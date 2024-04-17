@@ -1,4 +1,0 @@
-repository "ModuleBerserk@Joy_Seo@cloud"
-  path "/"
-    br "/main"
-    co "/main"
