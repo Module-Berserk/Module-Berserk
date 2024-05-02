@@ -131,9 +131,9 @@ public class PlayerManager : MonoBehaviour
     // 중앙에서 raycast하면 플랫폼 가장자리에 있을 때 false가 나와버리니 반드시 양쪽을 모두 체크해줘야 함.
     private void CheckIsGrounded()
     {
-        // 점프하면서 one way platform을 관통하다가 raycast가 성공할 수도 있으니
-        // 위로 이동하는 중이라면 무조건 isGrounded = false로 설정하고 바로 종료.
-        if (rb.velocity.y > 0.01f)
+        // Jump 또는 FallDown 입력에 의해 one way platform을 관통하는 경우도 있으므로
+        // 수직 속도가 정말 0에 가까운 경우에만 isGrounded 체크를 수행함.
+        if (Mathf.Abs(rb.velocity.y) > 0.01f)
         {
             isGrounded = false;
             return;
@@ -143,9 +143,10 @@ public class PlayerManager : MonoBehaviour
         Vector2 center = transform.position;
         center += capsuleCollider.offset;
 
-        // 콜라이더의 양 끝까지의 displacement
+        // 콜라이더의 양 끝까지의 displacement.
+        // half width보다 살짝 작아야 벽에 닿는 것에는 반응하지 않음.
         float halfWidth = capsuleCollider.size.x / 2f;
-        Vector2 sideOffset = new(halfWidth, 0f);
+        Vector2 sideOffset = new(halfWidth * 0.95f, 0f);
 
         // 정확히 half height만큼 하면 땅에 서있어도 fasle 나올 수 있으니 약간 여유 주기.
         float halfHeight = capsuleCollider.size.y / 2f;
