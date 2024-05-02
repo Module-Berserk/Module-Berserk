@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -35,6 +34,8 @@ public class PlayerManager : MonoBehaviour
 
 
     [Header("Follow Camera Target")]
+    // Cinemachine Virtual Camera의 Follow로 등록된 오브젝트를 지정해줘야 함!
+    // 새로운 높이의 플랫폼에 착지하기 전까지 카메라의 y축 좌표를 일정하게 유지하는 용도.
     [SerializeField] private GameObject cameraFollowTarget;
 
 
@@ -123,12 +124,15 @@ public class PlayerManager : MonoBehaviour
             HandleFallingVelocity();
         }
 
+        UpdateCameraFollowTarget();
+
         HandleMoveInput();
 
         if (isJumpKeyPressed)
         {
             HandleJumpInput();
         }
+
     }
 
     // Capsule의 양 끝에서 아래로 height의 절반 만큼 raycast해서 지금 땅을 밟고있는지 체크.
@@ -264,5 +268,26 @@ public class PlayerManager : MonoBehaviour
 
         // 입력 처리 완료
         isJumpKeyPressed = false;
+    }
+
+    // 평지에서 점프할 때 카메라가 위 아래로 흔들리는 것을 방지하기 위해
+    // 카메라 추적 대상을 플레이어와 별개의 오브젝트로 설정하고
+    // 플랫폼에 착지했을 때만 플레이어의 y 좌표를 따라가도록 설정함.
+    //
+    // Note:
+    // 맵이 수직으로 그리 높지 않은 경우는 괜찮은데
+    // 절벽처럼 카메라 시야를 벗어날 정도로 낙하하는 경우에는
+    // 캐릭터가 갑자기 화면 밖으로 사라지니까 이상하다고 느낄 수 있음.
+    private void UpdateCameraFollowTarget()
+    {
+        Vector2 newPosition = transform.position;
+
+        // 아직 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
+        if (!isGrounded)
+        {
+            newPosition.y = cameraFollowTarget.transform.position.y;
+        }
+
+        cameraFollowTarget.transform.position = newPosition;
     }
 }
