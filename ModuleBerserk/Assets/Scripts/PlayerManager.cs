@@ -37,28 +37,34 @@ public class PlayerManager : MonoBehaviour
     // Cinemachine Virtual Camera의 Follow로 등록된 오브젝트를 지정해줘야 함!
     // 새로운 높이의 플랫폼에 착지하기 전까지 카메라의 y축 좌표를 일정하게 유지하는 용도.
     [SerializeField] private GameObject cameraFollowTarget;
+    // 바라보는 방향으로 얼마나 앞에 있는 지점을 카메라가 추적할 것인지
+    [SerializeField] private float cameraLookAheadDistance = 1f;
 
 
     // 컴포넌트 레퍼런스
     private PlayerActionAssets actionAssets;
     private Rigidbody2D rb;
     private CapsuleCollider2D capsuleCollider; // TODO: 캡슐 대신 그냥 box collider를 사용할지 결정하기
+    private SpriteRenderer spriteRenderer;
 
 
     // FixedUpdate()에서 땅을 밟고 있는지 확인하고 여기에 기록함
-    private bool isGrounded;
+    private bool isGrounded = false;
     // 지금 밟고 있는 플랫폼의 레퍼런스.
     // 플랫폼을 관통해 아래로 점프할 때 사용함.
     private GameObject currentPlatform;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
-    private float coyoteTimeCounter;
+    private float coyoteTimeCounter = 0f;
     // coyote time, 더블 점프 등을 모두 고려한 점프 가능 여부로,
     // FixedUpdate()에서 업데이트됨.
     private bool canJump = true;
     // 키 입력은 physics 루프와 다른 시점에 처리되니까
     // 여기에 기록해두고 물리 연산은 FixedUpdate에서 처리함
-    private bool isJumpKeyPressed;
+    private bool isJumpKeyPressed = false;
+    // 현재 어느 쪽을 바라보고 있는지 기록.
+    // 스프라이트 반전과 카메라 추적 위치 조정에 사용됨.
+    private bool isFacingRight = true;
 
     private void Awake()
     {
@@ -70,6 +76,7 @@ public class PlayerManager : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void BindInputActions()
@@ -112,6 +119,7 @@ public class PlayerManager : MonoBehaviour
     private void FixedUpdate()
     {
         // TODO: 공중에서 벽에 닿으면 달라붙는 기능 구현하기
+        // TODO: 움직이는 방향 바라보게 flip 하기 (스프라이트, camera follow target의 offset)
 
         CheckIsGrounded();
         if (isGrounded)
@@ -124,8 +132,6 @@ public class PlayerManager : MonoBehaviour
             HandleFallingVelocity();
         }
 
-        UpdateCameraFollowTarget();
-
         HandleMoveInput();
 
         if (isJumpKeyPressed)
@@ -133,6 +139,8 @@ public class PlayerManager : MonoBehaviour
             HandleJumpInput();
         }
 
+        UpdateCameraFollowTarget();
+        UpdateSpriteDirection();
     }
 
     // Capsule의 양 끝에서 아래로 height의 절반 만큼 raycast해서 지금 땅을 밟고있는지 체크.
@@ -221,6 +229,12 @@ public class PlayerManager : MonoBehaviour
         float moveInput = actionAssets.Player.Move.ReadValue<float>();
         float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
 
+        // 현재 방향 기록 (입력이 없는 경우 현재 방향 유지)
+        if (moveInput != 0f)
+        {
+            isFacingRight = moveInput > 0f;
+        }
+
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
 
@@ -264,6 +278,10 @@ public class PlayerManager : MonoBehaviour
 
             // TODO: 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
             rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+
+            // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
+            // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
+            rb.gravityScale = defaultGravityScale;
         }
 
         // 입력 처리 완료
@@ -273,6 +291,7 @@ public class PlayerManager : MonoBehaviour
     // 평지에서 점프할 때 카메라가 위 아래로 흔들리는 것을 방지하기 위해
     // 카메라 추적 대상을 플레이어와 별개의 오브젝트로 설정하고
     // 플랫폼에 착지했을 때만 플레이어의 y 좌표를 따라가도록 설정함.
+    // x 좌표의 경우 플레이어의 실시간 위치 + 바라보는 방향으로 look ahead.
     //
     // Note:
     // 맵이 수직으로 그리 높지 않은 경우는 괜찮은데
@@ -282,6 +301,11 @@ public class PlayerManager : MonoBehaviour
     {
         Vector2 newPosition = transform.position;
 
+        // 바라보는 방향으로 look ahead
+        //
+        // 개인적인 의견: 좌/우 번갈아가면서 입력하면 카메라가 이리저리 이동해서 너무 어지러움...
+        newPosition.x += isFacingRight ? cameraLookAheadDistance : -cameraLookAheadDistance;
+
         // 아직 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
         if (!isGrounded)
         {
@@ -289,5 +313,10 @@ public class PlayerManager : MonoBehaviour
         }
 
         cameraFollowTarget.transform.position = newPosition;
+    }
+
+    private void UpdateSpriteDirection()
+    {
+        spriteRenderer.flipX = !isFacingRight;
     }
 }

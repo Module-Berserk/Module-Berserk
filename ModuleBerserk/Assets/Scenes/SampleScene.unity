@@ -964,6 +964,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   cameraFollowTarget: {fileID: 335837298}
+  cameraLookAheadDistance: 1
 --- !u!70 &1207513167
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
