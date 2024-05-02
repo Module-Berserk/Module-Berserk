@@ -8,30 +8,34 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour
 {
     [Header("Walk / Run")]
-    [SerializeField] private float MaxMoveSpeed = 1.5f;
-    [SerializeField] private float TurnAcceleration = 60f;
-    [SerializeField] private float MoveAcceleration = 30f;
-    [SerializeField] private float MoveDecceleration = 50f;
+    [SerializeField] private float maxMoveSpeed = 1.5f;
+    [SerializeField] private float turnAcceleration = 60f;
+    [SerializeField] private float moveAcceleration = 30f;
+    [SerializeField] private float moveDecceleration = 50f;
 
 
     [Header("Jump / Fall")]
-    [SerializeField] private float JumpVelocity = 4f;
+    [SerializeField] private float jumpVelocity = 4f;
     // 땅에서 떨어져도 점프를 허용하는 time window
-    [SerializeField] private float CoyoteTime = 0.15f;
+    [SerializeField] private float coyoteTime = 0.15f;
     // 공중에 있지만 위로 이동하는 중이라면 DefaultGravityScale을 사용하고
     // 아래로 이동하는 중이라면 GravityScaleWhenFalling을 사용해
     // 더 빨리 추락해서 공중에 붕 뜨는 이상한 느낌을 줄임.
-    [SerializeField] private float DefaultGravityScale = 1f;
-    [SerializeField] private float GravityScaleWhenFalling = 1.7f;
+    [SerializeField] private float defaultGravityScale = 1f;
+    [SerializeField] private float gravityScaleWhenFalling = 1.7f;
     // 아주 높은 곳에서 떨어질 때 부담스러울 정도로 아래로 가속하는 상황 방지
-    [SerializeField] private float MaxFallSpeed = 5f;
+    [SerializeField] private float maxFallSpeed = 5f;
     // 공중 조작이 지상 조작보다 둔하게 만드는 파라미터 (0: 조작 불가, 1: 변화 없음)
-    [SerializeField, Range(0f, 1f)] private float AirControl = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float airControl = 0.5f;
 
 
     [Header("Ground Contact")]
     // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
+
+
+    [Header("Follow Camera Target")]
+    [SerializeField] private GameObject cameraFollowTarget;
 
 
     // 컴포넌트 레퍼런스
@@ -179,13 +183,13 @@ public class PlayerManager : MonoBehaviour
     {
         canJump = true;
         coyoteTimeCounter = 0f;
-        rb.gravityScale = DefaultGravityScale;
+        rb.gravityScale = defaultGravityScale;
     }
 
     private void HandleCoyoteTime()
     {
         coyoteTimeCounter += Time.fixedDeltaTime;
-        if (coyoteTimeCounter > CoyoteTime)
+        if (coyoteTimeCounter > coyoteTime)
         {
             canJump = false;
         }
@@ -197,13 +201,13 @@ public class PlayerManager : MonoBehaviour
         bool isFalling = rb.velocity.y < -0.01f;
         if (isFalling)
         {
-            rb.gravityScale = GravityScaleWhenFalling;
+            rb.gravityScale = gravityScaleWhenFalling;
         }
 
         // 최대 추락 속도 제한
-        if (rb.velocity.y < -MaxFallSpeed)
+        if (rb.velocity.y < -maxFallSpeed)
         {
-            rb.velocity = new Vector2(rb.velocity.x, -MaxFallSpeed);
+            rb.velocity = new Vector2(rb.velocity.x, -maxFallSpeed);
         }
     }
 
@@ -211,7 +215,7 @@ public class PlayerManager : MonoBehaviour
     {
         // 원하는 속도를 계산
         float moveInput = actionAssets.Player.Move.ReadValue<float>();
-        float desiredVelocityX = MaxMoveSpeed * moveInput * MaxMoveSpeed;
+        float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
 
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
@@ -219,7 +223,7 @@ public class PlayerManager : MonoBehaviour
         // 공중이라면 AirControl 수치(0.0 ~ 1.0)에 비례해 가속도 감소
         if (!isGrounded)
         {
-            acceleration *= AirControl;
+            acceleration *= airControl;
         }
 
         // x축 속도가 원하는 속도에 부드럽게 도달하도록 보간
@@ -233,18 +237,18 @@ public class PlayerManager : MonoBehaviour
         bool isStopping = moveInput == 0f;
         if (isStopping)
         {
-            return MoveDecceleration;
+            return moveDecceleration;
         }
 
         // Case 2) 반대 방향으로 이동하려는 경우
         bool isTurningDirection = rb.velocity.x * desiredVelocityX < 0f;
         if (isTurningDirection)
         {
-            return TurnAcceleration;
+            return turnAcceleration;
         }
 
         // Case 3) 기존 방향으로 계속 이동하는 경우
-        return MoveAcceleration;
+        return moveAcceleration;
     }
 
     private void HandleJumpInput()
@@ -255,7 +259,7 @@ public class PlayerManager : MonoBehaviour
             canJump = false;
 
             // TODO: 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
-            rb.velocity = new Vector2(rb.velocity.x, JumpVelocity);
+            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
         }
 
         // 입력 처리 완료
