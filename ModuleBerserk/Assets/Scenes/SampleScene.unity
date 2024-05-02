@@ -816,7 +816,7 @@ PlatformEffector2D:
   m_RotationalOffset: 0
   m_UseOneWay: 1
   m_UseOneWayGrouping: 0
-  m_SurfaceArc: 180
+  m_SurfaceArc: 150
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
@@ -923,7 +923,7 @@ MonoBehaviour:
   TurnAcceleration: 60
   MoveAcceleration: 30
   MoveDecceleration: 50
-  JumpForce: 3.5
+  JumpForce: 4
   CoyoteTime: 0.15
   DefaultGravityScale: 1
   GravityScaleWhenFalling: 1.7
@@ -1044,7 +1044,7 @@ PlatformEffector2D:
   m_RotationalOffset: 0
   m_UseOneWay: 1
   m_UseOneWayGrouping: 0
-  m_SurfaceArc: 180
+  m_SurfaceArc: 150
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1

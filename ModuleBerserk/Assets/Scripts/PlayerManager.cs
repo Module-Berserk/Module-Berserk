@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
 
 
     [Header("Jump / Fall")]
-    [SerializeField] private float JumpForce = 4f;
+    [SerializeField] private float JumpVelocity = 4f;
     // 땅에서 떨어져도 점프를 허용하는 time window
     [SerializeField] private float CoyoteTime = 0.15f;
     // 공중에 있지만 위로 이동하는 중이라면 DefaultGravityScale을 사용하고
@@ -110,6 +110,14 @@ public class PlayerManager : MonoBehaviour
     // 중앙에서 raycast하면 플랫폼 가장자리에 있을 때 false가 나와버리니 반드시 양쪽을 모두 체크해줘야 함.
     private void CheckIsGrounded()
     {
+        // 점프하면서 one way platform을 관통하다가 raycast가 성공할 수도 있으니
+        // 위로 이동하는 중이라면 무조건 isGrounded = false로 설정하고 바로 종료.
+        if (rb.velocity.y > 0.01f)
+        {
+            isGrounded = false;
+            return;
+        }
+
         // 콜라이더의 중심
         Vector2 center = transform.position;
         center += capsuleCollider.offset;
@@ -210,11 +218,8 @@ public class PlayerManager : MonoBehaviour
             // 더블 점프 방지
             canJump = false;
 
-            // TODO:
-            // 1. coyote time 도중에 점프하면 위로 조금만 솟아올라서 점프 높이의 일관성이 떨어짐.
-            //    y축 velocity를 수정하는 방법을 고려해 볼 것.
-            // 2. 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
-            rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+            // TODO: 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
+            rb.velocity = new Vector2(rb.velocity.x, JumpVelocity);
         }
 
         // 입력 처리 완료
