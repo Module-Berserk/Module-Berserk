@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +42,9 @@ public class PlayerManager : MonoBehaviour
 
     // FixedUpdate()에서 땅을 밟고 있는지 확인하고 여기에 기록함
     private bool isGrounded;
+    // 지금 밟고 있는 플랫폼의 레퍼런스.
+    // 플랫폼을 관통해 아래로 점프할 때 사용함.
+    private GameObject currentPlatform;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
     private float coyoteTimeCounter;
@@ -79,9 +83,26 @@ public class PlayerManager : MonoBehaviour
 
     private void OnFallDown(InputAction.CallbackContext context)
     {
-        // TODO: 아래에 OneWayPlatform이 있으면 잠시 플랫폼과 플레이어의 collision 비활성화
-        Debug.Log("OnFallDown");
+        // 만약 아래에 one way platform이 있다면 아래로 통과하며 낙하
+        bool isSteppingOnOneWayPlatform = currentPlatform != null && currentPlatform.CompareTag("OneWayPlatform");
+        if (isSteppingOnOneWayPlatform)
+        {
+            var platformCollider = currentPlatform.GetComponent<Collider2D>();
+            const float collisionDisableDuration = 0.5f;
+
+            // await 없이 비동기로 처리하기 위해 discard
+            _ = DisableCollisionForDurationAsync(capsuleCollider, platformCollider, collisionDisableDuration);
+        }
     }
+
+     private async UniTask DisableCollisionForDurationAsync(Collider2D collider1, Collider2D collider2, float duration)
+     {
+        Physics2D.IgnoreCollision(collider1, collider2);
+
+        await UniTask.WaitForSeconds(duration);
+
+        Physics2D.IgnoreCollision(collider1, collider2, false);
+     }
 
     private void FixedUpdate()
     {
@@ -130,9 +151,23 @@ public class PlayerManager : MonoBehaviour
         float halfHeight = capsuleCollider.size.y / 2f;
         float traceDistance = halfHeight + 0.02f;
 
-        isGrounded =
-            Physics2D.Raycast(center + sideOffset, Vector2.down, traceDistance, groundLayerMask) ||
-            Physics2D.Raycast(center - sideOffset, Vector2.down, traceDistance, groundLayerMask);
+        // 1. 오른쪽 끝에서 raycast
+        RaycastHit2D rightSideHitInfo = Physics2D.Raycast(center + sideOffset, Vector2.down, traceDistance, groundLayerMask);
+        if (rightSideHitInfo.collider != null)
+        {
+            currentPlatform = rightSideHitInfo.collider.gameObject;
+            isGrounded = true;
+            return;
+        }
+
+        // 2. 왼쪽 끝에서 raycast
+        RaycastHit2D leftSideHitInfo = Physics2D.Raycast(center - sideOffset, Vector2.down, traceDistance, groundLayerMask);
+        if (leftSideHitInfo.collider != null)
+        {
+            currentPlatform = leftSideHitInfo.collider.gameObject;
+            isGrounded = true;
+            return;
+        }
 
         // 나중에 시각적으로 trace 범위를 확인하고 싶을 수도 있으니 주석으로 남겨둠.
         // Debug.DrawLine(center + sideOffset, center + sideOffset + Vector2.down * traceDistance);

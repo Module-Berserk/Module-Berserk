@@ -657,7 +657,7 @@ GameObject:
   - component: {fileID: 1114015933}
   m_Layer: 3
   m_Name: Platform
-  m_TagString: Untagged
+  m_TagString: OneWayPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -671,7 +671,7 @@ Transform:
   m_GameObject: {fileID: 1114015928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.016, y: 0.038, z: 0}
+  m_LocalPosition: {x: 1.016, y: 0.105, z: 0}
   m_LocalScale: {x: 1.048, y: 0.16, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -923,7 +923,7 @@ MonoBehaviour:
   TurnAcceleration: 60
   MoveAcceleration: 30
   MoveDecceleration: 50
-  JumpForce: 4
+  JumpVelocity: 4
   CoyoteTime: 0.15
   DefaultGravityScale: 1
   GravityScaleWhenFalling: 1.7
@@ -1009,7 +1009,7 @@ GameObject:
   - component: {fileID: 1263552030}
   m_Layer: 3
   m_Name: Platform (1)
-  m_TagString: Untagged
+  m_TagString: OneWayPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1023,7 +1023,7 @@ Transform:
   m_GameObject: {fileID: 1263552028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 0.579, z: 0}
+  m_LocalPosition: {x: 0.4, y: 0.786, z: 0}
   m_LocalScale: {x: 1.048, y: 0.16, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
