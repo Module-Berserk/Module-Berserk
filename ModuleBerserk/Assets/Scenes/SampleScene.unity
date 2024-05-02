@@ -923,8 +923,11 @@ MonoBehaviour:
   TurnAcceleration: 60
   MoveAcceleration: 30
   MoveDecceleration: 50
-  JumpForce: 4
-  CoyoteTime: 0.3
+  JumpForce: 3.5
+  CoyoteTime: 0.15
+  DefaultGravityScale: 1
+  GravityScaleWhenFalling: 1.7
+  MaxFallSpeed: 5
   AirControl: 0.5
   groundLayerMask:
     serializedVersion: 2

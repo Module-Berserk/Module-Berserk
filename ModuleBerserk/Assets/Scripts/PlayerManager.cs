@@ -6,32 +6,47 @@ using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
-    [Header("Movement Stats")]
+    [Header("Walk / Run")]
     [SerializeField] private float MaxMoveSpeed = 1.5f;
     [SerializeField] private float TurnAcceleration = 60f;
     [SerializeField] private float MoveAcceleration = 30f;
     [SerializeField] private float MoveDecceleration = 50f;
-    [SerializeField] private float JumpForce = 3.5f;
+
+
+    [Header("Jump / Fall")]
+    [SerializeField] private float JumpForce = 4f;
+    // 땅에서 떨어져도 점프를 허용하는 time window
     [SerializeField] private float CoyoteTime = 0.15f;
+    // 공중에 있지만 위로 이동하는 중이라면 DefaultGravityScale을 사용하고
+    // 아래로 이동하는 중이라면 GravityScaleWhenFalling을 사용해
+    // 더 빨리 추락해서 공중에 붕 뜨는 이상한 느낌을 줄임.
+    [SerializeField] private float DefaultGravityScale = 1f;
+    [SerializeField] private float GravityScaleWhenFalling = 1.7f;
+    // 아주 높은 곳에서 떨어질 때 부담스러울 정도로 아래로 가속하는 상황 방지
+    [SerializeField] private float MaxFallSpeed = 5f;
+    // 공중 조작이 지상 조작보다 둔하게 만드는 파라미터 (0: 조작 불가, 1: 변화 없음)
     [SerializeField, Range(0f, 1f)] private float AirControl = 0.5f;
 
+
     [Header("Ground Contact")]
+    // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
+
 
     // 컴포넌트 레퍼런스
     private PlayerActionAssets actionAssets;
     private Rigidbody2D rb;
-    private CapsuleCollider2D capsuleCollider;
+    private CapsuleCollider2D capsuleCollider; // TODO: 캡슐 대신 그냥 box collider를 사용할지 결정하기
+
 
     // FixedUpdate()에서 땅을 밟고 있는지 확인하고 여기에 기록함
     private bool isGrounded;
-
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
     private float coyoteTimeCounter;
-
+    // coyote time, 더블 점프 등을 모두 고려한 점프 가능 여부로,
+    // FixedUpdate()에서 업데이트됨.
     private bool canJump = true;
-
     // 키 입력은 physics 루프와 다른 시점에 처리되니까
     // 여기에 기록해두고 물리 연산은 FixedUpdate에서 처리함
     private bool isJumpKeyPressed;
@@ -70,14 +85,17 @@ public class PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // TODO: 공중에서 벽에 닿으면 달라붙는 기능 구현하기
+
         CheckIsGrounded();
         if (isGrounded)
         {
-            ResetJumpAndCoyoteTime();
+            ResetJumpRelatedStates();
         }
         else
         {
             HandleCoyoteTime();
+            HandleFallingVelocity();
         }
 
         HandleMoveInput();
@@ -113,10 +131,11 @@ public class PlayerManager : MonoBehaviour
         // Debug.DrawLine(center - sideOffset, center - sideOffset + Vector2.down * traceDistance);
     }
 
-    private void ResetJumpAndCoyoteTime()
+    private void ResetJumpRelatedStates()
     {
         canJump = true;
         coyoteTimeCounter = 0f;
+        rb.gravityScale = DefaultGravityScale;
     }
 
     private void HandleCoyoteTime()
@@ -125,6 +144,22 @@ public class PlayerManager : MonoBehaviour
         if (coyoteTimeCounter > CoyoteTime)
         {
             canJump = false;
+        }
+    }
+    
+    private void HandleFallingVelocity()
+    {
+        // 현재 추락하는 중이라면 더 강한 중력을 사용해서 붕 뜨는 느낌을 줄임.
+        bool isFalling = rb.velocity.y < -0.01f;
+        if (isFalling)
+        {
+            rb.gravityScale = GravityScaleWhenFalling;
+        }
+
+        // 최대 추락 속도 제한
+        if (rb.velocity.y < -MaxFallSpeed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -MaxFallSpeed);
         }
     }
 
@@ -175,6 +210,10 @@ public class PlayerManager : MonoBehaviour
             // 더블 점프 방지
             canJump = false;
 
+            // TODO:
+            // 1. coyote time 도중에 점프하면 위로 조금만 솟아올라서 점프 높이의 일관성이 떨어짐.
+            //    y축 velocity를 수정하는 방법을 고려해 볼 것.
+            // 2. 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
             rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
         }
 
