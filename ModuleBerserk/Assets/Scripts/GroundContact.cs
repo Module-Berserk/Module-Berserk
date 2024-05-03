@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -45,8 +44,6 @@ public class GroundContact
         CurrentPlatform = FindPlatformBelow();
         IsInContactWithLeftWall = CheckWallContact(Vector2.left);
         IsInContactWithRightWall = CheckWallContact(Vector2.right);
-
-        Debug.Log(IsGrounded);
     }
 
     // 콜라이더의 양 옆에서 아래로 raycast해서 바닥과 접촉 중인지 확인하고

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,11 +21,13 @@ public class PlayerManager : MonoBehaviour
     // 아래로 이동하는 중이라면 GravityScaleWhenFalling을 사용해
     // 더 빨리 추락해서 공중에 붕 뜨는 이상한 느낌을 줄임.
     [SerializeField] private float defaultGravityScale = 1f;
-    [SerializeField] private float gravityScaleWhenFalling = 1.7f;
+    [SerializeField] private float gravityScaleWhileFalling = 1.7f;
     // 아주 높은 곳에서 떨어질 때 부담스러울 정도로 아래로 가속하는 상황 방지
     [SerializeField] private float maxFallSpeed = 5f;
     // 공중 조작이 지상 조작보다 둔하게 만드는 파라미터 (0: 조작 불가, 1: 변화 없음)
     [SerializeField, Range(0f, 1f)] private float airControl = 0.5f;
+    // wall jump 이후 벽으로 돌아오는데에 걸리는 시간을 조정하는 파라미터 (airControl을 잠시 이 값으로 대체함)
+    [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.1f;
 
 
     [Header("Ground Contact")]
@@ -61,6 +64,16 @@ public class PlayerManager : MonoBehaviour
     // 현재 어느 쪽을 바라보고 있는지 기록.
     // 스프라이트 반전과 카메라 추적 위치 조정에 사용됨.
     private bool isFacingRight = true;
+    // 벽에 메달린 방향이 오른쪽인지 기록.
+    // 벽에서 떨어져야 하는지 테스트할 때 사용됨.
+    private bool isStickingToRightWall;
+
+    private enum State
+    {
+        IdleOrRun,
+        StickToWall,
+    };
+    private State state = State.IdleOrRun;
 
     private void Awake()
     {
@@ -107,7 +120,7 @@ public class PlayerManager : MonoBehaviour
         {
             ResetJumpRelatedStates();
         }
-        else
+        else if (state == State.IdleOrRun)
         {
             HandleCoyoteTime();
             HandleFallingVelocity();
@@ -146,7 +159,7 @@ public class PlayerManager : MonoBehaviour
         bool isFalling = rb.velocity.y < -0.01f;
         if (isFalling)
         {
-            rb.gravityScale = gravityScaleWhenFalling;
+            rb.gravityScale = gravityScaleWhileFalling;
         }
 
         // 최대 추락 속도 제한
@@ -158,15 +171,78 @@ public class PlayerManager : MonoBehaviour
 
     private void HandleMoveInput()
     {
-        // 원하는 속도를 계산
         float moveInput = actionAssets.Player.Move.ReadValue<float>();
-        float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
+        UpdateFacingDirection(moveInput);
 
-        // 현재 방향 기록 (입력이 없는 경우 현재 방향 유지)
+        if (state == State.IdleOrRun)
+        {
+            if (ShouldStickToWall(moveInput))
+            {
+                StartStickingToWall(moveInput);
+            }
+            else
+            {
+                UpdateMoveVelocity(moveInput);
+            }
+
+        }
+        else if (state == State.StickToWall && ShouldStopStickingToWall(moveInput))
+        {
+            StopStickingToWall();
+        }
+    }
+
+    private void UpdateFacingDirection(float moveInput)
+    {
         if (moveInput != 0f)
         {
             isFacingRight = moveInput > 0f;
         }
+    }
+
+    // 공중에 있고 이동하려는 방향의 벽과 접촉한 경우에 한해 true 반환.
+    private bool ShouldStickToWall(float moveInput)
+    {
+        bool shouldStickRight = moveInput > 0f && groundContact.IsInContactWithRightWall;
+        bool shouldStickLeft = moveInput < 0f && groundContact.IsInContactWithLeftWall;
+        return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
+    }
+
+    // 벽에 매달린 상태에서 입력을 취소하거나 반대 방향으로 이동하려는 경우 true 반환.
+    private bool ShouldStopStickingToWall(float moveInput)
+    {
+        return (isFacingRight != isStickingToRightWall) || (moveInput == 0f);
+    }
+
+    private void StartStickingToWall(float moveInput)
+    {
+        state = State.StickToWall;
+
+        // 매달린 방향과 반대로 이동하는 경우 매달리기 취소해야 하므로 현재 방향 기록
+        isStickingToRightWall = moveInput > 0f;
+
+        // wall jump 가능하게 설정
+        canJump = true;
+
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = 0f;
+
+        // TODO: 벽에 달라붙는 애니메이션으로 전환
+    }
+
+    private void StopStickingToWall()
+    {
+        state = State.IdleOrRun;
+
+        rb.gravityScale = defaultGravityScale;
+
+        // TODO: 낙하 애니메이션으로 전환
+    }
+
+    private void UpdateMoveVelocity(float moveInput)
+    {
+        // 원하는 속도를 계산
+        float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
 
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
@@ -209,8 +285,19 @@ public class PlayerManager : MonoBehaviour
             // 더블 점프 방지
             canJump = false;
 
-            // TODO: 벽에 달라붙은 상태라면 벽과 반대 방향으로 점프하도록 구현
-            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+            if (state == State.StickToWall)
+            {
+                StopStickingToWall();
+
+                // 비동기로 처리하기 위해 await하지 않고 discard
+                _ = ApplyWallJumpAirControlForDurationAsync(0.5f);
+
+                rb.velocity = new Vector2(isStickingToRightWall ? -1f : 1f, jumpVelocity);
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+            }
 
             // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
             // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
@@ -219,6 +306,18 @@ public class PlayerManager : MonoBehaviour
 
         // 입력 처리 완료
         isJumpKeyPressed = false;
+    }
+
+    // wall jump 직후에 너무 빨리 벽으로 돌아오는 것을
+    // 막기 위해 잠시 더 낮은 airControl 수치를 적용함.
+    private async UniTask ApplyWallJumpAirControlForDurationAsync(float duration)
+    {
+        float defaultAirControl = airControl;
+        airControl = airControlWhileWallJumping;
+
+        await UniTask.WaitForSeconds(duration);
+
+        airControl = defaultAirControl;
     }
 
     // 평지에서 점프할 때 카메라가 위 아래로 흔들리는 것을 방지하기 위해
