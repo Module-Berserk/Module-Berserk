@@ -47,7 +47,7 @@ public class PlayerManager : MonoBehaviour
     // 컴포넌트 레퍼런스
     private PlayerActionAssets actionAssets;
     private Rigidbody2D rb;
-    private CapsuleCollider2D capsuleCollider; // TODO: 캡슐 대신 그냥 box collider를 사용할지 결정하기
+    private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
 
     // 지면 접촉 테스트 관리자
@@ -80,13 +80,13 @@ public class PlayerManager : MonoBehaviour
         FindComponentReferences();
         BindInputActions();
 
-        groundContact = new(rb, capsuleCollider, groundLayerMask, contactDistanceThreshold);
+        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
     }
 
     private void FindComponentReferences()
     {
         rb = GetComponent<Rigidbody2D>();
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 

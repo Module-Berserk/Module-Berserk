@@ -12,11 +12,11 @@ public class GroundContact
     public bool IsInContactWithRightWall {get; private set;}
 
     private Rigidbody2D rigidbody;
-    private CapsuleCollider2D collider;
+    private BoxCollider2D collider;
     private LayerMask groundLayerMask;
     private float contactDistanceThreshold;
 
-    public GroundContact(Rigidbody2D rigidbody, CapsuleCollider2D collider, LayerMask groundLayerMask, float contactDistanceThreshold)
+    public GroundContact(Rigidbody2D rigidbody, BoxCollider2D collider, LayerMask groundLayerMask, float contactDistanceThreshold)
     {
         this.rigidbody = rigidbody;
         this.collider = collider;
