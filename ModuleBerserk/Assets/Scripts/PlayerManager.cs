@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,7 +38,7 @@ public class PlayerManager : MonoBehaviour
     // 새로운 높이의 플랫폼에 착지하기 전까지 카메라의 y축 좌표를 일정하게 유지하는 용도.
     [SerializeField] private GameObject cameraFollowTarget;
     // 바라보는 방향으로 얼마나 앞에 있는 지점을 카메라가 추적할 것인지
-    [SerializeField] private float cameraLookAheadDistance = 1f;
+    [SerializeField, Range(0f, 2f)] private float cameraLookAheadDistance = 1f;
 
 
     // 컴포넌트 레퍼런스
@@ -48,14 +47,8 @@ public class PlayerManager : MonoBehaviour
     private CapsuleCollider2D capsuleCollider; // TODO: 캡슐 대신 그냥 box collider를 사용할지 결정하기
     private SpriteRenderer spriteRenderer;
 
-
-    // FixedUpdate()에서 오른쪽, 왼쪽, 아래 방향에 벽과 접촉 중인지 확인하고 여기에 기록함
-    private bool isGrounded = false;
-    private bool isInContactWithLeftWall = false;
-    private bool isInContactWithRightWall = false;
-    // 지금 밟고 있는 플랫폼의 레퍼런스.
-    // 플랫폼을 관통해 아래로 점프할 때 사용함.
-    private GameObject currentPlatform;
+    // 지면 접촉 테스트 관리자
+    private GroundContact groundContact;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
     private float coyoteTimeCounter = 0f;
@@ -73,6 +66,8 @@ public class PlayerManager : MonoBehaviour
     {
         FindComponentReferences();
         BindInputActions();
+
+        groundContact = new(rb, capsuleCollider, groundLayerMask, contactDistanceThreshold);
     }
 
     private void FindComponentReferences()
@@ -98,31 +93,17 @@ public class PlayerManager : MonoBehaviour
 
     private void OnFallDown(InputAction.CallbackContext context)
     {
-        // 만약 아래에 one way platform이 있다면 아래로 통과하며 낙하
-        bool isSteppingOnOneWayPlatform = currentPlatform != null && currentPlatform.CompareTag("OneWayPlatform");
-        if (isSteppingOnOneWayPlatform)
+        if (groundContact.IsSteppingOnOneWayPlatform())
         {
-            var platformCollider = currentPlatform.GetComponent<Collider2D>();
-            const float collisionDisableDuration = 0.5f;
-
             // await 없이 비동기로 처리하기 위해 discard
-            _ = DisableCollisionForDurationAsync(capsuleCollider, platformCollider, collisionDisableDuration);
+            _ = groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f);
         }
     }
 
-     private async UniTask DisableCollisionForDurationAsync(Collider2D collider1, Collider2D collider2, float duration)
-     {
-        Physics2D.IgnoreCollision(collider1, collider2);
-
-        await UniTask.WaitForSeconds(duration);
-
-        Physics2D.IgnoreCollision(collider1, collider2, false);
-     }
-
     private void FixedUpdate()
     {
-        CheckGroundContact();
-        if (isGrounded)
+        groundContact.TestContact();
+        if (groundContact.IsGrounded)
         {
             ResetJumpRelatedStates();
         }
@@ -141,80 +122,6 @@ public class PlayerManager : MonoBehaviour
 
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
-    }
-
-    // 근처에 벽 또는 플랫폼과 접촉 중인지 테스트하고 다음 조건을 확인함
-    // 1. 지금 땅을 밟고 있는가?
-    // 2. 오른쪽 또는 왼쪽에 벽이 접촉 중인가?
-    //
-    // Note:
-    // Capsule의 양 끝에서 아래로 height의 절반 만큼 raycast해서 지금 땅을 밟고있는지 체크.
-    // 중앙에서 raycast하면 플랫폼 가장자리에 있을 때 false가 나와버리니 반드시 양쪽을 모두 체크해줘야 함.
-    private void CheckGroundContact()
-    {
-        isInContactWithLeftWall = CheckWallContact(Vector2.left);
-        isInContactWithRightWall = CheckWallContact(Vector2.right);
-
-        // 콜라이더의 중심과 크기 절반 미리 계산
-        Vector2 center = transform.position;
-        center += capsuleCollider.offset;
-
-        float halfWidth = capsuleCollider.size.x / 2f;
-        float halfHeight = capsuleCollider.size.y / 2f;
-
-        // Jump 또는 FallDown 입력에 의해 one way platform을 관통하는 경우도 있으므로
-        // 수직 속도가 정말 0에 가까운 경우에만 isGrounded 체크를 수행함.
-        if (Mathf.Abs(rb.velocity.y) > 0.01f)
-        {
-            isGrounded = false;
-            return;
-        }
-
-        // 콜라이더의 양 끝까지의 displacement.
-        // half width보다 살짝 작아야 벽에 닿는 것에는 반응하지 않음.
-        Vector2 sideOffset = new(halfWidth * 0.95f, 0f);
-
-        // 정확히 half height만큼 하면 땅에 서있어도 fasle 나올 수 있으니 약간 여유 주기.
-        float traceDistance = halfHeight + contactDistanceThreshold;
-
-        // 1. 오른쪽 끝에서 raycast
-        RaycastHit2D rightSideHitInfo = Physics2D.Raycast(center + sideOffset, Vector2.down, traceDistance, groundLayerMask);
-        if (rightSideHitInfo.collider != null)
-        {
-            currentPlatform = rightSideHitInfo.collider.gameObject;
-            isGrounded = true;
-            return;
-        }
-
-        // 2. 왼쪽 끝에서 raycast
-        RaycastHit2D leftSideHitInfo = Physics2D.Raycast(center - sideOffset, Vector2.down, traceDistance, groundLayerMask);
-        if (leftSideHitInfo.collider != null)
-        {
-            currentPlatform = leftSideHitInfo.collider.gameObject;
-            isGrounded = true;
-            return;
-        }
-
-        // 나중에 시각적으로 trace 범위를 확인하고 싶을 수도 있으니 주석으로 남겨둠.
-        // Debug.DrawLine(center + sideOffset, center + sideOffset + Vector2.down * traceDistance);
-        // Debug.DrawLine(center - sideOffset, center - sideOffset + Vector2.down * traceDistance);
-    }
-
-    // Vector2.left 또는 Vector2.right가 주어졌을 때 해당 방향으로 벽과 접촉중인지 확인.
-    private bool CheckWallContact(Vector2 direction)
-    {
-        Vector2 center = transform.position;
-        center += capsuleCollider.offset;
-
-        float halfWidth = capsuleCollider.size.x / 2f;
-        float traceDistance = halfWidth + contactDistanceThreshold;
-
-        float halfHeight = capsuleCollider.size.y / 2f;
-        Vector2 upwardOffset = new(0f, halfHeight * 0.95f);
-
-        return
-            Physics2D.Raycast(center + upwardOffset, direction, traceDistance, groundLayerMask) &&
-            Physics2D.Raycast(center - upwardOffset, direction, traceDistance, groundLayerMask);
     }
 
     private void ResetJumpRelatedStates()
@@ -265,7 +172,7 @@ public class PlayerManager : MonoBehaviour
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
 
         // 공중이라면 AirControl 수치(0.0 ~ 1.0)에 비례해 가속도 감소
-        if (!isGrounded)
+        if (!groundContact.IsGrounded)
         {
             acceleration *= airControl;
         }
@@ -333,7 +240,7 @@ public class PlayerManager : MonoBehaviour
         newPosition.x += isFacingRight ? cameraLookAheadDistance : -cameraLookAheadDistance;
 
         // 아직 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
-        if (!isGrounded)
+        if (!groundContact.IsGrounded)
         {
             newPosition.y = cameraFollowTarget.transform.position.y;
         }
