@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class DroppedItem : MonoBehaviour, IInteractable
 {
+    [SerializeField] private GameObject itemDescriptionUI;
+
     public void OnPlayerEnter()
     {
-        // TODO: 아이템 정보 띄우기
-        Debug.Log("Player entered interaction range");
+        itemDescriptionUI.SetActive(true);
     }
 
     public void OnPlayerExit()
     {
-        // TODO: 아이템 정보 감추기
-        Debug.Log("Player exited interaction range");
+        itemDescriptionUI.SetActive(false);
     }
 
     public void StartInteraction()
