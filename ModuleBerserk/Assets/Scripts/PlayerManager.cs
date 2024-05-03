@@ -49,11 +49,12 @@ public class PlayerManager : MonoBehaviour
 
 
     // 컴포넌트 레퍼런스
-    private PlayerActionAssets actionAssets;
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
 
+    // 입력 시스템
+    private ModuleBerserkActionAssets actionAssets;
     // 지면 접촉 테스트 관리자
     private GroundContact groundContact;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
@@ -102,7 +103,7 @@ public class PlayerManager : MonoBehaviour
 
     private void BindInputActions()
     {
-        actionAssets = new PlayerActionAssets();
+        actionAssets = new ModuleBerserkActionAssets();
         actionAssets.Player.Enable();
 
         actionAssets.Player.Jump.performed += OnJump;
@@ -128,11 +129,25 @@ public class PlayerManager : MonoBehaviour
     {
         if (availableInteractables.Count > 0)
         {
-            availableInteractables.First().StartInteraction();
+            // 제일 마지막에 활성화된 대상 선택
+            availableInteractables.Last().StartInteraction();
         }
         else
         {
             // TODO: 공격 처리
+        }
+    }
+
+    // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
+    public void SetInputEnabled(bool enable)
+    {
+        if (enable)
+        {
+            actionAssets.Player.Enable();
+        }
+        else
+        {
+            actionAssets.Player.Disable();
         }
     }
 
