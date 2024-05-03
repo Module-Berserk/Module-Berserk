@@ -73,6 +73,9 @@ public class PlayerManager : MonoBehaviour
     // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
     private float airControl;
 
+    // 상호작용 범위에 들어온 IInteractable 목록 (ex. NPC, 드랍 아이템, ...)
+    private List<IInteractable> availableInteractables = new();
+
     private enum State
     {
         IdleOrRun,
@@ -358,5 +361,23 @@ public class PlayerManager : MonoBehaviour
     private void UpdateSpriteDirection()
     {
         spriteRenderer.flipX = !isFacingRight;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            interactable.OnPlayerEnter();
+            availableInteractables.Add(interactable);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            interactable.OnPlayerExit();
+            availableInteractables.Remove(interactable);
+        }
     }
 }
