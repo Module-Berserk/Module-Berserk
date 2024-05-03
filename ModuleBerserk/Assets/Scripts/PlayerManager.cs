@@ -31,7 +31,8 @@ public class PlayerManager : MonoBehaviour
     [Header("Ground Contact")]
     // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
-
+    // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급
+    [SerializeField] private float contactDistanceThreshold = 0.02f;
 
     [Header("Follow Camera Target")]
     // Cinemachine Virtual Camera의 Follow로 등록된 오브젝트를 지정해줘야 함!
@@ -48,8 +49,10 @@ public class PlayerManager : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
 
-    // FixedUpdate()에서 땅을 밟고 있는지 확인하고 여기에 기록함
+    // FixedUpdate()에서 오른쪽, 왼쪽, 아래 방향에 벽과 접촉 중인지 확인하고 여기에 기록함
     private bool isGrounded = false;
+    private bool isInContactWithLeftWall = false;
+    private bool isInContactWithRightWall = false;
     // 지금 밟고 있는 플랫폼의 레퍼런스.
     // 플랫폼을 관통해 아래로 점프할 때 사용함.
     private GameObject currentPlatform;
@@ -118,10 +121,7 @@ public class PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // TODO: 공중에서 벽에 닿으면 달라붙는 기능 구현하기
-        // TODO: 움직이는 방향 바라보게 flip 하기 (스프라이트, camera follow target의 offset)
-
-        CheckIsGrounded();
+        CheckGroundContact();
         if (isGrounded)
         {
             ResetJumpRelatedStates();
@@ -143,10 +143,25 @@ public class PlayerManager : MonoBehaviour
         UpdateSpriteDirection();
     }
 
+    // 근처에 벽 또는 플랫폼과 접촉 중인지 테스트하고 다음 조건을 확인함
+    // 1. 지금 땅을 밟고 있는가?
+    // 2. 오른쪽 또는 왼쪽에 벽이 접촉 중인가?
+    //
+    // Note:
     // Capsule의 양 끝에서 아래로 height의 절반 만큼 raycast해서 지금 땅을 밟고있는지 체크.
     // 중앙에서 raycast하면 플랫폼 가장자리에 있을 때 false가 나와버리니 반드시 양쪽을 모두 체크해줘야 함.
-    private void CheckIsGrounded()
+    private void CheckGroundContact()
     {
+        isInContactWithLeftWall = CheckWallContact(Vector2.left);
+        isInContactWithRightWall = CheckWallContact(Vector2.right);
+
+        // 콜라이더의 중심과 크기 절반 미리 계산
+        Vector2 center = transform.position;
+        center += capsuleCollider.offset;
+
+        float halfWidth = capsuleCollider.size.x / 2f;
+        float halfHeight = capsuleCollider.size.y / 2f;
+
         // Jump 또는 FallDown 입력에 의해 one way platform을 관통하는 경우도 있으므로
         // 수직 속도가 정말 0에 가까운 경우에만 isGrounded 체크를 수행함.
         if (Mathf.Abs(rb.velocity.y) > 0.01f)
@@ -155,18 +170,12 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        // 콜라이더의 중심
-        Vector2 center = transform.position;
-        center += capsuleCollider.offset;
-
         // 콜라이더의 양 끝까지의 displacement.
         // half width보다 살짝 작아야 벽에 닿는 것에는 반응하지 않음.
-        float halfWidth = capsuleCollider.size.x / 2f;
         Vector2 sideOffset = new(halfWidth * 0.95f, 0f);
 
         // 정확히 half height만큼 하면 땅에 서있어도 fasle 나올 수 있으니 약간 여유 주기.
-        float halfHeight = capsuleCollider.size.y / 2f;
-        float traceDistance = halfHeight + 0.02f;
+        float traceDistance = halfHeight + contactDistanceThreshold;
 
         // 1. 오른쪽 끝에서 raycast
         RaycastHit2D rightSideHitInfo = Physics2D.Raycast(center + sideOffset, Vector2.down, traceDistance, groundLayerMask);
@@ -189,6 +198,23 @@ public class PlayerManager : MonoBehaviour
         // 나중에 시각적으로 trace 범위를 확인하고 싶을 수도 있으니 주석으로 남겨둠.
         // Debug.DrawLine(center + sideOffset, center + sideOffset + Vector2.down * traceDistance);
         // Debug.DrawLine(center - sideOffset, center - sideOffset + Vector2.down * traceDistance);
+    }
+
+    // Vector2.left 또는 Vector2.right가 주어졌을 때 해당 방향으로 벽과 접촉중인지 확인.
+    private bool CheckWallContact(Vector2 direction)
+    {
+        Vector2 center = transform.position;
+        center += capsuleCollider.offset;
+
+        float halfWidth = capsuleCollider.size.x / 2f;
+        float traceDistance = halfWidth + contactDistanceThreshold;
+
+        float halfHeight = capsuleCollider.size.y / 2f;
+        Vector2 upwardOffset = new(0f, halfHeight * 0.95f);
+
+        return
+            Physics2D.Raycast(center + upwardOffset, direction, traceDistance, groundLayerMask) &&
+            Physics2D.Raycast(center - upwardOffset, direction, traceDistance, groundLayerMask);
     }
 
     private void ResetJumpRelatedStates()
