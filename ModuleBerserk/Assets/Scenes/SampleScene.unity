@@ -1207,6 +1207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemDescriptionUI: {fileID: 653851274}
+  itemName: Yellow Ball
 --- !u!61 &1129271980
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1262,9 +1263,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1207513164}
   - component: {fileID: 1207513163}
-  - component: {fileID: 1207513166}
   - component: {fileID: 1207513168}
   - component: {fileID: 1207513169}
+  - component: {fileID: 1207513166}
+  - component: {fileID: 1207513170}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1442,6 +1444,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.13, y: 0.4815334}
   m_EdgeRadius: 0
+--- !u!114 &1207513170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207513162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e26658d425f143aeef1e9e6e3b370, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1234055978
 GameObject:
   m_ObjectHideFlags: 0

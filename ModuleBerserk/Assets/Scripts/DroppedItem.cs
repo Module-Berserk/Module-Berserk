@@ -6,6 +6,9 @@ public class DroppedItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject itemDescriptionUI;
 
+    // TODO: 아이템 이름 대신 사용 가능한 IActiveItem 객체로 변경
+    [SerializeField] private string itemName;
+
     public void OnPlayerEnter()
     {
         itemDescriptionUI.SetActive(true);
@@ -18,7 +21,12 @@ public class DroppedItem : MonoBehaviour, IInteractable
 
     public void StartInteraction()
     {
-        // TODO: 아이템 슬롯이 비어있다면 바로 장착하고, 아니라면 아이템 교체 UI 띄우기
-        Debug.Log("Starting interaction");
+        var player = GameObject.FindGameObjectWithTag("Player");
+        var itemManager = player.GetComponent<ItemManager>();
+
+        // TODO: 아이템 이름 대신 사용 가능한 IActiveItem 객체로 변경
+        itemManager.HandleItemCollect(itemName);
+
+        Destroy(gameObject);
     }
 }

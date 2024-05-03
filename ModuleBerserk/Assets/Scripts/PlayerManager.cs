@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -106,6 +107,7 @@ public class PlayerManager : MonoBehaviour
 
         actionAssets.Player.Jump.performed += OnJump;
         actionAssets.Player.FallDown.performed += OnFallDown;
+        actionAssets.Player.PerformAction.performed += OnPerformAction;
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -119,6 +121,18 @@ public class PlayerManager : MonoBehaviour
         {
             // await 없이 비동기로 처리하기 위해 discard
             _ = groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f);
+        }
+    }
+
+    private void OnPerformAction(InputAction.CallbackContext context)
+    {
+        if (availableInteractables.Count > 0)
+        {
+            availableInteractables.First().StartInteraction();
+        }
+        else
+        {
+            // TODO: 공격 처리
         }
     }
 
