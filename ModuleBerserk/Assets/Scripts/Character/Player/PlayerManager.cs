@@ -94,6 +94,7 @@ public class PlayerManager : MonoBehaviour
     {
         FindComponentReferences();
         BindInputActions();
+        
 
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
         airControl = defaultAirControl;
@@ -153,9 +154,9 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    IEnumerator TempAttackMotion(int direction) { //임시용
-        
+    IEnumerator TempAttackMotion(int direction) { //임시용        
         isAttacking = true;
+        tempWeapon.GetComponent<BoxCollider2D>().enabled = true;
         Vector3 pivot;
         float elapsedTime = 0f;
         while (elapsedTime < 0.25f) { // 무기 내려감
@@ -178,6 +179,7 @@ public class PlayerManager : MonoBehaviour
             yield return null;
         }
         isAttacking = false;
+        tempWeapon.GetComponent<BoxCollider2D>().enabled = false;
     }
 
     // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
@@ -440,6 +442,12 @@ public class PlayerManager : MonoBehaviour
         {
             interactable.OnPlayerEnter();
             availableInteractables.Add(interactable);
+        }
+        else if (other.gameObject.TryGetComponent(out EnemyStat enemy)) { // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함
+            if (!isAttacking) { // 이것도 대충 처리해놈;
+                playerStat.ModifyStat("HP", -enemy.GetModifiedStat("Attack"));
+                Debug.Log("아야! 내 현재 체력: " + playerStat.GetModifiedStat("HP"));
+            }
         }
     }
 

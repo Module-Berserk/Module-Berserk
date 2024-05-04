@@ -1384,10 +1384,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c09ffb2ff461504e96636ddebf1a3f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHP: 100
-  maxHP: 100
-  attackDamage: 10
-  speed: 10
+  HP: 100
+  attackDamage: 20
+  speed: 20
   moveRange: 5
 --- !u!1 &931631430
 GameObject:
@@ -2410,8 +2409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16858a3f80549f44b8e09a97126e530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHP: 200
-  maxHP: 200
+  HP: 100
   attackDamage: 20
   speed: 10
 --- !u!1 &1218411720
@@ -2987,7 +2985,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281604747}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
