@@ -142,39 +142,35 @@ public class PlayerManager : MonoBehaviour
             if (isAttacking) { // 임시로 이렇게 처리해놨습니당
                 return;
             }
-            Debug.Log("공격!");
-            StartCoroutine(TempAttackMotion());
+            if (spriteRenderer.flipX){
+                StartCoroutine(TempAttackMotion(1)); //-1 왼쪽, 1 오른쪽
+            }
+            else {
+                StartCoroutine(TempAttackMotion(-1)); //-1 왼쪽, 1 오른쪽
+            }
         }
     }
 
-    IEnumerator TempAttackMotion() { //임시용
+    IEnumerator TempAttackMotion(int direction) { //임시용
+        
         isAttacking = true;
-        Vector3 pivot = tempWeapon.position - new Vector3 (0, -tempWeapon.localScale.y * 0.3f, 0);
-
+        Vector3 pivot;
         float elapsedTime = 0f;
-        while (elapsedTime < 1f) //공격 회전 루프
-        {
+        while (elapsedTime < 0.25f) { // 무기 내려감
+            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
             // 무기 회전
-            float angle = Time.deltaTime * -90f;
-            tempWeapon.Translate(-pivot);
-            tempWeapon.Rotate(Vector3.forward, angle);
-            tempWeapon.Translate(pivot);
+            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * 90f * Time.deltaTime * 4);
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        // 대기
-        yield return new WaitForSeconds(0.5f);
 
         // 이번엔 반대로 회전
         elapsedTime = 0f;
-        while (elapsedTime < 1f)
-        {
+        while (elapsedTime < 0.25f) { // 무기 올라감
+            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
             // 초기 위치로 다시 회전
-            float angle = Time.deltaTime * 90f;
-            tempWeapon.Translate(-pivot);
-            tempWeapon.Rotate(Vector3.forward, angle);
-            tempWeapon.Translate(pivot);
+            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * -90f * Time.deltaTime * 4);
 
             elapsedTime += Time.deltaTime;
             yield return null;
