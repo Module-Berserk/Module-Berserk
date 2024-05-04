@@ -1239,6 +1239,8 @@ GameObject:
   - component: {fileID: 905899337}
   - component: {fileID: 905899336}
   - component: {fileID: 905899335}
+  - component: {fileID: 905899338}
+  - component: {fileID: 905899339}
   m_Layer: 0
   m_Name: BadEnemy
   m_TagString: Untagged
@@ -1358,6 +1360,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &905899338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905899334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba76e87d4b7520458443e03a818452f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &905899339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905899334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c09ffb2ff461504e96636ddebf1a3f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHP: 100
+  maxHP: 100
+  attackDamage: 10
+  speed: 10
+  moveRange: 5
 --- !u!1 &931631430
 GameObject:
   m_ObjectHideFlags: 0
