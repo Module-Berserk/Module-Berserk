@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class EnemyStat : CharacterStat {
     [Header("HP")] //체력 변수
-    [SerializeField] private float currentHP;
-    [SerializeField] private float maxHP;
+    [SerializeField] private float HP;
 
     [Header("Attack")] //공격력 변수
     [SerializeField] private float attackDamage;
@@ -18,8 +17,9 @@ public class EnemyStat : CharacterStat {
 
     private void Start(){
         //초기에 Stat Dictionary에 추가함
-        SetBaseStat("HP", currentHP, maxHP);
-        SetBaseStat("Attack", attackDamage, attackDamage);
-        SetBaseStat("Speed", speed, speed);
+        SetBaseStat("HP", HP);
+        SetBaseStat("Attack", attackDamage);
+        SetBaseStat("Speed", speed);
+        SetBaseStat("MoveRange", moveRange);
     }
 }

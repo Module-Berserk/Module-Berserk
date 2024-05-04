@@ -52,6 +52,7 @@ public class PlayerManager : MonoBehaviour
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
+    private PlayerStat playerStat;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -103,6 +104,7 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        playerStat = GetComponent<PlayerStat>();
         tempWeapon = transform.GetChild(0);
     }
 
