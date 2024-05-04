@@ -12,8 +12,15 @@ public struct Stat //Stat Struct
     public Stat(float baseValue, float maxValue)
     {
         this.baseValue = baseValue;
-        this.modifiedValue = baseValue;
+        this.currentValue = baseValue;
+        this.minValue = 0;
         this.maxValue = maxValue;
+    }
+
+    public void ApplyModifier(float modifier)
+    {
+        this.currentValue += modifier;
+        this.currentValue = Math.Max(this.minValue, Math.Min(this.currentValue, this.maxValue)); //최댓값 및 최솟값을 초과하지 못하게함
     }
 }
 
@@ -25,13 +32,17 @@ public class CharacterStat : MonoBehaviour
 
     public void SetBaseStat(string statName, float baseValue, float maxValue)
     {
-        if (!stats.ContainsKey(statName))
+        if (!stats.ContainsKey(statName)) //Stat 없을때
         {
             stats.Add(statName, new Stat(baseValue, maxValue));
         }
-        else
+        else // Stat 있을때
         {
-            stats[statName] = new Stat(baseValue, maxValue);
+            var existingStat = stats[statName];
+            existingStat.baseValue = baseValue;
+            existingStat.maxValue = maxValue;
+            existingStat.ApplyModifier(0); // 범위안에 넣기위해 실행
+            stats[statName] = existingStat;
         }
     }
 
@@ -39,12 +50,14 @@ public class CharacterStat : MonoBehaviour
     {
         if (stats.ContainsKey(statName))
         {
-            stats[statName].modifiedValue += modifier;
-            stats[statName].modifiedValue = Math.Max(0, Math.Min(stats[statName].modifiedValue, stats[statName].maxValue));
+            // Stat 변경
+            var stat = stats[statName];
+            stat.ApplyModifier(modifier);
+            stats[statName] = stat;
         }
         else
         {
-            Debug.LogError(statName + "가 없다!");
+            Debug.LogError(statName + " 엥? 이게 나오면 안되는데?");
         }
     }
 
@@ -52,7 +65,7 @@ public class CharacterStat : MonoBehaviour
     {
         if (stats.ContainsKey(statName))
         {
-            return stats[statName].modifiedValue;
+            return stats[statName].currentValue;
         }
         else
         {
