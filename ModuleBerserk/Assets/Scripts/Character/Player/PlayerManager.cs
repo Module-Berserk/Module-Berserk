@@ -77,6 +77,10 @@ public class PlayerManager : MonoBehaviour
 
     // 상호작용 범위에 들어온 IInteractable 목록 (ex. NPC, 드랍 아이템, ...)
     private List<IInteractable> availableInteractables = new();
+    
+    //Prototype 공격용 변수들
+    private Transform tempWeapon; //Prototype용 임시
+    private bool isAttacking = false;
 
     private enum State
     {
@@ -99,6 +103,7 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        tempWeapon = transform.GetChild(0);
     }
 
     private void BindInputActions()
@@ -134,8 +139,47 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            // TODO: 공격 처리
+            if (isAttacking) { // 임시로 이렇게 처리해놨습니당
+                return;
+            }
+            Debug.Log("공격!");
+            StartCoroutine(TempAttackMotion());
         }
+    }
+
+    IEnumerator TempAttackMotion() { //임시용
+        isAttacking = true;
+        Vector3 pivot = tempWeapon.position - new Vector3 (0, -tempWeapon.localScale.y * 0.3f, 0);
+
+        float elapsedTime = 0f;
+        while (elapsedTime < 1f) //공격 회전 루프
+        {
+            // 무기 회전
+            float angle = Time.deltaTime * -90f;
+            tempWeapon.Translate(-pivot);
+            tempWeapon.Rotate(Vector3.forward, angle);
+            tempWeapon.Translate(pivot);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        // 대기
+        yield return new WaitForSeconds(0.5f);
+
+        // 이번엔 반대로 회전
+        elapsedTime = 0f;
+        while (elapsedTime < 1f)
+        {
+            // 초기 위치로 다시 회전
+            float angle = Time.deltaTime * 90f;
+            tempWeapon.Translate(-pivot);
+            tempWeapon.Rotate(Vector3.forward, angle);
+            tempWeapon.Translate(pivot);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        isAttacking = false;
     }
 
     // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
