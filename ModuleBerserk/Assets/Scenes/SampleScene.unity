@@ -2202,6 +2202,7 @@ GameObject:
   - component: {fileID: 1207513169}
   - component: {fileID: 1207513166}
   - component: {fileID: 1207513170}
+  - component: {fileID: 1207513171}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2396,6 +2397,22 @@ MonoBehaviour:
   itemReplacementUI: {fileID: 1069896957}
   itemReplacementSlot1Outline: {fileID: 121048893}
   itemReplacementSlot2Outline: {fileID: 104649932}
+--- !u!114 &1207513171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207513162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16858a3f80549f44b8e09a97126e530, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHP: 200
+  maxHP: 200
+  attackDamage: 20
+  speed: 10
 --- !u!1 &1218411720
 GameObject:
   m_ObjectHideFlags: 0
