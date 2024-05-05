@@ -95,9 +95,22 @@ public class PlayerManager : MonoBehaviour
         FindComponentReferences();
         BindInputActions();
         
-
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
         airControl = defaultAirControl;
+    }
+
+    private void Start()
+    {
+        playerStat.HP.OnValueChange.AddListener(HandleHPChange);
+    }
+
+    private void HandleHPChange(float hp)
+    {
+        Debug.Log($"아야! 내 현재 체력: {hp}");
+
+        // TODO:
+        // 1. 체력바 UI 업데이트
+        // 2. 사망 처리
     }
 
     private void FindComponentReferences()
@@ -443,10 +456,12 @@ public class PlayerManager : MonoBehaviour
             interactable.OnPlayerEnter();
             availableInteractables.Add(interactable);
         }
-        else if (other.gameObject.TryGetComponent(out EnemyStat enemy)) { // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함
-            if (!isAttacking) { // 이것도 대충 처리해놈;
-                playerStat.ModifyStat("HP", -enemy.GetModifiedStat("Attack"));
-                Debug.Log("아야! 내 현재 체력: " + playerStat.GetModifiedStat("HP"));
+        // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함
+        else if (other.gameObject.TryGetComponent(out EnemyStat enemy))
+        {
+            if (!isAttacking) // 이것도 대충 처리해놈;
+            {
+                playerStat.HP.ModifyBaseValue(-enemy.AttackDamage.CurrentValue);
             }
         }
     }
