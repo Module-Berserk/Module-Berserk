@@ -155,6 +155,8 @@ public class PlayerManager : MonoBehaviour
     }
 
     IEnumerator TempAttackMotion(int direction) { //임시용        
+    //솔직히 WeaponManager 만들어서 할까 했는데
+    //너무 내 맘대로 막하는 거 같아서 걍 일단 이렇게 해봄
         isAttacking = true;
         tempWeapon.GetComponent<BoxCollider2D>().enabled = true;
         Vector3 pivot;
