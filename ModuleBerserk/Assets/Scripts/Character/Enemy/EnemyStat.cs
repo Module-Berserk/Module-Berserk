@@ -14,11 +14,13 @@ public class EnemyStat : MonoBehaviour {
     public CharacterStat HP;
     public CharacterStat AttackDamage;
     public CharacterStat Speed;
+    public CharacterStat MoveRange;
 
     private void Awake()
     {
         HP = new CharacterStat(maxHP, 0f, maxHP);
         AttackDamage = new CharacterStat(attackDamage, 0f);
         Speed = new CharacterStat(speed, 0f);
+        MoveRange = new CharacterStat(moveRange, 0f);
     }
 }
