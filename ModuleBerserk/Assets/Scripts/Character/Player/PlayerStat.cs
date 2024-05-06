@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStat : CharacterStat {
-    [Header("Stat")] //Stat
-    [SerializeField] private float HP;
-    [SerializeField] private float attackDamage;
-    [SerializeField] private float speed;
+public class PlayerStat : MonoBehaviour {
+    [Header("HP")] //체력 변수
+    [SerializeField] private float maxHP;
 
-    private void Start(){
-        //초기에 Stat Dictionary에 추가함
-        SetBaseStat("HP", HP);
-        SetBaseStat("Attack", attackDamage);
-        SetBaseStat("Speed", speed);
+    [Header("Attack")] //공격력 변수
+    [SerializeField] private float attackDamage;
+
+    public CharacterStat HP;
+    public CharacterStat AttackDamage;
+
+    private void Awake()
+    {
+        HP = new CharacterStat(maxHP, 0f, maxHP);
+        AttackDamage = new CharacterStat(attackDamage, 0f);
     }
 }
