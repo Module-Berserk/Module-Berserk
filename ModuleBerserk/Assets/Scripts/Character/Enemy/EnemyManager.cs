@@ -18,8 +18,7 @@ public class EnemyManager : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
+    private void Start() {
         initialPosition = transform.position;
         enemyStat.HP.OnValueChange.AddListener(HandleHPChange);
     }
