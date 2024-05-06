@@ -20,10 +20,6 @@ public class EnemyManager : MonoBehaviour {
 
     private void Start() {
         initialPosition = transform.position;
-    }
-
-    private void Start()
-    {
         enemyStat.HP.OnValueChange.AddListener(HandleHPChange);
     }
 
@@ -51,14 +47,14 @@ public class EnemyManager : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (Mathf.Abs(transform.position.x - initialPosition.x) >= enemyStat.GetModifiedStat("MoveRange")) { //방향전환
+        if (Mathf.Abs(transform.position.x - initialPosition.x) >= enemyStat.MoveRange.CurrentValue) { //방향전환
             moveRight = !moveRight;
         }
         if (moveRight) { //우측 이동
-            rb.velocity = new Vector2(enemyStat.GetModifiedStat("Speed"), rb.velocity.y);
+            rb.velocity = new Vector2(enemyStat.Speed.CurrentValue, rb.velocity.y);
         }
         else { //좌측 이동
-            rb.velocity = new Vector2(-enemyStat.GetModifiedStat("Speed"), rb.velocity.y);
+            rb.velocity = new Vector2(-enemyStat.Speed.CurrentValue, rb.velocity.y);
         }
     }
 }
