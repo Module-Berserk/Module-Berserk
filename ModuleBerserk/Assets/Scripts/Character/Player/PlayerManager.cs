@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -54,6 +53,7 @@ public class PlayerManager : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private PlayerStat playerStat;
+    private InteractionManager interactionManager;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -80,9 +80,6 @@ public class PlayerManager : MonoBehaviour
     private bool isStickingToRightWall;
     // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
     private float airControl;
-
-    // 상호작용 범위에 들어온 IInteractable 목록 (ex. NPC, 드랍 아이템, ...)
-    private List<IInteractable> availableInteractables = new();
     
     //Prototype 공격용 변수들
     private Transform tempWeapon; //Prototype용 임시
@@ -125,6 +122,7 @@ public class PlayerManager : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         playerStat = GetComponent<PlayerStat>();
+        interactionManager = GetComponent<InteractionManager>();
         tempWeapon = transform.GetChild(0);
     }
 
@@ -154,10 +152,9 @@ public class PlayerManager : MonoBehaviour
 
     private void OnPerformAction(InputAction.CallbackContext context)
     {
-        if (availableInteractables.Count > 0)
+        if (interactionManager.CanInteract)
         {
-            // 제일 마지막에 활성화된 대상 선택
-            availableInteractables.Last().StartInteraction();
+            interactionManager.StartInteractionWithLatestTarget();
         }
         else
         {
@@ -495,11 +492,6 @@ public class PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.TryGetComponent(out IInteractable interactable))
-        {
-            interactable.OnPlayerEnter();
-            availableInteractables.Add(interactable);
-        }
         // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함.
         // 적 자체와는 충돌하지 않게 하기 위해 적의 콜라이더를 둘로 분리한 상황:
         // 1. 적의 rigidbody를 위한 메인 콜라이더.
@@ -507,7 +499,7 @@ public class PlayerManager : MonoBehaviour
         // 2. 적의 자식 오브젝트에 붙은 공격 범위 콜라이더.
         //    Weapon 레이어로 분류해 플레이어의 공격에는 반응하지 않도록 함 (레이어가 )
         //    IsTrigger = true로 설정되었고, 일단 임시로 Attack이라는 태그를 부여해 다른 충돌과 구분함.
-        else if (other.CompareTag("Attack"))
+        if (other.CompareTag("Attack"))
         {
             if (!isAttacking) // 이것도 대충 처리해놈;
             {
@@ -518,15 +510,6 @@ public class PlayerManager : MonoBehaviour
                 EnemyStat enemyStat = other.GetComponentInParent<EnemyStat>();
                 playerStat.HP.ModifyBaseValue(-enemyStat.AttackDamage.CurrentValue);
             }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.TryGetComponent(out IInteractable interactable))
-        {
-            interactable.OnPlayerExit();
-            availableInteractables.Remove(interactable);
         }
     }
 
