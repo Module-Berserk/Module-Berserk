@@ -65,6 +65,10 @@ public class PlayerManager : MonoBehaviour
     // coyote time, 더블 점프 등을 모두 고려한 점프 가능 여부로,
     // FixedUpdate()에서 업데이트됨.
     private bool canJump = true;
+    // 벽에 붙어있다가 떨어지는 순간의 coyote time과
+    // 그냥 달리다가 떨어지는 순간의 coyote time을 구분하기 위한 상태 변수.
+    // 점프를 일반 점프로 할지 wall jump로 할지 결정한다.
+    private bool shouldWallJump = false;
     // 키 입력은 physics 루프와 다른 시점에 처리되니까
     // 여기에 기록해두고 물리 연산은 FixedUpdate에서 처리함
     private bool isJumpKeyPressed = false;
@@ -240,6 +244,7 @@ public class PlayerManager : MonoBehaviour
     private void ResetJumpRelatedStates()
     {
         canJump = true;
+        shouldWallJump = false;
         coyoteTimeCounter = 0f;
         rb.gravityScale = defaultGravityScale;
     }
@@ -323,6 +328,7 @@ public class PlayerManager : MonoBehaviour
 
         // wall jump 가능하게 설정
         canJump = true;
+        shouldWallJump = true;
 
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0f;
@@ -388,7 +394,7 @@ public class PlayerManager : MonoBehaviour
             canJump = false;
 
             // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
-            if (state == State.StickToWall || !groundContact.IsGrounded)
+            if (shouldWallJump)
             {
                 StopStickingToWall();
 
