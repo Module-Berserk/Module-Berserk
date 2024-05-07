@@ -8,6 +8,7 @@ public class EnemyManager : MonoBehaviour {
 
     private EnemyStat enemyStat;
     private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
 
     private bool moveRight = true;
     private Vector3 initialPosition;
@@ -16,6 +17,7 @@ public class EnemyManager : MonoBehaviour {
     {
         enemyStat = GetComponent<EnemyStat>();
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start() {
@@ -52,9 +54,11 @@ public class EnemyManager : MonoBehaviour {
         }
         if (moveRight) { //우측 이동
             rb.velocity = new Vector2(enemyStat.Speed.CurrentValue, rb.velocity.y);
+            spriteRenderer.flipX = false;
         }
         else { //좌측 이동
             rb.velocity = new Vector2(-enemyStat.Speed.CurrentValue, rb.velocity.y);
+            spriteRenderer.flipX = true;
         }
     }
 }

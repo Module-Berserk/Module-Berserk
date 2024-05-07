@@ -464,12 +464,23 @@ public class PlayerManager : MonoBehaviour
             interactable.OnPlayerEnter();
             availableInteractables.Add(interactable);
         }
-        // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함
-        else if (other.gameObject.TryGetComponent(out EnemyStat enemy))
+        // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함.
+        // 적 자체와는 충돌하지 않게 하기 위해 적의 콜라이더를 둘로 분리한 상황:
+        // 1. 적의 rigidbody를 위한 메인 콜라이더.
+        //    Character 레이어라서 플레이어와는 충돌 x.
+        // 2. 적의 자식 오브젝트에 붙은 공격 범위 콜라이더.
+        //    Weapon 레이어로 분류해 플레이어의 공격에는 반응하지 않도록 함 (레이어가 )
+        //    IsTrigger = true로 설정되었고, 일단 임시로 Attack이라는 태그를 부여해 다른 충돌과 구분함.
+        else if (other.CompareTag("Attack"))
         {
             if (!isAttacking) // 이것도 대충 처리해놈;
             {
-                playerStat.HP.ModifyBaseValue(-enemy.AttackDamage.CurrentValue);
+                // TODO:
+                // 1. 방어력 스탯 반영하기
+                // 2. 아예 데미지 관련 처리를 IDamageable같은 인터페이스로 분리하는 것 고려 (GetHP(), GetDefense(), ...)
+                // 3. 피격 경직 (impulse & animation)
+                EnemyStat enemyStat = other.GetComponentInParent<EnemyStat>();
+                playerStat.HP.ModifyBaseValue(-enemyStat.AttackDamage.CurrentValue);
             }
         }
     }
