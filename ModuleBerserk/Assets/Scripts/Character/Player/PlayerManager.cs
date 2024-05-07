@@ -62,9 +62,9 @@ public class PlayerManager : MonoBehaviour
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
     private float coyoteTimeCounter = 0f;
-    // coyote time, 더블 점프 등을 모두 고려한 점프 가능 여부로,
-    // FixedUpdate()에서 업데이트됨.
-    private bool canJump = true;
+    // 땅에 닿기 전에 점프한 횟수.
+    // 더블 점프 처리에 사용됨.
+    private int jumpCount = 0;
     // 벽에 붙어있다가 떨어지는 순간의 coyote time과
     // 그냥 달리다가 떨어지는 순간의 coyote time을 구분하기 위한 상태 변수.
     // 점프를 일반 점프로 할지 wall jump로 할지 결정한다.
@@ -243,7 +243,7 @@ public class PlayerManager : MonoBehaviour
 
     private void ResetJumpRelatedStates()
     {
-        canJump = true;
+        jumpCount = 0;
         shouldWallJump = false;
         coyoteTimeCounter = 0f;
         rb.gravityScale = defaultGravityScale;
@@ -252,9 +252,12 @@ public class PlayerManager : MonoBehaviour
     private void HandleCoyoteTime()
     {
         coyoteTimeCounter += Time.fixedDeltaTime;
+
+        // 방금 전까지 벽에 매달려있었더라도 coyote time을 넘어서면
+        // 일반적인 더블 점프로 취급 (점프해도 위로만 상승)
         if (coyoteTimeCounter > coyoteTime)
         {
-            canJump = false;
+            shouldWallJump = false;
         }
     }
     
@@ -327,7 +330,7 @@ public class PlayerManager : MonoBehaviour
         isStickingToRightWall = moveInput > 0f;
 
         // wall jump 가능하게 설정
-        canJump = true;
+        jumpCount = 0;
         shouldWallJump = true;
 
         rb.velocity = Vector2.zero;
@@ -388,38 +391,65 @@ public class PlayerManager : MonoBehaviour
 
     private void HandleJumpInput()
     {
-        if (canJump)
+        // 점프에는 두 가지 경우가 있음
+        // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
+        // 2. 2차 점프 - 이미 점프한 경우 또는 coyote time이 유효하지 않은 경우
+        if (IsFirstJump())
         {
-            // 더블 점프 방지
-            canJump = false;
-
-            // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
-            if (shouldWallJump)
-            {
-                StopStickingToWall();
-
-                // 비동기로 처리하기 위해 await하지 않고 discard
-                _ = ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration);
-
-                // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
-                // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
-                rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-            }
-
-            // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
-            // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
-            rb.gravityScale = defaultGravityScale;
-
-            // 점프 애니메이션 재생
-            animator.SetTrigger("Jump");
+            jumpCount = 1;
+            PerformJump();
+        }
+        else if (IsSecondJump())
+        {
+            // TODO: 만약 연료가 부족하다면 더블 점프 방지하고, 충분하다면 연료 소모
+            jumpCount = 2;
+            PerformJump();
         }
 
         // 입력 처리 완료
         isJumpKeyPressed = false;
+    }
+
+    // 최초의 점프로 취급하는 경우
+    // 1. 바닥에 서있는 경우 (jumpCount == 0)
+    // 2. 벽에 매달려있는 경우 (jumpCount == 0)
+    // 3. 조금 전까지 바닥에 서있던 경우 (coyote time 유효)
+    private bool IsFirstJump()
+    {
+        return jumpCount == 0 && coyoteTimeCounter < coyoteTime;
+    }
+
+    // 만약 이미 점프를 했거나, 점프를 하지 않았더라도 coyote time이 끝난 경우는 더블 점프로 취급함
+    private bool IsSecondJump()
+    {
+        return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
+    }
+
+    private void PerformJump()
+    {
+        // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
+        if (shouldWallJump)
+        {
+            StopStickingToWall();
+
+            // 비동기로 처리하기 위해 await하지 않고 discard
+            _ = ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration);
+
+            // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
+            // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
+            rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+        }
+
+        // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
+        // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
+        rb.gravityScale = defaultGravityScale;
+
+        // 점프 애니메이션 재생
+        animator.SetTrigger("Jump");
     }
 
     // wall jump 직후에 너무 빨리 벽으로 돌아오는 것을
