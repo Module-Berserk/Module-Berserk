@@ -52,6 +52,7 @@ public class PlayerManager : MonoBehaviour
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
     private PlayerStat playerStat;
 
     // 입력 시스템
@@ -118,6 +119,7 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         playerStat = GetComponent<PlayerStat>();
         tempWeapon = transform.GetChild(0);
     }
@@ -232,6 +234,7 @@ public class PlayerManager : MonoBehaviour
 
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
+        UpdateAnimatorState();
     }
 
     private void ResetJumpRelatedStates()
@@ -404,6 +407,9 @@ public class PlayerManager : MonoBehaviour
             // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
             // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
             rb.gravityScale = defaultGravityScale;
+
+            // 점프 애니메이션 재생
+            animator.SetTrigger("Jump");
         }
 
         // 입력 처리 완료
@@ -475,5 +481,13 @@ public class PlayerManager : MonoBehaviour
             interactable.OnPlayerExit();
             availableInteractables.Remove(interactable);
         }
+    }
+
+    // 매 프레임 갱신해야 하는 애니메이터 파라미터 관리
+    private void UpdateAnimatorState()
+    {
+        animator.SetBool("IsGrounded", groundContact.IsGrounded);
+        animator.SetFloat("HorizontalVelocity", rb.velocity.y);
+        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
     }
 }
