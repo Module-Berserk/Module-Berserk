@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
     [SerializeField] private float maxMoveSpeed = 1.5f;
@@ -104,15 +104,19 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         playerStat.HP.OnValueChange.AddListener(HandleHPChange);
+
+        // 무기에 달린 데미지 입히는 컴포넌트 초기화
+        // TODO: 데미지 입히는 테스트 끝나면 삭제할 것!
+        var damager = GetComponentInChildren<ApplyDamageOnContact>();
+        damager.DamageSource = Team.Player;
+        damager.RawDamage = playerStat.AttackDamage.CurrentValue;
     }
 
     private void HandleHPChange(float hp)
     {
         Debug.Log($"아야! 내 현재 체력: {hp}");
 
-        // TODO:
-        // 1. 체력바 UI 업데이트
-        // 2. 사망 처리
+        // TODO: 체력바 UI 업데이트
     }
 
     private void FindComponentReferences()
@@ -496,34 +500,32 @@ public class PlayerManager : MonoBehaviour
         spriteRenderer.flipX = !isFacingRight;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함.
-        // 적 자체와는 충돌하지 않게 하기 위해 적의 콜라이더를 둘로 분리한 상황:
-        // 1. 적의 rigidbody를 위한 메인 콜라이더.
-        //    Character 레이어라서 플레이어와는 충돌 x.
-        // 2. 적의 자식 오브젝트에 붙은 공격 범위 콜라이더.
-        //    Weapon 레이어로 분류해 플레이어의 공격에는 반응하지 않도록 함 (레이어가 )
-        //    IsTrigger = true로 설정되었고, 일단 임시로 Attack이라는 태그를 부여해 다른 충돌과 구분함.
-        if (other.CompareTag("Attack"))
-        {
-            if (!isAttacking) // 이것도 대충 처리해놈;
-            {
-                // TODO:
-                // 1. 방어력 스탯 반영하기
-                // 2. 아예 데미지 관련 처리를 IDamageable같은 인터페이스로 분리하는 것 고려 (GetHP(), GetDefense(), ...)
-                // 3. 피격 경직 (impulse & animation)
-                EnemyStat enemyStat = other.GetComponentInParent<EnemyStat>();
-                playerStat.HP.ModifyBaseValue(-enemyStat.AttackDamage.CurrentValue);
-            }
-        }
-    }
-
     // 매 프레임 갱신해야 하는 애니메이터 파라미터 관리
     private void UpdateAnimatorState()
     {
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
         animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
+    }
+
+    CharacterStat IDestructible.GetHPStat()
+    {
+        return playerStat.HP;
+    }
+
+    CharacterStat IDestructible.GetDefenseStat()
+    {
+        return playerStat.Defense;
+    }
+
+    Team IDestructible.GetTeam()
+    {
+        return Team.Player;
+    }
+
+    void IDestructible.OnDestruction()
+    {
+        // TODO: 캐릭터 destroy & 은신처로 복귀
+        Debug.Log("플레이어 사망");
     }
 }

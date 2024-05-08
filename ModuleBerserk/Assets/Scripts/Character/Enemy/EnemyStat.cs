@@ -11,10 +11,14 @@ public class EnemyStat : MonoBehaviour {
     [SerializeField] private float speed;
     [SerializeField] private float moveRange;
 
+    [Header("Defense")] // 방어력 변수
+    [SerializeField] private float defense;
+
     public CharacterStat HP;
     public CharacterStat AttackDamage;
     public CharacterStat Speed;
     public CharacterStat MoveRange;
+    public CharacterStat Defense;
 
     private void Awake()
     {
@@ -22,5 +26,6 @@ public class EnemyStat : MonoBehaviour {
         AttackDamage = new CharacterStat(attackDamage, 0f);
         Speed = new CharacterStat(speed, 0f);
         MoveRange = new CharacterStat(moveRange, 0f);
+        Defense = new CharacterStat(defense);
     }
 }

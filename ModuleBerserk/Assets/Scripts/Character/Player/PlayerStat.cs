@@ -9,12 +9,17 @@ public class PlayerStat : MonoBehaviour {
     [Header("Attack")] //공격력 변수
     [SerializeField] private float attackDamage;
 
+    [Header("Defense")] // 방어력 변수
+    [SerializeField] private float defense;
+
     public CharacterStat HP;
     public CharacterStat AttackDamage;
+    public CharacterStat Defense;
 
     private void Awake()
     {
         HP = new CharacterStat(maxHP, 0f, maxHP);
         AttackDamage = new CharacterStat(attackDamage, 0f);
+        Defense = new CharacterStat(defense);
     }
 }

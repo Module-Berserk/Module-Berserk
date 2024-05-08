@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
-public class EnemyManager : MonoBehaviour {
+public class EnemyManager : MonoBehaviour, IDestructible {
     //Components
 
     private EnemyStat enemyStat;
@@ -23,29 +22,18 @@ public class EnemyManager : MonoBehaviour {
     private void Start() {
         initialPosition = transform.position;
         enemyStat.HP.OnValueChange.AddListener(HandleHPChange);
+
+        // 데미지 입히는 컴포넌트 초기화
+        // TODO: 데미지 입히는 테스트 끝나면 삭제할 것!
+        var damager = GetComponentInChildren<ApplyDamageOnContact>();
+        damager.DamageSource = Team.Enemy;
+        damager.RawDamage = enemyStat.AttackDamage.CurrentValue;
     }
 
     private void HandleHPChange(float hp)
     {
         //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
         Debug.Log("아야! 적 현재 체력: " + hp);
-
-        if (hp <= 0) { //적 사망
-            Destroy(gameObject);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // Player 무기인지 확인
-        if (other.gameObject.layer == LayerMask.NameToLayer("Weapon"))
-        {
-            PlayerStat playerStat = other.GetComponentInParent<PlayerStat>();
-            if (playerStat != null)
-            {
-                enemyStat.HP.ModifyBaseValue(-playerStat.AttackDamage.CurrentValue);
-            }
-        }
     }
 
     private void FixedUpdate() {
@@ -60,5 +48,25 @@ public class EnemyManager : MonoBehaviour {
             rb.velocity = new Vector2(-enemyStat.Speed.CurrentValue, rb.velocity.y);
             spriteRenderer.flipX = true;
         }
+    }
+
+    CharacterStat IDestructible.GetHPStat()
+    {
+        return enemyStat.HP;
+    }
+
+    CharacterStat IDestructible.GetDefenseStat()
+    {
+        return enemyStat.Defense;
+    }
+
+    Team IDestructible.GetTeam()
+    {
+        return Team.Enemy;
+    }
+
+    void IDestructible.OnDestruction()
+    {
+        Destroy(gameObject);
     }
 }
