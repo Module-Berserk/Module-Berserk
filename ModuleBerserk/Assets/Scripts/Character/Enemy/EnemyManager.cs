@@ -23,24 +23,8 @@ public class EnemyManager : MonoBehaviour, IDestructible {
 
     private void Start() {
         initialPosition = transform.position;
-        enemyStat.HP.OnValueChange.AddListener(HandleHPChange);
 
-        // 데미지 입히는 컴포넌트 초기화
-        // TODO: 데미지 입히는 테스트 끝나면 삭제할 것!
-        var damager = GetComponentInChildren<ApplyDamageOnContact>();
-        damager.DamageSource = Team.Enemy;
-        damager.RawDamage = enemyStat.AttackDamage.CurrentValue;
-    }
-
-    private void HandleHPChange(float hpChange)
-    {
-        if (hpChange < 0f)
-        {
-            //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
-            Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
-
-            _ = flashEffectOnHit.StartEffectAsync();
-        }
+        // TODO: enemyStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
     }
 
     private void FixedUpdate() {
@@ -70,6 +54,14 @@ public class EnemyManager : MonoBehaviour, IDestructible {
     Team IDestructible.GetTeam()
     {
         return Team.Enemy;
+    }
+
+    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    {
+        //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
+        Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
+
+        _ = flashEffectOnHit.StartEffectAsync();
     }
 
     void IDestructible.OnDestruction()

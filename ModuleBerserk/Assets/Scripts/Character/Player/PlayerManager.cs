@@ -46,6 +46,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 바라보는 방향으로 얼마나 앞에 있는 지점을 카메라가 추적할 것인지
     [SerializeField, Range(0f, 2f)] private float cameraLookAheadDistance = 1f;
 
+    [Header("Stagger")]
+    // 약한 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
+    [SerializeField] private float weakStaggerKnockbackForce = 5f;
+    [SerializeField] private float strongStaggerKnockbackForce = 8f;
+
+
 
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
@@ -65,7 +71,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private float coyoteTimeCounter = 0f;
     // 땅에 닿기 전에 점프한 횟수.
     // 더블 점프 처리에 사용됨.
-    public int jumpCount = 0;
+    private int jumpCount = 0;
     // 벽에 붙어있다가 떨어지는 순간의 coyote time과
     // 그냥 달리다가 떨어지는 순간의 coyote time을 구분하기 위한 상태 변수.
     // 점프를 일반 점프로 할지 wall jump로 할지 결정한다.
@@ -104,25 +110,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void Start()
     {
-        playerStat.HP.OnValueChange.AddListener(HandleHPChange);
-
-        // 무기에 달린 데미지 입히는 컴포넌트 초기화
-        // TODO: 데미지 입히는 테스트 끝나면 삭제할 것!
-        var damager = GetComponentInChildren<ApplyDamageOnContact>();
-        damager.DamageSource = Team.Player;
-        damager.RawDamage = playerStat.AttackDamage.CurrentValue;
-    }
-
-    private void HandleHPChange(float hpChange)
-    {
-        if (hpChange < 0f)
-        {
-            Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
-
-            _ = flashEffectOnHit.StartEffectAsync();
-        }
-
-        // TODO: 체력바 UI 업데이트
+        // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
     }
 
     private void FindComponentReferences()
@@ -528,6 +516,42 @@ public class PlayerManager : MonoBehaviour, IDestructible
     Team IDestructible.GetTeam()
     {
         return Team.Player;
+    }
+
+    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    {
+        Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
+
+        _ = flashEffectOnHit.StartEffectAsync();
+
+        // TODO:
+        // 지금은 데미지를 연속으로 무한정 받을 수 있어서
+        // ApplyDamageOnContact 스크립트가 붙은 오브젝트 둘 사이에 끼면
+        // 핀볼처럼 튕겨다니는 상황이 발생함.
+        //
+        // 실제로는 적의 공격 모션이나 투사체에 공격 판정이 붙을거라
+        // 지금처럼 이상하진 않겠지만, 
+        switch(staggerInfo.strength)
+        {
+            case StaggerStrength.Weak:
+                ApplyWeakStagger(staggerInfo.direction);
+                break;
+            case StaggerStrength.Strong:
+                ApplyStrongStagger(staggerInfo.direction);
+                break;
+        }
+    }
+
+    private void ApplyWeakStagger(Vector2 direction)
+    {
+        // TODO: 경직 모션 & 잠시동안 긴급회피 이외의 조작 불가
+        rb.velocity = direction * weakStaggerKnockbackForce;
+    }
+
+    private void ApplyStrongStagger(Vector2 direction)
+    {
+        // TODO: 뒤로 넘어지는 모션 & 더 긴 시간동안 긴급회피 이외의 조작 불가
+        rb.velocity = direction * strongStaggerKnockbackForce;
     }
 
     void IDestructible.OnDestruction()
