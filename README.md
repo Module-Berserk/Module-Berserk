@@ -1,12 +1,15 @@
 # Module-Berserk
-CharacterManager(ComboCount, Gravity, Animation, Sound)
--> EnemyManager
-  -> MonsterManager
-  -> BossManager
--> PlayerManager(Input)
-CharacterStat(Buff/Debuff System Manager)
-  ==> Stat을 Dictionary로 관리
-    => {"HP": struct {base = 0, max = 100, ...}, ....}
 
-
-                        
+## TODO
+- 공격 애니메이션 만들어지면 공격 시스템 구현
+  - 연속 공격
+  - 공중 공격 도중에는 낙하 x
+  - 공격 모션에 따른 공격 범위 콜라이더 조작
+- 피격 경직 처리
+  - 경직 걸린 동안 행동 불가
+  - 긴급 회피로 탈출
+- 한 번의 공격에 여러 번 데미지를 입는 상황 방지하기
+  - 지금 테스트용으로 넣어둔 플레이어 무기는 OnTriggerEnter를  
+  조건으로 사용해서 왔다 갔다 하면서 두 번 공격하기도 함...
+- 회피 (다크소울 구르기에 해당하는 액션)
+- 더블 점프 사용 조건 결정되면 사용 제한 걸기 (ex. 연료/열기 사용)
