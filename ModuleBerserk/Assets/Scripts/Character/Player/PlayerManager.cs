@@ -32,6 +32,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.2f;
     // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
+    // 최대 공중공격 콤보 횟수
+    [SerializeField] private int maxOnAirAttackCount = 2;
+
 
 
     [Header("Ground Contact")]
@@ -94,6 +97,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     //Prototype 공격용 변수들
     private Transform tempWeapon; //Prototype용 임시
     private bool isAttacking = false;
+    private int airAttackCount = 0;
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
@@ -166,6 +170,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             if (isAttacking) { // 임시로 이렇게 처리해놨습니당
                 return;
             }
+            if (airAttackCount >= maxOnAirAttackCount && !groundContact.IsGrounded) {
+                return;
+            }
+            airAttackCount++; // 공중공격 횟수
             if (spriteRenderer.flipX){
                 StartCoroutine(TempAttackMotion(1)); //-1 왼쪽, 1 오른쪽
             }
@@ -180,6 +188,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     //너무 내 맘대로 막하는 거 같아서 걍 일단 이렇게 해봄
         isAttacking = true;
         tempWeapon.GetComponent<BoxCollider2D>().enabled = true;
+        rb.gravityScale = 0f;
+        rb.velocity = new Vector2(rb.velocity.x, 0);
         Vector3 pivot;
         float elapsedTime = 0f;
         while (elapsedTime < 0.25f) { // 무기 내려감
@@ -203,6 +213,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
         isAttacking = false;
         tempWeapon.GetComponent<BoxCollider2D>().enabled = false;
+        rb.gravityScale = 1.7f;
     }
 
     // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
@@ -224,6 +235,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         if (groundContact.IsGrounded)
         {
             ResetJumpRelatedStates();
+            airAttackCount = 0;
         }
         else if (state == State.IdleOrRun)
         {
@@ -273,7 +285,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 현재 추락하는 중이라면 더 강한 중력을 사용해서 붕 뜨는 느낌을 줄임.
         bool isFalling = rb.velocity.y < -0.01f;
-        if (isFalling)
+        if (isFalling && !isAttacking) //공격 중에 추락 ㄴㄴ
         {
             rb.gravityScale = gravityScaleWhileFalling;
         }
