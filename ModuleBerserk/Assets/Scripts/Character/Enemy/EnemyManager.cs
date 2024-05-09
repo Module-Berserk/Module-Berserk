@@ -8,6 +8,7 @@ public class EnemyManager : MonoBehaviour, IDestructible {
     private EnemyStat enemyStat;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private FlashEffectOnHit flashEffectOnHit;
 
     private bool moveRight = true;
     private Vector3 initialPosition;
@@ -17,6 +18,7 @@ public class EnemyManager : MonoBehaviour, IDestructible {
         enemyStat = GetComponent<EnemyStat>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
     }
 
     private void Start() {
@@ -30,10 +32,15 @@ public class EnemyManager : MonoBehaviour, IDestructible {
         damager.RawDamage = enemyStat.AttackDamage.CurrentValue;
     }
 
-    private void HandleHPChange(float hp)
+    private void HandleHPChange(float hpChange)
     {
-        //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
-        Debug.Log("아야! 적 현재 체력: " + hp);
+        if (hpChange < 0f)
+        {
+            //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
+            Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
+
+            _ = flashEffectOnHit.StartEffectAsync();
+        }
     }
 
     private void FixedUpdate() {

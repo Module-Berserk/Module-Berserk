@@ -15,7 +15,11 @@ public class CharacterStat
     public float MinValue {get; private set;} //최솟값
     public float MaxValue {get; private set;} // 최댓값
 
-    public UnityEvent<float> OnValueChange = new(); // 실질 수치가 변화할 때 호출되는 이벤트 (옵저버 패턴)
+    // 실질 수치가 변화할 때 호출되는 이벤트 (옵저버 패턴)
+    // 현재 수치는 CurrentValue로 알 수 있으니 변화량을 파라미터로 알려줌.
+    //
+    // ex) 체력 변화량의 부호에 따라 피격 이펙트 또는 체력 회복 이펙트 재생
+    public UnityEvent<float> OnValueChange = new();
 
     public CharacterStat(float baseValue, float minValue = float.NegativeInfinity, float maxValue = float.PositiveInfinity)
     {
@@ -26,22 +30,28 @@ public class CharacterStat
 
     public void ModifyBaseValue(float modifier)
     {
+        float prevValue = CurrentValue;
         baseValue += modifier;
+        float difference = CurrentValue - prevValue;
 
-        OnValueChange.Invoke(CurrentValue);
+        OnValueChange.Invoke(difference);
     }
 
     public void ApplyAdditiveModifier(float modifier)
     {
+        float prevValue = CurrentValue;
         additiveModifier += modifier;
+        float difference = CurrentValue - prevValue;
 
-        OnValueChange.Invoke(CurrentValue);
+        OnValueChange.Invoke(difference);
     }
 
     public void ApplyMultiplicativeModifier(float modifier)
     {
+        float prevValue = CurrentValue;
         multiplicativeModifier *= modifier;
+        float difference = CurrentValue - prevValue;
 
-        OnValueChange.Invoke(CurrentValue);
+        OnValueChange.Invoke(difference);
     }
 }

@@ -54,6 +54,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private Animator animator;
     private PlayerStat playerStat;
     private InteractionManager interactionManager;
+    private FlashEffectOnHit flashEffectOnHit;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -112,9 +113,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         damager.RawDamage = playerStat.AttackDamage.CurrentValue;
     }
 
-    private void HandleHPChange(float hp)
+    private void HandleHPChange(float hpChange)
     {
-        Debug.Log($"아야! 내 현재 체력: {hp}");
+        if (hpChange < 0f)
+        {
+            Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
+
+            _ = flashEffectOnHit.StartEffectAsync();
+        }
 
         // TODO: 체력바 UI 업데이트
     }
@@ -127,6 +133,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator = GetComponent<Animator>();
         playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
+        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         tempWeapon = transform.GetChild(0);
     }
 

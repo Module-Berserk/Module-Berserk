@@ -1427,6 +1427,7 @@ GameObject:
   - component: {fileID: 905899339}
   - component: {fileID: 905899340}
   - component: {fileID: 905899341}
+  - component: {fileID: 905899342}
   m_Layer: 7
   m_Name: BadEnemy
   m_TagString: Untagged
@@ -1624,6 +1625,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &905899342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905899334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
+  flashDuration: 0.15
 --- !u!1 &931631430
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,6 +2455,7 @@ GameObject:
   - component: {fileID: 1207513170}
   - component: {fileID: 1207513171}
   - component: {fileID: 1207513173}
+  - component: {fileID: 1207513174}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -2650,7 +2666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 100
   attackDamage: 20
-  defense: 15
+  defense: 19
 --- !u!95 &1207513172
 Animator:
   serializedVersion: 5
@@ -2684,6 +2700,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04287454b2f780447b783d01de8cb080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1207513174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207513162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
+  flashDuration: 0.15
 --- !u!1 &1218411720
 GameObject:
   m_ObjectHideFlags: 0
@@ -4047,6 +4077,7 @@ GameObject:
   - component: {fileID: 1734504186}
   - component: {fileID: 1734504185}
   - component: {fileID: 1734504184}
+  - component: {fileID: 1734504191}
   m_Layer: 7
   m_Name: BadEnemy (1)
   m_TagString: Untagged
@@ -4244,6 +4275,20 @@ Transform:
   - {fileID: 851153392}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1734504191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734504183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
+  flashDuration: 0.15
 --- !u!1 &1808919051
 GameObject:
   m_ObjectHideFlags: 0
