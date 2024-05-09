@@ -173,6 +173,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             if (airAttackCount >= maxOnAirAttackCount && !groundContact.IsGrounded) {
                 return;
             }
+            if (state != State.IdleOrRun) { //경직 및 벽 붙어서 공격 안됨
+                return;
+            }
             airAttackCount++; // 공중공격 횟수
             if (spriteRenderer.flipX){
                 StartCoroutine(TempAttackMotion(1)); //-1 왼쪽, 1 오른쪽
@@ -299,10 +302,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleMoveInput()
     {
-        float moveInput = actionAssets.Player.Move.ReadValue<float>();
+        float moveInput;
+        if (!isAttacking) {
+            moveInput = actionAssets.Player.Move.ReadValue<float>();
+        }
+        else {
+            moveInput = 0f;
+        }
+        
 
         // TODO: 공격 도중에는 방향 못 바꾸게 막기 (다음 공격 모션 직전에는 방향 전환 OK)
         UpdateFacingDirection(moveInput);
+        
 
         if (state == State.IdleOrRun)
         {
@@ -413,6 +424,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleJumpInput()
     {
+        if (isAttacking) { //공격시 점프 불가
+            isJumpKeyPressed = false; //선입력 방지
+            return;
+        }
         // 공격, 경직 등 다른 상태에서는 점프 불가능
         if (state == State.IdleOrRun || state == State.StickToWall)
         {
@@ -529,7 +544,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
-        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
+        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed() && !isAttacking); //공격중 애니메이션 재생 ㄴㄴ
+        animator.SetBool("IsAttacking", isAttacking);
+        
         animator.SetBool("IsStaggered", state == State.Stagger);
     }
 
