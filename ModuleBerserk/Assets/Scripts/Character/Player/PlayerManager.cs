@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -47,10 +48,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 2f)] private float cameraLookAheadDistance = 1f;
 
     [Header("Stagger")]
-    // 약한 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
+    // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
     [SerializeField] private float weakStaggerKnockbackForce = 5f;
     [SerializeField] private float strongStaggerKnockbackForce = 8f;
-
+    // 경직의 지속 시간
+    [SerializeField] private float weakStaggerDuration = 0.2f;
+    [SerializeField] private float strongStaggerDuration = 0.5f;
 
 
     // 컴포넌트 레퍼런스
@@ -92,10 +95,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private Transform tempWeapon; //Prototype용 임시
     private bool isAttacking = false;
 
+    // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
+    private CancellationTokenSource staggerCancellation = new();
+
     private enum State
     {
-        IdleOrRun,
-        StickToWall,
+        IdleOrRun, // 서있기, 달리기, 점프, 낙하
+        StickToWall, // 벽에 매달려 정지한 상태
+        Stagger, // 공격에 맞아 경직 판정인 상태
     };
     private State state = State.IdleOrRun;
 
@@ -144,8 +151,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (groundContact.IsSteppingOnOneWayPlatform())
         {
-            // await 없이 비동기로 처리하기 위해 discard
-            _ = groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f);
+            groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f).Forget();
         }
     }
 
@@ -232,6 +238,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
             HandleJumpInput();
         }
 
+        if (state == State.Stagger)
+        {
+            // 넉백 효과로 생긴 velocity 부드럽게 감소
+            UpdateMoveVelocity(0f);
+        }
+
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
         UpdateAnimatorState();
@@ -276,6 +288,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void HandleMoveInput()
     {
         float moveInput = actionAssets.Player.Move.ReadValue<float>();
+
+        // TODO: 공격 도중에는 방향 못 바꾸게 막기 (다음 공격 모션 직전에는 방향 전환 OK)
         UpdateFacingDirection(moveInput);
 
         if (state == State.IdleOrRun)
@@ -387,19 +401,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleJumpInput()
     {
-        // 점프에는 두 가지 경우가 있음
-        // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
-        // 2. 2차 점프 - 이미 점프한 경우 또는 coyote time이 유효하지 않은 경우
-        if (IsInitialJump())
+        // 공격, 경직 등 다른 상태에서는 점프 불가능
+        if (state == State.IdleOrRun || state == State.StickToWall)
         {
-            jumpCount = 1;
-            PerformJump();
-        }
-        else if (IsDoubleJump())
-        {
-            // TODO: 만약 연료가 부족하다면 더블 점프 방지하고, 충분하다면 연료 소모
-            jumpCount = 2;
-            PerformJump();
+            // 점프에는 두 가지 경우가 있음
+            // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
+            // 2. 2차 점프 - 이미 점프한 경우 또는 coyote time이 유효하지 않은 경우
+            if (IsInitialJump())
+            {
+                jumpCount = 1;
+                PerformJump();
+            }
+            else if (IsDoubleJump())
+            {
+                // TODO: 만약 연료가 부족하다면 더블 점프 방지하고, 충분하다면 연료 소모
+                jumpCount = 2;
+                PerformJump();
+            }
         }
 
         // 입력 처리 완료
@@ -434,8 +452,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
             StopStickingToWall();
 
-            // 비동기로 처리하기 위해 await하지 않고 discard
-            _ = ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration);
+            ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration).Forget();
 
             // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
             // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
@@ -501,6 +518,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
         animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
+        animator.SetBool("IsStaggered", state == State.Stagger);
     }
 
     CharacterStat IDestructible.GetHPStat()
@@ -522,36 +540,66 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
 
-        _ = flashEffectOnHit.StartEffectAsync();
+        flashEffectOnHit.StartEffectAsync().Forget();
 
         // TODO:
-        // 지금은 데미지를 연속으로 무한정 받을 수 있어서
-        // ApplyDamageOnContact 스크립트가 붙은 오브젝트 둘 사이에 끼면
-        // 핀볼처럼 튕겨다니는 상황이 발생함.
-        //
-        // 실제로는 적의 공격 모션이나 투사체에 공격 판정이 붙을거라
-        // 지금처럼 이상하진 않겠지만, 
+        // 지금은 데미지 입히는 타이밍에 제한이 없어서
+        // ApplyDamageOnContact 스크립트가 붙은 오브젝트 둘
+        // 사이에 끼어버리면 핀볼처럼 튕겨다니는 상황이 발생함.
+        // 데미지를 입으면 아주 짧은 시간 무적 판정을 줘도 좋을 것 같음.
+        // ex) 메이플스토리
         switch(staggerInfo.strength)
         {
             case StaggerStrength.Weak:
-                ApplyWeakStagger(staggerInfo.direction);
+                ApplyStagger(staggerInfo.direction * weakStaggerKnockbackForce, weakStaggerDuration);
                 break;
             case StaggerStrength.Strong:
-                ApplyStrongStagger(staggerInfo.direction);
+                ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, strongStaggerDuration);
                 break;
         }
     }
 
-    private void ApplyWeakStagger(Vector2 direction)
+    // 현재 하던 행동을 취소하고 피격 경직 상태에 진입
+    private void ApplyStagger(Vector2 staggerForce, float staggerDuration)
     {
-        // TODO: 경직 모션 & 잠시동안 긴급회피 이외의 조작 불가
-        rb.velocity = direction * weakStaggerKnockbackForce;
+        CancelCurrentAction();
+
+        rb.velocity = staggerForce;
+        SetStaggerStateForDurationAsync(staggerDuration).Forget();
+
+        // TODO:
+        // 경직 애니메이션 재생 (약한 경직 -> 제자리 경직 모션, 강한 경직 -> 뒤로 넘어지는 모션)
+        // 지금은 점프 모션 중 프레임 하나 훔쳐와서 경직 모션이라 치고 박아둔 상태 (player_loyal_stagger_temp)이고,
+        // 애니메이터의 IsStaggered 파라미터를 설정해서 임시 경직 애니메이션을 재생하도록 했음.
+        //
+        // 경직 모션 두 개 완성되면 UpdateAnimatorState() 함수랑 애니메이션 상태 그래프 수정해야 함
     }
 
-    private void ApplyStrongStagger(Vector2 direction)
+    // 경직에 걸리거나 기절당하는 등 현재 하던 행동을 종료해야 하는 경우 사용
+    private void CancelCurrentAction()
     {
-        // TODO: 뒤로 넘어지는 모션 & 더 긴 시간동안 긴급회피 이외의 조작 불가
-        rb.velocity = direction * strongStaggerKnockbackForce;
+        // TODO: 공격 구현할 때 여기에 공격 취소하는 로직도 추가할 것 (슈퍼아머 아닌 경우!)
+        if (state == State.StickToWall)
+        {
+            StopStickingToWall();
+        }
+        else if (state == State.Stagger)
+        {
+            // CancellationTokenSource는 리셋이 불가능해서
+            // 한 번 cancel하면 새로 만들어줘야 함.
+            staggerCancellation.Cancel();
+            staggerCancellation.Dispose();
+            staggerCancellation = new();
+        }
+    }
+
+    private async UniTask SetStaggerStateForDurationAsync(float duration)
+    {
+        state = State.Stagger;
+
+        await UniTask.WaitForSeconds(duration, cancellationToken: staggerCancellation.Token);
+
+        state = State.IdleOrRun;
     }
 
     void IDestructible.OnDestruction()

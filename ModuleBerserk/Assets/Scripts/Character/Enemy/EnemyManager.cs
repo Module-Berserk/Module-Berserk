@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour, IDestructible {
@@ -61,7 +62,7 @@ public class EnemyManager : MonoBehaviour, IDestructible {
         //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
         Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
 
-        _ = flashEffectOnHit.StartEffectAsync();
+        flashEffectOnHit.StartEffectAsync().Forget();
     }
 
     void IDestructible.OnDestruction()
