@@ -104,6 +104,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
     private int attackCount = 0;
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
+    private float prevSpritePivotX; // 공격 애니메이션에 따른 이동을 처리하기 위한 변수.
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
@@ -234,9 +235,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
         animator.SetTrigger($"Attack{attackCount}");
 
-        // TODO:
-        // 1. 공격 모션과 바라보는 방향에 맞게 공격 범위 콜라이더 조정
-        // 2. 애니메이션에 맞게 약간씩 앞으로 전진
+        // 공격 애니메이션의 pivot 변화로 루트모션을
+        // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
+        prevSpritePivotX = spriteRenderer.sprite.pivot.x;
 
         state = State.AttackInProgress;
     }
@@ -309,6 +310,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 HandleFallingVelocity();
             }
         }
+        // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여 (일종의 루트 모션)
+        else
+        {
+            ApplyAttackRootMotion();
+        }
 
         HandleMoveInput();
 
@@ -363,6 +369,32 @@ public class PlayerManager : MonoBehaviour, IDestructible
         {
             rb.velocity = new Vector2(rb.velocity.x, -maxFallSpeed);
         }
+    }
+
+    // 원본 공격 애니메이션들을 보면 플레이어가 중심 위치에
+    // 가만히 있지 않고 pivot을 기준으로 조금씩 이동함.
+    // 이걸 그냥 쓰면 플레이어 오브젝트는 가만히 있는데
+    // 스프라이트만 이동하는 것처럼 보이므로 굉장히 이상해짐...
+    //
+    // 지금 사용하는 방식:
+    // 1. 공격 애니메이션의 프레임 별 pivot이 항상 플레이어의 중심에 오도록 수정
+    //    => 이제 애니메이션 재생해도 플레이어는 제자리에 있는 것처럼 보임
+    // 2. 스프라이트 상의 이동을 실제 플레이어 오브젝트의 이동으로 변환하기 위해 pivot 변화량을 계산
+    //    => pivot 변화량에 비례해 velocity를 부여해서 원본 에셋의 이동하는 느낌을 물리적으로 재현
+    private void ApplyAttackRootMotion()
+    {
+        // 스프라이트의 pivot이 커졌다는 것은 플레이어의 중심 위치가
+        // 오른쪽으로 이동했다는 뜻이므로 오른쪽 방향으로 속도를 주면 됨.
+        // 서로 다른 공격 모션 사이에서는 가끔 음수가 나오는 이상한 현상이 있어서 max를 취함.
+        float currSpritePivotX = spriteRenderer.sprite.pivot.x;
+        float rootMotion = Mathf.Max(currSpritePivotX - prevSpritePivotX, 0f);
+
+        // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
+        // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
+        // 마지막에 곱하는 0.5은 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
+        rb.velocity = (isFacingRight ? Vector2.right : Vector2.left) * rootMotion * 0.5f;
+
+        prevSpritePivotX = currSpritePivotX;
     }
 
     private void HandleMoveInput()
