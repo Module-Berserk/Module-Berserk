@@ -58,6 +58,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float weakStaggerDuration = 0.2f;
     [SerializeField] private float strongStaggerDuration = 0.5f;
 
+    [Header("Attack")]
+    // 공격 범위로 사용할 콜라이더
+    [SerializeField] private Collider2D weaponCollider;
+
+
 
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
@@ -95,7 +100,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private float airControl;
     
     //Prototype 공격용 변수들
-    private Transform tempWeapon; //Prototype용 임시
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
     private int attackCount = 0;
@@ -137,7 +141,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
-        tempWeapon = transform.GetChild(0);
     }
 
     private void BindInputActions()
@@ -222,9 +225,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // note:
         // 트리거 이름은 Attack1부터 시작하며,
-        // 각각의 공격 애니메이션은 두 가지 이벤트를 제공해야 함
-        // 1. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
-        // 2. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
+        // 각각의 공격 애니메이션은 네 가지 이벤트를 제공해야 함
+        // 1. 선딜레이가 끝나고 공격 판정이 시작되는 시점 => OnEnableAttackCollider
+        // 2. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
+        // 3. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
+        // 4. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
+        //
+        // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
         animator.SetTrigger($"Attack{attackCount}");
 
         // TODO:
@@ -232,6 +239,20 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 2. 애니메이션에 맞게 약간씩 앞으로 전진
 
         state = State.AttackInProgress;
+    }
+
+    public void OnEnableAttackCollider()
+    {
+        weaponCollider.enabled = true;
+
+        // 바라보는 방향에 따라 콜라이더 위치 조정
+        float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (isFacingRight ? 1f : -1f);
+        weaponCollider.offset = new Vector2(newOffsetX, weaponCollider.offset.y);
+    }
+
+    public void OnDisableAttackCollider()
+    {
+        weaponCollider.enabled = false;
     }
 
     // 공격 애니메이션이 완전히 종료되는 시점에 호출되는 이벤트.
@@ -272,15 +293,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void FixedUpdate()
     {
-        groundContact.TestContact();
-        if (groundContact.IsGrounded)
+        // one way platform을 위로 스쳐 지나가는 상황에서
+        // 공격 상태에 진입해 정지하면 IsGrounded가 true가 되어버림.
+        // 실제로는 공중에 떠 있는 것으로 취급해야 하므로 공격 중이 아닐 때만 상태를 갱신함.
+        if (!IsAttacking())
         {
-            ResetJumpRelatedStates();
-        }
-        else if (state == State.IdleOrRun)
-        {
-            HandleCoyoteTime();
-            HandleFallingVelocity();
+            groundContact.TestContact();
+            if (groundContact.IsGrounded)
+            {
+                ResetJumpRelatedStates();
+            }
+            else if (state == State.IdleOrRun)
+            {
+                HandleCoyoteTime();
+                HandleFallingVelocity();
+            }
         }
 
         HandleMoveInput();
@@ -654,6 +681,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             attackCount = 0;
             isAttackInputBuffered = false;
             rb.gravityScale = defaultGravityScale;
+            OnDisableAttackCollider();
         }
 
         state = State.IdleOrRun;
