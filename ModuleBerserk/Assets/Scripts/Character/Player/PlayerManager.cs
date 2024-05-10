@@ -204,6 +204,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
+        // 공격을 시작하는 순간에 한해 방향 전환 허용
+        UpdateFacingDirection(actionAssets.Player.Move.ReadValue<float>());
+
         // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
