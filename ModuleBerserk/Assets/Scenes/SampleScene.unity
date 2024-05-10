@@ -1443,7 +1443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RawDamage: 10
   DamageSource: 1
-  staggerStrength: 0
+  staggerStrength: 1
 --- !u!61 &851153394
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2194,9 +2194,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uC704\uC5D0 \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74 \uACBD\uC9C1\uC774
-    \uC5C6\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC67C\uCABD\uC5D0 \uC788\uB294
-    \uC801: \uC811\uCD09\uD558\uBA74 \"\uC57D\uD55C \uACBD\uC9C1\"\uC5D0 \uD574\uB2F9\uD558\uB294
+  m_Text: "\uC67C\uCABD\uC5D0 \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74 \uACBD\uC9C1\uC774
+    \uC5C6\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC704\uC5D0 \uC788\uB294 \uC801:
+    \uC811\uCD09\uD558\uBA74 \"\uC57D\uD55C \uACBD\uC9C1\"\uC5D0 \uD574\uB2F9\uD558\uB294
     \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC624\uB978\uCABD\uC5D0 \uC788\uB294 \uC801:
     \uC811\uCD09\uD558\uBA74 \"\uD55C \uACBD\uC9C1\"\uC5D0 \uD574\uB2F9\uD558\uB294
     \uACF5\uACA9\uC744 \uB2F9\uD568\n\uB3D9\uADF8\uB77C\uBBF8\uB4E4: E\uD0A4\uB85C
@@ -2972,7 +2972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RawDamage: 10
   DamageSource: 1
-  staggerStrength: 1
+  staggerStrength: 0
 --- !u!61 &1217235632
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3634,7 +3634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 1
+  RawDamage: 10
   DamageSource: 0
   staggerStrength: 1
 --- !u!1 &1355737425

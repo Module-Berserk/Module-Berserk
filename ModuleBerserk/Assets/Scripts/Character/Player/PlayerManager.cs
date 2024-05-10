@@ -717,6 +717,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAttackInputBuffered = false;
             rb.gravityScale = defaultGravityScale;
             OnDisableAttackCollider();
+
+            // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼
+            // 연속 공격을 하지 않았더라도 착지하기 전까지 공격을 금지함.
+            // 공중 공격은 점프 당 1회, 최대 maxAirAttackCount만큼 연격.
+            if (!groundContact.IsGrounded)
+            {
+                isAirAttackPossible = false;
+            }
         }
 
         state = State.IdleOrRun;
