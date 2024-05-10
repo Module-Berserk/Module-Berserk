@@ -96,8 +96,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
     
     //Prototype 공격용 변수들
     private Transform tempWeapon; //Prototype용 임시
-    private bool isAttacking = false;
-    private int airAttackCount = 0;
+    private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
+    private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
+    private int attackCount = 0;
+    private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
@@ -107,6 +109,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         IdleOrRun, // 서있기, 달리기, 점프, 낙하
         StickToWall, // 벽에 매달려 정지한 상태
         Stagger, // 공격에 맞아 경직 판정인 상태
+        AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
+        AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
     };
     private State state = State.IdleOrRun;
 
@@ -161,62 +165,96 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void OnPerformAction(InputAction.CallbackContext context)
     {
+        // 1순위 행동: 상호작용 (아이템 줍기, NPC와 대화)
         if (interactionManager.CanInteract)
         {
             interactionManager.StartInteractionWithLatestTarget();
         }
+        // 2순위 행동: 공격
         else
         {
-            if (isAttacking) { // 임시로 이렇게 처리해놨습니당
+            // 경직 상태이거나 벽에 매달린 경우는 공격 불가
+            if (state == State.Stagger || state == State.StickToWall)
+            {
                 return;
             }
-            if (airAttackCount >= maxOnAirAttackCount && !groundContact.IsGrounded) {
-                return;
+
+            // 이미 핵심 공격 모션이 재생 중이라면 선입력으로 처리,
+            // 아니라면 다음 공격 모션 재생
+            if (state == State.AttackInProgress)
+            {
+                isAttackInputBuffered = true;
             }
-            if (state != State.IdleOrRun) { //경직 및 벽 붙어서 공격 안됨
-                return;
-            }
-            airAttackCount++; // 공중공격 횟수
-            if (spriteRenderer.flipX){
-                StartCoroutine(TempAttackMotion(1)); //-1 왼쪽, 1 오른쪽
-            }
-            else {
-                StartCoroutine(TempAttackMotion(-1)); //-1 왼쪽, 1 오른쪽
+            else
+            {
+                TriggerNextAttack();
             }
         }
     }
 
-    IEnumerator TempAttackMotion(int direction) { //임시용        
-    //솔직히 WeaponManager 만들어서 할까 했는데
-    //너무 내 맘대로 막하는 거 같아서 걍 일단 이렇게 해봄
-        isAttacking = true;
-        tempWeapon.GetComponent<BoxCollider2D>().enabled = true;
+    private void TriggerNextAttack()
+    {
+        // 이미 공중 공격을 했으면 착지하기 전까지는 공격 불가
+        if (!groundContact.IsGrounded && !isAirAttackPossible)
+        {
+            return;
+        }
+
+        // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        Vector3 pivot;
-        float elapsedTime = 0f;
-        while (elapsedTime < 0.25f) { // 무기 내려감
-            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
-            // 무기 회전
-            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * 90f * Time.deltaTime * 4);
+        rb.velocity = Vector2.zero;
 
-            elapsedTime += Time.deltaTime;
-            yield return null;
+        // 다음 공격 모션 선택
+        if (attackCount < maxAttackCount)
+        {
+            attackCount++;
+        }
+        else
+        {
+            attackCount = 1;
         }
 
-        // 이번엔 반대로 회전
-        elapsedTime = 0f;
-        while (elapsedTime < 0.25f) { // 무기 올라감
-            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
-            // 초기 위치로 다시 회전
-            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * -90f * Time.deltaTime * 4);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
+        // 공중에서는 최대 2회까지만 공격 가능
+        if (attackCount >= maxOnAirAttackCount && !groundContact.IsGrounded)
+        {
+            isAirAttackPossible = false;
         }
-        isAttacking = false;
-        tempWeapon.GetComponent<BoxCollider2D>().enabled = false;
-        rb.gravityScale = 1.7f;
+
+        // note:
+        // 트리거 이름은 Attack1부터 시작하며,
+        // 각각의 공격 애니메이션은 두 가지 이벤트를 제공해야 함
+        // 1. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
+        // 2. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
+        animator.SetTrigger($"Attack{attackCount}");
+
+        // TODO:
+        // 1. 공격 모션과 바라보는 방향에 맞게 공격 범위 콜라이더 조정
+        // 2. 애니메이션에 맞게 약간씩 앞으로 전진
+
+        state = State.AttackInProgress;
+    }
+
+    // 공격 애니메이션이 완전히 종료되는 시점에 호출되는 이벤트.
+    // 공격 상태를 종료하고 IdleOrRun 상태로 복귀함.
+    public void OnAttackMotionEnd()
+    {
+        CancelCurrentAction();
+    }
+
+    // 공격 애니메이션에서 선입력이 있다면 다음 공격으로 넘어가야 할 시점에 호출되는 이벤트.
+    // 공격 키를 정확히 그 시점에 누른 것과 동일한 효과를 준다.
+    // 선입력이 없었다면 애니메이션이 완전히 끝나기 전까지 공격 입력을 기다리는 상태에 진입.
+    public void OnStartWaitingAttackContinuation()
+    {
+        if (isAttackInputBuffered)
+        {
+            isAttackInputBuffered = false;
+            TriggerNextAttack();
+        }
+        else
+        {
+            state = State.AttackWaitingContinuation;
+        }
     }
 
     // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
@@ -238,7 +276,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         if (groundContact.IsGrounded)
         {
             ResetJumpRelatedStates();
-            airAttackCount = 0;
         }
         else if (state == State.IdleOrRun)
         {
@@ -267,6 +304,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void ResetJumpRelatedStates()
     {
         jumpCount = 0;
+        isAirAttackPossible = true;
         shouldWallJump = false;
         coyoteTimeCounter = 0f;
         rb.gravityScale = defaultGravityScale;
@@ -288,7 +326,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 현재 추락하는 중이라면 더 강한 중력을 사용해서 붕 뜨는 느낌을 줄임.
         bool isFalling = rb.velocity.y < -0.01f;
-        if (isFalling && !isAttacking) //공격 중에 추락 ㄴㄴ
+        if (isFalling)
         {
             rb.gravityScale = gravityScaleWhileFalling;
         }
@@ -302,21 +340,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleMoveInput()
     {
-        float moveInput;
-        if (!isAttacking) {
-            moveInput = actionAssets.Player.Move.ReadValue<float>();
-        }
-        else {
-            moveInput = 0f;
-        }
+        float moveInput = actionAssets.Player.Move.ReadValue<float>();
         
-
-        // TODO: 공격 도중에는 방향 못 바꾸게 막기 (다음 공격 모션 직전에는 방향 전환 OK)
-        UpdateFacingDirection(moveInput);
-        
-
         if (state == State.IdleOrRun)
         {
+            UpdateFacingDirection(moveInput);
             if (ShouldStickToWall(moveInput))
             {
                 StartStickingToWall(moveInput);
@@ -424,10 +452,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleJumpInput()
     {
-        if (isAttacking) { //공격시 점프 불가
-            isJumpKeyPressed = false; //선입력 방지
-            return;
-        }
         // 공격, 경직 등 다른 상태에서는 점프 불가능
         if (state == State.IdleOrRun || state == State.StickToWall)
         {
@@ -544,10 +568,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
-        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed() && !isAttacking); //공격중 애니메이션 재생 ㄴㄴ
-        animator.SetBool("IsAttacking", isAttacking);
-        
+        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed()); //공격중 애니메이션 재생 ㄴㄴ
+        animator.SetBool("IsAttacking", IsAttacking());
         animator.SetBool("IsStaggered", state == State.Stagger);
+    }
+
+    private bool IsAttacking()
+    {
+        return state == State.AttackInProgress || state == State.AttackWaitingContinuation;
     }
 
     CharacterStat IDestructible.GetHPStat()
@@ -604,7 +632,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 경직 모션 두 개 완성되면 UpdateAnimatorState() 함수랑 애니메이션 상태 그래프 수정해야 함
     }
 
-    // 경직에 걸리거나 기절당하는 등 현재 하던 행동을 종료해야 하는 경우 사용
+    // 경직에 걸리거나 기절당하는 등 현재 하던 행동을 종료해야 하는 경우 사용.
+    // 모든 상태를 깔끔하게 정리하고 IdleOrRun 상태로 복귀함.
     private void CancelCurrentAction()
     {
         // TODO: 공격 구현할 때 여기에 공격 취소하는 로직도 추가할 것 (슈퍼아머 아닌 경우!)
@@ -620,6 +649,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
             staggerCancellation.Dispose();
             staggerCancellation = new();
         }
+        else if (IsAttacking())
+        {
+            attackCount = 0;
+            isAttackInputBuffered = false;
+            rb.gravityScale = defaultGravityScale;
+        }
+
+        state = State.IdleOrRun;
     }
 
     private async UniTask SetStaggerStateForDurationAsync(float duration)
