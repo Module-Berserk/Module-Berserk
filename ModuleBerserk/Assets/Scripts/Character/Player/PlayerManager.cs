@@ -314,6 +314,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             }
         }
         // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여 (일종의 루트 모션)
+        // TODO: 그냥 animator에 apply root motion 체크해도 같은 효과가 나오는지 확인하기
         else
         {
             ApplyAttackRootMotion();
@@ -462,7 +463,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0f;
 
-        // TODO: 벽에 달라붙는 애니메이션으로 전환
+        // TODO:
+        // 1. 벽에 달라붙는 애니메이션으로 전환
+        // 2. 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
     }
 
     private void StopStickingToWall()
