@@ -233,6 +233,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 1. 선딜레이가 끝나고 공격 판정이 시작되는 시점 => OnEnableAttackCollider
         // 2. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
         // 3. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
+        //    * 연속 공격의 마지막 콤보 뒤에 딜레이를 의도적으로 넣고싶은 경우
+        //      이 이벤트를 없애서 복귀 자세를 강제하는 방식으로 처리할 수 있음
         // 4. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
         //
         // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기

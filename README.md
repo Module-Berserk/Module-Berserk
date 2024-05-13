@@ -4,6 +4,7 @@
 - 피격 경직 처리
   - 강한 경직, 약한 경직 애니메이션 추가하기
   - 긴급 회피로 탈출
+- 공격 애니메이션의 루트모션 처리가 animator의 Apply Root Motion으로 가능한지 테스트하기
 - 한 번의 공격에 여러 번 데미지를 입는 상황 방지하기
 - 회피 (다크소울 구르기에 해당하는 액션)
 - 더블 점프 사용 조건 결정되면 사용 제한 걸기 (ex. 연료/열기 사용)
@@ -35,6 +36,16 @@
 ### OneWayPlatform 태그
 - 아래 방향키를 두 번 빠르게 눌러 바닥으로 뚫고 들어가려면  
 해당 플랫폼이 Ground 레이어이고 "OneWayPlatform"이라는 태그를 가져야 함.
+### 공격 애니메이션 새로 임포트할 때 아래 이벤트 추가해줘야 함
+1. OnEnableAttackCollider, OnDisableAttackCollider
+  - 실제 공격 판정의 시작과 끝에 설정
+2. OnStartWaitingAttackContinuation
+  - 선입력을 처리해 다음 공격 모션으로 넘어갈 시점에 설정
+  - 이 이벤트를 없애면 자세 복귀 모션을 강제할 수 있음  
+    => 지금은 마지막 공격 모션에 이걸 없애서 연속 공격 사이에 딜레이를 넣어주고 있음
+3. OnAttackMotionEnd
+  - 공격 모션의 제일 마지막 프레임에 설정
+  - PlayerManager가 공격 모션 종료를 이 이벤트로 판단함!
 ### 공격 애니메이션들의 pivot은 중심으로 고정되지 않고 계속 변함!
 - PlayerManager의 ApplyAttackRootMotion() 함수 참고 바람
 - 원본 에셋 자체에 이동이 포함되어서 이를 스프라이트 상의 이동이 아니라  
