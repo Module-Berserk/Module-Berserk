@@ -64,8 +64,8 @@ public class GroundContact
             return null;
         }
 
-        // 0.95f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
-        var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.95f;
+        // 0.99f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
+        var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
         ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter);
 

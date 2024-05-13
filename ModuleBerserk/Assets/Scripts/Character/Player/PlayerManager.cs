@@ -270,7 +270,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 공격 상태를 종료하고 IdleOrRun 상태로 복귀함.
     public void OnAttackMotionEnd()
     {
-        CancelCurrentAction();
+        // 마지막 모션의 경우 별도의 OnStartWaitingAttackContinuation() 이벤트 없이
+        // 바로 OnAttackMotionEnd()가 호출되므로 선입력이 있는 경우를 따로 체크해야 함.
+        // 공중에 있는 경우는 최대 공격 횟수에 도달하면 무조건 공격을 멈춰야 하므로 취급 x
+        if (attackCount == maxAttackCount && groundContact.IsGrounded && isAttackInputBuffered)
+        {
+            isAttackInputBuffered = false;
+            TriggerNextAttack();
+        }
+        else
+        {
+            CancelCurrentAction();
+        }
     }
 
     // 공격 애니메이션에서 선입력이 있다면 다음 공격으로 넘어가야 할 시점에 호출되는 이벤트.

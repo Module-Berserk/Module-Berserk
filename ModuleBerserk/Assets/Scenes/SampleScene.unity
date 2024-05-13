@@ -1393,7 +1393,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.00366956, y: 0.25000918}
+  m_Offset: {x: -0.00044178963, y: 0.21917412}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1404,7 +1404,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.22476304, y: 0.49998164}
+  m_Size: {x: 0.13157272, y: 0.43831152}
   m_EdgeRadius: 0
 --- !u!114 &804265782
 MonoBehaviour:
@@ -1420,7 +1420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RawDamage: 20
   DamageSource: 1
-  staggerStrength: 2
+  staggerStrength: 0
 --- !u!1 &851153391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1466,7 +1466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 10
+  RawDamage: 20
   DamageSource: 1
   staggerStrength: 1
 --- !u!61 &851153394
@@ -1501,7 +1501,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0006687343, y: 0.22261429}
+  m_Offset: {x: -0.00269413, y: 0.22058883}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1512,7 +1512,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.21862382, y: 0.49389386}
+  m_Size: {x: 0.122752905, y: 0.42232817}
   m_EdgeRadius: 0
 --- !u!1 &905899334
 GameObject:
@@ -2232,13 +2232,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uC67C\uCABD\uC5D0 \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74 \uACBD\uC9C1\uC774
-    \uC5C6\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC704\uC5D0 \uC788\uB294 \uC801:
-    \uC811\uCD09\uD558\uBA74 \"\uC57D\uD55C \uACBD\uC9C1\"\uC5D0 \uD574\uB2F9\uD558\uB294
-    \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC624\uB978\uCABD\uC5D0 \uC788\uB294 \uC801:
-    \uC811\uCD09\uD558\uBA74 \"\uD55C \uACBD\uC9C1\"\uC5D0 \uD574\uB2F9\uD558\uB294
-    \uACF5\uACA9\uC744 \uB2F9\uD568\n\uB3D9\uADF8\uB77C\uBBF8\uB4E4: E\uD0A4\uB85C
-    \uC8FC\uC6B8 \uC218 \uC788\uB294 \uC544\uC774\uD15C\n\nPlayer \uC624\uBE0C\uC81D\uD2B8\uC758
+  m_Text: "\uC624\uB978\uCABD\uC5D0 \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74
+    \uACBD\uC9C1\uC774 \uC5C6\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC704\uC5D0
+    \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74 \"\uC57D\uD55C \uACBD\uC9C1\"\uC5D0
+    \uD574\uB2F9\uD558\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uC67C\uCABD\uC5D0
+    \uC788\uB294 \uC801: \uC811\uCD09\uD558\uBA74 \"\uAC15\uD55C \uACBD\uC9C1\"\uC5D0
+    \uD574\uB2F9\uD558\uB294 \uACF5\uACA9\uC744 \uB2F9\uD568\n\uB3D9\uADF8\uB77C\uBBF8\uB4E4:
+    E\uD0A4\uB85C \uC8FC\uC6B8 \uC218 \uC788\uB294 \uC544\uC774\uD15C\n\nPlayer \uC624\uBE0C\uC81D\uD2B8\uC758
     PlayerManager \uC2A4\uD06C\uB9BD\uD2B8\uC5D0\uC11C\n\uC774\uB3D9, \uACBD\uC9C1
     \uB4F1 \uC138\uBD80 \uC218\uCE58 \uC870\uC815 \uAC00\uB2A5\n\nPlayer \uB610\uB294
     BadEnemy\uC758 \uC790\uC2DD \uC624\uBE0C\uC81D\uD2B8\uC758 ApplyDamageOnContact
@@ -2840,7 +2840,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &1207513169
 BoxCollider2D:
@@ -2885,7 +2885,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.4492451}
+  m_Size: {x: 0.1, y: 0.4492451}
   m_EdgeRadius: 0
 --- !u!114 &1207513170
 MonoBehaviour:
@@ -3011,9 +3011,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 10
+  RawDamage: 20
   DamageSource: 1
-  staggerStrength: 0
+  staggerStrength: 2
 --- !u!61 &1217235632
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3046,7 +3046,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0046693683, y: 0.22261429}
+  m_Offset: {x: -0.005331695, y: 0.22128958}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3057,7 +3057,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.19195187, y: 0.49389386}
+  m_Size: {x: 0.13234007, y: 0.42765844}
   m_EdgeRadius: 0
 --- !u!1 &1218411720
 GameObject:
