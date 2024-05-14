@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerManager : MonoBehaviour, IDestructible
+public class PlayerManager : MonoBehaviour
 {
     [Header("Walk / Run")]
     [SerializeField] private float maxMoveSpeed = 1.5f;
@@ -32,9 +32,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.2f;
     // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
-    // 최대 공중공격 콤보 횟수
-    [SerializeField] private int maxOnAirAttackCount = 2;
-
 
 
     [Header("Ground Contact")]
@@ -50,28 +47,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 바라보는 방향으로 얼마나 앞에 있는 지점을 카메라가 추적할 것인지
     [SerializeField, Range(0f, 2f)] private float cameraLookAheadDistance = 1f;
 
-    [Header("Stagger")]
-    // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
-    [SerializeField] private float weakStaggerKnockbackForce = 5f;
-    [SerializeField] private float strongStaggerKnockbackForce = 8f;
-    // 경직의 지속 시간
-    [SerializeField] private float weakStaggerDuration = 0.2f;
-    [SerializeField] private float strongStaggerDuration = 0.5f;
-
-    [Header("Attack")]
-    // 공격 범위로 사용할 콜라이더
-    [SerializeField] private Collider2D weaponCollider;
-
-
 
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
-    private Animator animator;
     private PlayerStat playerStat;
+<<<<<<< Updated upstream
+=======
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
+    private ColliderSizeAdjuster colliderSizeAdjuster;
+>>>>>>> Stashed changes
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -80,13 +67,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
     // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
     private float coyoteTimeCounter = 0f;
-    // 땅에 닿기 전에 점프한 횟수.
-    // 더블 점프 처리에 사용됨.
-    private int jumpCount = 0;
-    // 벽에 붙어있다가 떨어지는 순간의 coyote time과
-    // 그냥 달리다가 떨어지는 순간의 coyote time을 구분하기 위한 상태 변수.
-    // 점프를 일반 점프로 할지 wall jump로 할지 결정한다.
-    private bool shouldWallJump = false;
+    // coyote time, 더블 점프 등을 모두 고려한 점프 가능 여부로,
+    // FixedUpdate()에서 업데이트됨.
+    private bool canJump = true;
     // 키 입력은 physics 루프와 다른 시점에 처리되니까
     // 여기에 기록해두고 물리 연산은 FixedUpdate에서 처리함
     private bool isJumpKeyPressed = false;
@@ -98,29 +81,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isStickingToRightWall;
     // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
     private float airControl;
+
+    // 상호작용 범위에 들어온 IInteractable 목록 (ex. NPC, 드랍 아이템, ...)
+    private List<IInteractable> availableInteractables = new();
     
     //Prototype 공격용 변수들
-    private bool isAttackInputBufferingAllowed = false; // 공격 모션 중에서 선입력 기록이 가능한 시점에 도달했는지
-    private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
-    private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
-    private int attackCount = 0;
-    private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
-    // 공격 애니메이션에 루트 모션을 적용하기 위한 변수.
-    // 이전 프레임의 pivot 좌표를 기억해 현재 pivot 좌표와의 차이를 velocity로 사용.
-    // 새로운 애니메이션이 시작된 경우 이전 애니메이션과 pivot 기준점이 다를 수 있으므로
-    // 이 경우 값으로 -1을 지정해 해당 프레임은 루트 모션을 적용하지 않고 넘어가도록 함.
-    private float prevSpritePivotX = -1;
-
-    // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
-    private CancellationTokenSource staggerCancellation = new();
+    private Transform tempWeapon; //Prototype용 임시
+    private bool isAttacking = false;
 
     private enum State
     {
-        IdleOrRun, // 서있기, 달리기, 점프, 낙하
-        StickToWall, // 벽에 매달려 정지한 상태
-        Stagger, // 공격에 맞아 경직 판정인 상태
-        AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
-        AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
+        IdleOrRun,
+        StickToWall,
     };
     private State state = State.IdleOrRun;
 
@@ -135,7 +107,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void Start()
     {
-        // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+        playerStat.HP.OnValueChange.AddListener(HandleHPChange);
+    }
+
+    private void HandleHPChange(float hp)
+    {
+        Debug.Log($"아야! 내 현재 체력: {hp}");
+
+        // TODO:
+        // 1. 체력바 UI 업데이트
+        // 2. 사망 처리
     }
 
     private void FindComponentReferences()
@@ -143,10 +124,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
         playerStat = GetComponent<PlayerStat>();
+<<<<<<< Updated upstream
+        tempWeapon = transform.GetChild(0);
+=======
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
+        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
+>>>>>>> Stashed changes
     }
 
     private void BindInputActions()
@@ -168,146 +153,58 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (groundContact.IsSteppingOnOneWayPlatform())
         {
-            groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f).Forget();
+            // await 없이 비동기로 처리하기 위해 discard
+            _ = groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f);
         }
     }
 
     private void OnPerformAction(InputAction.CallbackContext context)
     {
-        // 1순위 행동: 상호작용 (아이템 줍기, NPC와 대화)
-        if (interactionManager.CanInteract)
+        if (availableInteractables.Count > 0)
         {
-            interactionManager.StartInteractionWithLatestTarget();
+            // 제일 마지막에 활성화된 대상 선택
+            availableInteractables.Last().StartInteraction();
         }
-        // 2순위 행동: 공격
         else
         {
-            // 경직 상태이거나 벽에 매달린 경우는 공격 불가
-            if (state == State.Stagger || state == State.StickToWall)
-            {
+            if (isAttacking) { // 임시로 이렇게 처리해놨습니당
                 return;
             }
-
-            // 이미 핵심 공격 모션이 어느 정도 재생된 상태라면 선입력으로 처리,
-            // 아니라면 다음 공격 모션 재생
-            if (state == State.AttackInProgress && isAttackInputBufferingAllowed)
-            {
-                isAttackInputBuffered = true;
+            if (spriteRenderer.flipX){
+                StartCoroutine(TempAttackMotion(1)); //-1 왼쪽, 1 오른쪽
             }
-            else
-            {
-                TriggerNextAttack();
+            else {
+                StartCoroutine(TempAttackMotion(-1)); //-1 왼쪽, 1 오른쪽
             }
         }
     }
 
-    private void TriggerNextAttack()
-    {
-        // 이미 공중 공격을 했으면 착지하기 전까지는 공격 불가
-        if (!groundContact.IsGrounded && !isAirAttackPossible)
-        {
-            return;
+    IEnumerator TempAttackMotion(int direction) { //임시용        
+        isAttacking = true;
+        tempWeapon.GetComponent<BoxCollider2D>().enabled = true;
+        Vector3 pivot;
+        float elapsedTime = 0f;
+        while (elapsedTime < 0.25f) { // 무기 내려감
+            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
+            // 무기 회전
+            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * 90f * Time.deltaTime * 4);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
 
-        // 공격을 시작하는 순간에 한해 방향 전환 허용
-        UpdateFacingDirection(actionAssets.Player.Move.ReadValue<float>());
+        // 이번엔 반대로 회전
+        elapsedTime = 0f;
+        while (elapsedTime < 0.25f) { // 무기 올라감
+            pivot = transform.position - new Vector3 (0, tempWeapon.localScale.y * 0.3f, 0);
+            // 초기 위치로 다시 회전
+            tempWeapon.transform.RotateAround(pivot, Vector3.forward, direction * -90f * Time.deltaTime * 4);
 
-        // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
-        rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
-
-        // 다음 공격 모션 선택
-        if (attackCount < maxAttackCount)
-        {
-            attackCount++;
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-        else
-        {
-            attackCount = 1;
-        }
-
-        // 공중에서는 최대 2회까지만 공격 가능
-        if (attackCount >= maxOnAirAttackCount && !groundContact.IsGrounded)
-        {
-            isAirAttackPossible = false;
-        }
-
-        // note:
-        // 트리거 이름은 Attack1부터 시작하며,
-        // 각각의 공격 애니메이션은 다음 이벤트를 제공해야 함
-        // 1. 선딜레이가 끝나고 공격 판정이 시작되는 시점 => OnEnableAttackCollider
-        // 2. 선입력을 기록하기 시작할 시점 => OnBeginAttackInputBuffering
-        // 3. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
-        // 4. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
-        //    * 연속 공격의 마지막 콤보 뒤에 딜레이를 의도적으로 넣고싶은 경우
-        //      이 이벤트를 없애서 복귀 자세를 강제하는 방식으로 처리할 수 있음
-        // 5. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
-        //
-        // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
-        animator.SetTrigger($"Attack{attackCount}");
-
-        // 공격 애니메이션의 pivot 변화로 루트모션을
-        // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
-        // 값으로 -1을 넣으면 다음 프레임의 pivot 좌표를 기준점으로 삼는다.
-        prevSpritePivotX = -1;
-
-        // 너무 시간차가 큰 선입력 방지하기 위해 모션의 앞부분에는 선입력 처리 x
-        isAttackInputBufferingAllowed = false;
-
-        state = State.AttackInProgress;
-    }
-
-    public void OnEnableAttackCollider()
-    {
-        weaponCollider.enabled = true;
-
-        // 바라보는 방향에 따라 콜라이더 위치 조정
-        float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (isFacingRight ? 1f : -1f);
-        weaponCollider.offset = new Vector2(newOffsetX, weaponCollider.offset.y);
-    }
-
-    public void OnBeginAttackInputBuffering()
-    {
-        isAttackInputBufferingAllowed = true;
-    }
-
-    public void OnDisableAttackCollider()
-    {
-        weaponCollider.enabled = false;
-    }
-
-    // 공격 애니메이션이 완전히 종료되는 시점에 호출되는 이벤트.
-    // 공격 상태를 종료하고 IdleOrRun 상태로 복귀함.
-    public void OnAttackMotionEnd()
-    {
-        // 마지막 모션의 경우 별도의 OnStartWaitingAttackContinuation() 이벤트 없이
-        // 바로 OnAttackMotionEnd()가 호출되므로 선입력이 있는 경우를 따로 체크해야 함.
-        // 공중에 있는 경우는 최대 공격 횟수에 도달하면 무조건 공격을 멈춰야 하므로 취급 x
-        if (attackCount == maxAttackCount && groundContact.IsGrounded && isAttackInputBuffered)
-        {
-            isAttackInputBuffered = false;
-            TriggerNextAttack();
-        }
-        else
-        {
-            CancelCurrentAction();
-        }
-    }
-
-    // 공격 애니메이션에서 선입력이 있다면 다음 공격으로 넘어가야 할 시점에 호출되는 이벤트.
-    // 공격 키를 정확히 그 시점에 누른 것과 동일한 효과를 준다.
-    // 선입력이 없었다면 애니메이션이 완전히 끝나기 전까지 공격 입력을 기다리는 상태에 진입.
-    public void OnStartWaitingAttackContinuation()
-    {
-        if (isAttackInputBuffered)
-        {
-            isAttackInputBuffered = false;
-            TriggerNextAttack();
-        }
-        else
-        {
-            state = State.AttackWaitingContinuation;
-        }
+        isAttacking = false;
+        tempWeapon.GetComponent<BoxCollider2D>().enabled = false;
     }
 
     // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
@@ -323,30 +220,29 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
+    private void adjustCollider() {
+        if (groundContact.IsGrounded) {
+            colliderSizeAdjuster.DisableAutoUpdateColliderSize();
+        }
+        else {
+            colliderSizeAdjuster.EnableAutoUpdateColliderSize();
+        }
+    }
+
     private void FixedUpdate()
     {
+        adjustCollider(); //임시용
         // one way platform을 위로 스쳐 지나가는 상황에서
         // 공격 상태에 진입해 정지하면 IsGrounded가 true가 되어버림.
         // 실제로는 공중에 떠 있는 것으로 취급해야 하므로 공격 중이 아닐 때만 상태를 갱신함.
         if (!IsAttacking())
         {
-            groundContact.TestContact();
-            if (groundContact.IsGrounded)
-            {
-                ResetJumpRelatedStates();
-            }
-            else if (state == State.IdleOrRun)
-            {
-                HandleCoyoteTime();
-                HandleFallingVelocity();
-            }
+            ResetJumpRelatedStates();
         }
-        // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
-        // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
-        // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
-        else
+        else if (state == State.IdleOrRun)
         {
-            ApplyAttackRootMotion();
+            HandleCoyoteTime();
+            HandleFallingVelocity();
         }
 
         HandleMoveInput();
@@ -356,22 +252,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
             HandleJumpInput();
         }
 
-        if (state == State.Stagger)
-        {
-            // 넉백 효과로 생긴 velocity 부드럽게 감소
-            UpdateMoveVelocity(0f);
-        }
-
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
-        UpdateAnimatorState();
     }
 
     private void ResetJumpRelatedStates()
     {
-        jumpCount = 0;
-        isAirAttackPossible = true;
-        shouldWallJump = false;
+        canJump = true;
         coyoteTimeCounter = 0f;
         rb.gravityScale = defaultGravityScale;
     }
@@ -379,12 +266,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void HandleCoyoteTime()
     {
         coyoteTimeCounter += Time.fixedDeltaTime;
-
-        // 방금 전까지 벽에 매달려있었더라도 coyote time을 넘어서면
-        // 일반적인 더블 점프로 취급 (점프해도 위로만 상승)
         if (coyoteTimeCounter > coyoteTime)
         {
-            shouldWallJump = false;
+            canJump = false;
         }
     }
     
@@ -404,44 +288,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    // 원본 공격 애니메이션들을 보면 플레이어가 중심 위치에
-    // 가만히 있지 않고 pivot을 기준으로 조금씩 이동함.
-    // 이걸 그냥 쓰면 플레이어 오브젝트는 가만히 있는데
-    // 스프라이트만 이동하는 것처럼 보이므로 굉장히 이상해짐...
-    //
-    // 지금 사용하는 방식:
-    // 1. 공격 애니메이션의 프레임 별 pivot이 항상 플레이어의 중심에 오도록 수정
-    //    => 이제 애니메이션 재생해도 플레이어는 제자리에 있는 것처럼 보임
-    // 2. 스프라이트 상의 이동을 실제 플레이어 오브젝트의 이동으로 변환하기 위해 pivot 변화량을 계산
-    //    => pivot 변화량에 비례해 velocity를 부여해서 원본 에셋의 이동하는 느낌을 물리적으로 재현
-    private void ApplyAttackRootMotion()
-    {
-        float currSpritePivotX = spriteRenderer.sprite.pivot.x;
-
-        // 모션이 방금 바뀐 경우에는 기준으로 삼아야 할 pivot 값을 아직 모르니까
-        // 루트 모션 적용은 한 프레임 스킵하고 prevSpritePivotX 값만 갱신함
-        if (prevSpritePivotX != -1)
-        {
-            // 스프라이트의 pivot이 커졌다는 것은 플레이어의 중심 위치가
-            // 오른쪽으로 이동했다는 뜻이므로 오른쪽 방향으로 속도를 주면 됨.
-            float rootMotion = currSpritePivotX - prevSpritePivotX;
-
-            // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
-            // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
-            // 마지막에 곱하는 0.5은 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            rb.velocity = (isFacingRight ? Vector2.right : Vector2.left) * rootMotion * 0.5f;
-        }
-
-        prevSpritePivotX = currSpritePivotX;
-    }
-
     private void HandleMoveInput()
     {
         float moveInput = actionAssets.Player.Move.ReadValue<float>();
-        
+        UpdateFacingDirection(moveInput);
+
         if (state == State.IdleOrRun)
         {
-            UpdateFacingDirection(moveInput);
             if (ShouldStickToWall(moveInput))
             {
                 StartStickingToWall(moveInput);
@@ -488,26 +341,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
         isStickingToRightWall = moveInput > 0f;
 
         // wall jump 가능하게 설정
-        jumpCount = 0;
-        shouldWallJump = true;
-
-        // coyote time 리셋
-        coyoteTimeCounter = 0f;
+        canJump = true;
 
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0f;
 
-        // TODO:
-        // 1. 벽에 달라붙는 애니메이션으로 전환
-        // 2. 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
+        // TODO: 벽에 달라붙는 애니메이션으로 전환
     }
 
     private void StopStickingToWall()
     {
         state = State.IdleOrRun;
 
-        // 중력 활성화
+        // 중력 복구하고 coyote time 시작
         rb.gravityScale = defaultGravityScale;
+        coyoteTimeCounter = 0f;
+
+        // TODO: 낙하 애니메이션으로 전환
     }
 
     private void UpdateMoveVelocity(float moveInput)
@@ -551,74 +401,35 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleJumpInput()
     {
-        // 공격, 경직 등 다른 상태에서는 점프 불가능
-        if (state == State.IdleOrRun || state == State.StickToWall)
+        if (canJump)
         {
-            // 점프에는 두 가지 경우가 있음
-            // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
-            // 2. 2차 점프 - 이미 점프한 경우 또는 coyote time이 유효하지 않은 경우
-            if (IsInitialJump())
+            // 더블 점프 방지
+            canJump = false;
+
+            // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
+            if (state == State.StickToWall || !groundContact.IsGrounded)
             {
-                jumpCount = 1;
-                PerformJump();
+                StopStickingToWall();
+
+                // 비동기로 처리하기 위해 await하지 않고 discard
+                _ = ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration);
+
+                // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
+                // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
+                rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
             }
-            else if (IsDoubleJump())
+            else
             {
-                // TODO: 만약 연료가 부족하다면 더블 점프 방지하고, 충분하다면 연료 소모
-                jumpCount = 2;
-                PerformJump();
+                rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
             }
+
+            // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
+            // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
+            rb.gravityScale = defaultGravityScale;
         }
 
         // 입력 처리 완료
         isJumpKeyPressed = false;
-    }
-
-    // 최초의 점프로 취급하는 경우
-    // 1. 바닥에 서있는 경우
-    // 2. 벽에 매달려있는 경우
-    // 3. 1또는 2의 상황에서 추락을 시작한지 얼마 지나지 않은 경우 (coyote time 유효)
-    private bool IsInitialJump()
-    {
-        return jumpCount == 0 && coyoteTimeCounter < coyoteTime;
-    }
-
-    // 더블 점프로 취급하는 경우
-    // 1. 이미 최초의 점프를 완료한 경우
-    // 2. 아직 점프를 하지는 않았지만 추락 시간이 허용된 coyote time을
-    //    초과해서 공중에 떠있는 것으로 취급하는 경우
-    private bool IsDoubleJump()
-    {
-        return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
-    }
-
-    private void PerformJump()
-    {
-        // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
-        if (shouldWallJump)
-        {
-            // 더블 점프에서도 wall jump가 실행되는 것 방지
-            shouldWallJump = false;
-
-            StopStickingToWall();
-
-            ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration).Forget();
-
-            // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
-            // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
-            rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
-        }
-        else
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-        }
-
-        // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
-        // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
-        rb.gravityScale = defaultGravityScale;
-
-        // 점프 애니메이션 재생
-        animator.SetTrigger("Jump");
     }
 
     // wall jump 직후에 너무 빨리 벽으로 돌아오는 것을
@@ -662,124 +473,29 @@ public class PlayerManager : MonoBehaviour, IDestructible
         spriteRenderer.flipX = !isFacingRight;
     }
 
-    // 매 프레임 갱신해야 하는 애니메이터 파라미터 관리
-    private void UpdateAnimatorState()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        animator.SetBool("IsGrounded", groundContact.IsGrounded);
-        animator.SetFloat("HorizontalVelocity", rb.velocity.y);
-        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed()); //공격중 애니메이션 재생 ㄴㄴ
-        animator.SetBool("IsAttacking", IsAttacking());
-        animator.SetBool("IsStaggered", state == State.Stagger);
-    }
-
-    private bool IsAttacking()
-    {
-        return state == State.AttackInProgress || state == State.AttackWaitingContinuation;
-    }
-
-    CharacterStat IDestructible.GetHPStat()
-    {
-        return playerStat.HP;
-    }
-
-    CharacterStat IDestructible.GetDefenseStat()
-    {
-        return playerStat.Defense;
-    }
-
-    Team IDestructible.GetTeam()
-    {
-        return Team.Player;
-    }
-
-    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
-    {
-        Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
-
-        flashEffectOnHit.StartEffectAsync().Forget();
-
-        // TODO:
-        // 지금은 데미지 입히는 타이밍에 제한이 없어서
-        // ApplyDamageOnContact 스크립트가 붙은 오브젝트 둘
-        // 사이에 끼어버리면 핀볼처럼 튕겨다니는 상황이 발생함.
-        // 데미지를 입으면 아주 짧은 시간 무적 판정을 줘도 좋을 것 같음.
-        // ex) 메이플스토리
-        switch(staggerInfo.strength)
+        if (other.gameObject.TryGetComponent(out IInteractable interactable))
         {
-            case StaggerStrength.Weak:
-                ApplyStagger(staggerInfo.direction * weakStaggerKnockbackForce, weakStaggerDuration);
-                break;
-            case StaggerStrength.Strong:
-                ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, strongStaggerDuration);
-                break;
+            interactable.OnPlayerEnter();
+            availableInteractables.Add(interactable);
         }
-    }
-
-    // 현재 하던 행동을 취소하고 피격 경직 상태에 진입
-    private void ApplyStagger(Vector2 staggerForce, float staggerDuration)
-    {
-        CancelCurrentAction();
-
-        rb.velocity = staggerForce;
-        SetStaggerStateForDurationAsync(staggerDuration).Forget();
-
-        // TODO:
-        // 경직 애니메이션 재생 (약한 경직 -> 제자리 경직 모션, 강한 경직 -> 뒤로 넘어지는 모션)
-        // 지금은 점프 모션 중 프레임 하나 훔쳐와서 경직 모션이라 치고 박아둔 상태 (player_loyal_stagger_temp)이고,
-        // 애니메이터의 IsStaggered 파라미터를 설정해서 임시 경직 애니메이션을 재생하도록 했음.
-        //
-        // 경직 모션 두 개 완성되면 UpdateAnimatorState() 함수랑 애니메이션 상태 그래프 수정해야 함
-    }
-
-    // 경직에 걸리거나 기절당하는 등 현재 하던 행동을 종료해야 하는 경우 사용.
-    // 모든 상태를 깔끔하게 정리하고 IdleOrRun 상태로 복귀함.
-    private void CancelCurrentAction()
-    {
-        // TODO: 공격 구현할 때 여기에 공격 취소하는 로직도 추가할 것 (슈퍼아머 아닌 경우!)
-        if (state == State.StickToWall)
+        // 일단 적이랑 충돌했을시 데미지 받는걸로 가정함
+        else if (other.gameObject.TryGetComponent(out EnemyStat enemy))
         {
-            StopStickingToWall();
-        }
-        else if (state == State.Stagger)
-        {
-            // CancellationTokenSource는 리셋이 불가능해서
-            // 한 번 cancel하면 새로 만들어줘야 함.
-            staggerCancellation.Cancel();
-            staggerCancellation.Dispose();
-            staggerCancellation = new();
-        }
-        else if (IsAttacking())
-        {
-            attackCount = 0;
-            isAttackInputBufferingAllowed = false;
-            isAttackInputBuffered = false;
-            rb.gravityScale = defaultGravityScale;
-            OnDisableAttackCollider();
-
-            // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼
-            // 연속 공격을 하지 않았더라도 착지하기 전까지 공격을 금지함.
-            // 공중 공격은 점프 당 1회, 최대 maxAirAttackCount만큼 연격.
-            if (!groundContact.IsGrounded)
+            if (!isAttacking) // 이것도 대충 처리해놈;
             {
-                isAirAttackPossible = false;
+                playerStat.HP.ModifyBaseValue(-enemy.AttackDamage.CurrentValue);
             }
         }
-
-        state = State.IdleOrRun;
     }
 
-    private async UniTask SetStaggerStateForDurationAsync(float duration)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        state = State.Stagger;
-
-        await UniTask.WaitForSeconds(duration, cancellationToken: staggerCancellation.Token);
-
-        state = State.IdleOrRun;
-    }
-
-    void IDestructible.OnDestruction()
-    {
-        // TODO: 캐릭터 destroy & 은신처로 복귀
-        Debug.Log("플레이어 사망");
+        if (other.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            interactable.OnPlayerExit();
+            availableInteractables.Remove(interactable);
+        }
     }
 }
