@@ -100,6 +100,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private float airControl;
     
     //Prototype 공격용 변수들
+    private bool isAttackInputBufferingAllowed = false; // 공격 모션 중에서 선입력 기록이 가능한 시점에 도달했는지
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
     private int attackCount = 0;
@@ -187,9 +188,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 return;
             }
 
-            // 이미 핵심 공격 모션이 재생 중이라면 선입력으로 처리,
+            // 이미 핵심 공격 모션이 어느 정도 재생된 상태라면 선입력으로 처리,
             // 아니라면 다음 공격 모션 재생
-            if (state == State.AttackInProgress)
+            if (state == State.AttackInProgress && isAttackInputBufferingAllowed)
             {
                 isAttackInputBuffered = true;
             }
@@ -233,13 +234,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // note:
         // 트리거 이름은 Attack1부터 시작하며,
-        // 각각의 공격 애니메이션은 네 가지 이벤트를 제공해야 함
+        // 각각의 공격 애니메이션은 다음 이벤트를 제공해야 함
         // 1. 선딜레이가 끝나고 공격 판정이 시작되는 시점 => OnEnableAttackCollider
-        // 2. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
-        // 3. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
+        // 2. 선입력을 기록하기 시작할 시점 => OnBeginAttackInputBuffering
+        // 3. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
+        // 4. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
         //    * 연속 공격의 마지막 콤보 뒤에 딜레이를 의도적으로 넣고싶은 경우
         //      이 이벤트를 없애서 복귀 자세를 강제하는 방식으로 처리할 수 있음
-        // 4. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
+        // 5. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
         //
         // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
         animator.SetTrigger($"Attack{attackCount}");
@@ -248,6 +250,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
         // 값으로 -1을 넣으면 다음 프레임의 pivot 좌표를 기준점으로 삼는다.
         prevSpritePivotX = -1;
+
+        // 너무 시간차가 큰 선입력 방지하기 위해 모션의 앞부분에는 선입력 처리 x
+        isAttackInputBufferingAllowed = false;
 
         state = State.AttackInProgress;
     }
@@ -259,6 +264,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 바라보는 방향에 따라 콜라이더 위치 조정
         float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (isFacingRight ? 1f : -1f);
         weaponCollider.offset = new Vector2(newOffsetX, weaponCollider.offset.y);
+    }
+
+    public void OnBeginAttackInputBuffering()
+    {
+        isAttackInputBufferingAllowed = true;
     }
 
     public void OnDisableAttackCollider()
@@ -741,6 +751,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         else if (IsAttacking())
         {
             attackCount = 0;
+            isAttackInputBufferingAllowed = false;
             isAttackInputBuffered = false;
             rb.gravityScale = defaultGravityScale;
             OnDisableAttackCollider();
