@@ -1855,7 +1855,7 @@ MonoBehaviour:
   m_Follow: {fileID: 335837299}
   m_Lens:
     FieldOfView: 34
-    OrthographicSize: 1.8
+    OrthographicSize: 1.79
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -2805,6 +2805,7 @@ MonoBehaviour:
   airControlWhileWallJumping: 0.3
   wallJumpAirControlPenaltyDuration: 0.2
   maxOnAirAttackCount: 2
+  isWallStickingPersistent: 0
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
