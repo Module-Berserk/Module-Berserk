@@ -192,14 +192,30 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
             // 이미 핵심 공격 모션이 어느 정도 재생된 상태라면 선입력으로 처리,
             // 아니라면 다음 공격 모션 재생
-            if (state == State.AttackInProgress && isAttackInputBufferingAllowed)
+            if (state == State.AttackInProgress)
             {
-                isAttackInputBuffered = true;
+                HandleAttackInputBuffering();
             }
             else
             {
                 TriggerNextAttack();
             }
+        }
+    }
+
+    // 공격 애니메이션 중 타격 프레임이 지나간 이후부터
+    // 다음 공격으로 이어나갈 수 있는 시점 사이에
+    // 공격 키를 누르면 선입력으로 처리됨.
+    //
+    // 타격 프레임 이전에는 선입력으로 취급하지 않는 이유:
+    // 생각보다 공격 애니메이션이 길어서 내가 키를 누른 시점과
+    // 선입력에 의한 자동적인 다음 공격 트리거의 시간적 차이가 무척 커질 수 있음.
+    // "난 키 입력을 멈췄는데도 공격이 나가네?"라는 느낌을 없애기 위한 조치라고 보면 됨.
+    private void HandleAttackInputBuffering()
+    {
+        if (isAttackInputBufferingAllowed)
+        {
+            isAttackInputBuffered = true;
         }
     }
 
