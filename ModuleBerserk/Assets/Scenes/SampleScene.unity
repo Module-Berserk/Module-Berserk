@@ -2703,6 +2703,7 @@ GameObject:
   - component: {fileID: 1207513171}
   - component: {fileID: 1207513173}
   - component: {fileID: 1207513174}
+  - component: {fileID: 1207513175}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -2966,6 +2967,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
   flashDuration: 0.15
+--- !u!114 &1207513175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207513162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5c511fa37855234d8c01d44b072e0d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1217235629
 GameObject:
   m_ObjectHideFlags: 0

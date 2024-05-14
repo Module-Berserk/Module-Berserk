@@ -72,6 +72,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private PlayerStat playerStat;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
+    private ColliderSizeAdjuster colliderSizeAdjuster;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -147,6 +148,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
+        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
     }
 
     private void BindInputActions()
@@ -362,9 +364,26 @@ public class PlayerManager : MonoBehaviour, IDestructible
             UpdateMoveVelocity(0f);
         }
 
+        AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
         UpdateAnimatorState();
+    }
+    
+    // 점프 도중에 콜라이더가 실제 범위보다 넓은 문제를 해결하기 위한 임시방편.
+    // 공중에 있는 동안 콜라이더 사이즈를 약간 작게 만들어줌.
+    //
+    // TODO: 애니메이션에 따른 피격 범위 콜라이더 조정 방안이 확정되면 삭제할 것
+    private void AdjustCollider()
+    {
+        if (groundContact.IsGrounded)
+        {
+            colliderSizeAdjuster.DisableAutoUpdateColliderSize();
+        }
+        else
+        {
+            colliderSizeAdjuster.EnableAutoUpdateColliderSize();
+        }
     }
 
     private void ResetJumpRelatedStates()
