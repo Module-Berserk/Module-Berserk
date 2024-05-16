@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 // 플레이어의 무기 또는 적의 공격 콜라이더와 접촉할 때
 // 데미지를 입히기 위한 테스트용 컴포넌트!
@@ -17,6 +18,7 @@ public class ApplyDamageOnContact : MonoBehaviour
     public float RawDamage;
     public Team DamageSource;
     public StaggerStrength staggerStrength;
+    public UnityEvent OnApplyDamageSuccess;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -25,7 +27,12 @@ public class ApplyDamageOnContact : MonoBehaviour
             // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
             Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
             StaggerInfo staggerInfo = new(staggerStrength, staggerDirection);
-            destructible.TryApplyDamage(DamageSource, RawDamage, staggerInfo);
+
+            // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
+            if (destructible.TryApplyDamage(DamageSource, RawDamage, staggerInfo))
+            {
+                OnApplyDamageSuccess.Invoke();
+            }
         }
     }
 }

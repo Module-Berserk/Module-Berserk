@@ -83,9 +83,6 @@ public class EnemyManager : MonoBehaviour, IDestructible {
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
-        //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
-        Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
-
         flashEffectOnHit.StartEffectAsync().Forget();
 
         ApplyStaggerForDurationAsync(staggerInfo.direction * 3.0f, 0.4f).Forget();

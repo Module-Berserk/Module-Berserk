@@ -76,6 +76,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
     private ColliderSizeAdjuster colliderSizeAdjuster;
+    private GearSystem gearSystem;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -135,11 +136,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
         
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
         airControl = defaultAirControl;
+
+        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
+        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
+        applyDamageOnContact.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
     }
 
     private void Start()
     {
         // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+        // TODO: gearSystem.OnGearLevelChange에 기어 단계에 따른 버프 수치 조정 함수 등록
     }
 
     private void FindComponentReferences()
@@ -152,6 +158,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
+        gearSystem = GetComponent<GearSystem>();
     }
 
     private void BindInputActions()
@@ -236,6 +243,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
+
+        // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우 특수한 공격을 실행
+        if (gearSystem.IsNextGearLevelReady())
+        {
+            gearSystem.IncreaseGearLevel();
+
+            // TODO:
+            // 1. 이번 기어 단계에 맞는 특수 공격 실행
+            // 2. 아래에 있는 return statement 주석 해제해서 함수 바로 종료하기
+
+            // return;
+        }
 
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
@@ -743,8 +762,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
-        Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
-
         flashEffectOnHit.StartEffectAsync().Forget();
 
         // TODO:
@@ -762,6 +779,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, strongStaggerDuration);
                 break;
         }
+
+        // 공격 당하면 게이지가 깎임
+        gearSystem.OnPlayerHit();
     }
 
     // 현재 하던 행동을 취소하고 피격 경직 상태에 진입
