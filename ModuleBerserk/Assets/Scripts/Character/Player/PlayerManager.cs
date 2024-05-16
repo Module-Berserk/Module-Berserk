@@ -34,6 +34,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
     // 최대 공중공격 콤보 횟수
     [SerializeField] private int maxOnAirAttackCount = 2;
+    // 한 번 벽에 붙으면 방향키를 누르고 있지 않아도 계속 매달려 있어야 하는지
+    [SerializeField] private bool isWallStickingPersistent = false;
 
 
 
@@ -72,6 +74,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private PlayerStat playerStat;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
+    private ColliderSizeAdjuster colliderSizeAdjuster;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -147,6 +150,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
+        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
     }
 
     private void BindInputActions()
@@ -190,14 +194,30 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
             // 이미 핵심 공격 모션이 어느 정도 재생된 상태라면 선입력으로 처리,
             // 아니라면 다음 공격 모션 재생
-            if (state == State.AttackInProgress && isAttackInputBufferingAllowed)
+            if (state == State.AttackInProgress)
             {
-                isAttackInputBuffered = true;
+                HandleAttackInputBuffering();
             }
             else
             {
                 TriggerNextAttack();
             }
+        }
+    }
+
+    // 공격 애니메이션 중 타격 프레임이 지나간 이후부터
+    // 다음 공격으로 이어나갈 수 있는 시점 사이에
+    // 공격 키를 누르면 선입력으로 처리됨.
+    //
+    // 타격 프레임 이전에는 선입력으로 취급하지 않는 이유:
+    // 생각보다 공격 애니메이션이 길어서 내가 키를 누른 시점과
+    // 선입력에 의한 자동적인 다음 공격 트리거의 시간적 차이가 무척 커질 수 있음.
+    // "난 키 입력을 멈췄는데도 공격이 나가네?"라는 느낌을 없애기 위한 조치라고 보면 됨.
+    private void HandleAttackInputBuffering()
+    {
+        if (isAttackInputBufferingAllowed)
+        {
+            isAttackInputBuffered = true;
         }
     }
 
@@ -362,9 +382,26 @@ public class PlayerManager : MonoBehaviour, IDestructible
             UpdateMoveVelocity(0f);
         }
 
+        AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateSpriteDirection();
         UpdateAnimatorState();
+    }
+    
+    // 점프 도중에 콜라이더가 실제 범위보다 넓은 문제를 해결하기 위한 임시방편.
+    // 공중에 있는 동안 콜라이더 사이즈를 약간 작게 만들어줌.
+    //
+    // TODO: 애니메이션에 따른 피격 범위 콜라이더 조정 방안이 확정되면 삭제할 것
+    private void AdjustCollider()
+    {
+        if (groundContact.IsGrounded)
+        {
+            colliderSizeAdjuster.DisableAutoUpdateColliderSize();
+        }
+        else
+        {
+            colliderSizeAdjuster.EnableAutoUpdateColliderSize();
+        }
     }
 
     private void ResetJumpRelatedStates()
@@ -474,10 +511,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
         return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
     }
 
-    // 벽에 매달린 상태에서 입력을 취소하거나 반대 방향으로 이동하려는 경우 true 반환.
     private bool ShouldStopStickingToWall(float moveInput)
     {
-        return (isFacingRight != isStickingToRightWall) || (moveInput == 0f);
+        // 벽에 매달리는 것을 종료하는 조건은 설정에 따라 두 가지 모드로 나뉨
+        // 1) 벽에 매달린 뒤로 방향키를 더 이상 누르지 않아도 상태를 유지할 수 있다는 설정
+        bool isMovingToOppositeDirection = (isStickingToRightWall && moveInput < 0f) || (!isStickingToRightWall && moveInput > 0f);
+        if (isWallStickingPersistent)
+        {
+            return isMovingToOppositeDirection;
+        }
+        // 2) 방향키를 누르지 않는 순간에 바로 벽에서 떨어지도록 만드는 설정
+        else
+        {
+            return isMovingToOppositeDirection || moveInput == 0f;
+        }
+        
     }
 
     private void StartStickingToWall(float moveInput)
