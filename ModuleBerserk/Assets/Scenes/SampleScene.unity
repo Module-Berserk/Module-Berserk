@@ -1740,7 +1740,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 20
   DamageSource: 1
   staggerStrength: 0
   OnApplyDamageSuccess:
@@ -1791,7 +1790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 20
   DamageSource: 1
   staggerStrength: 1
   OnApplyDamageSuccess:
@@ -3246,7 +3244,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
-  attackDamage: 20
+  attackDamage: 1
+  attackSpeed: 1
   defense: 19
 --- !u!95 &1207513172
 Animator:
@@ -3369,7 +3368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 20
   DamageSource: 1
   staggerStrength: 2
   OnApplyDamageSuccess:
@@ -4036,7 +4034,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RawDamage: 1
   DamageSource: 0
   staggerStrength: 1
   OnApplyDamageSuccess:
