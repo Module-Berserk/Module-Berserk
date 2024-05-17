@@ -31,6 +31,10 @@ public class EnemyManager : MonoBehaviour, IDestructible {
     {
         initialPosition = transform.position;
         // TODO: enemyStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+
+        // ApplyDamageOnContact 컴포넌트에서 적의 공격력 스탯을 사용하도록 설정
+        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
+        applyDamageOnContact.RawDamage = enemyStat.AttackDamage;
     }
 
     private void FixedUpdate() {

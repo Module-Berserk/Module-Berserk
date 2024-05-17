@@ -4,15 +4,16 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 // 플레이어의 기어 게이지를 관리하는 클래스.
-// PlayerManager에서 다음 세 가지 함수를 적절히 호출해줘야 함:
+// PlayerManager에서 다음 함수들을 적절히 호출해줘야 함:
 // 1. 공격 성공 => OnAttackSuccess
 // 2. 적에게 공격 당함 => OnPlayerHit
 // 3. 긴급 회피 사용 => OnEmergencyDodge
+// 4. 기어 단계 변동 => UpdateGearLevelBuff
 public class GearSystem : MonoBehaviour
 {
     // 기어 단계별 게이지 최대치.
     // 최대치에 도달한 상태로 일정 시간 유지한 뒤 공격을 해야 다음 단계로 넘어갈 수 있다.
-    private readonly float[] GEAR_GAUGE_UPPER_BOUND = {0f, 24f, 49f, 74f, 99f, 100f};
+    private static readonly float[] GEAR_GAUGE_UPPER_BOUND = {0f, 24f, 49f, 74f, 99f, 100f};
     // CurrentGearLevel의 최대치.
     // 첫 번째 단계가 0에서 시작하기 때문에 마지막 단계는 5임.
     private const int MAX_GEAR_LEVEL = 5;
@@ -24,6 +25,23 @@ public class GearSystem : MonoBehaviour
     private const float MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE = 3f;
     // 비전투 상태에서 1초마다 깎이는 게이지
     private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
+
+    // 기어 레벨별 버프 수치 (일단 합연산으로 처리)
+    // TODO: 기획안에 따라 버프 수치 변경할 것
+    private struct GearLevelBuff
+    {
+        public float Damage;
+        public float Speed;
+    }
+    private static readonly GearLevelBuff[] GEAR_LEVEL_BUFF =
+    {
+        new GearLevelBuff{Damage = 0f, Speed = 0f},
+        new GearLevelBuff{Damage = 1f, Speed = 0.1f},
+        new GearLevelBuff{Damage = 2f, Speed = 0.2f},
+        new GearLevelBuff{Damage = 3f, Speed = 0.3f},
+        new GearLevelBuff{Damage = 4f, Speed = 0.4f},
+        new GearLevelBuff{Damage = 5f, Speed = 0.5f},
+    };
 
 
     // 0 ~ 100의 값을 갖는 게이지.
@@ -57,6 +75,9 @@ public class GearSystem : MonoBehaviour
     // 매 프레임마다 시간을 누적해 공격 또는 피격 이벤트로부터 몇 초나 지났는지 기록함.
     // 공격 및 피격 이후 3초 동안은 전투 중으로 취급함.
     private float combatTimer = 0f;
+    // 마지막으로 호출된 UpdateGearLevelBuff()에서 적용한 버프 수치.
+    // 이전 버프를 제거하고 현재 값으로 갱신하기 위해 기록한다.
+    private GearLevelBuff lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[0];
 
 
 
@@ -119,6 +140,8 @@ public class GearSystem : MonoBehaviour
         return combatTimer < 3f;
     }
 
+    // 게이지 최대치를 일정 시간 이상 유지해서
+    // 다음 기어 단계로 넘어갈 준비가 되었다면 true를 반환
     public bool IsNextGearLevelReady()
     {
         // 이미 최대 단계인 경우
@@ -153,6 +176,21 @@ public class GearSystem : MonoBehaviour
         CurrentGearGauge++;
 
         OnGearLevelChange.Invoke();
+    }
+
+    // 기어 단계별 공격력 & 공격 속도 버프를 현재 기어 단계에 맞게 갱신함.
+    // 마지막으로 호출된 UpdateGearLevelBuff()의 버프는 자동으로 제거.
+    // 기어 단계가 바뀔 때마다 호출해두면 됨.
+    public void UpdateGearLevelBuff(CharacterStat attackDamage, CharacterStat attackSpeed)
+    {
+        // 기존 버프 제거
+        attackDamage.ApplyAdditiveModifier(-lastAppliedGearLevelBuff.Damage);
+        attackSpeed.ApplyAdditiveModifier(-lastAppliedGearLevelBuff.Speed);
+        
+        // 신규 버프 부여
+        lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[CurrentGearLevel];
+        attackDamage.ApplyAdditiveModifier(lastAppliedGearLevelBuff.Damage);
+        attackSpeed.ApplyAdditiveModifier(lastAppliedGearLevelBuff.Speed);
     }
 
     private void Update()

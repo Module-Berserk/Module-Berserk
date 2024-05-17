@@ -10,12 +10,12 @@ using UnityEngine.Events;
 public class ApplyDamageOnContact : MonoBehaviour
 {
     // 테스트용으로 만든거라 그냥 public으로 노출했음.
-    // 공격력 스탯을 가져와서 적용하지 않고 그냥 인스펙터에서 넣어준 값을 그대로 사용함.
+    // 사용하는 쪽에서 RawDamage에 자신의 데미지 스탯을 넣어줘야 함!
     //
     // TODO:
     // 실제 공격 판정 구현할 때는 짧은 시간 안에 TriggerEnter와 TriggerExit을 반복해
     // 중복으로 데미지를 입히는 경우가 없도록 edge case를 잘 처리해줘야 함!!!
-    public float RawDamage;
+    public CharacterStat RawDamage;
     public Team DamageSource;
     public StaggerStrength staggerStrength;
     public UnityEvent OnApplyDamageSuccess;
@@ -29,7 +29,7 @@ public class ApplyDamageOnContact : MonoBehaviour
             StaggerInfo staggerInfo = new(staggerStrength, staggerDirection);
 
             // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
-            if (destructible.TryApplyDamage(DamageSource, RawDamage, staggerInfo))
+            if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue, staggerInfo))
             {
                 OnApplyDamageSuccess.Invoke();
             }

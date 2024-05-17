@@ -136,16 +136,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
         
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
         airControl = defaultAirControl;
-
-        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
-        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
-        applyDamageOnContact.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
     }
 
     private void Start()
     {
         // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
-        // TODO: gearSystem.OnGearLevelChange에 기어 단계에 따른 버프 수치 조정 함수 등록
+
+        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
+        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
+        applyDamageOnContact.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
+
+        // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
+        applyDamageOnContact.RawDamage = playerStat.AttackDamage;
+
+        // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
+        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed));
     }
 
     private void FindComponentReferences()
