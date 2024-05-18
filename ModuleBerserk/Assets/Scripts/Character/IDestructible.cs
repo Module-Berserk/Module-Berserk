@@ -95,8 +95,6 @@ public interface IDestructible
         // 방어력 10을 기준으로 스탯 1마다 10%씩 최종 데미지가 차이남.
         const float damageReductionPerDefense = 0.1f;
         float damageReduction = (def.CurrentValue - 10f) * damageReductionPerDefense;
-
-        // TODO: 슈퍼아머 상태라면 데미지 10% 더 받게 만들기
         float finalDamage = rawDamage * (1f - damageReduction);
 
         // HP 스탯에는 버프/디버프가 없다고 가정.

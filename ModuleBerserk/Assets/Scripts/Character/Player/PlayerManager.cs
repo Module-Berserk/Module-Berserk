@@ -237,6 +237,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
+        // 공격 애니메이션 중 타격 부분이 재생 중인 경우에도 처리 x
+        if (weaponCollider.enabled)
+        {
+            // TODO: 테스트 끝나면 삭제할 것
+            Debug.Log("핵심 공격 모션 도중에는 회피할 수 없습니다...");
+            return;
+        }
+
         CancelCurrentAction();
 
         // 회피 무적 상태로 전환
@@ -582,6 +590,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 공중에 있고 이동하려는 방향의 벽과 접촉한 경우에 한해 true 반환.
     private bool ShouldStickToWall(float moveInput)
     {
+        // TODO: 벽붙기는 로그 타입만 가능하도록 수정
         bool shouldStickRight = moveInput > 0f && groundContact.IsInContactWithRightWall;
         bool shouldStickLeft = moveInput < 0f && groundContact.IsInContactWithLeftWall;
         return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
@@ -688,7 +697,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             }
             else if (IsDoubleJump())
             {
-                // TODO: 만약 연료가 부족하다면 더블 점프 방지하고, 충분하다면 연료 소모
+                // TODO: 더블 점프는 로그 타입만 가능하도록 수정
                 jumpCount = 2;
                 PerformJump();
             }
@@ -828,12 +837,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         flashEffectOnHit.StartEffectAsync().Forget();
 
-        // TODO:
-        // 지금은 데미지 입히는 타이밍에 제한이 없어서
-        // ApplyDamageOnContact 스크립트가 붙은 오브젝트 둘
-        // 사이에 끼어버리면 핀볼처럼 튕겨다니는 상황이 발생함.
-        // 데미지를 입으면 아주 짧은 시간 무적 판정을 줘도 좋을 것 같음.
-        // ex) 메이플스토리
         switch(staggerInfo.strength)
         {
             case StaggerStrength.Weak:
@@ -865,7 +868,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 모든 상태를 깔끔하게 정리하고 IdleOrRun 상태로 복귀함.
     private void CancelCurrentAction()
     {
-        // TODO: 공격 구현할 때 여기에 공격 취소하는 로직도 추가할 것 (슈퍼아머 아닌 경우!)
         if (state == State.StickToWall)
         {
             StopStickingToWall();
