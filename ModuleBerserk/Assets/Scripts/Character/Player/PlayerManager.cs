@@ -61,10 +61,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float weakStaggerDuration = 0.2f;
     [SerializeField] private float strongStaggerDuration = 0.5f;
 
+
     [Header("Attack")]
     // 공격 범위로 사용할 콜라이더
     [SerializeField] private Collider2D weaponCollider;
 
+
+    [Header("Evasion")]
+    // 회피 모션 도중 부여할 수평 속도
+    [SerializeField] private float evasionVelocity = 10f;
+    [SerializeField] private float evasionCooltime = 2f;
 
 
     // 컴포넌트 레퍼런스
@@ -115,6 +121,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 이 경우 값으로 -1을 지정해 해당 프레임은 루트 모션을 적용하지 않고 넘어가도록 함.
     private float prevSpritePivotX = -1;
 
+    // 무적 판정
+    private bool isInvincible = false;
+    // 마지막 회피로부터 지난 시간.
+    // 이 값이 회피 쿨타임보다 크면 회피 가능.
+    // 캐릭터가 생성된 직후에도 회피가 가능하도록 쿨타임보다 확실히 큰 초기값을 부여함.
+    private float timeSinceLastEvasion = 10000f;
+
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
 
@@ -125,6 +138,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         Stagger, // 공격에 맞아 경직 판정인 상태
         AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
         AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
+        Evade, // 회피
     };
     private State state = State.IdleOrRun;
 
@@ -162,6 +176,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         actionAssets.Player.Jump.performed += OnJump;
         actionAssets.Player.FallDown.performed += OnFallDown;
         actionAssets.Player.PerformAction.performed += OnPerformAction;
+        actionAssets.Player.Evade.performed += OnEvade;
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -204,6 +219,48 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 TriggerNextAttack();
             }
         }
+    }
+
+    private void OnEvade(InputAction.CallbackContext context)
+    {
+        // 이미 회피 중이라면 처리 x
+        if (state == State.Evade)
+        {
+            return;
+        }
+
+        // 아직 회피 쿨타임이 끝나지 않았다면 처리 x
+        if (timeSinceLastEvasion < evasionCooltime)
+        {
+            // TODO: 효과음 / 이펙트 등으로 유저에게 지금은 회피를 할 수 없다는 피드백 주기
+            Debug.Log("아직 회피 쿨타임이 끝나지 않았습니다...");
+            return;
+        }
+
+        CancelCurrentAction();
+
+        // 회피 무적 상태로 전환
+        state = State.Evade;
+        isInvincible = true;
+
+        // 회피 모션 재생
+        //
+        // TODO:
+        // 아트 완성되면 PlayerLoyal 애니메이션 컨트롤러에서
+        // player_loyal_evade_temp를 정식 에셋으로 교체하고
+        // 회피 거리가 대충 2타일 정도 되도록 회피 속도 조정하기
+        animator.SetTrigger("Evade");
+        
+        // 쿨타임 계산 시작
+        timeSinceLastEvasion = 0f;
+    }
+
+    // 회피 애니메이션의 마지막 프레임에 호출되는 이벤트.
+    // 무적 판정을 해제하고 기본 이동 상태로 돌아온다.
+    public void OnEvadeEnd()
+    {
+        state = State.IdleOrRun;
+        isInvincible = false;
     }
 
     // 공격 애니메이션 중 타격 프레임이 지나간 이후부터
@@ -346,10 +403,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void FixedUpdate()
     {
+        if (state == State.Evade)
+        {
+            ApplyEvasionVelocity();
+        }
+        // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
+        // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
+        // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
+        else if (IsAttacking())
+        {
+            ApplyAttackRootMotion();
+        }
         // one way platform을 위로 스쳐 지나가는 상황에서
         // 공격 상태에 진입해 정지하면 IsGrounded가 true가 되어버림.
         // 실제로는 공중에 떠 있는 것으로 취급해야 하므로 공격 중이 아닐 때만 상태를 갱신함.
-        if (!IsAttacking())
+        else
         {
             groundContact.TestContact();
             if (groundContact.IsGrounded)
@@ -362,13 +430,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 HandleFallingVelocity();
             }
         }
-        // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
-        // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
-        // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
-        else
-        {
-            ApplyAttackRootMotion();
-        }
+
+        HandleEvasionCooltime();
 
         HandleMoveInput();
 
@@ -388,7 +451,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateSpriteDirection();
         UpdateAnimatorState();
     }
-    
+
+    // 회피 중이라면 바라보는 방향으로 일정한 속도 유지
+    private void ApplyEvasionVelocity()
+    {
+        float evasionVelocityX = evasionVelocity * (isFacingRight ? 1f : -1f);
+        rb.velocity = new Vector2(evasionVelocityX, rb.velocity.y);
+    }
+
+    private void HandleEvasionCooltime()
+    {
+        timeSinceLastEvasion += Time.fixedDeltaTime;
+    }
+
     // 점프 도중에 콜라이더가 실제 범위보다 넓은 문제를 해결하기 위한 임시방편.
     // 공중에 있는 동안 콜라이더 사이즈를 약간 작게 만들어줌.
     //
@@ -716,9 +791,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
-        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed()); //공격중 애니메이션 재생 ㄴㄴ
+        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
         animator.SetBool("IsAttacking", IsAttacking());
         animator.SetBool("IsStaggered", state == State.Stagger);
+        animator.SetBool("IsEvading", state == State.Evade);
     }
 
     private bool IsAttacking()
@@ -739,6 +815,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     Team IDestructible.GetTeam()
     {
         return Team.Player;
+    }
+
+    bool IDestructible.IsInvincible()
+    {
+        return isInvincible;
     }
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
