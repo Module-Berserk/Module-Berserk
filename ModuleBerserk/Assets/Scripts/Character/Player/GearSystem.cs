@@ -26,7 +26,7 @@ public class GearSystem : MonoBehaviour
     // 비전투 상태에서 1초마다 깎이는 게이지
     private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
 
-    // 기어 레벨별 버프 수치 (일단 합연산으로 처리)
+    // 기어 레벨별 버프 수치 (공격력: 합연산, 공격 속도: 곱연산)
     // TODO: 기획안에 따라 버프 수치 변경할 것
     private struct GearLevelBuff
     {
@@ -35,12 +35,12 @@ public class GearSystem : MonoBehaviour
     }
     private static readonly GearLevelBuff[] GEAR_LEVEL_BUFF =
     {
-        new GearLevelBuff{Damage = 0f, Speed = 0f},
-        new GearLevelBuff{Damage = 1f, Speed = 0.1f},
-        new GearLevelBuff{Damage = 2f, Speed = 0.2f},
-        new GearLevelBuff{Damage = 3f, Speed = 0.3f},
-        new GearLevelBuff{Damage = 4f, Speed = 0.4f},
-        new GearLevelBuff{Damage = 5f, Speed = 0.5f},
+        new GearLevelBuff{Damage = 0f, Speed = 1f},
+        new GearLevelBuff{Damage = 1f, Speed = 1.1f},
+        new GearLevelBuff{Damage = 2f, Speed = 1.2f},
+        new GearLevelBuff{Damage = 3f, Speed = 1.3f},
+        new GearLevelBuff{Damage = 4f, Speed = 1.4f},
+        new GearLevelBuff{Damage = 5f, Speed = 1.5f},
     };
 
 
@@ -71,7 +71,8 @@ public class GearSystem : MonoBehaviour
 
     // 현재 기어 단계의 최대치에 도달한 상태로 머무른 시간.
     // 이 시간이 MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE보다 높아야 다음 단계로 넘어갈 수 있다.
-    private float maxGaugeTime = 0f;
+    // 0단계에서는 공격하면 바로 1단계로 넘어갈 수 있도록 아주 큰 초기값을 부여.
+    private float maxGaugeTime = 10000f;
     // 매 프레임마다 시간을 누적해 공격 또는 피격 이벤트로부터 몇 초나 지났는지 기록함.
     // 공격 및 피격 이후 3초 동안은 전투 중으로 취급함.
     private float combatTimer = 0f;
@@ -185,12 +186,12 @@ public class GearSystem : MonoBehaviour
     {
         // 기존 버프 제거
         attackDamage.ApplyAdditiveModifier(-lastAppliedGearLevelBuff.Damage);
-        attackSpeed.ApplyAdditiveModifier(-lastAppliedGearLevelBuff.Speed);
+        attackSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
         
         // 신규 버프 부여
         lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[CurrentGearLevel];
         attackDamage.ApplyAdditiveModifier(lastAppliedGearLevelBuff.Damage);
-        attackSpeed.ApplyAdditiveModifier(lastAppliedGearLevelBuff.Speed);
+        attackSpeed.ApplyMultiplicativeModifier(lastAppliedGearLevelBuff.Speed);
     }
 
     private void Update()

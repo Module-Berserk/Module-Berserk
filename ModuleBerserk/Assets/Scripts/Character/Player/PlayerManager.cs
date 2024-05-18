@@ -245,21 +245,25 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirection(actionAssets.Player.Move.ReadValue<float>());
 
-        // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
-        rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
-
-        // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우 특수한 공격을 실행
+        // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우
         if (gearSystem.IsNextGearLevelReady())
         {
             gearSystem.IncreaseGearLevel();
 
-            // TODO:
-            // 1. 이번 기어 단계에 맞는 특수 공격 실행
-            // 2. 아래에 있는 return statement 주석 해제해서 함수 바로 종료하기
+            // 기어 0단계에서 기어 1단계로 넘어오는 경우를 제외하면
+            // 해당 공격이 특수 공격으로 전환됨!
+            if (gearSystem.CurrentGearLevel != 1)
+            {
+                // TODO: 이번 기어 단계에 맞는 특수 공격 실행
+                Debug.Log("특수 공격!");
 
-            // return;
+                return;
+            }
         }
+
+        // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
 
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
