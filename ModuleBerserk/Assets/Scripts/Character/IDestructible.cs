@@ -23,10 +23,11 @@ public enum StaggerStrength
     Strong, // 크게 뒤로 밀려나며 넘어지는 수준
 }
 
+// TODO: 멤버 변수에 경직 지속시간 추가
 public struct StaggerInfo
 {
     public StaggerStrength strength; // 경직 강도
-    public Vector2 direction; // 밀려날 방향 (TODO: 만약 왼쪽/오른쪽만 필요하다면 Vector2에서 bool 또는 enum으로 변경)
+    public Vector2 direction; // 밀려날 방향
 
     public StaggerInfo(StaggerStrength strength, Vector2 direction)
     {
