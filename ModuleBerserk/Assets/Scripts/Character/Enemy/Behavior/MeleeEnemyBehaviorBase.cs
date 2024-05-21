@@ -117,8 +117,12 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
             return false;
         }
 
-        // 벼랑 끝에 있는 경우
-        if (groundContact.IsOnGroundEdge)
+        // 플레이어가 있는 방향이 벼랑 끝인 경우
+        float displacement = player.transform.position.x - transform.position.x;
+        bool isOnBrink =
+            (displacement < 0f && !groundContact.IsLeftFootGrounded) || // 왼쪽으로 가야 하는데 왼쪽 발이 공중에 떠있음
+            (displacement > 0f && !groundContact.IsRightFootGrounded); // 오른쪽으로 가야 하는데 오른쪽 발이 공중에 떠있음
+        if (isOnBrink)
         {
             return false;
         }
