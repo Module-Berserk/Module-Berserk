@@ -1561,6 +1561,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDetectionRange: {fileID: 978722739}
   attackRange: {fileID: 573449064}
+  maxPatrolDuration: 6
+  patrolWalkDuration: 1
+  patrolPauseDuration: 2
+  patrolSpeed: 1
 --- !u!114 &874785241
 MonoBehaviour:
   m_ObjectHideFlags: 0

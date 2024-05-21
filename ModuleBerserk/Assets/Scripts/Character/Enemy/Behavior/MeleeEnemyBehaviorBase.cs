@@ -97,15 +97,11 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
         // 플레이어 방향으로 스프라이트 설정
         spriteRenderer.flipX = displacement < 0f;
+
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
         if (Mathf.Abs(displacement) > chaseStopDistance)
         {
-            animator.SetBool("IsMoving", true);
             rb.velocity = new Vector2(Mathf.Sign(displacement) * chaseSpeed, rb.velocity.y);
-        }
-        else
-        {
-            animator.SetBool("IsMoving", false);
         }
     }
 
@@ -142,6 +138,28 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         // 1. 아직 초기 위치에 도달하지 못했다면 계속 이동하고 false 반환
         // 2. 초기 위치에 도달했다면 true 반환
         return true;
+    }
+
+    void IEnemyBehavior.Patrol(float speed)
+    {
+        if (speed == 0f)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+        }
+        else
+        {
+            // 순찰 방향 바라보기
+            spriteRenderer.flipX = speed < 0f;
+
+            // 해당 방향이 낭떠러지가 아니라면 이동
+            bool canMoveForward =
+                (speed < 0f && groundContact.IsLeftFootGrounded) || // 왼쪽으로 가야 하고 왼쪽 발이 지면에 닿아있음
+                (speed > 0f && groundContact.IsRightFootGrounded); // 오른쪽으로 가야 하고 오른쪽 발이 지면에 닿아있음
+            if (canMoveForward)
+            {
+                rb.velocity = new Vector2(speed, rb.velocity.y);
+            }
+        }
     }
 
     bool IEnemyBehavior.TryApplyStagger(StaggerInfo staggerInfo)
