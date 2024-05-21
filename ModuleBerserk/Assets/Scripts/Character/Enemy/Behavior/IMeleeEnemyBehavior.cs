@@ -7,4 +7,8 @@ public interface IMeleeEnemyBehavior : IEnemyBehavior
 
     // 공격 쿨타임 등을 고려해 근접 공격이 준비된 시점에만 true를 반환
     bool IsMeleeAttackReady();
+
+    // 공격 애니메이션이 종료된 상태에서만 true를 반환.
+    // 모션 도중에 추적 상태로 들어가는 것을 방지하기 위해 사용.
+    bool IsMeleeAttackMotionFinished();
 }

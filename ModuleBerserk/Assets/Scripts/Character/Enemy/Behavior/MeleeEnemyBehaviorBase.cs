@@ -12,6 +12,7 @@ using UnityEngine;
 // 1. Animation Controller
 //    - 대기 모션의 마지막 프레임에 OnIdleAnimationEnd 이벤트 필요
 //    - ChangeIdleAnimation 트리거에 반응해 두 종류의 대기 모션을 번갈아가며 사용해야 함
+//    - 공격 모션의 마지막 프레임에 OnAttackMotionEnd 이벤트 필요
 //
 // Note:
 // 지금으로서는 대부분의 근거리 적이 거의 같은 행동을 보일 것으로 예상되므로
@@ -24,7 +25,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 {
     [Header("Chase")]
     // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건
-    [SerializeField] private float chaseStopDistance = 1f;
+    [SerializeField] private float chaseStopDistance = 0.5f;
     [SerializeField] private float chaseSpeed = 1f;
 
     
@@ -45,8 +46,12 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 다른 대기 애니메이션으로 전환되기 위한 반복 재생 횟수
     private const int IDLE_ANIMATION_CHANGE_THRESHOLD = 6;
 
-    // 근접 공격 쿨타임
-    private float timeSinceLastMeleeAttack = 0f;
+    // 근접 공격 쿨타임.
+    // 최초 공격은 바로 수행할 수 있도록 아주 큰 초기값 부여.
+    private float timeSinceLastMeleeAttack = 10000f;
+
+    // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
+    private bool isAttackMotionFinished = true;
 
     private void Awake()
     {
@@ -59,6 +64,13 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     private void Update()
     {
         timeSinceLastMeleeAttack += Time.deltaTime;
+
+        animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
+    }
+
+    public void OnAttackMotionEnd()
+    {
+        isAttackMotionFinished = true;
     }
 
     void IEnemyBehavior.Chase()
@@ -68,7 +80,6 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
         // 플레이어 방향으로 스프라이트 설정
         spriteRenderer.flipX = displacement < 0f;
-
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
         if (Mathf.Abs(displacement) > chaseStopDistance)
         {
@@ -101,24 +112,48 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         return true;
     }
 
+    bool IEnemyBehavior.TryApplyStagger(StaggerInfo staggerInfo)
+    {
+        animator.SetTrigger("Stagger");
+
+        rb.AddForce(staggerInfo.direction * 10.0f, ForceMode2D.Impulse);
+
+        // 공격받은 방향 바라보기 (오른쪽으로 넉백 <=> 왼쪽에서 공격당함)
+        spriteRenderer.flipX = staggerInfo.direction.x > 0f;
+
+        // 공격 모션이 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
+        isAttackMotionFinished = true;
+
+        return true;
+    }
+
     void IMeleeEnemyBehavior.MeleeAttack()
     {
         // 공격 모션 시작
         //
         // TODO:
-        // 적 애니메이션 완성되면 animation controller 제대로 만들기...
-        // 지금은 플레이어 애니메이션 복사해서 사용하는지라
-        // 호출해야될 이벤트가 없다는 등의 에라 로그가 출력됨.
-        // 모션이 잘 나오는지만 확인하기 위해 만든 임시 에셋이니 일단 무시합시다
+        // 1. 적 애니메이션 완성되면 animation controller 제대로 만들기...
+        //    지금은 플레이어 애니메이션 복사해서 사용하는지라
+        //    호출해야될 이벤트가 없다는 등의 에라 로그가 출력됨.
+        //    모션이 잘 나오는지만 확인하기 위해 만든 임시 에셋이니 일단 무시합시다
+        // 2. 공격 애니메이션에 슈퍼아머 토글, 무기 콜라이더 토글하는 이벤트 추가!
         animator.SetTrigger("MeleeAttack");
 
         // 쿨타임 시작
         timeSinceLastMeleeAttack = 0f;
+
+        // 공격 애니메이션 재생 중
+        isAttackMotionFinished = false;
     }
 
     bool IMeleeEnemyBehavior.IsMeleeAttackReady()
     {
         return timeSinceLastMeleeAttack > meleeAttackCooltime;
+    }
+
+    bool IMeleeEnemyBehavior.IsMeleeAttackMotionFinished()
+    {
+        return isAttackMotionFinished;
     }
 
     void IEnemyBehavior.StartIdle()

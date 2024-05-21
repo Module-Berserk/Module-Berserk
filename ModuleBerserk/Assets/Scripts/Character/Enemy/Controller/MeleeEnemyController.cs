@@ -39,13 +39,11 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     private IMeleeEnemyBehavior meleeEnemyBehavior;
     private FlashEffectOnHit flashEffectOnHit;
     private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
 
     // IDestructible이 요구하는 스탯
     private CharacterStat hp = new(100f, 0f, 100f);
     private CharacterStat defense = new(10f, 0f);
-
-    // 플레이어가 Chase 상태에서 적의 공격 범위 내에 몇 초나 머물렀는지 측정
-    private float playerInAttackRangeTimer = 0f;
 
     private enum State
     {
@@ -61,6 +59,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         meleeEnemyBehavior = GetComponent<IMeleeEnemyBehavior>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
@@ -79,19 +78,10 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
             {
                 meleeEnemyBehavior.Chase();
 
-                // 만약 플레이어가 공격 범위에 일정 시간 이상 머무른다면 공격 상태로 전환
+                // 플레이어가 공격 범위에 들어오면 즉시 공격 시도
                 if (attackRangeDetector.IsPlayerInRange)
                 {
-                    playerInAttackRangeTimer += Time.fixedDeltaTime;
-
-                    if (playerInAttackRangeTimer > 0.5f)
-                    {
-                        state = State.Attack;
-                    }
-                }
-                else
-                {
-                    playerInAttackRangeTimer = 0f;
+                    state = State.Attack;
                 }
             }
             // 추적 범위를 벗어났다면 초기 위치로 돌아온 뒤 대기 상태로 전환
@@ -118,11 +108,17 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
                     meleeEnemyBehavior.MeleeAttack();
                 }
             }
-            // 공격 범위를 벗어났다면 다시 Chase 상태로 전환
-            else
+            // 공격 범위를 벗어났고, 아직 공격 모션이 재생 중이지 않다면 다시 Chase 상태로 전환
+            else if (meleeEnemyBehavior.IsMeleeAttackMotionFinished())
             {
                 state = State.Chase;
             }
+        }
+        else if (state == State.Stagger)
+        {
+            // 경직과 같이 부여된 넉백 효과 부드럽게 감소
+            float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, 30f * Time.deltaTime);
+            rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
         }
     }
 
@@ -142,18 +138,21 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
             // TODO: 로그 출력 삭제하고 인식 모션 시작
             Debug.Log("플레이어 인식!");
-
-            // 주변에서 인식 정보를 공유받아 이 함수가 호출된 경우
-            // 자신의 PlayerDetector에는 플레이어가 아직 감지되지 않은 상태이므로
-            // 나중에 OnPlayerDetect가 한 번 더 실행될 수 있음.
-            //
-            // ex) 다른 층에 있는 적에게서 플레이어 인식 정보를 공유받은 뒤
-            //     플레이어가 자신의 층으로 점프해 올라온 경우
-            //
-            // 하지만 인식 정보 공유는 최초 발견자만 수행해야 하므로
-            // 여기서 PlayerDetector의 정보 공유 옵션을 비활성화 해줘야 함.
-            playerDetector.IsDetectionShared = false;
         }
+
+        // 주변에서 인식 정보를 공유받아 이 함수가 호출된 경우
+        // 자신의 PlayerDetector에는 플레이어가 아직 감지되지 않은 상태이므로
+        // 나중에 OnPlayerDetect가 한 번 더 실행될 수 있음.
+        //
+        // ex) 다른 층에 있는 적에게서 플레이어 인식 정보를 공유받은 뒤
+        //     플레이어가 자신의 층으로 점프해 올라온 경우
+        //
+        // ex) 대기 상태에서 플레이어에게 백어택을 당해 경직 & 추적 상태에 돌입.
+        //     Chase()에 의해 뒤를 돌아본 순간 플레이어가 PlayerDetector 범위 안에 들어온 경우.
+        //
+        // 하지만 인식 정보 공유는 최초 발견자만 수행해야 하므로
+        // 여기서 PlayerDetector의 정보 공유 옵션을 비활성화 해줘야 함.
+        playerDetector.IsDetectionShared = false;
     }
 
     CharacterStat IDestructible.GetHPStat()
@@ -173,11 +172,29 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
-        // TODO:
-        // 1. 경직 구현 (경직 끝나면 chase 상태로 전환)
-        // 2. 아직 플레이어를 인식하지 못한 상태였다면 아래 라인 실행 (인식 & 주변에 인식 정보 공유)
-        //    (this as IPlayerDetector).ShareDetectionInfo();
+        // 피격 이펙트
         flashEffectOnHit.StartEffectAsync().Forget();
+
+        // 경직 상태에 들어갔다면 잠시 기다렸다가 추적 시작
+        if (meleeEnemyBehavior.TryApplyStagger(staggerInfo))
+        {
+            state = State.Stagger;
+
+            // TODO: 경직 지속 시간을 staggerInfo의 정보로 대체하기
+            StartChasingAfterDuration(0.5f).Forget();
+        }
+        // 만약 슈퍼아머로 인해 경직을 무시했다면 바로 추적 시작
+        else
+        {
+            state = State.Chase;
+        }
+    }
+
+    private async UniTask StartChasingAfterDuration(float duration)
+    {
+        await UniTask.WaitForSeconds(duration);
+
+        state = State.Chase;
     }
 
     void IDestructible.OnDestruction()

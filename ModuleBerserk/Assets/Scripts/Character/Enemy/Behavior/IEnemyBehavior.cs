@@ -17,4 +17,9 @@ public interface IEnemyBehavior
     // 플레이어가 추적 범위를 벗어나 원래 위치로 돌아오는 동안 매 스탭 호출되는 함수.
     // 이동이 끝나지 않았다면 false를, 끝났다면 true를 반환해야 함.
     bool ReturnToInitialPosition();
+
+    // 피격 경직을 부여할 때 호출되는 함수.
+    // 만약 슈퍼아머 상태라면 아무것도 안 하고 false를 리턴해야 함.
+    // 반대로 경직이 적용되었다면 true를 리턴해야 함.
+    bool TryApplyStagger(StaggerInfo staggerInfo);
 }
