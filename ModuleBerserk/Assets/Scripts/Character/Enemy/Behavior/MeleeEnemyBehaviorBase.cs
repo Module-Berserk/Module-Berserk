@@ -21,12 +21,20 @@ using UnityEngine;
 // 만약 차이점이 너무 크다면 그냥 IMeleeEnemyBehavior를 새로 구현하면 됨.
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 {
     [Header("Chase")]
     // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건
     [SerializeField] private float chaseStopDistance = 0.5f;
     [SerializeField] private float chaseSpeed = 1f;
+    // 플레이어가 이 영역에 들어온 경우에만 추적 가능하다고 판단함
+    [SerializeField] private PlayerDetectionRange chaseRange;
+
+
+    [Header("Ground Contact")]
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private float contactDistanceThreshold = 0.02f;
 
     
     [Header("Melee Attack")]
@@ -37,9 +45,13 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
+    private BoxCollider2D boxCollider;
 
     // 플레이어 추적용 레퍼런스
     private GameObject player;
+
+    // 플레이어를 추적할 때 낙하하지 않을 상태인지 확인하기 위해 사용
+    private GroundContact groundContact;
 
     // 현재 대기 애니메이션이 반복 재생된 횟수
     private int idleAnimationRepetitionCount = 0;
@@ -58,12 +70,17 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         player = GameObject.FindGameObjectWithTag("Player");
+        
+        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        timeSinceLastMeleeAttack += Time.deltaTime;
+        groundContact.TestContact();
+
+        timeSinceLastMeleeAttack += Time.fixedDeltaTime;
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
     }
@@ -100,7 +117,18 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
             return false;
         }
 
-        // TODO: 플레이어가 자신이 위치한 플랫폼 범위 안에 존재하는 경우에만 true 반환
+        // 벼랑 끝에 있는 경우
+        if (groundContact.IsOnGroundEdge)
+        {
+            return false;
+        }
+
+        // 플레이어가 추적 가능 범위를 벗어난 경우
+        if (!chaseRange.IsPlayerInRange)
+        {
+            return false;
+        }
+
         return true;
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 // 감지 범위에 들어온 플레이어를 인식해 이벤트를 발생시키고
-// 주변의 PlayerDetector에게 인식 정보를 공유하는 기능을 제공함.
+// 주변의 PlayerDetectionRange에게 인식 정보를 공유하는 기능을 제공함.
 //
 // 그냥 특정 범위 안에 플레이어가 존재하는지 확인하는 용도로 사용할 수도 있음.
 //
@@ -18,17 +18,17 @@ using UnityEngine.Events;
 // 2. 자식 오브젝트에 trigger로 설정된 2d 콜라이더를 넣는다
 // 3. 마지막으로 이 스크립트를 추가한다
 [RequireComponent(typeof(Collider2D))]
-public class PlayerDetector : MonoBehaviour
+public class PlayerDetectionRange : MonoBehaviour
 {
     // 인식 공유 범위 (원형 범위의 반지름)
     [SerializeField] float detectionSharingRadius = 0f;
 
     // 플레이어가 탐지 범위 콜라이더에 들어왔을 때
-    // 주변에 있는 PlayerDetector에 감지 정보를 공유할지 결정하는 옵션.
+    // 주변에 있는 PlayerDetectionRange에 감지 정보를 공유할지 결정하는 옵션.
     public bool IsDetectionShared = false;
 
     // 플레이어가 직접 탐지 범위 콜라이더에 들어오거나
-    // 근처의 PlayerDetector의 ShareDetectionInfo()에 의해
+    // 근처의 PlayerDetectionRange의 ShareDetectionInfo()에 의해
     // 플레이어 인식 정보가 공유된 경우 호출되는 이벤트.
     public UnityEvent OnPlayerDetect;
 
@@ -74,7 +74,7 @@ public class PlayerDetector : MonoBehaviour
         }
     }
 
-    // 주위에 있는 IPlayerDetector에게 정보를 공유해
+    // 주위에 있는 PlayerDetectionRange에게 정보를 공유해
     // OnPlayerDetect 이벤트가 호출되게 만든다.
     private void ShareDetectionInfo()
     {
@@ -82,7 +82,7 @@ public class PlayerDetector : MonoBehaviour
         var colliders = Physics2D.OverlapCircleAll(transform.position, detectionSharingRadius);
         foreach (var collider in colliders)
         {
-            if (collider.TryGetComponent(out PlayerDetector detector) && detector != this)
+            if (collider.TryGetComponent(out PlayerDetectionRange detector) && detector != this)
             {
                 detector.OnPlayerDetect.Invoke();
             }

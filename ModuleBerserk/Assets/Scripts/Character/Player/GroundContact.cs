@@ -8,6 +8,7 @@ public class GroundContact
 {
     public GameObject CurrentPlatform {get; private set;}
     public bool IsGrounded {get => CurrentPlatform != null;}
+    public bool IsOnGroundEdge {get; private set;}
     public bool IsInContactWithLeftWall {get; private set;}
     public bool IsInContactWithRightWall {get; private set;}
 
@@ -61,6 +62,7 @@ public class GroundContact
         // TODO: 움직이는 플랫폼 위에 있는 경우 고려하기
         if (Mathf.Abs(rigidbody.velocity.y) > 0.01f)
         {
+            IsOnGroundEdge = false;
             return null;
         }
 
@@ -68,6 +70,9 @@ public class GroundContact
         var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
         ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter);
+
+        // 만약 아래에 플랫폼이 있다면 그 중에서도 끝자락에 위치한 상태인지 테스트
+        IsOnGroundEdge = result.IsOnlyOneHit();
 
         return result.TryGetCollidingObject();
     }
@@ -120,6 +125,13 @@ public class GroundContact
         public bool IsBothRayHit()
         {
             return Hit1 && Hit2;
+        }
+
+        // 둘 중 하나만 성공했는지 반환.
+        // 지금 플랫폼의 경계에 걸쳐있는지 테스트할 때 사용됨.
+        public bool IsOnlyOneHit()
+        {
+            return Hit1 ^ Hit2;
         }
     }
 

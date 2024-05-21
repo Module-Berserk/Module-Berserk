@@ -8,14 +8,14 @@ using System;
 //
 // 의존성:
 // 1. IMeleeEnemyBehavior 인터페이스를 구현한 스크립트 추가
-// 2. 자식 오브젝트에 인식 판정에 사용할 PlayerDetector 스크립트 추가
-// 3. 또 다른 자식 오브젝트에 공격 범위 판정에 사용할 PlayerDetector 스크립트 추가
+// 2. 자식 오브젝트에 인식 판정에 사용할 PlayerDetectionRange 스크립트 추가
+// 3. 또 다른 자식 오브젝트에 공격 범위 판정에 사용할 PlayerDetectionRange 스크립트 추가
 //
 // Hierarchy에서 보면 오브젝트 구조가 아래와 같음:
 //
 //   melee enemy
-//   ㄴ player detector
-//   ㄴ attack range detector
+//   ㄴ player detection range
+//   ㄴ attack range
 //
 // 만약 적절한 Behavior 스크립트가 없는 상태에서 이 스크립트를
 // 게임 오브젝트에 추가하는 경우 아래와 같은 경고 창이 표시된다:
@@ -30,10 +30,10 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     [Header("Player Detectors")]
     // 플레이어가 존재한다는걸 인식할 때 사용하는 detector.
     // idle -> chase 상태 전환 조건으로 쓰인다.
-    [SerializeField] private PlayerDetector playerDetector;
+    [SerializeField] private PlayerDetectionRange playerDetectionRange;
     // 플레이어가 공격 범위 안에 있는지 판단하기 위한 detector.
     // chase -> attack 상태 전환 조건으로 쓰인다.
-    [SerializeField] private PlayerDetector attackRangeDetector;
+    [SerializeField] private PlayerDetectionRange attackRange;
 
     // 컴포넌트 레퍼런스
     private IMeleeEnemyBehavior meleeEnemyBehavior;
@@ -64,7 +64,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     private void Start()
     {
-        playerDetector.OnPlayerDetect.AddListener(HandlePlayerDetection);
+        playerDetectionRange.OnPlayerDetect.AddListener(HandlePlayerDetection);
     }
 
     private void FixedUpdate()
@@ -79,7 +79,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
                 meleeEnemyBehavior.Chase();
 
                 // 플레이어가 공격 범위에 들어오면 즉시 공격 시도
-                if (attackRangeDetector.IsPlayerInRange)
+                if (attackRange.IsPlayerInRange)
                 {
                     state = State.Attack;
                 }
@@ -88,7 +88,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
             else
             {
                 // 돌아가는 동안 플레이어를 발견하면 다시 주위에 알려줘야 함
-                playerDetector.IsDetectionShared = true;
+                playerDetectionRange.IsDetectionShared = true;
 
                 bool isReturnComplete = meleeEnemyBehavior.ReturnToInitialPosition();
                 if (isReturnComplete)
@@ -101,7 +101,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         else if (state == State.Attack)
         {
             // 플레이어가 공격 범위 안에 있고 공격 쿨타임이 지났다면 다음 공격 시행
-            if (attackRangeDetector.IsPlayerInRange)
+            if (attackRange.IsPlayerInRange)
             {
                 if (meleeEnemyBehavior.IsMeleeAttackReady())
                 {
@@ -126,8 +126,8 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     // 스프라이트가 바라보는 방향과 일치하도록 조정
     private void UpdateDetectorDirection()
     {
-        playerDetector.SetDetectorDirection(spriteRenderer.flipX);
-        attackRangeDetector.SetDetectorDirection(spriteRenderer.flipX);
+        playerDetectionRange.SetDetectorDirection(spriteRenderer.flipX);
+        attackRange.SetDetectorDirection(spriteRenderer.flipX);
     }
 
     void HandlePlayerDetection()
@@ -141,18 +141,18 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         }
 
         // 주변에서 인식 정보를 공유받아 이 함수가 호출된 경우
-        // 자신의 PlayerDetector에는 플레이어가 아직 감지되지 않은 상태이므로
+        // 자신의 PlayerDetectionRange에는 플레이어가 아직 감지되지 않은 상태이므로
         // 나중에 OnPlayerDetect가 한 번 더 실행될 수 있음.
         //
         // ex) 다른 층에 있는 적에게서 플레이어 인식 정보를 공유받은 뒤
         //     플레이어가 자신의 층으로 점프해 올라온 경우
         //
         // ex) 대기 상태에서 플레이어에게 백어택을 당해 경직 & 추적 상태에 돌입.
-        //     Chase()에 의해 뒤를 돌아본 순간 플레이어가 PlayerDetector 범위 안에 들어온 경우.
+        //     Chase()에 의해 뒤를 돌아본 순간 플레이어가 PlayerDetectionRange 안에 들어온 경우.
         //
         // 하지만 인식 정보 공유는 최초 발견자만 수행해야 하므로
-        // 여기서 PlayerDetector의 정보 공유 옵션을 비활성화 해줘야 함.
-        playerDetector.IsDetectionShared = false;
+        // 여기서 PlayerDetectionRange의 정보 공유 옵션을 비활성화 해줘야 함.
+        playerDetectionRange.IsDetectionShared = false;
     }
 
     CharacterStat IDestructible.GetHPStat()
