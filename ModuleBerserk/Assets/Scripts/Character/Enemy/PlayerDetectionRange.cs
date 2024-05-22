@@ -20,8 +20,11 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider2D))]
 public class PlayerDetectionRange : MonoBehaviour
 {
+    [Header("Detection")]
     // 인식 공유 범위 (원형 범위의 반지름)
-    [SerializeField] float detectionSharingRadius = 0f;
+    [SerializeField] private float detectionSharingRadius = 0f;
+    // 인식 또는 인식 공유를 막을 레이어 (ex. ground)
+    [SerializeField] private LayerMask detectionBlockingLayerMask;
 
     // 플레이어가 탐지 범위 콜라이더에 들어왔을 때
     // 주변에 있는 PlayerDetectionRange에 감지 정보를 공유할지 결정하는 옵션.
@@ -34,13 +37,60 @@ public class PlayerDetectionRange : MonoBehaviour
 
     // 플레이어가 탐지 범위 콜라이더 안에 존재하는지 (인식 정보 공유는 고려하지 않음!)
     public bool IsPlayerInRange {get; private set;}
+    // 플레이어를 식별 가능한지
+    //
+    // IsPlayerInRange가 true여도 벽 등에 시선이 가로막히면
+    // IsPlayerDetected는 false가 될 수 있음.
+    public bool IsPlayerDetected {get; private set;}
 
     // 컴포넌트 레퍼런스
     private Collider2D detectionRange;
 
+    // 플레이어가 영역 안에 있을 때 시선이 닿는지 테스트하기 위해 참조.
+    // 영역 안에 있어도 벽에 가로막히면 detected로 취급하지 않는다!
+    private GameObject player;
+
     private void Awake()
     {
         detectionRange = GetComponent<Collider2D>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (IsPlayerInRange)
+        {
+            // 플레이어가 영역 안에는 들어왔지만 아직 시야가 가려있는 상태라면
+            // 이번 프레임에는 플레이어가 시야에 들어왔는지 확인함
+            if (!IsPlayerDetected && IsTargetVisible(player))
+            {
+                if (IsDetectionShared)
+                {
+                    ShareDetectionInfo();
+                }
+
+                OnPlayerDetect.Invoke();
+            }
+            // 플레이어가 영역 안에 있고 시야에도 들어온 상태라면
+            // 이번 프레임에 플레이어가 벽 뒤로 숨었는지 확인함
+            else if (IsPlayerDetected && !IsTargetVisible(player))
+            {
+                IsPlayerDetected = false;
+            }
+        }
+    }
+
+    private bool IsTargetVisible(GameObject target)
+    {
+        // 시야가 벽에 가로막혔는지 체크
+        Vector2 origin = transform.position;
+        Vector2 direction = target.transform.position - transform.position;
+        float distance = direction.magnitude;
+        if (Physics2D.Raycast(origin, direction, distance, detectionBlockingLayerMask))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public void SetDetectorDirection(bool flipX)
@@ -55,14 +105,9 @@ public class PlayerDetectionRange : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            player = other.gameObject;
+
             IsPlayerInRange = true;
-
-            if (IsDetectionShared)
-            {
-                ShareDetectionInfo();
-            }
-
-            OnPlayerDetect.Invoke();
         }
     }
 
@@ -71,6 +116,7 @@ public class PlayerDetectionRange : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             IsPlayerInRange = false;
+            IsPlayerDetected = false;
         }
     }
 
@@ -82,9 +128,14 @@ public class PlayerDetectionRange : MonoBehaviour
         var colliders = Physics2D.OverlapCircleAll(transform.position, detectionSharingRadius);
         foreach (var collider in colliders)
         {
+            // 공유 범위 안에 존재하는 PlayerDetectionRange 중에서 시야가 확보된 대상에 한해 정보 공유.
+            // 플랫폼, 벽 등으로 단절된 공간에 정보를 공유하는 상황을 막아준다.
             if (collider.TryGetComponent(out PlayerDetectionRange detector) && detector != this)
             {
-                detector.OnPlayerDetect.Invoke();
+                if (IsTargetVisible(collider.gameObject))
+                {
+                    detector.OnPlayerDetect.Invoke();
+                }
             }
         }
     }
