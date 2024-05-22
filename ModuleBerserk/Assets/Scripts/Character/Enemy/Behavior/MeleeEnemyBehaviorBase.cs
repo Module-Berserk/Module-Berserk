@@ -41,6 +41,18 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 다음 공격까지 기다려야 하는 시간
     [SerializeField] private float meleeAttackCooltime = 3f;
 
+
+    [Header("Patrol")]
+    // 순찰 상태가 지속되는 최대 시간
+    [SerializeField] private float maxPatrolDuration = 6f;
+    // 순찰 하위 상태인 '걷기' 또는 '대기'의 지속시간 범위.
+    // 하위 상태가 변경될 때마다 min ~ max 사이의 랜덤한 시간이 할당된다.
+    [SerializeField] private float minPatrolSubbehaviorDuration = 1f;
+    [SerializeField] private float maxPatrolSubbehaviorDuration = 2f;
+    // 순찰 중 걷기 상태의 이동 속도
+    [SerializeField] private float patrolSpeed = 0.5f;
+
+
     // 컴포넌트 레퍼런스
     private Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -65,6 +77,18 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
     private bool isAttackMotionFinished = true;
 
+    // 순찰 상태가 유지된 시간 총합
+    private float remaningPatrolDuration = 0f;
+    // 순찰 세부 상태 중 '걷기' 또는 '대기'가 유지된 시간
+    private float remaningPatrolSubbehaviorDuration = 0f;
+    // 순찰 세부 상태
+    private enum PatrolSubbehavior
+    {
+        Walk,
+        Pause,
+    }
+    private PatrolSubbehavior patrolSubbehavior = PatrolSubbehavior.Walk;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -83,6 +107,13 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         timeSinceLastMeleeAttack += Time.fixedDeltaTime;
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
+        
+        // 순찰
+        remaningPatrolDuration -= Time.fixedDeltaTime;
+        if (remaningPatrolDuration > 0f)
+        {
+            PerformPatrol();
+        }
     }
 
     public void OnAttackMotionEnd()
@@ -113,12 +144,9 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
             return false;
         }
 
-        // 플레이어가 있는 방향이 벼랑 끝인 경우
+        // 플레이어가 있는 방향이 낭떠러지인 경우
         float displacement = player.transform.position.x - transform.position.x;
-        bool isOnBrink =
-            (displacement < 0f && !groundContact.IsLeftFootGrounded) || // 왼쪽으로 가야 하는데 왼쪽 발이 공중에 떠있음
-            (displacement > 0f && !groundContact.IsRightFootGrounded); // 오른쪽으로 가야 하는데 오른쪽 발이 공중에 떠있음
-        if (isOnBrink)
+        if (IsOnBrink(displacement))
         {
             return false;
         }
@@ -140,26 +168,107 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         return true;
     }
 
-    void IEnemyBehavior.Patrol(float speed)
+    void IEnemyBehavior.StartPatrol()
     {
-        if (speed == 0f)
+        remaningPatrolDuration = maxPatrolDuration;
+
+        SetPatrolSubbehavior(PatrolSubbehavior.Walk);
+        SetInitialPatrolDirection();
+    }
+
+    // 순찰 하위 상태를 변경함.
+    // '걷기' 상태로 전환하는 경우 마지막 순찰 방향과 반대로 이동하게 됨.
+    private void SetPatrolSubbehavior(PatrolSubbehavior subbehavior)
+    {
+        patrolSubbehavior = subbehavior;
+
+        // 이번 하위 상태의 지속시간을 랜덤하게 할당
+        remaningPatrolSubbehaviorDuration = Random.Range(minPatrolSubbehaviorDuration, maxPatrolSubbehaviorDuration);
+
+        // '걷기' 상태에 돌입한 경우 방향 전환
+        if (patrolSubbehavior == PatrolSubbehavior.Walk)
         {
-            rb.velocity = new Vector2(0f, rb.velocity.y);
+            patrolSpeed *= -1;
+        }
+    }
+
+    // 순찰을 시작할 때 낭떠러지 방향이 아닌 랜덤한 방향으로 순찰을 시작함
+    private void SetInitialPatrolDirection()
+    {
+        // 50% 확률로 랜덤하게 순찰 방향을 선택
+        patrolSpeed = Mathf.Abs(patrolSpeed) * (Random.Range(0, 1) == 0 ? 1f : -1f);
+
+        // 만약 해당 방향이 낭떠러지라면 반대로 이동
+        if (IsOnBrink(patrolSpeed))
+        {
+            patrolSpeed *= -1f;
+        }
+    }
+
+    // 순찰 방향이 낭떠러지인지 반환
+    private bool IsOnBrink(float direction)
+    {
+        return 
+            (direction > 0f && !groundContact.IsRightFootGrounded) ||
+            (direction < 0f && !groundContact.IsLeftFootGrounded);
+    }
+
+    bool IEnemyBehavior.isPatrolFinished()
+    {
+        return remaningPatrolDuration <= 0f;
+    }
+
+    private void PerformPatrol()
+    {
+        // 아직 순찰이 끝나지 않은 경우 '걷기'와 '대기'라는 순찰 하위 상태를 반복함
+        UpdatePatrolSubbehavior();
+
+        if (patrolSubbehavior == PatrolSubbehavior.Walk)
+        {
+            PatrolWalk();
         }
         else
         {
-            // 순찰 방향 바라보기
-            spriteRenderer.flipX = speed < 0f;
+            PatrolPause();
+        }
+    }
 
-            // 해당 방향이 낭떠러지가 아니라면 이동
-            bool canMoveForward =
-                (speed < 0f && groundContact.IsLeftFootGrounded) || // 왼쪽으로 가야 하고 왼쪽 발이 지면에 닿아있음
-                (speed > 0f && groundContact.IsRightFootGrounded); // 오른쪽으로 가야 하고 오른쪽 발이 지면에 닿아있음
-            if (canMoveForward)
+    private void UpdatePatrolSubbehavior()
+    {
+        // '걷기' 또는 '대기'가 지속된 시간 누적
+        remaningPatrolSubbehaviorDuration -= Time.fixedDeltaTime;
+
+        // 하위 상태 지속 시간이 끝나면 '걷기'와 '대기'를 번갈아가며 실행
+        if (remaningPatrolSubbehaviorDuration < 0f)
+        {
+            if (patrolSubbehavior == PatrolSubbehavior.Walk)
             {
-                rb.velocity = new Vector2(speed, rb.velocity.y);
+                SetPatrolSubbehavior(PatrolSubbehavior.Pause);
+            }
+            else
+            {
+                SetPatrolSubbehavior(PatrolSubbehavior.Walk);
             }
         }
+    }
+
+    // 순찰 하위 상태 중 '걷기'에 해당하는 행동
+    private void PatrolWalk()
+    {
+        // 순찰 방향 바라보기
+        spriteRenderer.flipX = patrolSpeed < 0f;
+
+        // 해당 방향이 낭떠러지가 아니라면 이동
+        if (!IsOnBrink(patrolSpeed))
+        {
+            rb.velocity = new Vector2(patrolSpeed, rb.velocity.y);
+        }
+    }
+
+    // 순찰 하위 상태 중 '대기'에 해당하는 행동
+    private void PatrolPause()
+    {
+        rb.velocity = new Vector2(0f, rb.velocity.y);
     }
 
     bool IEnemyBehavior.TryApplyStagger(StaggerInfo staggerInfo)

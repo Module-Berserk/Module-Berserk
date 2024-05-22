@@ -34,17 +34,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     // chase -> attack 상태 전환 조건으로 쓰인다.
     [SerializeField] private PlayerDetectionRange attackRange;
 
-
-    [Header("Patrol")]
-    // 순찰 상태가 지속되는 최대 시간
-    [SerializeField] private float maxPatrolDuration = 6f;
-    // 순찰 중 걷기 상태가 지속되는 시간. 걷기 <-> 대기는 번갈아가며 실행됨.
-    [SerializeField] private float patrolWalkDuration = 1f;
-    // 순찰 중 대기 상태가 지속되는 시간. 걷기 <-> 대기는 번갈아가며 실행됨.
-    [SerializeField] private float patrolPauseDuration = 2f;
-    // 순찰 중 걷기 상태의 이동 속도
-    [SerializeField] private float patrolSpeed = 0.5f;
-
     // 컴포넌트 레퍼런스
     private IMeleeEnemyBehavior meleeEnemyBehavior;
     private FlashEffectOnHit flashEffectOnHit;
@@ -54,13 +43,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     // IDestructible이 요구하는 스탯
     private CharacterStat hp = new(100f, 0f, 100f);
     private CharacterStat defense = new(10f, 0f);
-
-    // 순찰 상태가 유지된 시간 총합
-    private float patrolDuration = 0f;
-    // 순찰 세부 상태 중 '걷기' 또는 '대기'가 유지된 시간
-    private float patrolSubbehaviorDuration = 0f;
-    // 순찰 세부 상태가 '걷기'인지 기록하는 플래그
-    private bool isPatrolSubbehaviorWalk = true;
 
     private enum State
     {
@@ -118,20 +100,12 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
             if (isReturnComplete)
             {
                 state = State.Patrol;
-                patrolDuration = 0f;
-                isPatrolSubbehaviorWalk = true;
+                meleeEnemyBehavior.StartPatrol();
             }
         }
         else if (state == State.Patrol)
         {
-            // 아직 순찰이 끝나지 않은 경우 '걷기'와 '대기'라는 순찰 하위 상태를 반복함
-            if (patrolDuration < maxPatrolDuration)
-            {
-                patrolDuration += Time.fixedDeltaTime;
-                HandlePatrolBehavior();
-            }
-            // 순찰이 끝났다면 다시 대기 상태로 전환
-            else
+            if (meleeEnemyBehavior.isPatrolFinished())
             {
                 state = State.Idle;
                 meleeEnemyBehavior.StartIdle();
@@ -158,33 +132,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
             // 경직과 같이 부여된 넉백 효과 부드럽게 감소
             float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, 30f * Time.deltaTime);
             rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
-        }
-    }
-
-    private void HandlePatrolBehavior()
-    {
-        // '걷기' 또는 '대기'가 지속된 시간 누적
-        patrolSubbehaviorDuration += Time.fixedDeltaTime;
-
-        // '걷기'가 끝났으면 '대기' 시작
-        if (isPatrolSubbehaviorWalk && patrolSubbehaviorDuration > patrolWalkDuration)
-        {
-            isPatrolSubbehaviorWalk = false;
-            patrolSubbehaviorDuration = 0f;
-        }
-        // '대기'가 끝났으면 '걷기' 시작
-        else if (!isPatrolSubbehaviorWalk && patrolSubbehaviorDuration > patrolPauseDuration)
-        {
-            isPatrolSubbehaviorWalk = true;
-            patrolSubbehaviorDuration = 0f;
-
-            // 순찰 방향은 '걷기' 상태에 진입할 때마다 반대로 바뀜
-            patrolSpeed *= -1;
-        }
-
-        if (isPatrolSubbehaviorWalk)
-        {
-            meleeEnemyBehavior.Patrol(patrolSpeed);
         }
     }
 

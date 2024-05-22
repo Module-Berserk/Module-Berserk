@@ -1561,10 +1561,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDetectionRange: {fileID: 978722739}
   attackRange: {fileID: 573449064}
-  maxPatrolDuration: 6
-  patrolWalkDuration: 1
-  patrolPauseDuration: 2
-  patrolSpeed: 1
 --- !u!114 &874785241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1585,6 +1581,10 @@ MonoBehaviour:
     m_Bits: 8
   contactDistanceThreshold: 0.02
   meleeAttackCooltime: 3
+  maxPatrolDuration: 8
+  minPatrolSubbehaviorDuration: 1
+  maxPatrolSubbehaviorDuration: 2
+  patrolSpeed: 0.5
 --- !u!61 &874785242
 BoxCollider2D:
   m_ObjectHideFlags: 0
