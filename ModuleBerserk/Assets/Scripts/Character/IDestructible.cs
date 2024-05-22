@@ -23,20 +23,21 @@ public enum StaggerStrength
     Strong, // 크게 뒤로 밀려나며 넘어지는 수준
 }
 
-// TODO: 멤버 변수에 경직 지속시간 추가
 public struct StaggerInfo
 {
     public StaggerStrength strength; // 경직 강도
     public Vector2 direction; // 밀려날 방향
+    public float duration; // 경직 지속 시간
 
-    public StaggerInfo(StaggerStrength strength, Vector2 direction)
+    public StaggerInfo(StaggerStrength strength, Vector2 direction, float duration)
     {
         this.strength = strength;
         this.direction = direction;
+        this.duration = duration;
     }
 
     // 경직 없이 데미지를 입히고 싶은 경우 사용
-    public static StaggerInfo NoStagger => new(StaggerStrength.None, Vector2.zero);
+    public static StaggerInfo NoStagger => new(StaggerStrength.None, Vector2.zero, 0f);
 }
 
 // 체력과 방어력이 존재하며 파괴 가능한 모든 물체

@@ -57,9 +57,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
     [SerializeField] private float weakStaggerKnockbackForce = 13f;
     [SerializeField] private float strongStaggerKnockbackForce = 23f;
-    // 경직의 지속 시간
-    [SerializeField] private float weakStaggerDuration = 0.2f;
-    [SerializeField] private float strongStaggerDuration = 0.5f;
+
 
     [Header("Attack")]
     // 공격 범위로 사용할 콜라이더
@@ -756,10 +754,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         switch(staggerInfo.strength)
         {
             case StaggerStrength.Weak:
-                ApplyStagger(staggerInfo.direction * weakStaggerKnockbackForce, weakStaggerDuration);
+                ApplyStagger(staggerInfo.direction * weakStaggerKnockbackForce, staggerInfo.duration);
                 break;
             case StaggerStrength.Strong:
-                ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, strongStaggerDuration);
+                ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, staggerInfo.duration);
                 break;
         }
     }

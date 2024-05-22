@@ -129,9 +129,11 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         }
         else if (state == State.Stagger)
         {
-            // 경직과 같이 부여된 넉백 효과 부드럽게 감소
-            float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, 30f * Time.deltaTime);
-            rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
+            // 경직이 끝나면 추적 상태로 전환
+            if (meleeEnemyBehavior.IsStaggerFinished())
+            {
+                state = State.Chase;
+            }
         }
     }
 
@@ -192,22 +194,12 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         if (meleeEnemyBehavior.TryApplyStagger(staggerInfo))
         {
             state = State.Stagger;
-
-            // TODO: 경직 지속 시간을 staggerInfo의 정보로 대체하기
-            StartChasingAfterDuration(0.5f).Forget();
         }
         // 만약 슈퍼아머로 인해 경직을 무시했다면 바로 추적 시작
         else
         {
             state = State.Chase;
         }
-    }
-
-    private async UniTask StartChasingAfterDuration(float duration)
-    {
-        await UniTask.WaitForSeconds(duration);
-
-        state = State.Chase;
     }
 
     void IDestructible.OnDestruction()

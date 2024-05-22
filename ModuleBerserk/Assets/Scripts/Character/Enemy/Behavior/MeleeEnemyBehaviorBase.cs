@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 // 아주 단순한 근접 공격 잡몹의 행동을 정의함:
@@ -77,6 +78,10 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
     private bool isAttackMotionFinished = true;
 
+    // 현재 경직 상태인지 확인하기 위한 플래그.
+    // 넉백 효과를 부드럽게 감소시키기 위해 사용한다.
+    private bool isStaggered = false;
+
     // 순찰 상태가 유지된 시간 총합
     private float remaningPatrolDuration = 0f;
     // 순찰 세부 상태 중 '걷기' 또는 '대기'가 유지된 시간
@@ -113,6 +118,13 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         if (remaningPatrolDuration > 0f)
         {
             PerformPatrol();
+        }
+
+        // 경직과 같이 부여된 넉백 효과 부드럽게 감소
+        if (isStaggered)
+        {
+            float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, 30f * Time.deltaTime);
+            rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
         }
     }
 
@@ -273,17 +285,36 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
     bool IEnemyBehavior.TryApplyStagger(StaggerInfo staggerInfo)
     {
-        animator.SetTrigger("Stagger");
+        GetStaggeredForDuration(staggerInfo).Forget();
 
-        rb.AddForce(staggerInfo.direction * 10.0f, ForceMode2D.Impulse);
+        return true;
+    }
+
+    private async UniTask GetStaggeredForDuration(StaggerInfo staggerInfo)
+    {
+        // 공격 모션이 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
+        isAttackMotionFinished = true;
 
         // 공격받은 방향 바라보기 (오른쪽으로 넉백 <=> 왼쪽에서 공격당함)
         spriteRenderer.flipX = staggerInfo.direction.x > 0f;
 
-        // 공격 모션이 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
-        isAttackMotionFinished = true;
+        // 넉백 효과
+        rb.AddForce(staggerInfo.direction * 10.0f, ForceMode2D.Impulse);
 
-        return true;
+        // 애니메이션 재생
+        animator.SetTrigger("Stagger");
+
+        // 잠시 경직 상태에 돌입
+        isStaggered = true;
+
+        await UniTask.WaitForSeconds(staggerInfo.duration);
+
+        isStaggered = false;
+    }
+
+    bool IEnemyBehavior.IsStaggerFinished()
+    {
+        return !isStaggered;
     }
 
     void IMeleeEnemyBehavior.MeleeAttack()

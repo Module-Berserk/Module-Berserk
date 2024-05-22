@@ -28,4 +28,7 @@ public interface IEnemyBehavior
     // 만약 슈퍼아머 상태라면 아무것도 안 하고 false를 리턴해야 함.
     // 반대로 경직이 적용되었다면 true를 리턴해야 함.
     bool TryApplyStagger(StaggerInfo staggerInfo);
+
+    // 경직 효과가 끝났는지 반환
+    bool IsStaggerFinished();
 }

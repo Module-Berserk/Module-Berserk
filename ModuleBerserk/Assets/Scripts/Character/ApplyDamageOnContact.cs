@@ -17,6 +17,7 @@ public class ApplyDamageOnContact : MonoBehaviour
     public float RawDamage;
     public Team DamageSource;
     public StaggerStrength staggerStrength;
+    public float staggerDuration = 0.5f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -24,7 +25,7 @@ public class ApplyDamageOnContact : MonoBehaviour
         {
             // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
             Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
-            StaggerInfo staggerInfo = new(staggerStrength, staggerDirection);
+            StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, staggerDuration);
             destructible.TryApplyDamage(DamageSource, RawDamage, staggerInfo);
         }
     }
