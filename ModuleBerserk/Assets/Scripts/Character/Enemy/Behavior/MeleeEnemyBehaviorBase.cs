@@ -188,6 +188,11 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         SetInitialPatrolDirection();
     }
 
+    void IEnemyBehavior.StopPatrol()
+    {
+        remaningPatrolDuration = 0f;
+    }
+
     // 순찰 하위 상태를 변경함.
     // '걷기' 상태로 전환하는 경우 마지막 순찰 방향과 반대로 이동하게 됨.
     private void SetPatrolSubbehavior(PatrolSubbehavior subbehavior)
@@ -299,7 +304,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         spriteRenderer.flipX = staggerInfo.direction.x > 0f;
 
         // 넉백 효과
-        rb.AddForce(staggerInfo.direction * 10.0f, ForceMode2D.Impulse);
+        rb.AddForce(staggerInfo.direction * 5.0f, ForceMode2D.Impulse);
 
         // 애니메이션 재생
         animator.SetTrigger("Stagger");

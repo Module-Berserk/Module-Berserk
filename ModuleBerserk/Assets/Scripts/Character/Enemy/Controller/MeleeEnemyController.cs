@@ -147,8 +147,14 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     void HandlePlayerDetection()
     {
-        if (state == State.Idle)
+        if (IsPlayerUndetected())
         {
+            // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
+            if (!meleeEnemyBehavior.isPatrolFinished())
+            {
+                meleeEnemyBehavior.StopPatrol();
+            }
+
             state = State.Chase;
 
             // TODO: 로그 출력 삭제하고 인식 모션 시작
@@ -168,6 +174,12 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         // 하지만 인식 정보 공유는 최초 발견자만 수행해야 하므로
         // 여기서 PlayerDetectionRange의 정보 공유 옵션을 비활성화 해줘야 함.
         playerDetectionRange.IsDetectionShared = false;
+    }
+
+    // 아직 플레이어를 인식하지 못한 상태인지 반환
+    private bool IsPlayerUndetected()
+    {
+        return state == State.Idle || state == State.Patrol;
     }
 
     CharacterStat IDestructible.GetHPStat()
