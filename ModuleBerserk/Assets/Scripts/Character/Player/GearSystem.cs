@@ -27,6 +27,8 @@ public class GearSystem : MonoBehaviour
     private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
     // 최대 기어 단계에 도달했을 때 게이지 수치 하락을 막는 기간
     private const float MAX_GEAR_LEVEL_PROTECTION_TIME = 5f;
+    // 비전투 상태에서 게이지 하한선에 도달했을 때 기어 단계 하락을 막는 기간
+    private const float NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME = 3f;
 
     // 기어 레벨별 버프 수치
     private struct GearLevelBuff
@@ -77,6 +79,8 @@ public class GearSystem : MonoBehaviour
     // 최대 기어 단계 도달에 의한 게이지 하락 보호 기간.
     // 이 수치가 0 이상이면 무슨 일이 있어도 게이지가 떨어지지 않는다.
     private float remainingGaugeProtectionTime = 0f;
+    // 비전투 상태에서 게이지 하한선에 머무른 시간
+    private float gaugeLowerBoundDuration = 0f;
     // 매 프레임마다 시간을 누적해 공격 또는 피격 이벤트로부터 몇 초나 지났는지 기록함.
     // 공격 및 피격 이후 3초 동안은 전투 중으로 취급함.
     private float combatTimer = 0f;
@@ -223,8 +227,7 @@ public class GearSystem : MonoBehaviour
         // 비전투 상태라면 게이지 조금씩 감소
         if (!IsCombatOngoing())
         {
-            float gear_gauge_lower_bound = CurrentGearLevel > 0 ? (GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel - 1] + 1f) : 0f;
-            CurrentGearGauge = Mathf.Max(CurrentGearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime, gear_gauge_lower_bound);
+            HandleNaturalGaugeDecrease();
         }
 
         // 게이지 최대치에 도달한 경우 최대치를 유지한 시간을 기록
@@ -242,5 +245,34 @@ public class GearSystem : MonoBehaviour
         // TODO: 테스트 끝나면 삭제할 것
         descriptionText.text = $"gauge: {CurrentGearGauge}\nlevel: {CurrentGearLevel}";
         gaugeSlider.value = CurrentGearGauge / 100f;
+    }
+
+    // 비전투 상태에서의 기어 게이지 하락 로직
+    private void HandleNaturalGaugeDecrease()
+    {
+        // 이미 최소 기어 단계인 경우는 더 하락할 게이지조차 없음
+        if (CurrentGearLevel == 0)
+        {
+            return;
+        }
+
+        // 현재 기어 단계의 게이지 하한선
+        float gearGaugeLowerBound = GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel - 1] + 1f;
+
+        // 하한선까지는 계속 감소
+        CurrentGearGauge = Mathf.Max(CurrentGearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime, gearGaugeLowerBound);
+
+        // 하한선에 도달한 경우 잠깐의 유예 시간을 준 뒤 단계를 하나 감소시킴
+        if (CurrentGearGauge == gearGaugeLowerBound)
+        {
+            gaugeLowerBoundDuration += Time.deltaTime;
+            if (gaugeLowerBoundDuration > NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME)
+            {
+                gaugeLowerBoundDuration = 0f;
+
+                // 이미 하한선에 도달했으므로 1만 감소시켜도 기어 단계를 낮출 수 있음
+                CurrentGearGauge -= 1f;
+            }
+        }
     }
 }
