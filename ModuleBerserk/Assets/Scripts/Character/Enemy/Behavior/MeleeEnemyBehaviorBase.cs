@@ -26,11 +26,11 @@ using UnityEngine;
 public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 {
     [Header("Chase")]
-    // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건
-    [SerializeField] private float chaseStopDistance = 0.5f;
+    // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건.
+    // 거리가 min과 max 사이에 있는 경우에만 추적을 시도한다.
+    [SerializeField] private float chaseMinDistance = 0.5f;
+    [SerializeField] private float chaseMaxDistance = 5f;
     [SerializeField] private float chaseSpeed = 1f;
-    // 플레이어가 이 영역에 들어온 경우에만 추적 가능하다고 판단함
-    [SerializeField] private PlayerDetectionRange chaseRange;
 
 
     [Header("Ground Contact")]
@@ -44,8 +44,6 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
 
     [Header("Patrol")]
-    // 순찰 상태가 지속되는 최대 시간
-    [SerializeField] private float maxPatrolDuration = 6f;
     // 순찰 하위 상태인 '걷기' 또는 '대기'의 지속시간 범위.
     // 하위 상태가 변경될 때마다 min ~ max 사이의 랜덤한 시간이 할당된다.
     [SerializeField] private float minPatrolSubbehaviorDuration = 1f;
@@ -82,8 +80,11 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 넉백 효과를 부드럽게 감소시키기 위해 사용한다.
     private bool isStaggered = false;
 
-    // 순찰 상태가 유지된 시간 총합
-    private float remaningPatrolDuration = 0f;
+    // 현재 순찰 상태인지 나타내는 플래그
+    private bool isPatrolling = false;
+    // 연속적으로 같은 순찰 방향이 선택된 횟수
+    // 방향이 바뀌면 1부터 시작함
+    private int samePatrolDirectionCount = 0;
     // 순찰 세부 상태 중 '걷기' 또는 '대기'가 유지된 시간
     private float remaningPatrolSubbehaviorDuration = 0f;
     // 순찰 세부 상태
@@ -92,7 +93,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         Walk,
         Pause,
     }
-    private PatrolSubbehavior patrolSubbehavior = PatrolSubbehavior.Walk;
+    private PatrolSubbehavior patrolSubbehavior = PatrolSubbehavior.Pause;
 
     private void Awake()
     {
@@ -112,10 +113,9 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         timeSinceLastMeleeAttack += Time.fixedDeltaTime;
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
-        
-        // 순찰
-        remaningPatrolDuration -= Time.fixedDeltaTime;
-        if (remaningPatrolDuration > 0f)
+
+        // 순찰 상태
+        if (isPatrolling)
         {
             PerformPatrol();
         }
@@ -142,7 +142,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         spriteRenderer.flipX = displacement < 0f;
 
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
-        if (Mathf.Abs(displacement) > chaseStopDistance)
+        if (Mathf.Abs(displacement) > chaseMinDistance)
         {
             rb.velocity = new Vector2(Mathf.Sign(displacement) * chaseSpeed, rb.velocity.y);
         }
@@ -164,7 +164,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
-        if (!chaseRange.IsPlayerInRange)
+        if (Mathf.Abs(displacement) > chaseMaxDistance)
         {
             return false;
         }
@@ -172,29 +172,18 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         return true;
     }
 
-    bool IEnemyBehavior.ReturnToInitialPosition()
-    {
-        // TODO:
-        // 1. 아직 초기 위치에 도달하지 못했다면 계속 이동하고 false 반환
-        // 2. 초기 위치에 도달했다면 true 반환
-        return true;
-    }
-
     void IEnemyBehavior.StartPatrol()
     {
-        remaningPatrolDuration = maxPatrolDuration;
-
-        SetPatrolSubbehavior(PatrolSubbehavior.Walk);
-        SetInitialPatrolDirection();
+        isPatrolling = true;
+        samePatrolDirectionCount = 0;
+        SetPatrolSubbehavior(PatrolSubbehavior.Pause);
     }
 
     void IEnemyBehavior.StopPatrol()
     {
-        remaningPatrolDuration = 0f;
+        isPatrolling = false;
     }
 
-    // 순찰 하위 상태를 변경함.
-    // '걷기' 상태로 전환하는 경우 마지막 순찰 방향과 반대로 이동하게 됨.
     private void SetPatrolSubbehavior(PatrolSubbehavior subbehavior)
     {
         patrolSubbehavior = subbehavior;
@@ -205,20 +194,31 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         // '걷기' 상태에 돌입한 경우 방향 전환
         if (patrolSubbehavior == PatrolSubbehavior.Walk)
         {
-            patrolSpeed *= -1;
+            ChooseRandomPatrolDirection();
         }
     }
 
-    // 순찰을 시작할 때 낭떠러지 방향이 아닌 랜덤한 방향으로 순찰을 시작함
-    private void SetInitialPatrolDirection()
+    // 낭떠러지 방향이 아닌 랜덤한 방향으로 순찰을 진행
+    private void ChooseRandomPatrolDirection()
     {
-        // 50% 확률로 랜덤하게 순찰 방향을 선택
-        patrolSpeed = Mathf.Abs(patrolSpeed) * (Random.Range(0, 1) == 0 ? 1f : -1f);
+        float prevPatrolSpeed = patrolSpeed;
 
-        // 만약 해당 방향이 낭떠러지라면 반대로 이동
-        if (IsOnBrink(patrolSpeed))
+        // 50% 확률로 랜덤하게 순찰 방향을 선택
+        // int버전 Random은 최대치가 exclusive라서 2를 줘야 0 또는 1이 나옴!
+        patrolSpeed = Mathf.Abs(patrolSpeed) * (Random.Range(0, 2) == 0 ? 1f : -1f);
+
+        // 순찰을 시작한 뒤로 처음 방향을 정하는 경우,
+        // 또는 이전 순찰 방향과 동일한 방향이 걸린 경우 카운터 증가
+        if (samePatrolDirectionCount == 0 || patrolSpeed == prevPatrolSpeed)
+        {
+            ++samePatrolDirectionCount;
+        }
+
+        // 만약 같은 순찰 방향이 3회 이상 걸렸거나 해당 방향이 낭떠러지인 경우 반대 방향 선택
+        if (samePatrolDirectionCount >= 3 || IsOnBrink(patrolSpeed))
         {
             patrolSpeed *= -1f;
+            samePatrolDirectionCount = 1;
         }
     }
 
@@ -228,11 +228,6 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         return 
             (direction > 0f && !groundContact.IsRightFootGrounded) ||
             (direction < 0f && !groundContact.IsLeftFootGrounded);
-    }
-
-    bool IEnemyBehavior.isPatrolFinished()
-    {
-        return remaningPatrolDuration <= 0f;
     }
 
     private void PerformPatrol()
@@ -349,12 +344,6 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     bool IMeleeEnemyBehavior.IsMeleeAttackMotionFinished()
     {
         return isAttackMotionFinished;
-    }
-
-    void IEnemyBehavior.StartIdle()
-    {
-        // 대기 상태로 전환
-        animator.SetBool("IsMoving", false);
     }
 
     // 대기 애니메이션의 마지막 프레임에 호출되는 이벤트

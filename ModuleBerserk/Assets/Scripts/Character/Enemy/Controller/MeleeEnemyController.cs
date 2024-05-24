@@ -46,14 +46,12 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     private enum State
     {
-        Idle,
+        Patrol,
         Chase,
         Attack,
         Stagger,
-        ReturnToInitialPosition,
-        Patrol,
     }
-    private State state = State.Idle;
+    private State state = State.Patrol;
 
     private void Awake()
     {
@@ -66,6 +64,9 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     private void Start()
     {
         playerDetectionRange.OnPlayerDetect.AddListener(HandlePlayerDetection);
+
+        // 순찰 상태로 시작
+        meleeEnemyBehavior.StartPatrol();
     }
 
     private void FixedUpdate()
@@ -85,30 +86,14 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
                     state = State.Attack;
                 }
             }
-            // 추적 범위를 벗어났다면 초기 위치로 돌아온 뒤 대기 상태로 전환
+            // 추적 범위를 벗어났다면 순찰 상태로 전환
             else
-            {
-                state = State.ReturnToInitialPosition;
-
-                // 돌아가는 동안 플레이어를 발견하면 다시 주위에 알려줘야 함
-                playerDetectionRange.IsDetectionShared = true;
-            }
-        }
-        else if (state == State.ReturnToInitialPosition)
-        {
-            bool isReturnComplete = meleeEnemyBehavior.ReturnToInitialPosition();
-            if (isReturnComplete)
             {
                 state = State.Patrol;
                 meleeEnemyBehavior.StartPatrol();
-            }
-        }
-        else if (state == State.Patrol)
-        {
-            if (meleeEnemyBehavior.isPatrolFinished())
-            {
-                state = State.Idle;
-                meleeEnemyBehavior.StartIdle();
+
+                // 순찰 도중에 플레이어를 발견하면 다시 주위에 알려줘야 함
+                playerDetectionRange.IsDetectionShared = true;
             }
         }
         else if (state == State.Attack)
@@ -147,13 +132,10 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     void HandlePlayerDetection()
     {
-        if (IsPlayerUndetected())
+        // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
+        if (state == State.Patrol)
         {
-            // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
-            if (!meleeEnemyBehavior.isPatrolFinished())
-            {
-                meleeEnemyBehavior.StopPatrol();
-            }
+            meleeEnemyBehavior.StopPatrol();
 
             state = State.Chase;
 
@@ -174,12 +156,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         // 하지만 인식 정보 공유는 최초 발견자만 수행해야 하므로
         // 여기서 PlayerDetectionRange의 정보 공유 옵션을 비활성화 해줘야 함.
         playerDetectionRange.IsDetectionShared = false;
-    }
-
-    // 아직 플레이어를 인식하지 못한 상태인지 반환
-    private bool IsPlayerUndetected()
-    {
-        return state == State.Idle || state == State.Patrol;
     }
 
     CharacterStat IDestructible.GetHPStat()
