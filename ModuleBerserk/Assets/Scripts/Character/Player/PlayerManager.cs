@@ -8,7 +8,6 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
-    [SerializeField] private float maxMoveSpeed = 2.5f;
     [SerializeField] private float turnAcceleration = 150f;
     [SerializeField] private float moveAcceleration = 100f;
     [SerializeField] private float moveDecceleration = 150f;
@@ -150,7 +149,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         applyDamageOnContact.RawDamage = playerStat.AttackDamage;
 
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
-        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed));
+        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed, playerStat.MoveSpeed));
     }
 
     private void FindComponentReferences()
@@ -593,7 +592,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void UpdateMoveVelocity(float moveInput)
     {
         // 원하는 속도를 계산
-        float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
+        float desiredVelocityX = playerStat.MoveSpeed.CurrentValue * moveInput;
 
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
