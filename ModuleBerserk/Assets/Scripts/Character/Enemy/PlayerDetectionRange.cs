@@ -25,6 +25,11 @@ public class PlayerDetectionRange : MonoBehaviour
     [SerializeField] private float detectionSharingRadius = 0f;
     // 인식 또는 인식 공유를 막을 레이어 (ex. ground)
     [SerializeField] private LayerMask detectionBlockingLayerMask;
+    // 인식 또는 인식 공유를 장애물이 막아야 하는지 결정하는 옵션.
+    // true라면 자신과 대상 사이에 raycast가 추가적으로 수행된다.
+    // 근접 공격 가능 범위처럼 굳이 raycast까지 할 필요가 없는 경우
+    // false를 줘서 약간의 성능 향상을 노릴 수 있음.
+    [SerializeField] private bool shouldConsiderLineOfSight = true;
 
     // 플레이어가 탐지 범위 콜라이더에 들어왔을 때
     // 주변에 있는 PlayerDetectionRange에 감지 정보를 공유할지 결정하는 옵션.
@@ -57,18 +62,13 @@ public class PlayerDetectionRange : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsPlayerInRange)
+        if (shouldConsiderLineOfSight && IsPlayerInRange)
         {
             // 플레이어가 영역 안에는 들어왔지만 아직 시야가 가려있는 상태라면
             // 이번 프레임에는 플레이어가 시야에 들어왔는지 확인함
             if (!IsPlayerDetected && IsTargetVisible(player))
             {
-                if (IsDetectionShared)
-                {
-                    ShareDetectionInfo();
-                }
-
-                OnPlayerDetect.Invoke();
+                HandlePlayerDetection();
             }
             // 플레이어가 영역 안에 있고 시야에도 들어온 상태라면
             // 이번 프레임에 플레이어가 벽 뒤로 숨었는지 확인함
@@ -77,6 +77,16 @@ public class PlayerDetectionRange : MonoBehaviour
                 IsPlayerDetected = false;
             }
         }
+    }
+
+    private void HandlePlayerDetection()
+    {
+        if (IsDetectionShared)
+        {
+            ShareDetectionInfo();
+        }
+
+        OnPlayerDetect.Invoke();
     }
 
     private bool IsTargetVisible(GameObject target)
@@ -108,6 +118,11 @@ public class PlayerDetectionRange : MonoBehaviour
             player = other.gameObject;
 
             IsPlayerInRange = true;
+
+            // 시야가 가리는 것을 고려할 필요가 없다면 바로 detected로 처리
+            if (!shouldConsiderLineOfSight) {
+                HandlePlayerDetection();
+            }
         }
     }
 
