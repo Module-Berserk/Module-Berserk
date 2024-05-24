@@ -25,6 +25,8 @@ public class GearSystem : MonoBehaviour
     private const float MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE = 3f;
     // 비전투 상태에서 1초마다 깎이는 게이지
     private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
+    // 최대 기어 단계에 도달했을 때 게이지 수치 하락을 막는 기간
+    private const float MAX_GEAR_LEVEL_PROTECTION_TIME = 5f;
 
     // 기어 레벨별 버프 수치
     private struct GearLevelBuff
@@ -72,6 +74,9 @@ public class GearSystem : MonoBehaviour
     // 이 시간이 MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE보다 높아야 다음 단계로 넘어갈 수 있다.
     // 0단계에서는 공격하면 바로 1단계로 넘어갈 수 있도록 아주 큰 초기값을 부여.
     private float maxGaugeTime = 10000f;
+    // 최대 기어 단계 도달에 의한 게이지 하락 보호 기간.
+    // 이 수치가 0 이상이면 무슨 일이 있어도 게이지가 떨어지지 않는다.
+    private float remainingGaugeProtectionTime = 0f;
     // 매 프레임마다 시간을 누적해 공격 또는 피격 이벤트로부터 몇 초나 지났는지 기록함.
     // 공격 및 피격 이후 3초 동안은 전투 중으로 취급함.
     private float combatTimer = 0f;
@@ -102,6 +107,12 @@ public class GearSystem : MonoBehaviour
     public void OnPlayerHit()
     {
         ResetCombatTimer();
+
+        // 최대 기어 단계 도달에 의한 게이지 하락 보호 기간인 경우 변동 x
+        if (remainingGaugeProtectionTime > 0f)
+        {
+            return;
+        }
 
         int prevGearLevel = CurrentGearLevel;
 
@@ -176,6 +187,12 @@ public class GearSystem : MonoBehaviour
         CurrentGearGauge++;
 
         OnGearLevelChange.Invoke();
+
+        // 기어 단계가 최대치에 도달하면 잠시동안 게이지 하락을 막음
+        if (CurrentGearLevel == MAX_GEAR_LEVEL)
+        {
+            remainingGaugeProtectionTime = MAX_GEAR_LEVEL_PROTECTION_TIME;
+        }
     }
 
     // 기어 단계별 공격력 & 공격 속도 버프를 현재 기어 단계에 맞게 갱신함.
@@ -199,6 +216,9 @@ public class GearSystem : MonoBehaviour
     {
         // 전투 상태로 돌입한 시점으로부터 몇 초나 지났는지 기록
         combatTimer += Time.deltaTime;
+
+        // 기어 레벨 최대치에 달성한 경우 주어지는 게이지 하락 방지 기간
+        remainingGaugeProtectionTime -= Time.deltaTime;
 
         // 비전투 상태라면 게이지 조금씩 감소
         if (!IsCombatOngoing())
