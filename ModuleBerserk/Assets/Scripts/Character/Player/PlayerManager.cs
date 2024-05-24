@@ -179,13 +179,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void OnPerformAction(InputAction.CallbackContext context)
     {
-        // 1순위 행동: 상호작용 (아이템 줍기, NPC와 대화)
-        if (interactionManager.CanInteract)
-        {
-            interactionManager.StartInteractionWithLatestTarget();
-        }
-        // 2순위 행동: 공격
-        else
+        // 1순위 행동인 상호작용을 먼저 시도 (아이템 줍기, NPC와 대화)
+        bool isInteractionSuccessful = interactionManager.TryStartInteractionWithLatestTarget();
+
+        // 만약 상호작용이 가능한 대상이 없었다면 2순위 행동인 공격을 시도한다.
+        if (!isInteractionSuccessful)
         {
             // 경직 상태이거나 벽에 매달린 경우는 공격 불가
             if (state == State.Stagger || state == State.StickToWall)

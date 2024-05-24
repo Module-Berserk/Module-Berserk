@@ -10,12 +10,24 @@ public class InteractionManager : MonoBehaviour
     // 상호작용 범위에 들어온 IInteractable 목록 (ex. NPC, 드랍 아이템, ...)
     private List<IInteractable> availableInteractables = new();
 
-    public bool CanInteract {get => availableInteractables.Count > 0;}
-
-    // 제일 마지막으로 범위에 들어온 대상과 상호작용 시작
-    public void StartInteractionWithLatestTarget()
+    // 상호작용이 가능한 IInteractable 중에서 제일
+    // 늦게 접촉한 대상의 StartInteraction()을 호출한다.
+    //
+    // 상호작용에 하나라도 성공하면 즉시 true를 반환하며,
+    // 만약 범위 내에 아무도 없거나 모두 상호작용이
+    // 불가능한 상태였다면 false를 반환한다.
+    public bool TryStartInteractionWithLatestTarget()
     {
-        availableInteractables.Last().StartInteraction();
+        for (int i = availableInteractables.Count - 1; i >= 0; --i)
+        {
+            if (availableInteractables[i].IsInteractionPossible())
+            {
+                availableInteractables[i].StartInteraction();
+                return true;
+            }
+        }
+
+        return false;
     }
     
     private void OnTriggerEnter2D(Collider2D other)
