@@ -40,16 +40,21 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     
     [Header("Melee Attack")]
     // 다음 공격까지 기다려야 하는 시간
-    [SerializeField] private float meleeAttackCooltime = 3f;
+    [SerializeField] private float delayBetweenMeleeAttacks = 3f;
 
 
     [Header("Patrol")]
     // 순찰 하위 상태인 '걷기' 또는 '대기'의 지속시간 범위.
     // 하위 상태가 변경될 때마다 min ~ max 사이의 랜덤한 시간이 할당된다.
     [SerializeField] private float minPatrolSubbehaviorDuration = 1f;
-    [SerializeField] private float maxPatrolSubbehaviorDuration = 2f;
+    [SerializeField] private float maxPatrolSubbehaviorDuration = 4f;
     // 순찰 중 걷기 상태의 이동 속도
-    [SerializeField] private float patrolSpeed = 0.5f;
+    [SerializeField] private float patrolSpeed = 1f;
+
+
+    [Header("Stat Randomization")]
+    // 이동 속도, 공격 딜레이 등 각종 수치를 몹마다 다르게 할 비율 (퍼센트 단위, 0이면 랜덤성 없음)
+    [SerializeField] private float randomizationFactor = 0.1f;
 
 
     // 컴포넌트 레퍼런스
@@ -69,9 +74,8 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
     // 다른 대기 애니메이션으로 전환되기 위한 반복 재생 횟수
     private const int IDLE_ANIMATION_CHANGE_THRESHOLD = 6;
 
-    // 근접 공격 쿨타임.
-    // 최초 공격은 바로 수행할 수 있도록 아주 큰 초기값 부여.
-    private float timeSinceLastMeleeAttack = 10000f;
+    // 근접 공격 쿨타임 (0이 되면 공격 가능)
+    private float remainingMeleeAttackCooltime = 0f;
 
     // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
     private bool isAttackMotionFinished = true;
@@ -97,20 +101,39 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
     private void Awake()
     {
+        FindComponentReferences();
+        RandomizeSpeedStats();
+
+        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
+    }
+
+    private void FindComponentReferences()
+    {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         player = GameObject.FindGameObjectWithTag("Player");
-        
-        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
+    }
+
+    // 움직임 관련 수치들을 약간씩 바꿔서 적들이 같은 위치에 겹치는 것을 방지
+    private void RandomizeSpeedStats()
+    {
+        chaseMinDistance *= SampleRandomizationFactor();
+        chaseSpeed *= SampleRandomizationFactor();
+        patrolSpeed *= SampleRandomizationFactor();
+    }
+
+    private float SampleRandomizationFactor()
+    {
+        return Random.Range(1 + randomizationFactor, 1 - randomizationFactor);
     }
 
     private void FixedUpdate()
     {
         groundContact.TestContact();
 
-        timeSinceLastMeleeAttack += Time.fixedDeltaTime;
+        remainingMeleeAttackCooltime -= Time.fixedDeltaTime;
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
 
@@ -157,14 +180,14 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         }
 
         // 플레이어가 있는 방향이 낭떠러지인 경우
-        float displacement = player.transform.position.x - transform.position.x;
-        if (IsOnBrink(displacement))
+        Vector2 displacement = player.transform.position - transform.position;
+        if (IsOnBrink(displacement.x))
         {
             return false;
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
-        if (Mathf.Abs(displacement) > chaseMaxDistance)
+        if (displacement.magnitude > chaseMaxDistance)
         {
             return false;
         }
@@ -329,8 +352,9 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         // 2. 공격 애니메이션에 슈퍼아머 토글, 무기 콜라이더 토글하는 이벤트 추가!
         animator.SetTrigger("MeleeAttack");
 
-        // 쿨타임 시작
-        timeSinceLastMeleeAttack = 0f;
+        // 약간의 랜덤성을 부여한 쿨타임 시작
+        // 적들이 동일한 간격으로 공격하는 것을 방지해 조금 더 자연스럽게 느껴지도록 한다
+        remainingMeleeAttackCooltime = delayBetweenMeleeAttacks * SampleRandomizationFactor();
 
         // 공격 애니메이션 재생 중
         isAttackMotionFinished = false;
@@ -338,7 +362,7 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
 
     bool IMeleeEnemyBehavior.IsMeleeAttackReady()
     {
-        return timeSinceLastMeleeAttack > meleeAttackCooltime;
+        return remainingMeleeAttackCooltime <= 0f;
     }
 
     bool IMeleeEnemyBehavior.IsMeleeAttackMotionFinished()
