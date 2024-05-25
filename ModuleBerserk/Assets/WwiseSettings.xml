@@ -3,7 +3,7 @@
     <CreateWwiseGlobal>true</CreateWwiseGlobal>
     <CreateWwiseListener>true</CreateWwiseListener>
     <SoundbankPath>Audio/GeneratedSoundBanks</SoundbankPath>
-    <WwiseProjectPath>../ModuleBerserk_WwiseProject/ModuleBerserk_WwiseProject.wproj</WwiseProjectPath>
-    <WwiseInstallationPathWindows>C:\Program Files (x86)\Audiokinetic\Wwise2023.1.3.8471</WwiseInstallationPathWindows>
+    <WwiseProjectPath>../../ModuleBerserk/ModuleBerserk_WwiseProject/ModuleBerserk_WwiseProject.wproj</WwiseProjectPath>
+    <WwiseInstallationPathWindows>C:\Program Files (x86)\Audiokinetic\Wwise2023.1.4.8496</WwiseInstallationPathWindows>
     <WwiseInstallationPathMac></WwiseInstallationPathMac>
 </WwiseSettings>
