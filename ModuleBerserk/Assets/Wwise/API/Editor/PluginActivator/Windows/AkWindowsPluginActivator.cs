@@ -41,7 +41,7 @@ public class AkWindowsPluginActivator : AkPlatformPluginActivator
 	private const int CONFIG_INDEX = 2;
 
 	private const int EDITOR_CPU_INDEX = 1;
-	internal override AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter)
+	public override AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter)
 	{
 		var parts = GetPluginPathParts(pluginImporter.assetPath);
 		return new AkPluginActivator.PluginImporterInformation

@@ -57,7 +57,7 @@ public class AkPluginActivator : UnityEditor.AssetPostprocessor
 		return CurrentConfig;
 	}
 
-	private static Dictionary<BuildTarget, AkPlatformPluginActivator> BuildTargetToPlatformPluginActivator = new Dictionary<BuildTarget, AkPlatformPluginActivator>();
+	public static Dictionary<BuildTarget, AkPlatformPluginActivator> BuildTargetToPlatformPluginActivator = new Dictionary<BuildTarget, AkPlatformPluginActivator>();
 
 	public static void RegisterPlatformPluginActivator(BuildTarget target, AkPlatformPluginActivator platformPluginActivator)
 	{
@@ -93,7 +93,7 @@ public class AkPluginActivator : UnityEditor.AssetPostprocessor
 		return wwisePlugins;
 	}
 
-	internal class PluginImporterInformation
+	public class PluginImporterInformation
 	{
 		public string PluginName;
 		public string PluginArch;

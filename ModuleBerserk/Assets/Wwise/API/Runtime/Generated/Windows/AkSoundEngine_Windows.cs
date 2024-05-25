@@ -878,6 +878,12 @@ public partial class AkSoundEngine {
 
   public static void MonitorStreamMgrTerm() { AkSoundEnginePINVOKE.CSharp_MonitorStreamMgrTerm(); }
 
+  public static void AkMemCpy(global::System.IntPtr pDest, global::System.IntPtr pSrc, uint uSize) { AkSoundEnginePINVOKE.CSharp_AkMemCpy(pDest, pSrc, uSize); }
+
+  public static void AkMemMove(global::System.IntPtr pDest, global::System.IntPtr pSrc, uint uSize) { AkSoundEnginePINVOKE.CSharp_AkMemMove(pDest, pSrc, uSize); }
+
+  public static void AkMemSet(global::System.IntPtr pDest, int iVal, uint uSize) { AkSoundEnginePINVOKE.CSharp_AkMemSet(pDest, iVal, uSize); }
+
   public static void AkGetDefaultHighPriorityThreadProperties(AkThreadProperties out_threadProperties) { AkSoundEnginePINVOKE.CSharp_AkGetDefaultHighPriorityThreadProperties(AkThreadProperties.getCPtr(out_threadProperties)); }
 
   public static uint ResolveDialogueEvent(uint in_eventID, uint[] in_aArgumentValues, uint in_uNumArguments, uint in_idSequence) { return AkSoundEnginePINVOKE.CSharp_ResolveDialogueEvent__SWIG_0(in_eventID, in_aArgumentValues, in_uNumArguments, in_idSequence); }

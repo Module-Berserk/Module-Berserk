@@ -84,6 +84,11 @@ Copyright (c) 2024 Audiokinetic Inc.
 	{
 		get { return 0; }
 	}
+
+	public virtual float DefaultScalingFactor
+	{
+		get { return 1f; }
+	}
 }
 
 [System.Serializable]
@@ -246,6 +251,9 @@ public partial class AkCommonUserSettings
 
 	[UnityEngine.Tooltip("Enable Wwise engine logging. This is used to turn on/off the logging of the Wwise engine.")]
 	public bool m_EngineLogging = AkCallbackManager.InitializationSettings.DefaultIsLoggingEnabled;
+
+	[UnityEngine.Tooltip("The default value of the \"Attenuation Scaling Factor\" when an AkComponent is created.")]
+	public float m_DefaultScalingFactor = 1.0f;
 
 	[UnityEngine.Tooltip("Maximum number of automation paths for positioning sounds.")]
 	public uint m_MaximumNumberOfPositioningPaths = 255;
@@ -680,6 +688,11 @@ public abstract class AkCommonPlatformSettings : AkBasePlatformSettings
 	public override uint MemoryDebugLevel
 	{
 		get { return GetAdvancedSettings().m_MemoryDebugLevel; }
+	}
+
+	public override float DefaultScalingFactor
+	{
+		get { return GetUserSettings().m_DefaultScalingFactor; }
 	}
 
 	public override AkCommunicationSettings AkCommunicationSettings

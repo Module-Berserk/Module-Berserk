@@ -48,6 +48,24 @@ public class AkGameObj : UnityEngine.MonoBehaviour
 	/// When not set to null, the position is offset relative to the Game Object position by the Position Offset
 	public AkGameObjPositionOffsetData m_positionOffsetData;
 
+	private float scalingFactor = -1f;
+
+	public float ScalingFactor
+	{
+		get => scalingFactor;
+		set
+		{
+			if (value < 0)
+			{
+				scalingFactor = 0;
+			}
+			else
+			{
+				scalingFactor = value;
+			}
+		}
+	}
+
 	public bool IsUsingDefaultListeners
 	{
 		get { return m_listeners.useDefaultListeners; }
@@ -173,6 +191,19 @@ public class AkGameObj : UnityEngine.MonoBehaviour
 			}
 
 			m_listeners.Init(this);
+			if (scalingFactor < 0f)
+			{
+				var initializer = AkInitializer.GetAkInitializerGameObject();
+				if (initializer)
+				{
+					scalingFactor = initializer.GetComponent<AkInitializer>().InitializationSettings.UserSettings.m_DefaultScalingFactor;
+				}
+				else
+				{
+					scalingFactor = 1f;
+				}
+			}
+			AkSoundEngine.SetScalingFactor(gameObject, scalingFactor);
 		}
 	}
 

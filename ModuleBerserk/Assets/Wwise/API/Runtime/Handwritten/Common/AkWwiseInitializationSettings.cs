@@ -73,6 +73,7 @@ public class AkWwiseInitializationSettings : AkCommonPlatformSettings
 		"UserSettings.m_BasePath",
 		"UserSettings.m_StartupLanguage",
 		"UserSettings.m_EngineLogging",
+		"UserSettings.m_DefaultScalingFactor",
 		"UserSettings.m_MaximumNumberOfPositioningPaths",
 		"UserSettings.m_MemoryCutoffThreshold",
 		"UserSettings.m_CommandQueueSize",

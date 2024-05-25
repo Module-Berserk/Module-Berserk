@@ -65,7 +65,9 @@ public class AkGameObjectInspector : UnityEditor.Editor
 		if (m_AkGameObject.m_positionOffsetData != null)
 		{
 			if (!m_AkGameObject.m_positionOffsetData.KeepMe)
+			{
 				m_AkGameObject.m_positionOffsetData = null;
+			}
 		}
 
 		var positionOffsetData = m_AkGameObject.m_positionOffsetData;
@@ -78,7 +80,9 @@ public class AkGameObjectInspector : UnityEditor.Editor
 			var applyPosOffset = UnityEditor.EditorGUILayout.Toggle("Apply Position Offset:", positionOffsetData != null);
 
 			if (applyPosOffset != (positionOffsetData != null))
+			{
 				positionOffsetData = applyPosOffset ? new AkGameObjPositionOffsetData(true) : null;
+			}
 
 			if (positionOffsetData != null)
 			{
@@ -146,8 +150,25 @@ public class AkGameObjectInspector : UnityEditor.Editor
 		}
 
 		if (isEnvironmentAware)
+		{
 			RigidbodyCheck(m_AkGameObject.gameObject);
+		}
 
+		UnityEngine.GUILayout.Space(UnityEditor.EditorGUIUtility.standardVerticalSpacing);
+
+		UnityEditor.EditorGUI.BeginChangeCheck();
+		m_AkGameObject.ScalingFactor = UnityEditor.EditorGUILayout.FloatField("Attenuation Scaling Factor", m_AkGameObject.ScalingFactor);
+		if (UnityEditor.EditorGUI.EndChangeCheck())
+		{
+			if (m_AkGameObject.ScalingFactor <= 0)
+			{
+				m_AkGameObject.ScalingFactor = 0;
+			}
+			else
+			{
+				AkSoundEngine.SetScalingFactor(m_AkGameObject.gameObject, m_AkGameObject.ScalingFactor);
+			}
+		}
 		UnityEngine.GUILayout.Space(UnityEditor.EditorGUIUtility.standardVerticalSpacing);
 
 		using (new UnityEditor.EditorGUILayout.VerticalScope("box"))
@@ -155,7 +176,9 @@ public class AkGameObjectInspector : UnityEditor.Editor
 			UnityEditor.EditorGUI.BeginChangeCheck();
 			UnityEditor.EditorGUILayout.PropertyField(listeners);
 			if (UnityEditor.EditorGUI.EndChangeCheck())
+			{
 				serializedObject.ApplyModifiedProperties();
+			}
 		}
 	}
 
@@ -184,7 +207,9 @@ public class AkGameObjectInspector : UnityEditor.Editor
 	private void OnSceneGUI()
 	{
 		if (m_AkGameObject.m_positionOffsetData == null)
+		{
 			return;
+		}
 
 		UnityEditor.EditorGUI.BeginChangeCheck();
 

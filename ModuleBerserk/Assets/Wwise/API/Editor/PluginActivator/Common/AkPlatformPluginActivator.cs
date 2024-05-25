@@ -56,7 +56,7 @@ public abstract class AkPlatformPluginActivator
         return pluginPath.Substring(indexOfPluginFolder + AkPluginActivatorConstants.WwisePluginFolder.Length + 1).Split('/');
     }
 
-    internal abstract AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter);
+    public abstract AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter);
     internal abstract bool ConfigurePlugin(PluginImporter pluginImporter, AkPluginActivator.PluginImporterInformation pluginImporterInformation);
 
 }

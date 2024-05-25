@@ -35,7 +35,7 @@ public class AkMacPluginActivator : AkPlatformPluginActivator
 	}
 	
 	private const int CONFIG_INDEX = 1;
-	internal override AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter)
+	public override AkPluginActivator.PluginImporterInformation GetPluginImporterInformation(PluginImporter pluginImporter)
 	{
 		return new AkPluginActivator.PluginImporterInformation
 		{

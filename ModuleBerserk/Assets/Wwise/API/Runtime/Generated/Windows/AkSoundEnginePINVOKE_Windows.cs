@@ -1626,6 +1626,12 @@ class AkSoundEnginePINVOKE {
   public static extern void CSharp_MonitorStreamingDeviceDestroyed(uint jarg1);
   [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_MonitorStreamMgrTerm")]
   public static extern void CSharp_MonitorStreamMgrTerm();
+  [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_AkMemCpy")]
+  public static extern void CSharp_AkMemCpy(global::System.IntPtr jarg1, global::System.IntPtr jarg2, uint jarg3);
+  [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_AkMemMove")]
+  public static extern void CSharp_AkMemMove(global::System.IntPtr jarg1, global::System.IntPtr jarg2, uint jarg3);
+  [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_AkMemSet")]
+  public static extern void CSharp_AkMemSet(global::System.IntPtr jarg1, int jarg2, uint jarg3);
   [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_AkGetDefaultHighPriorityThreadProperties")]
   public static extern void CSharp_AkGetDefaultHighPriorityThreadProperties(global::System.IntPtr jarg1);
   [global::System.Runtime.InteropServices.DllImport("AkSoundEngine", EntryPoint="CSharp_ResolveDialogueEvent__SWIG_0")]
