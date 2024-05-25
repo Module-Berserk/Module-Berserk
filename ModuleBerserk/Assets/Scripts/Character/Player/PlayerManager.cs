@@ -8,24 +8,24 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
-    [SerializeField] private float maxMoveSpeed = 1.5f;
-    [SerializeField] private float turnAcceleration = 60f;
-    [SerializeField] private float moveAcceleration = 30f;
-    [SerializeField] private float moveDecceleration = 50f;
+    [SerializeField] private float maxMoveSpeed = 2.5f;
+    [SerializeField] private float turnAcceleration = 150f;
+    [SerializeField] private float moveAcceleration = 100f;
+    [SerializeField] private float moveDecceleration = 150f;
 
 
     [Header("Jump / Fall")]
-    [SerializeField] private float jumpVelocity = 4f;
-    [SerializeField] private Vector2 wallJumpVelocity = new(2f, 4f);
+    [SerializeField] private float jumpVelocity = 12f;
+    [SerializeField] private Vector2 wallJumpVelocity = new(10f, 10f);
     // 땅에서 떨어져도 점프를 허용하는 time window
     [SerializeField] private float coyoteTime = 0.15f;
     // 공중에 있지만 위로 이동하는 중이라면 DefaultGravityScale을 사용하고
     // 아래로 이동하는 중이라면 GravityScaleWhenFalling을 사용해
     // 더 빨리 추락해서 공중에 붕 뜨는 이상한 느낌을 줄임.
-    [SerializeField] private float defaultGravityScale = 1f;
-    [SerializeField] private float gravityScaleWhileFalling = 1.7f;
+    [SerializeField] private float defaultGravityScale = 3f;
+    [SerializeField] private float gravityScaleWhileFalling = 6f;
     // 아주 높은 곳에서 떨어질 때 부담스러울 정도로 아래로 가속하는 상황 방지
-    [SerializeField] private float maxFallSpeed = 5f;
+    [SerializeField] private float maxFallSpeed = 15f;
     // 공중 조작이 지상 조작보다 둔하게 만드는 파라미터 (0: 조작 불가, 1: 변화 없음)
     [SerializeField, Range(0f, 1f)] private float defaultAirControl = 0.5f;
     // wall jump 이후 벽으로 돌아오는데에 걸리는 시간을 조정하는 파라미터 (airControl을 잠시 이 값으로 대체함)
@@ -35,8 +35,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 최대 공중공격 콤보 횟수
     [SerializeField] private int maxOnAirAttackCount = 2;
     // 한 번 벽에 붙으면 방향키를 누르고 있지 않아도 계속 매달려 있어야 하는지
-    [SerializeField] private bool isWallStickingPersistent = false;
-
+    [SerializeField] private bool isWallStickingPersistent = true;
 
 
     [Header("Ground Contact")]
@@ -45,17 +44,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급
     [SerializeField] private float contactDistanceThreshold = 0.02f;
 
+
     [Header("Follow Camera Target")]
     // Cinemachine Virtual Camera의 Follow로 등록된 오브젝트를 지정해줘야 함!
     // 새로운 높이의 플랫폼에 착지하기 전까지 카메라의 y축 좌표를 일정하게 유지하는 용도.
     [SerializeField] private GameObject cameraFollowTarget;
     // 바라보는 방향으로 얼마나 앞에 있는 지점을 카메라가 추적할 것인지
-    [SerializeField, Range(0f, 2f)] private float cameraLookAheadDistance = 1f;
+    [SerializeField, Range(0f, 5f)] private float cameraLookAheadDistance = 2f;
+
 
     [Header("Stagger")]
     // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
-    [SerializeField] private float weakStaggerKnockbackForce = 5f;
-    [SerializeField] private float strongStaggerKnockbackForce = 8f;
+    [SerializeField] private float weakStaggerKnockbackForce = 13f;
+    [SerializeField] private float strongStaggerKnockbackForce = 23f;
     // 경직의 지속 시간
     [SerializeField] private float weakStaggerDuration = 0.2f;
     [SerializeField] private float strongStaggerDuration = 0.5f;
