@@ -22,10 +22,23 @@
 				<Bus Id="3803692087" Name="Master Audio Bus"/>
 			</Busses>
 		</SoundBank>
-		<SoundBank Id="2228651116" Type="User" Language="SFX" Hash="{2ABD40C5-574D-7741-6576-5BCDA6B6C56A}">
+		<SoundBank Id="2228651116" Type="User" Language="SFX" Hash="{02267403-3B16-1ABE-ED76-04AFC5C4AD3D}">
 			<ShortName>Main_Soundbank</ShortName>
 			<Path>Main_Soundbank.bnk</Path>
+			<Media>
+				<File Id="887359927" Language="SFX" Streaming="false" Location="Memory">
+					<ShortName>Fight Hits 08.wav</ShortName>
+					<CachePath>SFX/Fight Hits 08_818F3B66.wem</CachePath>
+				</File>
+			</Media>
+			<Events>
+				<Event Id="1519321238" Name="Play_Attack" DurationType="OneShot" DurationMin="0.58385485" DurationMax="0.58385485">
+					<MediaRefs>
+						<MediaRef Id="887359927"/>
+					</MediaRefs>
+				</Event>
+			</Events>
 		</SoundBank>
 	</SoundBanks>
-	<FileHash>{94C47EDA-5465-3CF6-AAF1-5CDB046110C3}</FileHash>
+	<FileHash>{48508CD3-792D-99F7-CA4E-2A0D49BA193F}</FileHash>
 </SoundBanksInfo>

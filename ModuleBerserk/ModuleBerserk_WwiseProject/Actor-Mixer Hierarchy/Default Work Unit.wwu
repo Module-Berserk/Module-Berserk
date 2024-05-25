@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{2CCD8CAB-58BF-488D-A4F8-C24A66B14177}" SchemaVersion="119">
 	<AudioObjects>
-		<WorkUnit Name="Default Work Unit" ID="{2CCD8CAB-58BF-488D-A4F8-C24A66B14177}" PersistMode="Standalone"/>
+		<WorkUnit Name="Default Work Unit" ID="{2CCD8CAB-58BF-488D-A4F8-C24A66B14177}" PersistMode="Standalone">
+			<ChildrenList>
+				<Sound Name="Attack" ID="{80AA58B9-ECEE-4A1C-8E2D-2008A32EDC78}" ShortID="190617188">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{82EA3157-C304-4AC1-93D9-F252D1B16FF5}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{0B680788-1EB5-4FFD-B901-7B3EE90D78B0}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="Fight Hits 08" ID="{D955681E-C303-46BB-9799-0233673AE6A5}">
+							<Language>SFX</Language>
+							<AudioFile>Fight Hits 08.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="887359927"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="Fight Hits 08" ID="{D955681E-C303-46BB-9799-0233673AE6A5}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
 	</AudioObjects>
 </WwiseDocument>

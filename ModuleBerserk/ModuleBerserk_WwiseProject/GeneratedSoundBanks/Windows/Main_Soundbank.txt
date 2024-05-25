@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1519321238	Play_Attack			\Default Work Unit\Play_Attack	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	887359927	Attack	C:\Users\admin\Documents\GitHub\Module-Berserk\ModuleBerserk\ModuleBerserk_WwiseProject\.cache\Windows\SFX\Fight Hits 08_818F3B66.wem		\Actor-Mixer Hierarchy\Default Work Unit\Attack		25844
+
