@@ -3,6 +3,11 @@ using UnityEngine.Events;
 
 // 조건 개념에 해당하는 모든 것들의 base class.
 //
+// 모든 Trigger 계열의 클래스는 다음 요구사항을 충족해야 한다:
+// 1. 초기 조건은 false이다
+// 2. 조건이 false에서 true로 바뀌는 순간에 Activate()를 호출한다
+// 3. 조건이 true에서 false로 바뀌는 순간에 Deactivate()를 호출한다.
+//
 // 조건이 활성화된 순간을 OnActivate 이벤트로 알아내거나
 // IsActive 프로퍼티로 현재 조건이 활성화되었는지 직접 확인할 수 있음.
 // 

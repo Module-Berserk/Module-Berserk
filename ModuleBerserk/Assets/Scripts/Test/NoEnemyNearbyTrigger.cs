@@ -8,14 +8,6 @@ public class NoEnemyNearbyTrigger : Trigger
 {
     private int numEnemiesWithinRange = 0;
 
-    private void Awake()
-    {
-        // 범위 내에 적이 없는 상태로 시작하면 OnTriggerExit2D
-        // 이벤트가 발생하지 않아 비활성화 상태로 유지됨.
-        // 이를 막기 위해 활성화 상태로 시작함.
-        Activate();
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
