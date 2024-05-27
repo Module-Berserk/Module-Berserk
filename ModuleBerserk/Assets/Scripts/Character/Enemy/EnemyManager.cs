@@ -31,6 +31,10 @@ public class EnemyManager : MonoBehaviour, IDestructible {
     {
         initialPosition = transform.position;
         // TODO: enemyStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+
+        // ApplyDamageOnContact 컴포넌트에서 적의 공격력 스탯을 사용하도록 설정
+        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
+        applyDamageOnContact.RawDamage = enemyStat.AttackDamage;
     }
 
     private void FixedUpdate() {
@@ -83,9 +87,6 @@ public class EnemyManager : MonoBehaviour, IDestructible {
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
-        //체력을 보여줄 방법을 찾지 못해 로그로 표현해봤습니다.
-        Debug.Log("아야! 적 현재 체력: " + enemyStat.HP.CurrentValue);
-
         flashEffectOnHit.StartEffectAsync().Forget();
 
         ApplyStaggerForDurationAsync(staggerInfo.direction * 3.0f, 0.4f).Forget();

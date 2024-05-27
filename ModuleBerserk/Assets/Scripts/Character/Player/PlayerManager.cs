@@ -8,7 +8,6 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
-    [SerializeField] private float maxMoveSpeed = 2.5f;
     [SerializeField] private float turnAcceleration = 150f;
     [SerializeField] private float moveAcceleration = 100f;
     [SerializeField] private float moveDecceleration = 150f;
@@ -76,6 +75,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
     private ColliderSizeAdjuster colliderSizeAdjuster;
+    private GearSystem gearSystem;
 
     // 입력 시스템
     private ModuleBerserkActionAssets actionAssets;
@@ -140,6 +140,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Start()
     {
         // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+
+        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
+        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
+        applyDamageOnContact.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
+
+        // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
+        applyDamageOnContact.RawDamage = playerStat.AttackDamage;
+
+        // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
+        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed, playerStat.MoveSpeed));
     }
 
     private void FindComponentReferences()
@@ -152,6 +162,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
+        gearSystem = GetComponent<GearSystem>();
     }
 
     private void BindInputActions()
@@ -231,6 +242,22 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirection(actionAssets.Player.Move.ReadValue<float>());
 
+        // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우
+        if (gearSystem.IsNextGearLevelReady())
+        {
+            gearSystem.IncreaseGearLevel();
+
+            // 기어 0단계에서 기어 1단계로 넘어오는 경우를 제외하면
+            // 해당 공격이 특수 공격으로 전환됨!
+            if (gearSystem.CurrentGearLevel != 1)
+            {
+                // TODO: 이번 기어 단계에 맞는 특수 공격 실행
+                Debug.Log("특수 공격!");
+
+                return;
+            }
+        }
+
         // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
@@ -264,6 +291,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         //
         // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
         animator.SetTrigger($"Attack{attackCount}");
+
+        // 공격 속도 스탯에 따라 애니메이션 재생 속도 설정
+        animator.speed = playerStat.AttackSpeed.CurrentValue;
 
         // 공격 애니메이션의 pivot 변화로 루트모션을
         // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
@@ -464,8 +494,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
-            // 마지막에 곱하는 0.5은 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            rb.velocity = (isFacingRight ? Vector2.right : Vector2.left) * rootMotion * 0.5f;
+            // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
+            rb.velocity = (isFacingRight ? Vector2.right : Vector2.left) * rootMotion * 1.2f;
         }
 
         prevSpritePivotX = currSpritePivotX;
@@ -560,7 +590,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void UpdateMoveVelocity(float moveInput)
     {
         // 원하는 속도를 계산
-        float desiredVelocityX = maxMoveSpeed * moveInput * maxMoveSpeed;
+        float desiredVelocityX = playerStat.MoveSpeed.CurrentValue * moveInput;
 
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
@@ -741,8 +771,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
-        Debug.Log($"아야! 내 현재 체력: {playerStat.HP.CurrentValue}");
-
         flashEffectOnHit.StartEffectAsync().Forget();
 
         // TODO:
@@ -760,6 +788,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, strongStaggerDuration);
                 break;
         }
+
+        // 공격 당하면 게이지가 깎임
+        gearSystem.OnPlayerHit();
     }
 
     // 현재 하던 행동을 취소하고 피격 경직 상태에 진입
@@ -802,6 +833,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAttackInputBuffered = false;
             rb.gravityScale = defaultGravityScale;
             OnDisableAttackCollider();
+
+            // 공격 속도 스탯이 다른 모션의 재생 속도에는 영향을 미치지 않도록 1로 돌려놓기
+            animator.speed = 1f;
 
             // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼
             // 연속 공격을 하지 않았더라도 착지하기 전까지 공격을 금지함.
