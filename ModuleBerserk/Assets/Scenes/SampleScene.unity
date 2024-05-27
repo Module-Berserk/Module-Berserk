@@ -5436,9 +5436,9 @@ MonoBehaviour:
   OnActivate:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 18177902}
-        m_TargetAssemblyTypeName: TestDoor, Assembly-CSharp
-        m_MethodName: Open
+      - m_Target: {fileID: 1751546153}
+        m_TargetAssemblyTypeName: Elevator, Assembly-CSharp
+        m_MethodName: StartMovingUp
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5451,9 +5451,9 @@ MonoBehaviour:
   OnDeactivate:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 18177902}
-        m_TargetAssemblyTypeName: TestDoor, Assembly-CSharp
-        m_MethodName: Close
+      - m_Target: {fileID: 1751546153}
+        m_TargetAssemblyTypeName: Elevator, Assembly-CSharp
+        m_MethodName: StartMovingDown
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5992,9 +5992,9 @@ MonoBehaviour:
   OnActivate:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1751546153}
-        m_TargetAssemblyTypeName: Elevator, Assembly-CSharp
-        m_MethodName: StartMovingUp
+      - m_Target: {fileID: 18177902}
+        m_TargetAssemblyTypeName: TestDoor, Assembly-CSharp
+        m_MethodName: Open
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6006,7 +6006,19 @@ MonoBehaviour:
         m_CallState: 2
   OnDeactivate:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 18177902}
+        m_TargetAssemblyTypeName: TestDoor, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

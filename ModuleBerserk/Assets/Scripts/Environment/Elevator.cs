@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ public class Elevator : MonoBehaviour
     private Rigidbody2D rb;
     private float heightUpperBound;
     private float heightLowerBound;
+
+    private CancellationTokenSource movementCancellation = new();
+    private bool isMoving = false;
 
     private void Awake()
     {
@@ -55,15 +59,26 @@ public class Elevator : MonoBehaviour
 
     private async UniTask StartMovement(float destinationHeight)
     {
-        PlayerElevatorMoveStartEffect();
+        // 이미 이동 중이었다면 모션 취소
+        if (isMoving)
+        {
+            CancelMovement();
+        }
+        // 정지 상태였다면 잠깐 대기한 뒤 이동 시작
+        //
+        // Note:
+        // 플레이어가 엘레베이터를 레버 등으로 작동한 뒤
+        // 탑승하러 오기까지 약간의 시간적 여유가 필요함
+        else
+        {
+            PlayerElevatorMoveStartEffect();
 
-        await UniTask.WaitForSeconds(delayBeforeMovement);
+            await UniTask.WaitForSeconds(delayBeforeMovement, cancellationToken: movementCancellation.Token);
+        }
 
-        // TODO:
-        // 1. 더 복잡한 속도 커브가 필요한 경우 DoTween으로 전환할 것
-        // 2. 이미 엘리베이터가 이동하는 중인데 또 StartMovement가 호출되는 상황 처리하기
-        //    ex) 일회성 트리거 클래스를 새로 만들거나
-        //        Elevator가 기존 이동을 취소하고 새로운 방향으로 즉시 전환
+        isMoving = true;
+
+        // TODO: 더 복잡한 속도 커브가 필요한 경우 DoTween으로 전환할 것
         while (true)
         {
             float heightDiff = destinationHeight - rb.position.y;
@@ -71,15 +86,24 @@ public class Elevator : MonoBehaviour
             if (Mathf.Abs(heightDiff) > 0.1f)
             {
                 rb.velocity = Vector2.up * Mathf.Sign(heightDiff);
-                await UniTask.NextFrame();
+                await UniTask.NextFrame(cancellationToken: movementCancellation.Token);
             }
             else
             {
-                rb.position = new Vector2(rb.position.x, destinationHeight);
-                rb.velocity = Vector2.zero;
                 break;
             }
         }
+        
+        rb.position = new Vector2(rb.position.x, destinationHeight);
+        rb.velocity = Vector2.zero;
+        isMoving = false;
+    }
+
+    private void CancelMovement()
+    {
+        movementCancellation.Cancel();
+        movementCancellation.Dispose();
+        movementCancellation = new();
     }
 
     private void PlayerElevatorMoveStartEffect()
