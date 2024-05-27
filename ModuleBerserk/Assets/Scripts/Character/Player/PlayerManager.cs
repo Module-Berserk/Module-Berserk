@@ -69,6 +69,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float evasionVelocity = 10f;
     [SerializeField] private float evasionCooltime = 2f;
 
+    public bool IsFacingRight
+    {
+        get
+        {
+            return !spriteRenderer.flipX;
+        }
+        private set
+        {
+            spriteRenderer.flipX = !value;
+        }
+    }
 
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
@@ -100,9 +111,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isJumpKeyPressed = false;
     // 현재 어느 쪽을 바라보고 있는지 기록.
     // 스프라이트 반전과 카메라 추적 위치 조정에 사용됨.
-    private bool isFacingRight = true;
-    // 벽에 메달린 방향이 오른쪽인지 기록.
-    // 벽에서 떨어져야 하는지 테스트할 때 사용됨.
     private bool isStickingToRightWall;
     // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
     private float airControl;
@@ -376,7 +384,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         weaponCollider.enabled = true;
 
         // 바라보는 방향에 따라 콜라이더 위치 조정
-        float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (isFacingRight ? 1f : -1f);
+        float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (IsFacingRight ? 1f : -1f);
         weaponCollider.offset = new Vector2(newOffsetX, weaponCollider.offset.y);
     }
 
@@ -485,14 +493,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         AdjustCollider();
         UpdateCameraFollowTarget();
-        UpdateSpriteDirection();
         UpdateAnimatorState();
     }
 
     // 회피 중이라면 바라보는 방향으로 일정한 속도 유지
     private void ApplyEvasionVelocity()
     {
-        float evasionVelocityX = evasionVelocity * (isFacingRight ? 1f : -1f);
+        float evasionVelocityX = evasionVelocity * (IsFacingRight ? 1f : -1f);
         rb.velocity = new Vector2(evasionVelocityX, rb.velocity.y);
     }
 
@@ -579,7 +586,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            rb.velocity = (isFacingRight ? Vector2.right : Vector2.left) * rootMotion * 1.2f;
+            rb.velocity = (IsFacingRight ? Vector2.right : Vector2.left) * rootMotion * 1.2f;
         }
 
         prevSpritePivotX = currSpritePivotX;
@@ -612,7 +619,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (moveInput != 0f)
         {
-            isFacingRight = moveInput > 0f;
+            IsFacingRight = moveInput > 0f;
         }
     }
 
@@ -659,9 +666,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0f;
 
-        // TODO:
-        // 1. 벽에 달라붙는 애니메이션으로 전환 (임시 애니메이션 사용할 것!)
-        // 2. 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
+        // TODO: 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
     }
 
     private void StopStickingToWall()
@@ -769,6 +774,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
             // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
             rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
+
+            // 점프하는 방향 바라보기
+            IsFacingRight = rb.velocity.x > 0f;
         }
         else
         {
@@ -808,7 +816,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         Vector2 newPosition = transform.position;
 
         // 바라보는 방향으로 look ahead
-        newPosition.x += isFacingRight ? cameraLookAheadDistance : -cameraLookAheadDistance;
+        newPosition.x += IsFacingRight ? cameraLookAheadDistance : -cameraLookAheadDistance;
 
         // 벽에 매달리거나 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
         if (!groundContact.IsGrounded && state != State.StickToWall)
@@ -817,11 +825,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         cameraFollowTarget.transform.position = newPosition;
-    }
-
-    private void UpdateSpriteDirection()
-    {
-        spriteRenderer.flipX = !isFacingRight;
     }
 
     // 매 프레임 갱신해야 하는 애니메이터 파라미터 관리
@@ -833,6 +836,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetBool("IsAttacking", IsAttacking());
         animator.SetBool("IsStaggered", state == State.Stagger);
         animator.SetBool("IsEvading", state == State.Evade);
+        animator.SetBool("IsStickingToWall", state == State.StickToWall);
     }
 
     private bool IsAttacking()
