@@ -3462,7 +3462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
-  attackDamage: 1000
+  attackDamage: 0
   attackSpeed: 1
   defense: 19
   moveSpeed: 2.5
