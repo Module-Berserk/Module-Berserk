@@ -55,21 +55,27 @@ public class GroundContact
     // 이를 방지하기 위해 양쪽을 모두 확인해줘야 함.
     private GameObject FindPlatformBelow()
     {
-        // Jump 또는 FallDown 입력에 의해 one way platform을 관통하는 경우도 있으므로
-        // 수직 속도가 정말 0에 가까운 경우에만 체크를 수행함.
-        //
-        // TODO: 움직이는 플랫폼 위에 있는 경우 고려하기
-        if (Mathf.Abs(rigidbody.velocity.y) > 0.01f)
-        {
-            return null;
-        }
-
         // 0.99f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
         var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
         ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter);
 
-        return result.TryGetCollidingObject();
+        // 아래에 아무것도 없으면 확실히 바닥과 접촉 중이 아님
+        GameObject platform = result.TryGetCollidingObject();
+        if (platform == null)
+        {
+            return null;
+        }
+
+        // 땅에 가만히 서있거나 움직이는 엘리베이터에 서있는 경우(상대 속도 = 0)를
+        // 점프해서 one way platform을 뚫고 올라는 경우(상대 속도 != 0)를 구분하기 위해
+        var platformRigidbody = platform.GetComponent<Rigidbody2D>();
+        if (platformRigidbody == null || Mathf.Abs(platformRigidbody.velocity.y - rigidbody.velocity.y) > 0.01f)
+        {
+            return null;
+        }
+
+        return platform;
     }
 
     // Vector2.left 또는 Vector2.right가 주어졌을 때 해당 방향으로
