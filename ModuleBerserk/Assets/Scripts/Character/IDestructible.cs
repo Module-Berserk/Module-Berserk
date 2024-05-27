@@ -26,16 +26,18 @@ public enum StaggerStrength
 public struct StaggerInfo
 {
     public StaggerStrength strength; // 경직 강도
-    public Vector2 direction; // 밀려날 방향 (TODO: 만약 왼쪽/오른쪽만 필요하다면 Vector2에서 bool 또는 enum으로 변경)
+    public Vector2 direction; // 밀려날 방향
+    public float duration; // 경직 지속 시간
 
-    public StaggerInfo(StaggerStrength strength, Vector2 direction)
+    public StaggerInfo(StaggerStrength strength, Vector2 direction, float duration)
     {
         this.strength = strength;
         this.direction = direction;
+        this.duration = duration;
     }
 
     // 경직 없이 데미지를 입히고 싶은 경우 사용
-    public static StaggerInfo NoStagger => new(StaggerStrength.None, Vector2.zero);
+    public static StaggerInfo NoStagger => new(StaggerStrength.None, Vector2.zero, 0f);
 }
 
 // 체력과 방어력이 존재하며 파괴 가능한 모든 물체

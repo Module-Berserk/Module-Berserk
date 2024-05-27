@@ -8,6 +8,8 @@ public class GroundContact
 {
     public GameObject CurrentPlatform {get; private set;}
     public bool IsGrounded {get => CurrentPlatform != null;}
+    public bool IsLeftFootGrounded {get; private set;}
+    public bool IsRightFootGrounded {get; private set;}
     public bool IsInContactWithLeftWall {get; private set;}
     public bool IsInContactWithRightWall {get; private set;}
 
@@ -55,6 +57,10 @@ public class GroundContact
     // 이를 방지하기 위해 양쪽을 모두 확인해줘야 함.
     private GameObject FindPlatformBelow()
     {
+        // 이전 상태 초기화
+        IsLeftFootGrounded = false;
+        IsRightFootGrounded = false;
+
         // 0.99f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
         var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
@@ -75,6 +81,9 @@ public class GroundContact
             return null;
         }
 
+        // 만약 아래에 플랫폼이 있다면 그 중에서도 끝자락에 위치한 상태인지 테스트
+        IsRightFootGrounded = result.Hit1;
+        IsLeftFootGrounded = result.Hit2;
         return platform;
     }
 

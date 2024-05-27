@@ -26,7 +26,7 @@ public class ApplyDamageOnContact : MonoBehaviour
         {
             // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
             Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
-            StaggerInfo staggerInfo = new(staggerStrength, staggerDirection);
+            StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f);
 
             // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
             if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue, staggerInfo))
