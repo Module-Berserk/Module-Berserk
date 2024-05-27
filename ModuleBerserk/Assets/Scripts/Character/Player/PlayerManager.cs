@@ -209,8 +209,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 만약 상호작용이 가능한 대상이 없었다면 2순위 행동인 공격을 시도한다.
         if (!isInteractionSuccessful)
         {
-            // 경직 상태이거나 벽에 매달린 경우는 공격 불가
-            if (state == State.Stagger || state == State.StickToWall)
+            // 회피 중이거나 경직 상태이거나 벽에 매달린 경우는 공격 불가
+            if (state == State.Evade || state == State.Stagger || state == State.StickToWall)
             {
                 return;
             }
@@ -660,7 +660,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb.gravityScale = 0f;
 
         // TODO:
-        // 1. 벽에 달라붙는 애니메이션으로 전환
+        // 1. 벽에 달라붙는 애니메이션으로 전환 (임시 애니메이션 사용할 것!)
         // 2. 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
     }
 
