@@ -366,9 +366,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
         animator.SetTrigger($"Attack{attackCount}");
 
-        // 공격 속도 스탯에 따라 애니메이션 재생 속도 설정
-        animator.speed = playerStat.AttackSpeed.CurrentValue;
-
         // 공격 애니메이션의 pivot 변화로 루트모션을
         // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
         // 값으로 -1을 넣으면 다음 프레임의 pivot 좌표를 기준점으로 삼는다.
@@ -839,6 +836,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetBool("IsStaggered", state == State.Stagger);
         animator.SetBool("IsEvading", state == State.Evade);
         animator.SetBool("IsStickingToWall", state == State.StickToWall);
+        animator.SetFloat("AttackSpeed", playerStat.AttackSpeed.CurrentValue);
     }
 
     private bool IsAttacking()
@@ -923,9 +921,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAttackInputBuffered = false;
             rb.gravityScale = defaultGravityScale;
             OnDisableAttackCollider();
-
-            // 공격 속도 스탯이 다른 모션의 재생 속도에는 영향을 미치지 않도록 1로 돌려놓기
-            animator.speed = 1f;
 
             // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼
             // 연속 공격을 하지 않았더라도 착지하기 전까지 공격을 금지함.
