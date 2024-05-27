@@ -62,6 +62,15 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Evade"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e098b6b-a77e-43bd-a4ec-a1310ec15c9e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -128,6 +137,17 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PerformAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""906c912c-07a0-4f14-9c47-17a44c0dcac9"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Evade"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -270,6 +290,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_FallDown = m_Player.FindAction("FallDown", throwIfNotFound: true);
         m_Player_PerformAction = m_Player.FindAction("PerformAction", throwIfNotFound: true);
+        m_Player_Evade = m_Player.FindAction("Evade", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
@@ -343,6 +364,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_FallDown;
     private readonly InputAction m_Player_PerformAction;
+    private readonly InputAction m_Player_Evade;
     public struct PlayerActions
     {
         private @ModuleBerserkActionAssets m_Wrapper;
@@ -351,6 +373,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @FallDown => m_Wrapper.m_Player_FallDown;
         public InputAction @PerformAction => m_Wrapper.m_Player_PerformAction;
+        public InputAction @Evade => m_Wrapper.m_Player_Evade;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -372,6 +395,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @PerformAction.started += instance.OnPerformAction;
             @PerformAction.performed += instance.OnPerformAction;
             @PerformAction.canceled += instance.OnPerformAction;
+            @Evade.started += instance.OnEvade;
+            @Evade.performed += instance.OnEvade;
+            @Evade.canceled += instance.OnEvade;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -388,6 +414,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @PerformAction.started -= instance.OnPerformAction;
             @PerformAction.performed -= instance.OnPerformAction;
             @PerformAction.canceled -= instance.OnPerformAction;
+            @Evade.started -= instance.OnEvade;
+            @Evade.performed -= instance.OnEvade;
+            @Evade.canceled -= instance.OnEvade;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -497,6 +526,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         void OnJump(InputAction.CallbackContext context);
         void OnFallDown(InputAction.CallbackContext context);
         void OnPerformAction(InputAction.CallbackContext context);
+        void OnEvade(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
