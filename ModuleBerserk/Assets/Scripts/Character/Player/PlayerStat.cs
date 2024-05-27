@@ -14,7 +14,7 @@ public class PlayerStat : MonoBehaviour {
     [SerializeField] private float defense = 10f;
 
     [Header("Speed")]
-    [SerializeField] private float moveSpeed = 2.5f;
+    [SerializeField] private float moveSpeed = 3.5f;
 
     public CharacterStat HP;
     public CharacterStat AttackDamage;

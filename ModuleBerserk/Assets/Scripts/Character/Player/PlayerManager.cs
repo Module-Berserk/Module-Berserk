@@ -33,8 +33,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
     // 최대 공중공격 콤보 횟수
     [SerializeField] private int maxOnAirAttackCount = 2;
-    // 한 번 벽에 붙으면 방향키를 누르고 있지 않아도 계속 매달려 있어야 하는지
-    [SerializeField] private bool isWallStickingPersistent = true;
 
 
     [Header("Ground Contact")]
@@ -262,6 +260,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         CancelCurrentAction();
 
+        // 입력 방향으로 방향 전환
+        UpdateFacingDirectionByInput();
+
         // 회피 무적 상태로 전환
         state = State.Evade;
         isInvincible = true;
@@ -311,7 +312,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // 공격을 시작하는 순간에 한해 방향 전환 허용
-        UpdateFacingDirection(actionAssets.Player.Move.ReadValue<float>());
+        UpdateFacingDirectionByInput();
 
         // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우
         if (gearSystem.IsNextGearLevelReady())
@@ -468,6 +469,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
             if (groundContact.IsGrounded)
             {
                 ResetJumpRelatedStates();
+
+                // 벽에 붙은 상태에서 엘리베이터가 올라와
+                // IsGrounded = true가 되어버리는 상황 처리
+                if (state == State.StickToWall)
+                {
+                    StopStickingToWall();
+                }
             }
             else if (state == State.IdleOrRun)
             {
@@ -598,7 +606,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         
         if (state == State.IdleOrRun)
         {
-            UpdateFacingDirection(moveInput);
+            UpdateFacingDirectionByInput();
             if (ShouldStickToWall(moveInput))
             {
                 StartStickingToWall(moveInput);
@@ -615,8 +623,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    private void UpdateFacingDirection(float moveInput)
+    // 이동 입력에 따라 바라보는 방향을 변경함
+    // 키가 입력되지 않은 상황에서는 기존 방향을 유지
+    private void UpdateFacingDirectionByInput()
     {
+        var moveInput = actionAssets.Player.Move.ReadValue<float>();
         if (moveInput != 0f)
         {
             IsFacingRight = moveInput > 0f;
@@ -632,21 +643,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
         return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
     }
 
+    // 벽에 붙은 방향과 반대로 이동하는 경우 벽붙기 중지
     private bool ShouldStopStickingToWall(float moveInput)
     {
-        // 벽에 매달리는 것을 종료하는 조건은 설정에 따라 두 가지 모드로 나뉨
-        // 1) 벽에 매달린 뒤로 방향키를 더 이상 누르지 않아도 상태를 유지할 수 있다는 설정
-        bool isMovingToOppositeDirection = (isStickingToRightWall && moveInput < 0f) || (!isStickingToRightWall && moveInput > 0f);
-        if (isWallStickingPersistent)
-        {
-            return isMovingToOppositeDirection;
-        }
-        // 2) 방향키를 누르지 않는 순간에 바로 벽에서 떨어지도록 만드는 설정
-        else
-        {
-            return isMovingToOppositeDirection || moveInput == 0f;
-        }
-        
+        return
+            (isStickingToRightWall && moveInput < 0f) || // 오른쪽 벽에 붙은 상태에서 왼쪽으로 이동
+            (!isStickingToRightWall && moveInput > 0f); // 왼쪽 벽에 붙은 상태에서 오른쪽으로 이동
     }
 
     private void StartStickingToWall(float moveInput)

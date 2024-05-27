@@ -3347,10 +3347,9 @@ MonoBehaviour:
   gravityScaleWhileFalling: 6
   maxFallSpeed: 15
   defaultAirControl: 0.5
-  airControlWhileWallJumping: 0.3
-  wallJumpAirControlPenaltyDuration: 0.2
+  airControlWhileWallJumping: 0.2
+  wallJumpAirControlPenaltyDuration: 0.3
   maxOnAirAttackCount: 2
-  isWallStickingPersistent: 1
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
@@ -3360,6 +3359,8 @@ MonoBehaviour:
   weakStaggerKnockbackForce: 3
   strongStaggerKnockbackForce: 23
   weaponCollider: {fileID: 1281604750}
+  evasionVelocity: 10
+  evasionCooltime: 2
 --- !u!50 &1207513168
 Rigidbody2D:
   serializedVersion: 4
@@ -3465,7 +3466,7 @@ MonoBehaviour:
   attackDamage: 0
   attackSpeed: 1
   defense: 19
-  moveSpeed: 2.5
+  moveSpeed: 3.5
 --- !u!95 &1207513172
 Animator:
   serializedVersion: 5
@@ -5096,7 +5097,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.5, y: -2.4, z: 0}
-  m_LocalScale: {x: 2, y: 0.4, z: 1}
+  m_LocalScale: {x: 2.6, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 931631431}
