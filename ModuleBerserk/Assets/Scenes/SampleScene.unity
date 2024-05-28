@@ -2538,8 +2538,8 @@ Transform:
   - {fileID: 1937523359}
   - {fileID: 1668952327}
   - {fileID: 1114015929}
-  - {fileID: 1751546148}
   - {fileID: 1263552029}
+  - {fileID: 1751546148}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &941497983
@@ -5800,8 +5800,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementRange: 3
-  delayBeforeMovement: 2
-  initialState: 1
+  movementSpeed: 1
+  initialMovementDelay: 1
+  delayBeforeReturning: 3
 --- !u!1 &1808919051
 GameObject:
   m_ObjectHideFlags: 0
@@ -6055,7 +6056,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1751546153}
         m_TargetAssemblyTypeName: Elevator, Assembly-CSharp
-        m_MethodName: StartMovingUp
+        m_MethodName: ActivateElevator
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6067,19 +6068,7 @@ MonoBehaviour:
         m_CallState: 2
   OnDeactivate:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1751546153}
-        m_TargetAssemblyTypeName: Elevator, Assembly-CSharp
-        m_MethodName: StartMovingDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   noEnemyNearbyTrigger: {fileID: 2144466758}
 --- !u!58 &1906449011
 CircleCollider2D:
