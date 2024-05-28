@@ -56,6 +56,6 @@ Material:
     m_Floats:
     - _SimilarityTolerance: 0.097
     m_Colors:
-    - _GlowColor: {r: 0, g: 1.723749, b: 38.937145, a: 0}
+    - _GlowColor: {r: 12.844468, g: 8.004632, b: 0, a: 0}
     - _ReferenceColor: {r: 0.9921569, g: 0.972549, b: 0.07450979, a: 1}
   m_BuildTextureStacks: []

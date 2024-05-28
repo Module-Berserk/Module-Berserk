@@ -501,11 +501,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateAnimatorState();
     }
 
-    // 회피 중이라면 바라보는 방향으로 일정한 속도 유지
+    // 회피 중이라면 바라보는 방향으로 일정한 속도 유지 (추락 x)
     private void ApplyEvasionVelocity()
     {
-        float evasionVelocityX = evasionVelocity * (IsFacingRight ? 1f : -1f);
-        rb.velocity = new Vector2(evasionVelocityX, rb.velocity.y);
+        rb.velocity = evasionVelocity * (IsFacingRight ? Vector2.right : Vector2.left);
     }
 
     private void HandleEvasionCooltime()
@@ -634,7 +633,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 공중에 있고 이동하려는 방향의 벽과 접촉한 경우에 한해 true 반환.
     private bool ShouldStickToWall(float moveInput)
     {
-        // TODO: 벽붙기는 로그 타입만 가능하도록 수정
+        // TODO:
+        // 1. 벽붙기는 로그 타입만 가능하도록 수정
+        // 2. 이미 한 번 붙었다가 떨어진 벽에는 다시 붙을 수 없도록 제한 (무한 벽타기 방지)
         bool shouldStickRight = moveInput > 0f && groundContact.IsInContactWithRightWall;
         bool shouldStickLeft = moveInput < 0f && groundContact.IsInContactWithLeftWall;
         return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
@@ -755,6 +756,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     //    초과해서 공중에 떠있는 것으로 취급하는 경우
     private bool IsDoubleJump()
     {
+        // 더블 점프는 일단 폐기...
+        return false;
         return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
     }
 

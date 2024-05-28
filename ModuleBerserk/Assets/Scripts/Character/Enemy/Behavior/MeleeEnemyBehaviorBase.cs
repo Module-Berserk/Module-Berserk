@@ -187,6 +187,10 @@ public class MeleeEnemyBehaviorBase : MonoBehaviour, IMeleeEnemyBehavior
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
+        //
+        // TODO:
+        // 일부 적은 플레이어와의 거리가 아니라 특정 영역 내부를 최우선으로 지키기도 함,
+        // 다른 Behavior 클래스를 만들던지, 여기에 플래그로 if-else 처리를 하던지 해야 함
         if (displacement.magnitude > chaseMaxDistance)
         {
             return false;
