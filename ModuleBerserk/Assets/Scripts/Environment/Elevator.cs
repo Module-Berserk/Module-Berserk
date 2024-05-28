@@ -59,10 +59,16 @@ public class Elevator : MonoBehaviour
 
     private async UniTask StartMovement(float destinationHeight)
     {
+        // 이번 task에 사용할 토큰.
+        // CancellationTokenSource는 취소할 때마다 새로
+        // 생성되므로 레퍼런스가 일관적이지 않음
+        CancellationToken cancellationToken = movementCancellation.Token;
+        
         // 이미 이동 중이었다면 모션 취소
         if (isMoving)
         {
             CancelMovement();
+            cancellationToken = movementCancellation.Token; // 새 토큰으로 교체
         }
         // 정지 상태였다면 잠깐 대기한 뒤 이동 시작
         //
@@ -73,7 +79,11 @@ public class Elevator : MonoBehaviour
         {
             PlayerElevatorMoveStartEffect();
 
-            await UniTask.WaitForSeconds(delayBeforeMovement, cancellationToken: movementCancellation.Token);
+            await UniTask.WaitForSeconds(delayBeforeMovement, cancellationToken: cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
         }
 
         isMoving = true;
@@ -83,10 +93,16 @@ public class Elevator : MonoBehaviour
         {
             float heightDiff = destinationHeight - rb.position.y;
 
-            if (Mathf.Abs(heightDiff) > 0.1f)
+            // 아직 목적지와 거리가 있고 목적지를 넘어선 상황도 아니라면 계속 이동
+            if (Mathf.Abs(heightDiff) > 0.1f && IsWithinBoundary())
             {
                 rb.velocity = Vector2.up * Mathf.Sign(heightDiff);
-                await UniTask.NextFrame(cancellationToken: movementCancellation.Token);
+
+                await UniTask.NextFrame(cancellationToken: cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
             }
             else
             {
@@ -99,8 +115,14 @@ public class Elevator : MonoBehaviour
         isMoving = false;
     }
 
+    private bool IsWithinBoundary()
+    {
+        return rb.position.y >= heightLowerBound && rb.position.y <= heightUpperBound;
+    }
+
     private void CancelMovement()
     {
+        Debug.Log("이동 취소됨!");
         movementCancellation.Cancel();
         movementCancellation.Dispose();
         movementCancellation = new();
