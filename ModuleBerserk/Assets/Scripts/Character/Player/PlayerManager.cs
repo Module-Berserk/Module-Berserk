@@ -758,7 +758,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 더블 점프는 일단 폐기...
         return false;
-        return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
+        // return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
     }
 
     private void PerformJump()
