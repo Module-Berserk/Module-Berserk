@@ -107,7 +107,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
                 }
             }
             // 공격 범위를 벗어났고, 아직 공격 모션이 재생 중이지 않다면 다시 Chase 상태로 전환
-            else if (meleeEnemyBehavior.IsMeleeAttackMotionFinished())
+            else if (meleeEnemyBehavior.IsAttackMotionFinished())
             {
                 state = State.Chase;
             }

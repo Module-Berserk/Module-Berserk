@@ -56,13 +56,6 @@ public interface IDestructible
     }
 
     // 공격을 받을 때마다 호출됨
-    //
-    // TODO:
-    // 만약 CharacterStat.OnValueChange 이벤트에서 파라미터로 알려주는 스탯 변화량을
-    // 직접 stat.CurrentValue를 사용해 알아내거나 이 함수처럼 변화량을 다른 방법으로
-    // 알아낼 수 있다고 한다면 CharacterStat.OnValueChange 이벤트 타입을
-    // UnityEvent<float>에서 그냥 UnityEvent로 바꿔도 됨.
-    // 생각해보니 스탯이 바뀔 때마다 현재 수치 말고 변화량 자체가 필요한 곳이 별로 없는 것 같음...
     void OnDamage(float finalDamage, StaggerInfo staggerInfo);
 
     // 공격을 받아 HP가 0이 된 경우 호출됨

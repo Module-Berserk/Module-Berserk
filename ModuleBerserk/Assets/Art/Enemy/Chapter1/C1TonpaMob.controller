@@ -57,7 +57,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: player_loyal_stagger_temp
+  m_Name: c1_tonpamob_kb
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -71,7 +71,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 429f925d997e3654aa56190a37717a67, type: 2}
+  m_Motion: {fileID: 7400000, guid: 7bdb5a27efb909b44a85bc3f2e7eaaaf, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -141,7 +141,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TempMeleeEnemy
+  m_Name: C1TonpaMob
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: MeleeAttack
@@ -229,7 +229,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: player_loyal_run
+  m_Name: c1_tonpamob_move
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -243,7 +243,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 05a9670b38b11bf48ae1945162f9ccf0, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5d8fa064d7b6586469703ccc2bea28cf, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -256,7 +256,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: chapter1_mob_Clip
+  m_Name: c1_tonpamob_idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -270,7 +270,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: e7f826a701e6a874eb6d2880686b28b6, type: 2}
+  m_Motion: {fileID: 7400000, guid: dcf57b1a017fd5d4cbead6b46e0663aa, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -305,7 +305,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: player_loyal_atk1
+  m_Name: c1_tonpamob_atk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -319,7 +319,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 8d6b8243eca86ec4eb1baf1b8153d38d, type: 2}
+  m_Motion: {fileID: 7400000, guid: 51fc800f7c7784545aa17ce806c34b89, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

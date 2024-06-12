@@ -73,10 +73,11 @@ public class GroundContact
             return null;
         }
 
-        // 땅에 가만히 서있거나 움직이는 엘리베이터에 서있는 경우(상대 속도 = 0)를
-        // 점프해서 one way platform을 뚫고 올라는 경우(상대 속도 != 0)를 구분하기 위해
+        // 땅에 가만히 서있거나 (상대 속도 = 0) 움직이는 엘리베이터에 서있는 경우를
+        // 점프해서 one way platform을 뚫고 올라는 경우(상대 속도 != 0)를 구분
+        var isElevator = platform.GetComponent<Elevator>() != null;
         var platformRigidbody = platform.GetComponent<Rigidbody2D>();
-        if (platformRigidbody == null || Mathf.Abs(platformRigidbody.velocity.y - rigidbody.velocity.y) > 0.01f)
+        if (!isElevator && Mathf.Abs(platformRigidbody.velocity.y - rigidbody.velocity.y) > 0.01f)
         {
             return null;
         }

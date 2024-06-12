@@ -1,10 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// 주인공의 이동/공격/상호작용 등 각종 조작을 구현하는 클래스.
+//
+// 필요한 애니메이션 이벤트:
+// 1. OnEnableAttackCollider() 
+//    - 선딜레이가 끝나고 공격 판정이 시작되는 시점
+// 2. OnBeginAttackInputBuffering()
+//    - 선입력을 기록하기 시작할 시점 (1번 이벤트의 다음 프레임)
+// 3. OnDisableAttackCollider()
+//    - 타격 모션이 끝나고 후딜레이가 시작되는 시점
+// 4. OnStartWaitingAttackContinuation()
+//    - 선입력에 의해 자동으로 공격을 이어나가는 시점 (복귀 자세 시작되는 프레임)
+//    - 연속 공격의 마지막 콤보 뒤에 딜레이를 의도적으로 넣고싶은 경우
+//      이 이벤트를 없애서 복귀 자세를 강제하는 방식으로 처리할 수 있음
+// 5. OnAttackMotionEnd() - 각 공격 모션의 마지막 프레임
+//
+// 필요한 애니메이션 컨트롤러 설정:
+// - 공격 모션마다 Speed Multiplier로 AttackSpeed 파라미터 할당
+//
+// 제공되는 애니메이션 트리거:
+// 1. Jump
+// 2. Evade - 일반 회피
+// 3. AttackN - N번째 공격 모션 시작 ex) Attack1, Attack2, ...
 public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
@@ -38,8 +58,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [Header("Ground Contact")]
     // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
-    // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급
-    [SerializeField] private float contactDistanceThreshold = 0.02f;
+    // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급.
+    // 
+    // Note:
+    // 엘리베이터를 타고 하강하는 상황에서 하단 엘리베이터가
+    // 검출될 수 있을 정도로 넉넉하게 주어야 한다!
+    // 엘리베이터가 먼저 떨어지고 플레이어가 중력으로 낙하하는
+    // 구조여서 의외로 수직 거리가 크게 벌어진다.
+    [SerializeField] private float contactDistanceThreshold = 0.2f;
 
 
     [Header("Follow Camera Target")]
@@ -57,9 +83,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
 
 
-    [Header("Attack")]
-    // 공격 범위로 사용할 콜라이더
-    [SerializeField] private Collider2D weaponCollider;
+    [Header("Weapon Hitbox")]
+    [SerializeField] private ApplyDamageOnContact weaponHitbox;
 
 
     [Header("Evasion")]
@@ -67,16 +92,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float evasionVelocity = 10f;
     [SerializeField] private float evasionCooltime = 2f;
 
-    public bool IsFacingRight
+    public bool IsFacingLeft
     {
-        get
-        {
-            return !spriteRenderer.flipX;
-        }
-        private set
-        {
-            spriteRenderer.flipX = !value;
-        }
+        get => spriteRenderer.flipX;
+        protected set => spriteRenderer.flipX = value;
     }
 
     // 컴포넌트 레퍼런스
@@ -159,15 +178,22 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
 
-        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
-        var applyDamageOnContact = GetComponentInChildren<ApplyDamageOnContact>();
-        applyDamageOnContact.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
-
-        // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
-        applyDamageOnContact.RawDamage = playerStat.AttackDamage;
+        InitializeWeaponHitbox();
 
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
         gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed, playerStat.MoveSpeed));
+    }
+
+    private void InitializeWeaponHitbox()
+    {
+        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
+        weaponHitbox.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
+
+        // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
+        weaponHitbox.RawDamage = playerStat.AttackDamage;
+
+        // 무기 히트박스는 항상 비활성화 상태로 시작해야 함
+        weaponHitbox.IsHitboxEnabled = false;
     }
 
     private void FindComponentReferences()
@@ -251,10 +277,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // 공격 애니메이션 중 타격 부분이 재생 중인 경우에도 처리 x
-        if (weaponCollider.enabled)
+        if (weaponHitbox.IsHitboxEnabled)
         {
-            // TODO: 테스트 끝나면 삭제할 것
-            Debug.Log("핵심 공격 모션 도중에는 회피할 수 없습니다...");
             return;
         }
 
@@ -315,6 +339,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateFacingDirectionByInput();
 
         // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우
+        // TODO: 기어 변동 로직을 "R키를 눌렀을 때"로 옮길 것
         if (gearSystem.IsNextGearLevelReady())
         {
             gearSystem.IncreaseGearLevel();
@@ -352,18 +377,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAirAttackPossible = false;
         }
 
-        // note:
-        // 트리거 이름은 Attack1부터 시작하며,
-        // 각각의 공격 애니메이션은 다음 이벤트를 제공해야 함
-        // 1. 선딜레이가 끝나고 공격 판정이 시작되는 시점 => OnEnableAttackCollider
-        // 2. 선입력을 기록하기 시작할 시점 => OnBeginAttackInputBuffering
-        // 3. 타격 모션이 끝나고 후딜레이가 시작되는 시점 => OnDisableAttackCollider
-        // 4. 선입력에 의해 자동으로 공격을 이어나가는 시점 => OnStartWaitingAttackContinuation
-        //    * 연속 공격의 마지막 콤보 뒤에 딜레이를 의도적으로 넣고싶은 경우
-        //      이 이벤트를 없애서 복귀 자세를 강제하는 방식으로 처리할 수 있음
-        // 5. 공격 모션이 완전히 끝난 뒤 => OnAttackMotionEnd
-        //
-        // TODO: 만약 공격 모션마다 히트박스가 달라지는 경우 처리 방식 수정하기
+        // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐
         animator.SetTrigger($"Attack{attackCount}");
 
         // 공격 애니메이션의 pivot 변화로 루트모션을
@@ -379,11 +393,18 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     public void OnEnableAttackCollider()
     {
-        weaponCollider.enabled = true;
+        // 공격 판정이 들어가는 FixedUpdate보다 애니메이션 상태 갱신이
+        // 나중에 일어나기 때문에 이 함수가 호출되는 프레임에 정확히 피격 경직을 당하는 경우
+        // Stagger 상태에서 무기 히트박스를 켜버리는 상황이 발생할 수 있음!
+        if (state == State.Stagger)
+        {
+            return;
+        }
 
         // 바라보는 방향에 따라 콜라이더 위치 조정
-        float newOffsetX = Mathf.Abs(weaponCollider.offset.x) * (IsFacingRight ? 1f : -1f);
-        weaponCollider.offset = new Vector2(newOffsetX, weaponCollider.offset.y);
+        weaponHitbox.SetHitboxDirection(IsFacingLeft);
+
+        weaponHitbox.IsHitboxEnabled = true;
     }
 
     public void OnBeginAttackInputBuffering()
@@ -393,14 +414,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     public void OnDisableAttackCollider()
     {
-        weaponCollider.enabled = false;
+        weaponHitbox.IsHitboxEnabled = false;
     }
 
     // 공격 애니메이션이 완전히 종료되는 시점에 호출되는 이벤트.
     // 공격 상태를 종료하고 IdleOrRun 상태로 복귀함.
     public void OnAttackMotionEnd()
     {
-        Debug.Log("AttackMotionEnd");
         // 마지막 모션의 경우 별도의 OnStartWaitingAttackContinuation() 이벤트 없이
         // 바로 OnAttackMotionEnd()가 호출되므로 선입력이 있는 경우를 따로 체크해야 함.
         // 공중에 있는 경우는 최대 공격 횟수에 도달하면 무조건 공격을 멈춰야 하므로 취급 x
@@ -496,7 +516,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             UpdateMoveVelocity(0f);
         }
 
-        AdjustCollider();
+        // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
     }
@@ -504,28 +524,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 회피 중이라면 바라보는 방향으로 일정한 속도 유지 (추락 x)
     private void ApplyEvasionVelocity()
     {
-        rb.velocity = evasionVelocity * (IsFacingRight ? Vector2.right : Vector2.left);
+        rb.velocity = evasionVelocity * (IsFacingLeft ? Vector2.left : Vector2.right);
     }
 
     private void HandleEvasionCooltime()
     {
         timeSinceLastEvasion += Time.fixedDeltaTime;
-    }
-
-    // 점프 도중에 콜라이더가 실제 범위보다 넓은 문제를 해결하기 위한 임시방편.
-    // 공중에 있는 동안 콜라이더 사이즈를 약간 작게 만들어줌.
-    //
-    // TODO: 애니메이션에 따른 피격 범위 콜라이더 조정 방안이 확정되면 삭제할 것
-    private void AdjustCollider()
-    {
-        if (groundContact.IsGrounded)
-        {
-            colliderSizeAdjuster.DisableAutoUpdateColliderSize();
-        }
-        else
-        {
-            colliderSizeAdjuster.EnableAutoUpdateColliderSize();
-        }
     }
 
     private void ResetJumpRelatedStates()
@@ -590,7 +594,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            rb.velocity = (IsFacingRight ? Vector2.right : Vector2.left) * rootMotion * 1.2f;
+            rb.velocity = (IsFacingLeft ? Vector2.left : Vector2.right) * rootMotion * 1.2f;
         }
 
         prevSpritePivotX = currSpritePivotX;
@@ -626,7 +630,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         var moveInput = actionAssets.Player.Move.ReadValue<float>();
         if (moveInput != 0f)
         {
-            IsFacingRight = moveInput > 0f;
+            IsFacingLeft = moveInput < 0f;
         }
     }
 
@@ -778,7 +782,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
 
             // 점프하는 방향 바라보기
-            IsFacingRight = rb.velocity.x > 0f;
+            IsFacingLeft = rb.velocity.x < 0f;
         }
         else
         {
@@ -818,7 +822,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         Vector2 newPosition = transform.position;
 
         // 바라보는 방향으로 look ahead
-        newPosition.x += IsFacingRight ? cameraLookAheadDistance : -cameraLookAheadDistance;
+        newPosition.x += IsFacingLeft ? -cameraLookAheadDistance : cameraLookAheadDistance;
 
         // 벽에 매달리거나 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
         if (!groundContact.IsGrounded && state != State.StickToWall)
