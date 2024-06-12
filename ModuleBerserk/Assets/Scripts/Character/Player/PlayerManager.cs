@@ -109,8 +109,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private ColliderSizeAdjuster colliderSizeAdjuster;
     private GearSystem gearSystem;
 
-    // 입력 시스템
-    private ModuleBerserkActionAssets actionAssets;
     // 지면 접촉 테스트 관리자
     private GroundContact groundContact;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
@@ -168,10 +166,22 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Awake()
     {
         FindComponentReferences();
-        BindInputActions();
         
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
         airControl = defaultAirControl;
+    }
+
+    private void FindComponentReferences()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        playerStat = GetComponent<PlayerStat>();
+        interactionManager = GetComponent<InteractionManager>();
+        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
+        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
+        gearSystem = GetComponent<GearSystem>();
     }
 
     private void Start()
@@ -196,28 +206,22 @@ public class PlayerManager : MonoBehaviour, IDestructible
         weaponHitbox.IsHitboxEnabled = false;
     }
 
-    private void FindComponentReferences()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
-        playerStat = GetComponent<PlayerStat>();
-        interactionManager = GetComponent<InteractionManager>();
-        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
-        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
-        gearSystem = GetComponent<GearSystem>();
+    private void OnEnable()
+    {    
+        var playerActions = InputManager.InputActions.Player;
+        playerActions.Jump.performed += OnJump;
+        playerActions.FallDown.performed += OnFallDown;
+        playerActions.PerformAction.performed += OnPerformAction;
+        playerActions.Evade.performed += OnEvade;
     }
 
-    private void BindInputActions()
+    private void OnDisable()
     {
-        actionAssets = new ModuleBerserkActionAssets();
-        actionAssets.Player.Enable();
-
-        actionAssets.Player.Jump.performed += OnJump;
-        actionAssets.Player.FallDown.performed += OnFallDown;
-        actionAssets.Player.PerformAction.performed += OnPerformAction;
-        actionAssets.Player.Evade.performed += OnEvade;
+        var playerActions = InputManager.InputActions.Player;
+        playerActions.Jump.performed -= OnJump;
+        playerActions.FallDown.performed -= OnFallDown;
+        playerActions.PerformAction.performed -= OnPerformAction;
+        playerActions.Evade.performed -= OnEvade;
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -451,19 +455,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    // UI가 뜨거나 컷신에 진입하는 등 잠시 입력을 막아야 하는 경우 사용
-    public void SetInputEnabled(bool enable)
-    {
-        if (enable)
-        {
-            actionAssets.Player.Enable();
-        }
-        else
-        {
-            actionAssets.Player.Disable();
-        }
-    }
-
     private void FixedUpdate()
     {
         if (state == State.Evade)
@@ -602,7 +593,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void HandleMoveInput()
     {
-        float moveInput = actionAssets.Player.Move.ReadValue<float>();
+        float moveInput = InputManager.InputActions.Player.Move.ReadValue<float>();
         
         if (state == State.IdleOrRun)
         {
@@ -627,7 +618,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 키가 입력되지 않은 상황에서는 기존 방향을 유지
     private void UpdateFacingDirectionByInput()
     {
-        var moveInput = actionAssets.Player.Move.ReadValue<float>();
+        var moveInput = InputManager.InputActions.Player.Move.ReadValue<float>();
         if (moveInput != 0f)
         {
             IsFacingLeft = moveInput < 0f;
@@ -838,7 +829,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
-        animator.SetBool("IsRunning", actionAssets.Player.Move.IsPressed());
+        animator.SetBool("IsRunning", InputManager.InputActions.Player.Move.IsPressed());
         animator.SetBool("IsAttacking", IsAttacking());
         animator.SetBool("IsStaggered", state == State.Stagger);
         animator.SetBool("IsEvading", state == State.Evade);

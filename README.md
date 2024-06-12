@@ -79,3 +79,8 @@ rigidbody의 이동으로 변환하기 위해 꼼수를 조금 썼음
 
 ### 캐릭터 콜라이더를 발보다 조금 위로 설정해야 지면과 접촉하는 것으로 표시됨
 - 정확히 발 밑까지 포함시키면 어째서인지 공중에 떠있는 것처럼 보임
+
+### UI 요소들의 입력 처리 방식
+- 최상단 UI만 입력을 처리하도록 스택 구조를 채용함
+- UI가 생길 때 UserInterfaceStack.PushUserInterface(this),  
+UI가 사라질 때 UserInterfaceStack.PopUserInterface(this)를 호출해줘야 함.
