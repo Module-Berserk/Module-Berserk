@@ -5,19 +5,12 @@ using UnityEngine.Assertions;
 
 // 활성화되는 순간 꼭대기까지 올라갔다가 다시 돌아오는 엘리베이터.
 // 이미 시작된 이동은 취소할 수 없다.
-//
-// TODO: 현재 엘리베이터의 가속이 너무 빠르면 아래로 내려갈 때
-// 플레이어가 살짝 공중에 떴다가 떨어지는 jitter 현상이 발생함.
-// 엘리베이터의 가속을 플레이어의 중력이 바로 따라잡지 못해서 그러는 것 같음...
 [RequireComponent(typeof(Rigidbody2D))]
 public class Elevator : MonoBehaviour
 {
     // 현재 위치에서 얼마나 높이 올라갈지
     [SerializeField] private float movementRange;
-    // 이동에 걸리는 시간.
-    // 아래로 떨어질 때는 물리 issue 때문에
-    // 플레이어가 안정적으로 바닥에 붙어있지 못하므로
-    // downwardMovementDuration은 넉넉하게 주는 것이 좋다.
+    // 이동에 걸리는 시간 및 속도 커브
     [SerializeField] private float upwardMovementDuration;
     [SerializeField] private float downwardMovementDuration;
     [SerializeField] private Ease movementEase = Ease.InOutSine;

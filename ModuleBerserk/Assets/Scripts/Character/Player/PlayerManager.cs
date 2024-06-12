@@ -478,6 +478,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             {
                 ResetJumpRelatedStates();
 
+                // 움직이는 엘리베이터 위에서도 안정적으로
+                // 서있을 수 있게 parent object로 설정해줌
+                HandleStickingToElevator();
+
                 // 벽에 붙은 상태에서 엘리베이터가 올라와
                 // IsGrounded = true가 되어버리는 상황 처리
                 if (state == State.StickToWall)
@@ -485,10 +489,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
                     StopStickingToWall();
                 }
             }
-            else if (state == State.IdleOrRun)
+            else
             {
-                HandleCoyoteTime();
-                HandleFallingVelocity();
+                StopStickingToElevator();
+                if (state == State.IdleOrRun)
+                {
+                    HandleCoyoteTime();
+                    HandleFallingVelocity();
+                }
             }
         }
 
@@ -510,6 +518,28 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
+    }
+
+    // 엘리베이터 위에서 벗어났을 때 parent object 설정을 원래대로 돌려놓음.
+    // parent 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
+    private void StopStickingToElevator()
+    {
+        transform.SetParent(null);
+    }
+
+    // IsGrounded가 true인 경우 호출되는 함수로,
+    // 밟고 있는 플랫폼이 엘리베이터인 경우 플랫폼을 자신의 parent object로 설정한다.
+    //
+    // 아래로 움직이는 엘리베이터의 이동 속도를 중력이
+    // 바로 따라잡지 못해 낙하와 착지를 반복하는 현상을 막아줌.
+    private void HandleStickingToElevator()
+    {
+        // GetComponent와 SetParent가 무거운 연산이므로
+        // parent가 null인 경우에만 (i.e. 엘리베이터에 서있지 않은 상태) 실행한다.
+        if (transform.parent == null && groundContact.CurrentPlatform.GetComponent<Elevator>())
+        {
+            transform.SetParent(groundContact.CurrentPlatform.transform);
+        }
     }
 
     // 회피 중이라면 바라보는 방향으로 일정한 속도 유지 (추락 x)
