@@ -952,7 +952,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
-        // TODO: 캐릭터 destroy & 은신처로 복귀
-        Debug.Log("플레이어 사망");
+        // TODO: 잠시 입력 비활성화, 은신처로 복귀 (결과창 표시?)
+        animator.SetTrigger("Death");
     }
 }
