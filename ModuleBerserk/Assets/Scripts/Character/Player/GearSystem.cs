@@ -1,4 +1,3 @@
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -8,7 +7,7 @@ using UnityEngine.UI;
 // PlayerManager에서 다음 함수들을 적절히 호출해줘야 함:
 // 1. 공격 성공 => OnAttackSuccess
 // 2. 적에게 공격 당함 => OnPlayerHit
-// 3. 긴급 회피 사용 => OnEmergencyDodge
+// 3. 긴급 회피 사용 => OnEmergencyEvade
 // 4. 기어 단계 변동 => UpdateGearLevelBuff
 public class GearSystem : MonoBehaviour
 {
@@ -30,7 +29,8 @@ public class GearSystem : MonoBehaviour
     // 비전투 상태에서 게이지 하한선에 도달했을 때 기어 단계 하락을 막는 기간
     private const float NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME = 3f;
 
-    // 기어 레벨별 버프 수치
+    // 기어 레벨별 버프 수치.
+    // 버프가 속도 이외의 스탯도 바꿀 가능성을 염두해서 구조체로 처리함.
     private struct GearLevelBuff
     {
         public float Speed; // 공격 속도와 이동 속도 곱연산 버프 (수치 동일함!)
@@ -50,7 +50,9 @@ public class GearSystem : MonoBehaviour
     // 적을 공격하면 게이지가 차고 반대로 공격당하면 줄어든다.
     public float CurrentGearGauge {get; private set;}
     // 게이지의 범위에 따라 총 6단계로 구분해 버프를 부여함.
-    // note: 기어 단계는 0부터 시작해 최대 5까지 있음!
+    // 기어 단계는 0부터 시작해 최대 5까지 있으며,
+    // 0단계는 맵 입장할 때 0에서 1단계로 슉 올라가는 모습을 보여주기 위한
+    // 용도이므로 실질적으로는 1단계가 최소 기어 단계임!
     public int CurrentGearLevel {get; private set;}
     // 공격 피격 등으로 기어 단계가 바뀐 경우 호출되는 이벤트.
     // 플레이어는 기어 단계에 따라 버프를 받으므로 수치 변동을 여기서 처리하면 됨.
@@ -58,8 +60,7 @@ public class GearSystem : MonoBehaviour
 
     // 현재 기어 단계의 최대치에 도달한 상태로 머무른 시간.
     // 이 시간이 MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE보다 높아야 다음 단계로 넘어갈 수 있다.
-    // 0단계에서는 공격하면 바로 1단계로 넘어갈 수 있도록 아주 큰 초기값을 부여.
-    private float maxGaugeTime = 10000f;
+    private float maxGaugeTime = 0f;
     // 최대 기어 단계 도달에 의한 게이지 하락 보호 기간.
     // 이 수치가 0 이상이면 무슨 일이 있어도 게이지가 떨어지지 않는다.
     private float remainingGaugeProtectionTime = 0f;
@@ -125,16 +126,19 @@ public class GearSystem : MonoBehaviour
         CurrentGearGauge = Mathf.Max(0f, CurrentGearGauge - GEAR_GAUGE_LOSS_PER_HIT);
     }
 
-    // 긴급 회피를 사용해 데미지를 무효화한 경우 호출되는 함수
-    public void OnEmergencyDodge()
+    // 긴급 회피는 기어 단계를 하락시키므로 최소 1단계
+    public bool IsEmergencyEvadePossible()
     {
-        // 긴급 회피는 게이지를 25만큼 소모하므로
-        // 현재 게이지가 적어도 25 이상은 되어야 함.
-        Assert.IsTrue(CurrentGearGauge >= 25f);
+        return CurrentGearLevel > 1;
+    }
 
-        CurrentGearGauge -= 25f;
+    // 긴급 회피를 사용하는 경우 호출되는 함수.
+    // 일반 회피와 다르게 데미지 무효화가 가능한 대신 기어 단계를 하나 떨어트린다.
+    public void OnEmergencyEvade()
+    {
+        Assert.IsTrue(CurrentGearLevel > 1);
 
-        // 게이지를 25 소모하면 확정적으로 기어 단계가 하나 낮아짐!
+        CurrentGearLevel--;
         OnGearLevelChange.Invoke();
     }
 

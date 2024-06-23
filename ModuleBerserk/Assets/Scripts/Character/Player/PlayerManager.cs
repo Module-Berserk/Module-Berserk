@@ -325,22 +325,28 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void HandleEmergencyEvasion()
     {
-        // TODO: 기어 게이지 충분하지 않으면 바로 return, 충분하면 게이지 차감.
-
-        // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
-        if (numPendingDamages > 0)
+        // TODO: 테스트 끝나면 돌려놓기
+        // 테스트 과정에서 긴급 회피를 제한 없이
+        // 사용할 수 있도록 기어 게이지 소모를 비활성화해둠
+        // if (gearSystem.IsEmergencyEvadePossible())
         {
-            CancelPendingDamages();
+            // gearSystem.OnEmergencyEvade();
+
+            // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
+            if (numPendingDamages > 0)
+            {
+                CancelPendingDamages();
+            }
+            
+            animator.SetTrigger("EmergencyEvade");
+
+            // 회피 무적 상태로 전환
+            state = State.Evade;
+            isInvincible = true;
+
+            // 모든 넉백 효과 제거
+            rb.velocity = Vector2.zero;
         }
-        
-        animator.SetTrigger("EmergencyEvade");
-
-        // 회피 무적 상태로 전환
-        state = State.Evade;
-        isInvincible = true;
-
-        // 모든 넉백 효과 제거
-        rb.velocity = Vector2.zero;
     }
 
     // 긴급 회피가 시전된 경우 아직 적용되지 않은 데미지들을 무효화함.
