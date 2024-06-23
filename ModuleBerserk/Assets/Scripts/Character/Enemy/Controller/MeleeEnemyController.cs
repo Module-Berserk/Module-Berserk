@@ -175,6 +175,8 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
+        (this as IDestructible).HandleHPDecrease(finalDamage);
+
         // 피격 이펙트
         flashEffectOnHit.StartEffectAsync().Forget();
 

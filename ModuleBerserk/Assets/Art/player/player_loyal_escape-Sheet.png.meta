@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 224c0e8b9811c644fab58ec4c2553aed
+guid: 60b28f3e3c4f78840a1e0f1492a8035e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,190 +97,106 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_0
+      name: player_loyal_escape-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 96
         height: 84
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 922585a4c6cf0574e864bc70d2adcdd5
-      internalID: -1282441214
+      spriteID: 7f69931a65ccd2345af1c6c1b42eff64
+      internalID: 146872743
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_1
+      name: player_loyal_escape-Sheet_1
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 96
         height: 84
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 223e3b143e1aba54098dcaafeb6114b3
-      internalID: 173641135
+      spriteID: 465c140b7bc3b3f43b783e6096342ad4
+      internalID: -1475751539
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_2
+      name: player_loyal_escape-Sheet_2
       rect:
         serializedVersion: 2
         x: 192
         y: 0
         width: 96
         height: 84
-      alignment: 9
-      pivot: {x: 0.53125, y: 0.5}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cac71a9aaa8631f4b96c17c49d7ca2d0
-      internalID: 1806680984
+      spriteID: 77e9056823b502a4e8517dd373f7f818
+      internalID: 1336195288
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_3
+      name: player_loyal_escape-Sheet_3
       rect:
         serializedVersion: 2
         x: 288
         y: 0
         width: 96
         height: 84
-      alignment: 9
-      pivot: {x: 0.5520833, y: 0.5}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77a7ee0229fc9d046a1bb394c8b75953
-      internalID: -767480821
+      spriteID: 895937a2aebad7a478dc6aacfb33ed7f
+      internalID: -1007536906
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_4
+      name: player_loyal_escape-Sheet_4
       rect:
         serializedVersion: 2
         x: 384
         y: 0
         width: 96
         height: 84
-      alignment: 9
-      pivot: {x: 0.5520833, y: 0.5}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20b7a7ceed166164abd59e58bc6a3e1b
-      internalID: 293601597
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_5
-      rect:
-        serializedVersion: 2
-        x: 481
-        y: 0
-        width: 96
-        height: 84
-      alignment: 9
-      pivot: {x: 0.5729167, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 907a7b052c9e2f74fa0a94e5ee295fec
-      internalID: 1728727418
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_6
-      rect:
-        serializedVersion: 2
-        x: 576
-        y: 0
-        width: 96
-        height: 84
-      alignment: 9
-      pivot: {x: 0.59375, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d5472c56c927f9542b70febc3fbcafd5
-      internalID: -1868461756
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_7
-      rect:
-        serializedVersion: 2
-        x: 672
-        y: 0
-        width: 96
-        height: 84
-      alignment: 9
-      pivot: {x: 0.6041667, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b2800801005945d4f8d87bc9eb0dc812
-      internalID: 461905986
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_loyal_atk1-Sheet_8
-      rect:
-        serializedVersion: 2
-        x: 768
-        y: 0
-        width: 96
-        height: 84
-      alignment: 9
-      pivot: {x: 0.625, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0897f2b9c5ad33b4888f561937884465
-      internalID: 2023794727
+      spriteID: bf520a291cb1c54418746d99d9517145
+      internalID: 999986470
       vertices: []
       indices: 
       edges: []
@@ -296,15 +212,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player_loyal_atk1-Sheet_0: -1282441214
-      player_loyal_atk1-Sheet_1: 173641135
-      player_loyal_atk1-Sheet_2: 1806680984
-      player_loyal_atk1-Sheet_3: -767480821
-      player_loyal_atk1-Sheet_4: 293601597
-      player_loyal_atk1-Sheet_5: 1728727418
-      player_loyal_atk1-Sheet_6: -1868461756
-      player_loyal_atk1-Sheet_7: 461905986
-      player_loyal_atk1-Sheet_8: 2023794727
+      player_loyal_escape-Sheet_0: 146872743
+      player_loyal_escape-Sheet_1: -1475751539
+      player_loyal_escape-Sheet_2: 1336195288
+      player_loyal_escape-Sheet_3: -1007536906
+      player_loyal_escape-Sheet_4: 999986470
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

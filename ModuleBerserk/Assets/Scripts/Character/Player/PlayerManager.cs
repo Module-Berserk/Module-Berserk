@@ -1,5 +1,7 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +27,9 @@ using UnityEngine.InputSystem;
 // 1. Jump
 // 2. Evade - 일반 회피
 // 3. AttackN - N번째 공격 모션 시작 ex) Attack1, Attack2, ...
+//
+// 필요한 인스펙터 drag & drop 설정:
+// 1. cameraFollowTarget - cinemachine 카메라의 추적 대상으로 설정된 빈 오브젝트
 public class PlayerManager : MonoBehaviour, IDestructible
 {
     [Header("Walk / Run")]
@@ -78,19 +83,24 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     [Header("Stagger")]
     // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
-    [SerializeField] private float weakStaggerKnockbackForce = 13f;
+    [SerializeField] private float weakStaggerKnockbackForce = 10f;
     [SerializeField] private float strongStaggerKnockbackForce = 23f;
 
 
 
-    [Header("Weapon Hitbox")]
-    [SerializeField] private ApplyDamageOnContact weaponHitbox;
+    [Header("Hitbox")]
+    [SerializeField] private ApplyDamageOnContact weaponHitbox; // 평타 범위
+    [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
 
     [Header("Evasion")]
-    // 회피 모션 도중 부여할 수평 속도
-    [SerializeField] private float evasionVelocity = 10f;
+    [SerializeField] private float evasionDuration = 0.4f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
+    [SerializeField] private float evasionDistance = 2f;
+    [SerializeField] private Ease evasionEase = Ease.OutCubic;
     [SerializeField] private float evasionCooltime = 2f;
+    // 피격 시점 이후로 긴급 회피가 허용되는 시간.
+    // 이 시간 안에 회피 버튼을 누르면 데미지를 무효화하고 반격할 수 있음.
+    [SerializeField] private float emergencyEvasionTimeWindow = 0.3f;
 
     public bool IsFacingLeft
     {
@@ -106,7 +116,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private PlayerStat playerStat;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
-    private ColliderSizeAdjuster colliderSizeAdjuster;
     private GearSystem gearSystem;
 
     // 지면 접촉 테스트 관리자
@@ -138,9 +147,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
     // 공격 애니메이션에 루트 모션을 적용하기 위한 변수.
     // 이전 프레임의 pivot 좌표를 기억해 현재 pivot 좌표와의 차이를 velocity로 사용.
-    // 새로운 애니메이션이 시작된 경우 이전 애니메이션과 pivot 기준점이 다를 수 있으므로
-    // 이 경우 값으로 -1을 지정해 해당 프레임은 루트 모션을 적용하지 않고 넘어가도록 함.
-    private float prevSpritePivotX = -1;
+    private float prevSpritePivotX;
+    // 새로운 애니메이션이 시작된 경우 이전 애니메이션과 pivot 기준점이 다를 수 있음.
+    // 이 상황에서 이전 애니메이션의 pivot과 새 애니메이션의 pivot의 차이를 root motion으로 줘버리면
+    // 제자리에 서있어야 하는데도 캐릭터가 이동해버리는 문제가 생김!
+    // 이를 방지하기 위해 애니메이션 전환이 일어나는 몇 프레임 동안은 루트 모션을 비활성화함.
+    private int numFramesDisableRootMotion = 0;
 
     // 무적 판정
     private bool isInvincible = false;
@@ -151,6 +163,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
+    // 긴급 회피를 시전할 때 직전에 입은 데미지를 무효화
+    private CancellationTokenSource damageCancellation = new();
+    // 긴급 회피가 일어나는지 확인하려고 대기 중인 데미지 목록.
+    // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인하기 위해 사용함.
+    private int numPendingDamages = 0;
 
     private enum State
     {
@@ -180,7 +197,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
-        colliderSizeAdjuster = GetComponent<ColliderSizeAdjuster>();
         gearSystem = GetComponent<GearSystem>();
     }
 
@@ -188,22 +204,25 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
 
-        InitializeWeaponHitbox();
+        InitializeHitbox();
 
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
         gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed, playerStat.MoveSpeed));
     }
 
-    private void InitializeWeaponHitbox()
+    // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함
+    private void InitializeHitbox()
     {
         // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
         weaponHitbox.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
 
         // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
         weaponHitbox.RawDamage = playerStat.AttackDamage;
+        emergencyEvadeHitbox.RawDamage = playerStat.AttackDamage;
 
-        // 무기 히트박스는 항상 비활성화 상태로 시작해야 함
+        // 히트박스는 항상 비활성화 상태로 시작해야 함
         weaponHitbox.IsHitboxEnabled = false;
+        emergencyEvadeHitbox.IsHitboxEnabled = false;
     }
 
     private void OnEnable()
@@ -246,6 +265,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         if (!isInteractionSuccessful)
         {
             // 회피 중이거나 경직 상태이거나 벽에 매달린 경우는 공격 불가
+            // TODO: 회피 모션 중에도 공격 선입력 허용하는 것 고려하기
             if (state == State.Evade || state == State.Stagger || state == State.StickToWall)
             {
                 return;
@@ -272,6 +292,68 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
+        // Case 1) 상단 방향키 + 회피 버튼 = 기어 게이지 상승
+        if (InputManager.InputActions.Player.UpArrow.IsPressed())
+        {
+            HandleGearGaugeAscent();
+        }
+        // Case 2) 하단 방향키 + 회피 버튼 = 긴급 회피
+        else if (InputManager.InputActions.Player.DownArrow.IsPressed())
+        {
+            HandleEmergencyEvasion();
+        }
+        // Case 3) 방향키 입력 없이 회피 버튼 = 일반 회피
+        else
+        {
+            HandleNormalEvasion();
+        }
+    }
+
+    // 기어 게이지가 현재 단계의 최대치를 일정 시간 유지한 상태에서
+    // 유저가 shift + up arrow를 입력한 경우 호출되는 함수.
+    //
+    // 기어를 한 단계 올리고 특수 공격을 시전한다.
+    private void HandleGearGaugeAscent()
+    {
+        if (gearSystem.IsNextGearLevelReady())
+        {
+            gearSystem.IncreaseGearLevel();
+
+            // TODO: 특수 공격
+        }
+    }
+
+    void HandleEmergencyEvasion()
+    {
+        // TODO: 기어 게이지 충분하지 않으면 바로 return, 충분하면 게이지 차감.
+
+        // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
+        if (numPendingDamages > 0)
+        {
+            CancelPendingDamages();
+        }
+        
+        animator.SetTrigger("EmergencyEvade");
+
+        // 회피 무적 상태로 전환
+        state = State.Evade;
+        isInvincible = true;
+
+        // 모든 넉백 효과 제거
+        rb.velocity = Vector2.zero;
+    }
+
+    // 긴급 회피가 시전된 경우 아직 적용되지 않은 데미지들을 무효화함.
+    // 조금 더 자세한 내용은 ApplyDamageWithDelay() 참고할 것.
+    private void CancelPendingDamages()
+    {
+        damageCancellation.Cancel();
+        damageCancellation.Dispose();
+        damageCancellation = new CancellationTokenSource();
+    }
+
+    private void HandleNormalEvasion()
+    {
         // 아직 회피 쿨타임이 끝나지 않았다면 처리 x
         if (timeSinceLastEvasion < evasionCooltime)
         {
@@ -295,16 +377,20 @@ public class PlayerManager : MonoBehaviour, IDestructible
         state = State.Evade;
         isInvincible = true;
 
-        // 회피 모션 재생
-        //
-        // TODO:
-        // 아트 완성되면 PlayerLoyal 애니메이션 컨트롤러에서
-        // player_loyal_evade_temp를 정식 에셋으로 교체하고
-        // 회피 거리가 대충 2타일 정도 되도록 회피 속도 조정하기
-        animator.SetTrigger("Evade");
+        // 회피 도중에는 추락 x
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
         
         // 쿨타임 계산 시작
         timeSinceLastEvasion = 0f;
+
+        // 회피 모션 재생
+        animator.SetTrigger("Evade");
+
+        float targetX = transform.position.x + evasionDistance * (IsFacingLeft ? -1f : 1f);
+        rb.DOMoveX(targetX, evasionDuration)
+            .SetEase(evasionEase)
+            .SetUpdate(UpdateType.Fixed);
     }
 
     // 회피 애니메이션의 마지막 프레임에 호출되는 이벤트.
@@ -313,6 +399,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         state = State.IdleOrRun;
         isInvincible = false;
+
+        // 회피 끝났으면 다시 추락 가능
+        rb.gravityScale = defaultGravityScale;
     }
 
     // 공격 애니메이션 중 타격 프레임이 지나간 이후부터
@@ -342,25 +431,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirectionByInput();
 
-        // 기어 게이지가 가득 차서 다음 단계로 넘어가는 경우
-        // TODO: 기어 변동 로직을 "R키를 눌렀을 때"로 옮길 것
-        if (gearSystem.IsNextGearLevelReady())
-        {
-            gearSystem.IncreaseGearLevel();
-
-            // 기어 0단계에서 기어 1단계로 넘어오는 경우를 제외하면
-            // 해당 공격이 특수 공격으로 전환됨!
-            if (gearSystem.CurrentGearLevel != 1)
-            {
-                // 지금은 특수 공격이 없으니 그냥 공격을 취소함
-                // TODO: 이번 기어 단계에 맞는 특수 공격 실행
-                Debug.Log("특수 공격!");
-                CancelCurrentAction();
-
-                return;
-            }
-        }
-
         // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
@@ -386,8 +456,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // 공격 애니메이션의 pivot 변화로 루트모션을
         // 적용하기 때문에 시작할 때 기준점을 잡아줘야 함.
-        // 값으로 -1을 넣으면 다음 프레임의 pivot 좌표를 기준점으로 삼는다.
-        prevSpritePivotX = -1;
+        //
+        // 2프레임을 대기해야 하는 이유는 다음과 같음:
+        // 1. 유니티는 애니메이션 이벤트를 FixedUpdate보다 먼저 처리함
+        // 2. 연속 공격의 경우 이 함수가 OnAttackMotionEnd()에 의해 호출됨
+        // 3. 루트 모션 처리는 FixedUpdate에서 일어남
+        // 4. 그러므로 루트모션 비활성화는 "이번 프레임을 포함한" 2프레임동안 일어나게 됨
+        //
+        //   [이전 애니메이션] n번 프레임 <-- numFramesDisableRootMotion 2에서 1로 감소
+        //   [다음 애니메이션] 1번 프레임 <-- numFramesDisableRootMotion 1에서 0으로 감소, 새로운 pivot 기준점 기록!
+        //   [다음 애니메이션] 2번 프레임 <-- 새 애니메이션의 1번 프레임 기준으로 root motion 적용 가능
+        numFramesDisableRootMotion = 2;
 
         // 너무 시간차가 큰 선입력 방지하기 위해 모션의 앞부분에는 선입력 처리 x
         isAttackInputBufferingAllowed = false;
@@ -459,7 +538,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (state == State.Evade)
         {
-            ApplyEvasionVelocity();
+            // 회피 도중에는 아무것도 처리하지 않음
         }
         // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
         // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
@@ -542,12 +621,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    // 회피 중이라면 바라보는 방향으로 일정한 속도 유지 (추락 x)
-    private void ApplyEvasionVelocity()
-    {
-        rb.velocity = evasionVelocity * (IsFacingLeft ? Vector2.left : Vector2.right);
-    }
-
     private void HandleEvasionCooltime()
     {
         timeSinceLastEvasion += Time.fixedDeltaTime;
@@ -605,8 +678,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         float currSpritePivotX = spriteRenderer.sprite.pivot.x;
 
         // 모션이 방금 바뀐 경우에는 기준으로 삼아야 할 pivot 값을 아직 모르니까
-        // 루트 모션 적용은 한 프레임 스킵하고 prevSpritePivotX 값만 갱신함
-        if (prevSpritePivotX != -1)
+        // 루트 모션 적용은 스킵하고 prevSpritePivotX 값만 갱신함.
+        // 자세한 설명은 TriggerNextAttack()에서 이 변수를 수정하는 부분 참고할 것.
+        if (numFramesDisableRootMotion > 0)
+        {
+            numFramesDisableRootMotion--;
+        }
+        else
         {
             // 스프라이트의 pivot이 커졌다는 것은 플레이어의 중심 위치가
             // 오른쪽으로 이동했다는 뜻이므로 오른쪽 방향으로 속도를 주면 됨.
@@ -783,7 +861,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 더블 점프는 일단 폐기...
         return false;
-        return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
+        //return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
     }
 
     private void PerformJump()
@@ -906,8 +984,27 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 break;
         }
 
-        // 공격 당하면 게이지가 깎임
-        gearSystem.OnPlayerHit();
+        ApplyDamageWithDelayAsync(finalDamage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
+    }
+
+    // 플레이어가 긴급회피로 데미지를 무효화할 수 있으니 잠시 유예 시간을 부여함.
+    //
+    // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인할 수 있도록
+    // 대기 중인 데미지의 수를 numPendingDamages 변수로 관리한다.
+    private async UniTask ApplyDamageWithDelayAsync(float finalDamage, float delay, CancellationToken cancellationToken)
+    {
+        numPendingDamages++;
+        await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
+        numPendingDamages--;
+
+        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리
+        if (!cancellationToken.IsCancellationRequested)
+        {
+            (this as IDestructible).HandleHPDecrease(finalDamage);
+
+            // 공격 당하면 게이지가 깎임
+            gearSystem.OnPlayerHit();
+        }
     }
 
     // 현재 하던 행동을 취소하고 피격 경직 상태에 진입

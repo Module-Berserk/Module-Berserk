@@ -30,13 +30,6 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     // 근접 공격 쿨타임 (0이 되면 공격 가능)
     private float remainingMeleeAttackCooltime = 0f;
 
-    // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
-    private bool isAttackMotionFinished = true;
-    // 공격 모션의 선딜 ~ 타격까지 슈퍼아머를 부여하는 플래그.
-    // MeleeAttack()에서 true로 설정된 뒤
-    // 애니메이션 이벤트 DisableSuperArmor()에서 false로 돌아옴.
-    private bool isSuperArmorEnabled = false;
-
     private void Start()
     {
         meleeAttackHitbox.RawDamage = new CharacterStat(meleeAttackDamage, 0f);
@@ -55,25 +48,6 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
         isAttackMotionFinished = true;
     }
 
-    public override bool TryApplyStagger(StaggerInfo staggerInfo)
-    {
-        // 슈퍼아머 판정인 경우 경직 x
-        if (isSuperArmorEnabled)
-        {
-            return false;
-        }
-
-        // 공격 모션 후딜레이가 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
-        isAttackMotionFinished = true;
-
-        // 애니메이션 재생
-        animator.SetTrigger("Stagger");
-
-        GetStaggeredForDuration(staggerInfo).Forget();
-
-        return true;
-    }
-
     void IMeleeEnemyBehavior.MeleeAttack()
     {
         // 바라보는 방향으로 히트박스 이동
@@ -88,8 +62,8 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
         // 공격 애니메이션 재생 중
         isAttackMotionFinished = false;
 
-        // 후딜레이 전까지는 슈퍼아머 판정
-        isSuperArmorEnabled = true;
+        // 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
+        StaggerResistance = StaggerStrength.Weak;
     }
 
     bool IMeleeEnemyBehavior.IsMeleeAttackReady()
@@ -100,6 +74,20 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     bool IMeleeEnemyBehavior.IsAttackMotionFinished()
     {
         return isAttackMotionFinished;
+    }
+
+    public override bool TryApplyStagger(StaggerInfo staggerInfo)
+    {
+        bool isStaggered = base.TryApplyStagger(staggerInfo);
+
+        // 공격을 하던 도중에 경직당하면 히트박스가
+        // 활성화 상태로 방치될 위험이 있어 꼭 정리해줘야 함.
+        if (isStaggered)
+        {
+            DisableMeleeAttackHitbox();
+        }
+
+        return isStaggered;
     }
 
     public void EnableMeleeAttackHitbox()
@@ -114,7 +102,7 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
 
     public void DisableSuperArmor()
     {
-        isSuperArmorEnabled = false;
+        StaggerResistance = StaggerStrength.None;
     }
 
     // 대기 애니메이션의 마지막 프레임에 호출되는 이벤트

@@ -79,7 +79,9 @@ public class Elevator : MonoBehaviour
     private async UniTask MoveToAsync(float destinationHeight, float movementDuration)
     {
         // 목적지 방향으로 일정한 속도 부여
-        transform.DOMoveY(destinationHeight, movementDuration).SetEase(movementEase).SetUpdate(UpdateType.Fixed);
+        rb.DOMoveY(destinationHeight, movementDuration)
+            .SetEase(movementEase)
+            .SetUpdate(UpdateType.Fixed);
 
         // 이동 속도가 너무 빨라서 목적지를 지나쳐버리지 않는 한
         // 한 프레임씩 기다리며 거리가 충분히 가까워졌는지 체크

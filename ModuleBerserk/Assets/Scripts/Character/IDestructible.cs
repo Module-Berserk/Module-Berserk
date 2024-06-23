@@ -55,7 +55,10 @@ public interface IDestructible
         return false;
     }
 
-    // 공격을 받을 때마다 호출됨
+    // 공격을 받을 때마다 호출되며, HP 차감이나 경직 처리 등을 구현해야 함.
+    // 
+    // HP 차감의 경우 플레이어처럼 긴급회피로 나중에 데미지를 무효화할 수 있는
+    // 특수한 경우가 아니라면 그냥 HandleHPDecrease(finalDamage)를 호출하면 된다!
     void OnDamage(float finalDamage, StaggerInfo staggerInfo);
 
     // 공격을 받아 HP가 0이 된 경우 호출됨
@@ -84,7 +87,6 @@ public interface IDestructible
             return false;
         }
 
-        CharacterStat hp = GetHPStat();
         CharacterStat def = GetDefenseStat();
 
         // 방어력 10을 기준으로 스탯 1마다 10%씩 최종 데미지가 차이남.
@@ -92,17 +94,26 @@ public interface IDestructible
         float damageReduction = (def.CurrentValue - 10f) * damageReductionPerDefense;
         float finalDamage = rawDamage * (1f - damageReduction);
 
+        // 데미지 처리 요청
+        OnDamage(finalDamage, staggerInfo);
+
+        return true;
+    }
+
+    // HP 차감 및 사망 처리의 기본 구현.
+    //
+    // 플레이어가 긴급 회피로 데미지를 무효화할 가능성이 있어서
+    // TryApplyDamage()에서 바로 처리하는 대신 OnDamage 이벤트에서
+    // 각자 필요한 순간에 이 함수를 호출하는 방식으로 구현함.
+    void HandleHPDecrease(float finalDamage)
+    {
         // HP 스탯에는 버프/디버프가 없다고 가정.
+        CharacterStat hp = GetHPStat();
         hp.ModifyBaseValue(-finalDamage);
 
-
-        // 데미지 및 파괴 이벤트
-        OnDamage(finalDamage, staggerInfo);
         if (hp.CurrentValue <= 0f)
         {
             OnDestruction();
         }
-
-        return true;
     }
 }

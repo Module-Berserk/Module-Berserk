@@ -50,6 +50,9 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         protected set => spriteRenderer.flipX = value;
     }
 
+    // 당한 공격의 StaggerStrength가 이 수치 이하인 경우 경직을 무시한다.
+    public StaggerStrength StaggerResistance{get; protected set;}
+
     // 컴포넌트 레퍼런스
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
@@ -62,6 +65,8 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     // 플레이어를 추적할 때 낙하하지 않을 상태인지 확인하기 위해 사용
     protected GroundContact groundContact;
 
+    // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
+    protected bool isAttackMotionFinished = true;
     
     // 현재 순찰 상태인지 나타내는 플래그
     private bool isPatrolling = false;
@@ -89,6 +94,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         RandomizeSpeedStats();
 
         groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
+
+        // 잡몹은 평상시에 경직 저항력이 없고,
+        // 몹의 종류에 따라 공격 모션에 일부 약한 경직 저항이 부여됨.
+        StaggerResistance = StaggerStrength.None;
     }
 
     protected void FixedUpdate()
@@ -299,9 +308,29 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         return !isStaggered;
     }
 
-    // 슈퍼아머 판정은 적 종류별로 다를 수 있어서 여기서 직접 처리하지는 않음.
-    // 만약 경직 및 넉백이 필요하다면 GetStaggeredForDuration()을 사용하면 된다.
-    public abstract bool TryApplyStagger(StaggerInfo staggerInfo);
+    public virtual bool TryApplyStagger(StaggerInfo staggerInfo)
+    {
+        // 경직 저항력에 의한 슈퍼아머
+        if (staggerInfo.strength <= StaggerResistance)
+        {
+            return false;
+        }
+        // 경직 저항에 실패한 경우 잡몹의 기본 저항값으로 복귀
+        else
+        {
+            StaggerResistance = StaggerStrength.None;
+        }
+
+        // 공격 모션이 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
+        isAttackMotionFinished = true;
+
+        // 애니메이션 재생
+        animator.SetTrigger("Stagger");
+
+        GetStaggeredForDuration(staggerInfo).Forget();
+
+        return true;
+    }
 
     // 넉백 효과를 부여하고 잠시 경직 상태를 부여.
     // 애니메이션이나 이펙트같은 side effect는 처리해주지 않는다!
