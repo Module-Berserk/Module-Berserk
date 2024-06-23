@@ -71,6 +71,24 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UpArrow"",
+                    ""type"": ""Value"",
+                    ""id"": ""48317ee1-a6c3-4795-a126-d4aa3d415aab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DownArrow"",
+                    ""type"": ""Value"",
+                    ""id"": ""07592c75-5883-4ef2-8e0e-d2d789bead62"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -144,10 +162,32 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""name"": """",
                     ""id"": ""906c912c-07a0-4f14-9c47-17a44c0dcac9"",
                     ""path"": ""<Keyboard>/leftShift"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Evade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46e12b64-1ae0-42e2-bfb9-a30febec6447"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UpArrow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7ec4995-8757-4029-b04d-e3e8b7154730"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DownArrow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -299,6 +339,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         m_Player_FallDown = m_Player.FindAction("FallDown", throwIfNotFound: true);
         m_Player_PerformAction = m_Player.FindAction("PerformAction", throwIfNotFound: true);
         m_Player_Evade = m_Player.FindAction("Evade", throwIfNotFound: true);
+        m_Player_UpArrow = m_Player.FindAction("UpArrow", throwIfNotFound: true);
+        m_Player_DownArrow = m_Player.FindAction("DownArrow", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
@@ -375,6 +417,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     private readonly InputAction m_Player_FallDown;
     private readonly InputAction m_Player_PerformAction;
     private readonly InputAction m_Player_Evade;
+    private readonly InputAction m_Player_UpArrow;
+    private readonly InputAction m_Player_DownArrow;
     public struct PlayerActions
     {
         private @ModuleBerserkActionAssets m_Wrapper;
@@ -384,6 +428,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         public InputAction @FallDown => m_Wrapper.m_Player_FallDown;
         public InputAction @PerformAction => m_Wrapper.m_Player_PerformAction;
         public InputAction @Evade => m_Wrapper.m_Player_Evade;
+        public InputAction @UpArrow => m_Wrapper.m_Player_UpArrow;
+        public InputAction @DownArrow => m_Wrapper.m_Player_DownArrow;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -408,6 +454,12 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @Evade.started += instance.OnEvade;
             @Evade.performed += instance.OnEvade;
             @Evade.canceled += instance.OnEvade;
+            @UpArrow.started += instance.OnUpArrow;
+            @UpArrow.performed += instance.OnUpArrow;
+            @UpArrow.canceled += instance.OnUpArrow;
+            @DownArrow.started += instance.OnDownArrow;
+            @DownArrow.performed += instance.OnDownArrow;
+            @DownArrow.canceled += instance.OnDownArrow;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -427,6 +479,12 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @Evade.started -= instance.OnEvade;
             @Evade.performed -= instance.OnEvade;
             @Evade.canceled -= instance.OnEvade;
+            @UpArrow.started -= instance.OnUpArrow;
+            @UpArrow.performed -= instance.OnUpArrow;
+            @UpArrow.canceled -= instance.OnUpArrow;
+            @DownArrow.started -= instance.OnDownArrow;
+            @DownArrow.performed -= instance.OnDownArrow;
+            @DownArrow.canceled -= instance.OnDownArrow;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -575,6 +633,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         void OnFallDown(InputAction.CallbackContext context);
         void OnPerformAction(InputAction.CallbackContext context);
         void OnEvade(InputAction.CallbackContext context);
+        void OnUpArrow(InputAction.CallbackContext context);
+        void OnDownArrow(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -45,9 +45,6 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
     // 밀쳐내기 쿨타임 (0이 되면 가능)
     private float remainingRepelAttackCooltime = 0f;
 
-    // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
-    private bool isAttackMotionFinished = true;
-
     protected void Start()
     {
         repelAttackHitbox.RawDamage = new CharacterStat(repelAttackDamage, 0f);
@@ -65,26 +62,6 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
     public void OnAttackMotionEnd()
     {
         isAttackMotionFinished = true;
-    }
-
-    public override bool TryApplyStagger(StaggerInfo staggerInfo)
-    {
-        // 밀쳐내기 모션 중 히트박스가 켜진 상태에서는 슈퍼아머 판정이라 경직 x.
-        // 원거리 공격 모션 중 슈퍼아머 판정은 자식 클래스에서 처리해야 함.
-        if (repelAttackHitbox.IsHitboxEnabled)
-        {
-            return false;
-        }
-
-        // 공격 모션이 재생 중이었을 가능성이 있으니 안전하게 플래그 정리.
-        isAttackMotionFinished = true;
-
-        // 애니메이션 재생
-        animator.SetTrigger("Stagger");
-
-        GetStaggeredForDuration(staggerInfo).Forget();
-
-        return true;
     }
 
     // 원거리 공격은 투사체 방식과 히트박스 방식으로 나뉘기 때문에
@@ -139,11 +116,14 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
 
     public void EnableRepelAttackHitbox()
     {
+        // 밀쳐내기 공격의 핵심 모션 도중에는 약한 경직 저항 부여
+        StaggerResistance = StaggerStrength.Weak;
         repelAttackHitbox.IsHitboxEnabled = true;
     }
 
     public void DisableRepelAttackHitbox()
     {
+        StaggerResistance = StaggerStrength.None;
         repelAttackHitbox.IsHitboxEnabled = false;
     }
 

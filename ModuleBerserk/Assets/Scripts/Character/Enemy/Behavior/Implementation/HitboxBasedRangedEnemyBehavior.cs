@@ -25,22 +25,28 @@ public class HitboxBasedRangedEnemyBehavior : RangedEnemyBehaviorBase
 
     public void EnableRangedAttackHitbox()
     {
+        // 밀쳐내기와 마찬가지로 원거리 공격의 핵심 모션에 약한 경직 저항 부여
+        StaggerResistance = StaggerStrength.Weak;
         rangedAttackHitbox.IsHitboxEnabled = true;
     }
 
     public void DisableRangedAttackHitbox()
     {
+        StaggerResistance = StaggerStrength.None;
         rangedAttackHitbox.IsHitboxEnabled = false;
     }
 
     public override bool TryApplyStagger(StaggerInfo staggerInfo)
     {
-        // 밀쳐내기와 마찬가지로 원거리 공격 모션 중 히트박스가 켜진 동안은 슈퍼아머 판정이라 경직 x
-        if (rangedAttackHitbox.IsHitboxEnabled)
+        bool isStaggered = base.TryApplyStagger(staggerInfo);
+
+        // 밀쳐내기 공격을 하던 도중에 경직당하면 히트박스가
+        // 활성화 상태로 방치될 위험이 있어 꼭 정리해줘야 함.
+        if (isStaggered)
         {
-            return false;
+            DisableRangedAttackHitbox();
         }
 
-        return base.TryApplyStagger(staggerInfo);
+        return isStaggered;
     }
 }

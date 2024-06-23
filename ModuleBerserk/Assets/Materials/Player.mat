@@ -54,8 +54,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _SimilarityTolerance: 0.097
+    - _SimilarityTolerance: 0.001
     m_Colors:
-    - _GlowColor: {r: 12.844468, g: 8.004632, b: 0, a: 0}
-    - _ReferenceColor: {r: 0.9921569, g: 0.972549, b: 0.07450979, a: 1}
+    - _GlowColor: {r: 22.363525, g: 14.050383, b: 0, a: 0}
+    - _ReferenceColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
