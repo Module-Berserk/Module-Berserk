@@ -207,7 +207,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InitializeHitbox();
 
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
-        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackDamage, playerStat.AttackSpeed, playerStat.MoveSpeed));
+        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackSpeed, playerStat.MoveSpeed));
     }
 
     // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함

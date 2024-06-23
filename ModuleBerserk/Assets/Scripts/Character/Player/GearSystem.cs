@@ -33,17 +33,16 @@ public class GearSystem : MonoBehaviour
     // 기어 레벨별 버프 수치
     private struct GearLevelBuff
     {
-        public float Damage; // 공격력 합연산 버프 
         public float Speed; // 공격 속도와 이동 속도 곱연산 버프 (수치 동일함!)
     }
     private static readonly GearLevelBuff[] GEAR_LEVEL_BUFF =
     {
-        new GearLevelBuff{Damage = 0f, Speed = 1f},
-        new GearLevelBuff{Damage = 3f, Speed = 1.05f},
-        new GearLevelBuff{Damage = 6f, Speed = 1.1f},
-        new GearLevelBuff{Damage = 9f, Speed = 1.15f},
-        new GearLevelBuff{Damage = 12f, Speed = 1.2f},
-        new GearLevelBuff{Damage = 15f, Speed = 1.25f},
+        new GearLevelBuff{Speed = 1f},
+        new GearLevelBuff{Speed = 1.05f},
+        new GearLevelBuff{Speed = 1.1f},
+        new GearLevelBuff{Speed = 1.15f},
+        new GearLevelBuff{Speed = 1.2f},
+        new GearLevelBuff{Speed = 1.25f},
     };
 
 
@@ -198,16 +197,14 @@ public class GearSystem : MonoBehaviour
     // 기어 단계별 공격력 & 공격 속도 버프를 현재 기어 단계에 맞게 갱신함.
     // 마지막으로 호출된 UpdateGearLevelBuff()의 버프는 자동으로 제거.
     // 기어 단계가 바뀔 때마다 호출해두면 됨.
-    public void UpdateGearLevelBuff(CharacterStat attackDamage, CharacterStat attackSpeed, CharacterStat moveSpeed)
+    public void UpdateGearLevelBuff(CharacterStat attackSpeed, CharacterStat moveSpeed)
     {
         // 기존 버프 제거
-        attackDamage.ApplyAdditiveModifier(-lastAppliedGearLevelBuff.Damage);
         attackSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
         moveSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
         
         // 신규 버프 부여
         lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[CurrentGearLevel];
-        attackDamage.ApplyAdditiveModifier(lastAppliedGearLevelBuff.Damage);
         attackSpeed.ApplyMultiplicativeModifier(lastAppliedGearLevelBuff.Speed);
         moveSpeed.ApplyMultiplicativeModifier(lastAppliedGearLevelBuff.Speed);
     }
