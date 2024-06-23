@@ -78,7 +78,7 @@ public class GearSystem : MonoBehaviour
     // TODO: 테스트 끝나면 삭제할 것
     public Text descriptionText;
     public Slider gaugeSlider;
-    public RectTransform gaugeArrow; // z축 각도: 최소 80, 최대 -137, 붉은 영역 최대 -165
+    public RectTransform gaugeArrow;
 
 
     private void Start()
@@ -243,8 +243,9 @@ public class GearSystem : MonoBehaviour
         descriptionText.text = $"gauge: {CurrentGearGauge}\nlevel: {CurrentGearLevel}";
         gaugeSlider.value = CurrentGearGauge / 100f;
 
-        float targetZAngle = Mathf.Lerp(80f, -137f, CurrentGearGauge / MAX_GEAR_GAUGE);
-        gaugeArrow.rotation = Quaternion.Euler(0f, 0f, targetZAngle);
+        float targetZAngle = Mathf.Lerp(359f, 142f, CurrentGearGauge / MAX_GEAR_GAUGE);
+        float newZAngle = Mathf.Lerp(gaugeArrow.eulerAngles.z, targetZAngle, 0.1f);
+        gaugeArrow.rotation =  Quaternion.Euler(0f, 0f, newZAngle);
     }
 
     // 비전투 상태에서의 기어 게이지 하락 로직

@@ -356,7 +356,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1347074998}
+  - {fileID: 1277186981}
   m_Father: {fileID: 682138637}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
@@ -3570,6 +3570,42 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1277186980
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1277186981}
+  m_Layer: 5
+  m_Name: gear gauge arrow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1277186981
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277186980}
+  m_LocalRotation: {x: 0, y: 0, z: 0.94776845, w: 0.3189593}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1347074998}
+  m_Father: {fileID: 62343633}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 142.8}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 24, y: 24}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1278486996
 GameObject:
   m_ObjectHideFlags: 0
@@ -3658,7 +3694,7 @@ GameObject:
   - component: {fileID: 1347075000}
   - component: {fileID: 1347074999}
   m_Layer: 5
-  m_Name: gear gauge arrow
+  m_Name: gear gauge arrow image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3671,13 +3707,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347074997}
-  m_LocalRotation: {x: 0, y: 0, z: -0.9912155, w: 0.13225642}
+  m_LocalRotation: {x: -0, y: -0, z: 0.6352698, w: 0.77229035}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 62343633}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -164.8}
+  m_Father: {fileID: 1277186981}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 78.88}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -5431,7 +5467,7 @@ PrefabInstance:
     - target: {fileID: 5967063454063742748, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: gaugeArrow
       value: 
-      objectReference: {fileID: 1347074998}
+      objectReference: {fileID: 1277186981}
     - target: {fileID: 5967063454063742748, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: gaugeSlider
       value: 
