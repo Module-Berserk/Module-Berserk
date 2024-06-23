@@ -337,6 +337,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             {
                 CancelPendingDamages();
             }
+
+            // 공격 도중에 긴급 회피를 사용하는 경우 히트박스를 다시 비활성화해줘야 함
+            CancelCurrentAction();
             
             animator.SetTrigger("EmergencyEvade");
 
@@ -344,7 +347,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
             state = State.Evade;
             isInvincible = true;
 
-            // 모든 넉백 효과 제거
+            // 회피 도중에는 추락 및 넉백 x
+            rb.gravityScale = 0f;
             rb.velocity = Vector2.zero;
         }
     }
@@ -383,7 +387,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         state = State.Evade;
         isInvincible = true;
 
-        // 회피 도중에는 추락 x
+        // 회피 도중에는 추락 및 넉백 x
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
         
