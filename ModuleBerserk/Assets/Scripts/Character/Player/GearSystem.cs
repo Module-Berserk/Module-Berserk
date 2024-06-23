@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -11,12 +12,11 @@ using UnityEngine.UI;
 // 4. 기어 단계 변동 => UpdateGearLevelBuff
 public class GearSystem : MonoBehaviour
 {
-    // 기어 단계별 게이지 최대치.
-    // 최대치에 도달한 상태로 일정 시간 유지한 뒤 공격을 해야 다음 단계로 넘어갈 수 있다.
-    private static readonly float[] GEAR_GAUGE_UPPER_BOUND = {0f, 24f, 49f, 74f, 99f, 100f};
     // CurrentGearLevel의 최대치.
     // 첫 번째 단계가 0에서 시작하기 때문에 마지막 단계는 5임.
     private const int MAX_GEAR_LEVEL = 5;
+    // 각 단계마다 가질 수 있는 게이지의 최대치.
+    private const int MAX_GEAR_GAUGE = 25;
     // 한 번 공격에 성공하면 얻는 게이지
     private const float GEAR_GAUGE_GAIN_PER_ATTACK_SUCCESS = 5f;
     // 한 번 적의 공격에 맞으면 잃는 게이지
@@ -47,27 +47,12 @@ public class GearSystem : MonoBehaviour
     };
 
 
-    // 0 ~ 100의 값을 갖는 게이지.
+    // 각 기어 단계마다 0 ~ MAX_GEAR_GAUGE의 값을 갖는 게이지.
     // 적을 공격하면 게이지가 차고 반대로 공격당하면 줄어든다.
     public float CurrentGearGauge {get; private set;}
     // 게이지의 범위에 따라 총 6단계로 구분해 버프를 부여함.
     // note: 기어 단계는 0부터 시작해 최대 5까지 있음!
-    public int CurrentGearLevel
-    {
-        get
-        {
-            for (int level = 0; level < 5; ++level)
-            {
-                if (CurrentGearGauge <= GEAR_GAUGE_UPPER_BOUND[level])
-                {
-                    return level;
-                }
-            }
-
-            // 게이지가 100으로 가득 찬 경우
-            return 5;
-        }
-    }
+    public int CurrentGearLevel {get; private set;}
     // 공격 피격 등으로 기어 단계가 바뀐 경우 호출되는 이벤트.
     // 플레이어는 기어 단계에 따라 버프를 받으므로 수치 변동을 여기서 처리하면 됨.
     public UnityEvent OnGearLevelChange;
@@ -89,14 +74,19 @@ public class GearSystem : MonoBehaviour
     private GearLevelBuff lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[0];
 
 
-
     // 임시 UI
     // TODO: 테스트 끝나면 삭제할 것
     public Text descriptionText;
     public Slider gaugeSlider;
+    public RectTransform gaugeArrow; // z축 각도: 최소 80, 최대 -137, 붉은 영역 최대 -165
 
 
-
+    private void Start()
+    {
+        // TODO: 맵 입장할 때 0단계에서 시작해 1단계까지 쭉 올라가는 모습 보여주기
+        CurrentGearGauge = 0;
+        CurrentGearLevel = 0;
+    }
 
     // 공격에 성공한 경우 호출되는 함수
     public void OnAttackSuccess()
@@ -104,7 +94,7 @@ public class GearSystem : MonoBehaviour
         ResetCombatTimer();
 
         // 공격에 성공할 때마다 현재 단계의 최대치를 넘지 않는 선에서 게이지를 증가시킴
-        CurrentGearGauge = Mathf.Min(CurrentGearGauge + GEAR_GAUGE_GAIN_PER_ATTACK_SUCCESS, GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel]);
+        CurrentGearGauge = Mathf.Min(CurrentGearGauge + GEAR_GAUGE_GAIN_PER_ATTACK_SUCCESS, MAX_GEAR_GAUGE);
     }
 
     // 적의 공격에 맞은 경우 호출되는 함수
@@ -118,17 +108,22 @@ public class GearSystem : MonoBehaviour
             return;
         }
 
-        int prevGearLevel = CurrentGearLevel;
-
         // 피격당한 경우에는 현재 게이지 단계의 하한선을 무시하고 게이지가 감소함!
         // Note: 게이지 하한선은 비전투 상태의 게이지 감소에만 영향을 줌
-        CurrentGearGauge = Mathf.Max(CurrentGearGauge - GEAR_GAUGE_LOSS_PER_HIT, 0f);
-
-        // 만약 게이지 감소로 인해 기어 단계가 바뀐 경우 이벤트로 알려줌
-        if (prevGearLevel != CurrentGearLevel)
+        //
+        // 깎을 게이지가 없는 경우 기어가 한 단계 내려감.
+        // 이 경우 뺄셈에서 받아내림을 하듯이 처리해줘야 함
+        // ex) 기어 2단계 게이지 3에서 10 차감 ==> 기어 1단계 게이지 (3 + MAX_GEAR_GAUGE)에서 10 차감
+        if (CurrentGearGauge < GEAR_GAUGE_LOSS_PER_HIT && CurrentGearLevel > 1)
         {
+            CurrentGearLevel--;
+            CurrentGearGauge += MAX_GEAR_GAUGE;
+
             OnGearLevelChange.Invoke();
         }
+
+        // Note: 최소 기어 단계였다면 게이지가 음수가 되어버릴 수 있으므로 최소 0 유지
+        CurrentGearGauge = Mathf.Max(0f, CurrentGearGauge - GEAR_GAUGE_LOSS_PER_HIT);
     }
 
     // 긴급 회피를 사용해 데미지를 무효화한 경우 호출되는 함수
@@ -166,7 +161,7 @@ public class GearSystem : MonoBehaviour
         }
 
         // 아직 게이지를 충분히 채우지 못한 경우
-        if (CurrentGearGauge < GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel])
+        if (CurrentGearGauge < MAX_GEAR_GAUGE)
         {
             return false;
         }
@@ -185,10 +180,11 @@ public class GearSystem : MonoBehaviour
         // 기어 단계 변동은 아직 최대 단계에 도달하지 못했고
         // 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함
         Assert.IsTrue(CurrentGearLevel < MAX_GEAR_LEVEL);
-        Assert.AreEqual(CurrentGearGauge, GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel]);
+        Assert.AreEqual(CurrentGearGauge, MAX_GEAR_GAUGE);
 
-        // 이미 게이지가 상한선에 도달했으므로 1만 올려줘도 다음 단계로 넘어갈 수 있음
-        CurrentGearGauge++;
+        // 단계가 올라가면 게이지를 0부터 다시 채우기 시작
+        CurrentGearLevel++;
+        CurrentGearGauge = 0;
 
         OnGearLevelChange.Invoke();
 
@@ -231,7 +227,7 @@ public class GearSystem : MonoBehaviour
         }
 
         // 게이지 최대치에 도달한 경우 최대치를 유지한 시간을 기록
-        if (CurrentGearGauge == GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel])
+        if (CurrentGearGauge == MAX_GEAR_GAUGE)
         {
             maxGaugeTime += Time.deltaTime;
         }
@@ -245,6 +241,9 @@ public class GearSystem : MonoBehaviour
         // TODO: 테스트 끝나면 삭제할 것
         descriptionText.text = $"gauge: {CurrentGearGauge}\nlevel: {CurrentGearLevel}";
         gaugeSlider.value = CurrentGearGauge / 100f;
+
+        float targetZAngle = Mathf.Lerp(80f, -137f, CurrentGearGauge / MAX_GEAR_GAUGE);
+        gaugeArrow.rotation = Quaternion.Euler(0f, 0f, targetZAngle);
     }
 
     // 비전투 상태에서의 기어 게이지 하락 로직
@@ -256,22 +255,22 @@ public class GearSystem : MonoBehaviour
             return;
         }
 
-        // 현재 기어 단계의 게이지 하한선
-        float gearGaugeLowerBound = GEAR_GAUGE_UPPER_BOUND[CurrentGearLevel - 1] + 1f;
-
         // 하한선까지는 계속 감소
-        CurrentGearGauge = Mathf.Max(CurrentGearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime, gearGaugeLowerBound);
+        CurrentGearGauge = Mathf.Max(0f, CurrentGearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime);
 
         // 하한선에 도달한 경우 잠깐의 유예 시간을 준 뒤 단계를 하나 감소시킴
-        if (CurrentGearGauge == gearGaugeLowerBound)
+        if (CurrentGearGauge == 0f)
         {
             gaugeLowerBoundDuration += Time.deltaTime;
             if (gaugeLowerBoundDuration > NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME)
             {
                 gaugeLowerBoundDuration = 0f;
 
-                // 이미 하한선에 도달했으므로 1만 감소시켜도 기어 단계를 낮출 수 있음
-                CurrentGearGauge -= 1f;
+                // 단계가 감소한 뒤에는 게이지가 이전 단계의 최대치에서 감소하기 시작함
+                CurrentGearLevel--;
+                CurrentGearGauge = MAX_GEAR_GAUGE;
+
+                OnGearLevelChange.Invoke();
             }
         }
     }
