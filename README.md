@@ -16,7 +16,22 @@
 ## 리팩토링 후보 (생각날 때마다 기록)
 
 
-## 코드로 드러나지 않는 중요한 사항
+## 코드로 파악하기 힘든 중요한 사항
+### 게임의 저장/불러오기 구조
+- 모든 scene이 self-contained 하도록 만들기 위해 플레이어나 UI같은 요소는 scene마다 하나씩 생성됨
+- scene을 넘어갈 때 유지되는 정보는 모두 GameState라는 클래스로 관리함
+- 현재 세션의 GameState는 GameStateManager에서 가져올 수 있으며,  
+플레이어 등의 요소는 scene이 로딩된 직후 GameState를 참고해 이전 scene에서의 상태를 복원함
+  - GameState는 복사가 아니라 참조 형식으로 처리되므로  
+  peripheral한 플레이어같은 오브젝트와 다르게 실시간으로 변조/유지됨!
+  - 예를 들어, PlayerState를 참조 및 조작하는 PlayerManager 스크립트는  
+  scene마다 하나씩 생성/초기화되지만 PlayerState 자체는 scene 전환에도 삭제되지 않아서  
+  기어 시스템에 의한 버프나 HP 상태 등을 그대로 유지한 채로 이동하게 됨
+- 정상적인 게임플레이의 경우 메인 화면에서 세이브 데이터를 선택한 뒤 게임이 진행되므로  
+GameStateManager.ActiveGameState에 해당 세이브 데이터가 할당됨.  
+하지만 테스트 도중에는 미션 한가운데에서 시작하게 될 수도 있으므로 (ex. 보스전만 테스트)  
+이 경우에는 더미 GameState를 생성해 사용함.
+
 ### Project Setting에서 Physics2D multithreading 옵션 활성화함
 - 혹시 나중에 물리 관련해서 오류 발생하면 멀티스레딩을 의심해볼 것
 

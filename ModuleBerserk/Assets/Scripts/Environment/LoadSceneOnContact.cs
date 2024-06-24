@@ -20,6 +20,7 @@ public class LoadSceneOnContact : MonoBehaviour
             SceneManager.LoadSceneAsync(sceneName);
 
             // TODO: fading 등 로딩 화면 처리하기
+            // TODO: SceneManager.sceneUnloaded에 DOTween.KillAll() 호출하는 콜백 함수 넣기
         }
     }
 }
