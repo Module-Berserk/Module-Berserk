@@ -7,6 +7,7 @@ TagManager:
   - OneWayPlatform
   - Attack
   - Enemy
+  - TestSpawnPoint
   layers:
   - Default
   - TransparentFX

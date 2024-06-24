@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
 // 주인공의 이동/공격/상호작용 등 각종 조작을 구현하는 클래스.
@@ -212,11 +213,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         playerState = GameStateManager.ActiveGameState.PlayerState;
 
-        if (playerState.SpawnPosition.HasValue)
+        // 포탈을 타고 다른 scene으로 넘어온 경우 해당 포탈에 대응되는 도착 위치에서 시작함
+        if (playerState.SpawnPointTag != null)
         {
-            rb.MovePosition(playerState.SpawnPosition.Value);
-        }
+            GameObject spawnPoint = GameObject.FindGameObjectWithTag(playerState.SpawnPointTag);
+            Assert.IsNotNull(spawnPoint);
 
+            rb.MovePosition(spawnPoint.transform.position);
+        }
         
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);

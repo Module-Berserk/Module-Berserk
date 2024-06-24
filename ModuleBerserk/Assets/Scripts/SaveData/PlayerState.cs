@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 // 플레이어의 무기와 특성을 결정하는 속성
 public enum PlayerType
@@ -29,13 +28,10 @@ public class PlayerState
     //
     // 포탈을 타고 이동하면 같은 scene이라고 해도
     // 다른 위치에서 시작할 수 있기 때문에 필요하다.
-    //
-    // TODO: 좌표 대신 tag 이름으로 처리하는 방안 고려하기.
-    // 맵에 "SpawnPoint1"같은 태그를 가진 오브젝트를 배치하고 이 좌표를 이용하도록 하는게 더 좋을 것 같음.
-    public Vector2? SpawnPosition {get; set;}
+    public string SpawnPointTag {get; set;}
 
     public GearSystemState GearSystemState {get; set;}
-    
+
     // TODO: 인벤토리 상태 추가
 
     public static PlayerState CreateDummyState()
@@ -48,7 +44,7 @@ public class PlayerState
             AttackSpeed = new CharacterStat(1f, 0f),
             Defense = new CharacterStat(10f, 0f),
             MoveSpeed = new CharacterStat(3.5f, 0f),
-            SpawnPosition = null,
+            SpawnPointTag = null,
             GearSystemState = GearSystemState.CreateDummyState(),
         };
     }
