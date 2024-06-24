@@ -22,6 +22,9 @@ public class ApplyDamageOnContact : MonoBehaviour
     // 공격의 주체가 설정해줘야하는 스탯
     public CharacterStat RawDamage;
 
+    // 공격마다 계수가 다른 경우 설정
+    public float DamageCoefficient = 1f;
+
     // 공격 성공 여부가 필요한 경우 사용할 수 있는 이벤트.
     // 기어 시스템에서 게이지를 회복하는 조건으로 활용한다.
     public UnityEvent OnApplyDamageSuccess;
@@ -50,7 +53,7 @@ public class ApplyDamageOnContact : MonoBehaviour
             StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f); // TODO: 경직 시간을 외부에서 설정할 수 있도록 수정
 
             // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
-            if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue, staggerInfo))
+            if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue * DamageCoefficient, staggerInfo))
             {
                 OnApplyDamageSuccess.Invoke();
             }
