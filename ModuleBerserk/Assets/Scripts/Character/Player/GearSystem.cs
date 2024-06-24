@@ -76,7 +76,7 @@ public class GearSystem : MonoBehaviour
     private float combatTimer = 0f;
     // 마지막으로 호출된 UpdateGearLevelBuff()에서 적용한 버프 수치.
     // 이전 버프를 제거하고 현재 값으로 갱신하기 위해 기록한다.
-    private GearLevelBuff lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[0];
+    private GearLevelBuff lastAppliedGearLevelBuff;
 
 
     // 임시 UI
@@ -90,8 +90,13 @@ public class GearSystem : MonoBehaviour
     public void InitializeState(GearSystemState state)
     {
         CurrentState = state;
-        OnGearLevelChange.Invoke();
-        
+
+        // Note:
+        // scene마다 생성되는 플레이어 오브젝트와 다르게 PlayerState는 삭제되지 않으므로
+        // 버프 또한 이전 scene에서의 값을 유지함!
+        lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[state.GearLevel];
+
+        // TODO: UI 상태 복원하기
         // TODO: 기어가 0단계인 경우 미션 시작이므로 0단계에서 1단계까지 쭉 올라가는 모습 보여주기
     }
 

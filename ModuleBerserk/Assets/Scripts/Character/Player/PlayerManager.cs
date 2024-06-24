@@ -233,8 +233,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
         gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(attackSpeed, moveSpeed));
-
-        // Note: 여기서 OnGearLevelChange가 바로 호출되므로 반드시 윗줄의 AddListener보다 나중에 와야 함!
         gearSystem.InitializeState(gearSystemState);
     }
 
