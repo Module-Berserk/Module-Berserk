@@ -11,7 +11,7 @@ public class DialogueBox : MonoBehaviour
 
     [SerializeField] private float widthPadding = 1f;
     [SerializeField] private float heightPadding = 1f;
-    [SerializeField] private float heightOffset = 0.8f;
+    [SerializeField] private float heightOffset = 0f;
     [SerializeField] private float characterAppearanceDelay = 0.02f;
 
     private void Start()
@@ -25,7 +25,7 @@ public class DialogueBox : MonoBehaviour
         await UniTask.WaitForSeconds(1f);
         await BeginTypingAnimation("강은 바다로 넓어지고 사람은 죽음으로 넘치네");
         await UniTask.WaitForSeconds(1f);
-        await BeginTypingAnimation("추운 겨울에는 따뜻한 커피와 티를 마셔야지요");
+        await BeginTypingAnimation("추운 겨울에는 <u>따뜻한 커피</u>와 티를 마셔야지요");
         await UniTask.WaitForSeconds(1f);
         await BeginTypingAnimation("사막에서 걷는 법을 알려줘\n신발에 모래가 들어가서 발을 델 것 같아");
     }
