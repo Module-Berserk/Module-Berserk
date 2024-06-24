@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 // 버프 또는 디버프가 가능한 유동적인 스탯을 관리하는 클래스.
 // 값이 바뀔 때마다 OnValueChange 이벤트로 알려줌.
+[Serializable]
 public class CharacterStat
 {
     private float baseValue; // 버프와 최대치를 적용하지 않은 현재 값

@@ -92,6 +92,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 0
   staggerStrength: 2
+  RawDamage:
+    OnValueChange:
+      m_PersistentCalls:
+        m_Calls: []
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -110,7 +114,6 @@ GameObject:
   - component: {fileID: 1931364779816567341}
   - component: {fileID: 6823456031613974186}
   - component: {fileID: 4491008500044812834}
-  - component: {fileID: 7514164879446862625}
   - component: {fileID: 4895742193337405064}
   - component: {fileID: 6683100023457001669}
   - component: {fileID: 5967063454063742748}
@@ -340,23 +343,6 @@ MonoBehaviour:
   itemReplacementUI: {fileID: 0}
   itemReplacementSlot1Outline: {fileID: 0}
   itemReplacementSlot2Outline: {fileID: 0}
---- !u!114 &7514164879446862625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053644641385332747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b16858a3f80549f44b8e09a97126e530, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHP: 100
-  attackDamage: 1
-  attackSpeed: 1
-  defense: 19
-  moveSpeed: 3.5
 --- !u!114 &4895742193337405064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,6 +386,7 @@ MonoBehaviour:
       m_Calls: []
   descriptionText: {fileID: 0}
   gaugeSlider: {fileID: 0}
+  gaugeArrow: {fileID: 0}
 --- !u!1 &2448791050619999344
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,6 +479,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 0
   staggerStrength: 1
+  RawDamage:
+    OnValueChange:
+      m_PersistentCalls:
+        m_Calls: []
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []

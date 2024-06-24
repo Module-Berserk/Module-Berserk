@@ -113,10 +113,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
-    private PlayerStat playerStat;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
     private GearSystem gearSystem;
+
+    // GameState에서 가져온 저장 가능한 플레이어 상태들
+    private PlayerState playerState;
 
     // 지면 접촉 테스트 관리자
     private GroundContact groundContact;
@@ -194,7 +196,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        playerStat = GetComponent<PlayerStat>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         gearSystem = GetComponent<GearSystem>();
@@ -202,23 +203,46 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void Start()
     {
-        // TODO: playerStat.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
+        InitializePlayerState();
+    }
 
-        InitializeHitbox();
+    // scene 로딩이 끝난 뒤 호출되는 함수.
+    // 직전 scene에서의 상태를 복원한다.
+    private void InitializePlayerState()
+    {
+        playerState = GameStateManager.ActiveGameState.PlayerState;
 
+        if (playerState.SpawnPosition.HasValue)
+        {
+            rb.MovePosition(playerState.SpawnPosition.Value);
+        }
+
+        
+        InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
+        InitializeHitbox(playerState.AttackDamage);
+
+        // TODO: 인벤토리 상태 초기화하기 (아이템 종류, 쿨타임 등)
+        // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
+    }
+
+    private void InitializeGearSystem(GearSystemState gearSystemState, CharacterStat attackSpeed, CharacterStat moveSpeed)
+    {
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
-        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(playerStat.AttackSpeed, playerStat.MoveSpeed));
+        gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(attackSpeed, moveSpeed));
+
+        // Note: 여기서 OnGearLevelChange가 바로 호출되므로 반드시 윗줄의 AddListener보다 나중에 와야 함!
+        gearSystem.InitializeState(gearSystemState);
     }
 
     // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함
-    private void InitializeHitbox()
+    private void InitializeHitbox(CharacterStat attackDamage)
     {
         // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
         weaponHitbox.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
 
         // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
-        weaponHitbox.RawDamage = playerStat.AttackDamage;
-        emergencyEvadeHitbox.RawDamage = playerStat.AttackDamage;
+        weaponHitbox.RawDamage = attackDamage;
+        emergencyEvadeHitbox.RawDamage = attackDamage;
 
         // 히트박스는 항상 비활성화 상태로 시작해야 함
         weaponHitbox.IsHitboxEnabled = false;
@@ -232,6 +256,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed += OnFallDown;
         playerActions.PerformAction.performed += OnPerformAction;
         playerActions.Evade.performed += OnEvade;
+
+        // TODO: playerState.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
     }
 
     private void OnDisable()
@@ -241,6 +267,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed -= OnFallDown;
         playerActions.PerformAction.performed -= OnPerformAction;
         playerActions.Evade.performed -= OnEvade;
+
+        // TODO: playerState.HP.OnValueChange에 체력바 UI 업데이트 함수 제거
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -793,7 +821,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void UpdateMoveVelocity(float moveInput)
     {
         // 원하는 속도를 계산
-        float desiredVelocityX = playerStat.MoveSpeed.CurrentValue * moveInput;
+        float desiredVelocityX = playerState.MoveSpeed.CurrentValue * moveInput;
 
         // 방향 전환 여부에 따라 다른 가속도 사용
         float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
@@ -952,7 +980,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetBool("IsStaggered", state == State.Stagger);
         animator.SetBool("IsEvading", state == State.Evade);
         animator.SetBool("IsStickingToWall", state == State.StickToWall);
-        animator.SetFloat("AttackSpeed", playerStat.AttackSpeed.CurrentValue);
+        animator.SetFloat("AttackSpeed", playerState.AttackSpeed.CurrentValue);
     }
 
     private bool IsAttacking()
@@ -962,12 +990,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     CharacterStat IDestructible.GetHPStat()
     {
-        return playerStat.HP;
+        return playerState.HP;
     }
 
     CharacterStat IDestructible.GetDefenseStat()
     {
-        return playerStat.Defense;
+        return playerState.Defense;
     }
 
     Team IDestructible.GetTeam()
