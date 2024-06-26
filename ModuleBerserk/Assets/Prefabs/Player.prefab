@@ -96,6 +96,7 @@ MonoBehaviour:
     OnValueChange:
       m_PersistentCalls:
         m_Calls: []
+  DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -324,7 +325,8 @@ MonoBehaviour:
   evasionDuration: 0.4
   evasionDistance: 2
   evasionEase: 9
-  evasionCooltime: 0.5
+  evasionCooltime: 2
+  emergencyEvasionCooltime: 1
   emergencyEvasionTimeWindow: 0.3
 --- !u!114 &4491008500044812834
 MonoBehaviour:
@@ -483,6 +485,7 @@ MonoBehaviour:
     OnValueChange:
       m_PersistentCalls:
         m_Calls: []
+  DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []

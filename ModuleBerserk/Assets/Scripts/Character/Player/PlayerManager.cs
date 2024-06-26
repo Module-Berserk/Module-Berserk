@@ -99,6 +99,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float evasionDistance = 2f;
     [SerializeField] private Ease evasionEase = Ease.OutCubic;
     [SerializeField] private float evasionCooltime = 2f;
+    [SerializeField] private float emergencyEvasionCooltime = 1f;
     // 피격 시점 이후로 긴급 회피가 허용되는 시간.
     // 이 시간 안에 회피 버튼을 누르면 데미지를 무효화하고 반격할 수 있음.
     [SerializeField] private float emergencyEvasionTimeWindow = 0.3f;
@@ -163,6 +164,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 이 값이 회피 쿨타임보다 크면 회피 가능.
     // 캐릭터가 생성된 직후에도 회피가 가능하도록 쿨타임보다 확실히 큰 초기값을 부여함.
     private float timeSinceLastEvasion = 10000f;
+
+    // 마지막 긴급회피로부터 지난 시간.
+    private float timeSinceLastEmergencyEvasion = 10000f;
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
@@ -355,6 +359,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void HandleEmergencyEvasion()
     {
+        // 아직 회피 쿨타임이 끝나지 않았다면 처리 x
+        if (timeSinceLastEmergencyEvasion < emergencyEvasionCooltime)
+        {
+            // TODO: 효과음 / 이펙트 등으로 유저에게 지금은 회피를 할 수 없다는 피드백 주기
+            Debug.Log("아직 긴급회피 쿨타임이 끝나지 않았습니다...");
+            return;
+        }
+
         // TODO: 테스트 끝나면 돌려놓기
         // 테스트 과정에서 긴급 회피를 제한 없이
         // 사용할 수 있도록 기어 게이지 소모를 비활성화해둠
@@ -380,6 +392,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 회피 도중에는 추락 및 넉백 x
             rb.gravityScale = 0f;
             rb.velocity = Vector2.zero;
+        
+            // 쿨타임 계산 시작
+            timeSinceLastEmergencyEvasion = 0f;
         }
     }
 
@@ -664,6 +679,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void HandleEvasionCooltime()
     {
         timeSinceLastEvasion += Time.fixedDeltaTime;
+        timeSinceLastEmergencyEvasion += Time.fixedDeltaTime;
     }
 
     private void ResetJumpRelatedStates()
