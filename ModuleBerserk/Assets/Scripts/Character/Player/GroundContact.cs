@@ -16,14 +16,16 @@ public class GroundContact
     private Rigidbody2D rigidbody;
     private BoxCollider2D collider;
     private LayerMask groundLayerMask;
-    private float contactDistanceThreshold;
+    private float groundContactDistanceThreshold;
+    private float wallContactDistanceThreshold;
 
-    public GroundContact(Rigidbody2D rigidbody, BoxCollider2D collider, LayerMask groundLayerMask, float contactDistanceThreshold)
+    public GroundContact(Rigidbody2D rigidbody, BoxCollider2D collider, LayerMask groundLayerMask, float groundContactDistanceThreshold, float wallContactDistanceThreshold)
     {
         this.rigidbody = rigidbody;
         this.collider = collider;
         this.groundLayerMask = groundLayerMask;
-        this.contactDistanceThreshold = contactDistanceThreshold;
+        this.groundContactDistanceThreshold = groundContactDistanceThreshold;
+        this.wallContactDistanceThreshold = wallContactDistanceThreshold;
     }
 
     public bool IsSteppingOnOneWayPlatform()
@@ -64,7 +66,7 @@ public class GroundContact
         // 0.99f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
         var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
-        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter);
+        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, groundContactDistanceThreshold);
 
         // 아래에 아무것도 없으면 확실히 바닥과 접촉 중이 아님
         GameObject platform = result.TryGetCollidingObject();
@@ -99,7 +101,7 @@ public class GroundContact
     {
         var offsetFromCenter = Vector2.up * collider.size.y / 2f;
         var ray = direction * collider.size.x / 2f;
-        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter);
+        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, wallContactDistanceThreshold);
 
         return result.IsBothRayHit();
     }
@@ -141,20 +143,15 @@ public class GroundContact
 
     // ray: 중심에서 접촉을 확인할 방향의 콜라이더 경계까지의 벡터
     // offsetFromCenter: 콜라이더 중심으로부터 ray의 시작점까지의 벡터 (다른 한 ray는 반대 방향에서 시작)
-    private ParallelRaycastResult PerformParallelRaycast(Vector2 ray, Vector2 offsetFromCenter)
+    private ParallelRaycastResult PerformParallelRaycast(Vector2 ray, Vector2 offsetFromCenter, float contactDistanceThreshold)
     {
         Vector2 center = GetColliderCenter();
 
-        // ray 파라미터에는 중심에서 콜라이더의 경계까지 도달하는 벡터가 주어짐.
-        // 하지만 정확히 경계면까지 raycast를 하는 경우 벽에 닿아있어도 가끔 검출에 실패할 수 있음.
-        // 이런 일관적이지 않은 결과를 방지하기 위해 콜라이더의 경계로부터 거리가
-        // contactDistanceThreshold 이하인 경우는 접촉 중인 것으로 취급함.
-        float raycastDistance = ray.magnitude + contactDistanceThreshold;
-
+        // 경계면에서 지형까지의 거리가 contactDistanceThreshold 이하인 경우는 접촉 중인 것으로 취급함.
         return new ParallelRaycastResult
         {
-            Hit1 = Physics2D.Raycast(center + offsetFromCenter, ray, raycastDistance, groundLayerMask),
-            Hit2 = Physics2D.Raycast(center - offsetFromCenter, ray, raycastDistance, groundLayerMask)
+            Hit1 = Physics2D.Raycast(center + ray + offsetFromCenter, ray, contactDistanceThreshold, groundLayerMask),
+            Hit2 = Physics2D.Raycast(center + ray - offsetFromCenter, ray, contactDistanceThreshold, groundLayerMask)
         };
     }
 

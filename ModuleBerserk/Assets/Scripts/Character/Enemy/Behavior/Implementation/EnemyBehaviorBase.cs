@@ -93,7 +93,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         FindComponentReferences();
         RandomizeSpeedStats();
 
-        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
+        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold, contactDistanceThreshold);
 
         // 잡몹은 평상시에 경직 저항력이 없고,
         // 몹의 종류에 따라 공격 모션에 일부 약한 경직 저항이 부여됨.

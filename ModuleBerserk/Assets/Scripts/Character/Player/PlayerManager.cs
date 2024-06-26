@@ -66,12 +66,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private LayerMask groundLayerMask;
     // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급.
     // 
-    // Note:
-    // 엘리베이터를 타고 하강하는 상황에서 하단 엘리베이터가
-    // 검출될 수 있을 정도로 넉넉하게 주어야 한다!
+    // 바닥과의 충돌 판정 거리는 생각보다 크게 줘야 함.
+    // 엘리베이터를 타고 하강하는 상황이라면
     // 엘리베이터가 먼저 떨어지고 플레이어가 중력으로 낙하하는
-    // 구조여서 의외로 수직 거리가 크게 벌어진다.
-    [SerializeField] private float contactDistanceThreshold = 0.2f;
+    // 구조여서 의외로 수직 거리가 크게 벌어지기 때문!
+    //
+    // 벽과의 충돌은 충돌 판정 거리를 작게 잡아줘도 됨.
+    [SerializeField] private float groundContactDistanceThreshold = 0.2f;
+    [SerializeField] private float wallContactDistanceThreshold = 0.02f;
 
 
     [Header("Follow Camera Target")]
@@ -191,7 +193,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         FindComponentReferences();
         
-        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold);
+        groundContact = new(rb, boxCollider, groundLayerMask, groundContactDistanceThreshold, wallContactDistanceThreshold);
         airControl = defaultAirControl;
     }
 
