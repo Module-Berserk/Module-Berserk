@@ -1,8 +1,10 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Cinemachine;
 
 [RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(CinemachineImpulseSource))]
 public class C1BoxGimmick : MonoBehaviour
 {
     // 일반 맵에서는 부수면 크레딧을 드랍해야 하지만
@@ -10,6 +12,15 @@ public class C1BoxGimmick : MonoBehaviour
     [SerializeField] private bool shouldDropCreditOnDestroy = false;
     // 플레이어가 대쉬로 충돌한 경우 부여할 스턴 지속시간
     [SerializeField] private float playerStunDurationOnDashImpact = 2.0f;
+    // 플레이어가 충돌해서 상자가 파괴될 때 부여할 카메라 흔들림 효과 강도
+    [SerializeField] private float cameraShakeForce = 0.1f;
+
+    private CinemachineImpulseSource cameraShake;
+
+    private void Awake()
+    {
+        cameraShake = GetComponent<CinemachineImpulseSource>();
+    }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -24,7 +35,7 @@ public class C1BoxGimmick : MonoBehaviour
             {
                 DestroyBox();
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();
-                // TODO: 카메라 흔들림 넣기
+                cameraShake.GenerateImpulse(cameraShakeForce);
             }
         }
 
