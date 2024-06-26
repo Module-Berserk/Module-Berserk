@@ -24,8 +24,8 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         AssertConfiguration();
 
         // TODO: 테스트 끝나면 삭제할 것
-        // TestDialogueSelection().Forget();
-        TestDialogueSequence().Forget();
+        TestDialogueSelection().Forget();
+        // TestDialogueSequence().Forget();
     }
 
     // 정상적인 대화창 prefab 설정인지 확인
@@ -183,7 +183,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
             // 현재 선택중인 옵션에만 밑줄 추가
             if (i == selectedDialogueOptionIndex)
             {
-                newText += $"<u>{dialogueOptions[i]}</u>";
+                newText += $"<b>{dialogueOptions[i]}</b>";
             }
             else
             {
