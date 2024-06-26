@@ -6,6 +6,17 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
+public enum PlayerActionState
+{
+    IdleOrRun, // 서있기, 달리기, 점프, 낙하
+    StickToWall, // 벽에 매달려 정지한 상태
+    Stagger, // 공격에 맞아 경직 판정인 상태
+    AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
+    AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
+    Evade, // 회피
+    Stun, // 챕터1 박스 기믹 등에 의해 기절당한 상태. Stagger와 마찬가지로 최우선 판정.
+};
+
 // 주인공의 이동/공격/상호작용 등 각종 조작을 구현하는 클래스.
 //
 // 필요한 애니메이션 이벤트:
@@ -172,22 +183,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     // 경직 도중에 또 경직을 당하거나 긴급 회피로 탈출하는 경우 기존 경직 취소
     private CancellationTokenSource staggerCancellation = new();
+    // 기절 상태에서 공격을 받는 경우 기절 취소하고 경직 상태로 전환
+    private CancellationTokenSource stunCancellation = new();
     // 긴급 회피를 시전할 때 직전에 입은 데미지를 무효화
     private CancellationTokenSource damageCancellation = new();
     // 긴급 회피가 일어나는지 확인하려고 대기 중인 데미지 목록.
     // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인하기 위해 사용함.
     private int numPendingDamages = 0;
 
-    private enum State
-    {
-        IdleOrRun, // 서있기, 달리기, 점프, 낙하
-        StickToWall, // 벽에 매달려 정지한 상태
-        Stagger, // 공격에 맞아 경직 판정인 상태
-        AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
-        AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
-        Evade, // 회피
-    };
-    private State state = State.IdleOrRun;
+    public PlayerActionState ActionState {get; private set;} = PlayerActionState.IdleOrRun;
 
     private void Awake()
     {
@@ -300,16 +304,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 만약 상호작용이 가능한 대상이 없었다면 2순위 행동인 공격을 시도한다.
         if (!isInteractionSuccessful)
         {
-            // 회피 중이거나 경직 상태이거나 벽에 매달린 경우는 공격 불가
+            // 회피 중이거나 경직/기절 상태이거나 벽에 매달린 경우는 공격 불가
             // TODO: 회피 모션 중에도 공격 선입력 허용하는 것 고려하기
-            if (state == State.Evade || state == State.Stagger || state == State.StickToWall)
+            if (ActionState == PlayerActionState.Evade || ActionState == PlayerActionState.Stagger || ActionState == PlayerActionState.Stun || ActionState == PlayerActionState.StickToWall)
             {
                 return;
             }
 
             // 이미 핵심 공격 모션이 어느 정도 재생된 상태라면 선입력으로 처리,
             // 아니라면 다음 공격 모션 재생
-            if (state == State.AttackInProgress)
+            if (ActionState == PlayerActionState.AttackInProgress)
             {
                 HandleAttackInputBuffering();
             }
@@ -322,8 +326,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void OnEvade(InputAction.CallbackContext context)
     {
-        // 이미 회피 중이라면 처리 x
-        if (state == State.Evade)
+        // 이미 회피 중이거나 기절 상태라면 처리 x
+        if (ActionState == PlayerActionState.Evade || ActionState == PlayerActionState.Stun)
         {
             return;
         }
@@ -388,7 +392,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             animator.SetTrigger("EmergencyEvade");
 
             // 회피 무적 상태로 전환
-            state = State.Evade;
+            ActionState = PlayerActionState.Evade;
             isInvincible = true;
 
             // 회피 도중에는 추락 및 넉백 x
@@ -431,7 +435,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateFacingDirectionByInput();
 
         // 회피 무적 상태로 전환
-        state = State.Evade;
+        ActionState = PlayerActionState.Evade;
         isInvincible = true;
 
         // 회피 도중에는 추락 및 넉백 x
@@ -454,7 +458,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 무적 판정을 해제하고 기본 이동 상태로 돌아온다.
     public void OnEvadeEnd()
     {
-        state = State.IdleOrRun;
+        ActionState = PlayerActionState.IdleOrRun;
         isInvincible = false;
 
         // 회피 끝났으면 다시 추락 가능
@@ -528,7 +532,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 너무 시간차가 큰 선입력 방지하기 위해 모션의 앞부분에는 선입력 처리 x
         isAttackInputBufferingAllowed = false;
 
-        state = State.AttackInProgress;
+        ActionState = PlayerActionState.AttackInProgress;
     }
 
     public void OnEnableAttackCollider()
@@ -536,7 +540,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격 판정이 들어가는 FixedUpdate보다 애니메이션 상태 갱신이
         // 나중에 일어나기 때문에 이 함수가 호출되는 프레임에 정확히 피격 경직을 당하는 경우
         // Stagger 상태에서 무기 히트박스를 켜버리는 상황이 발생할 수 있음!
-        if (state == State.Stagger)
+        if (ActionState == PlayerActionState.Stagger)
         {
             return;
         }
@@ -587,13 +591,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
         else
         {
-            state = State.AttackWaitingContinuation;
+            ActionState = PlayerActionState.AttackWaitingContinuation;
         }
     }
 
     private void FixedUpdate()
     {
-        if (state == State.Evade)
+        if (ActionState == PlayerActionState.Evade)
         {
             // 회피 도중에는 아무것도 처리하지 않음
         }
@@ -620,7 +624,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
                 // 벽에 붙은 상태에서 엘리베이터가 올라와
                 // IsGrounded = true가 되어버리는 상황 처리
-                if (state == State.StickToWall)
+                if (ActionState == PlayerActionState.StickToWall)
                 {
                     StopStickingToWall();
                 }
@@ -628,7 +632,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             else
             {
                 StopStickingToElevator();
-                if (state == State.IdleOrRun)
+                if (ActionState == PlayerActionState.IdleOrRun)
                 {
                     HandleCoyoteTime();
                     HandleFallingVelocity();
@@ -645,7 +649,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             HandleJumpInput();
         }
 
-        if (state == State.Stagger)
+        if (ActionState == PlayerActionState.Stagger)
         {
             // 넉백 효과로 생긴 velocity 부드럽게 감소
             UpdateMoveVelocity(0f);
@@ -761,7 +765,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         float moveInput = InputManager.InputActions.Player.Move.ReadValue<float>();
         
-        if (state == State.IdleOrRun)
+        if (ActionState == PlayerActionState.IdleOrRun)
         {
             UpdateFacingDirectionByInput();
             if (ShouldStickToWall(moveInput))
@@ -774,7 +778,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             }
 
         }
-        else if (state == State.StickToWall && ShouldStopStickingToWall(moveInput))
+        else if (ActionState == PlayerActionState.StickToWall && ShouldStopStickingToWall(moveInput))
         {
             StopStickingToWall();
         }
@@ -812,7 +816,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void StartStickingToWall(float moveInput)
     {
-        state = State.StickToWall;
+        ActionState = PlayerActionState.StickToWall;
 
         // 매달린 방향과 반대로 이동하는 경우 매달리기 취소해야 하므로 현재 방향 기록
         isStickingToRightWall = moveInput > 0f;
@@ -832,7 +836,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void StopStickingToWall()
     {
-        state = State.IdleOrRun;
+        ActionState = PlayerActionState.IdleOrRun;
 
         // 중력 활성화
         rb.gravityScale = defaultGravityScale;
@@ -880,7 +884,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void HandleJumpInput()
     {
         // 공격, 경직 등 다른 상태에서는 점프 불가능
-        if (state == State.IdleOrRun || state == State.StickToWall)
+        if (ActionState == PlayerActionState.IdleOrRun || ActionState == PlayerActionState.StickToWall)
         {
             // 점프에는 두 가지 경우가 있음
             // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
@@ -982,7 +986,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         newPosition.x += IsFacingLeft ? -cameraLookAheadDistance : cameraLookAheadDistance;
 
         // 벽에 매달리거나 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
-        if (!groundContact.IsGrounded && state != State.StickToWall)
+        if (!groundContact.IsGrounded && ActionState != PlayerActionState.StickToWall)
         {
             newPosition.y = cameraFollowTarget.transform.position.y;
         }
@@ -997,15 +1001,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
         animator.SetBool("IsRunning", InputManager.InputActions.Player.Move.IsPressed());
         animator.SetBool("IsAttacking", IsAttacking());
-        animator.SetBool("IsStaggered", state == State.Stagger);
-        animator.SetBool("IsEvading", state == State.Evade);
-        animator.SetBool("IsStickingToWall", state == State.StickToWall);
+        animator.SetBool("IsStaggered", ActionState == PlayerActionState.Stagger);
+        animator.SetBool("IsStunned", ActionState == PlayerActionState.Stun);
+        animator.SetBool("IsEvading", ActionState == PlayerActionState.Evade);
+        animator.SetBool("IsStickingToWall", ActionState == PlayerActionState.StickToWall);
         animator.SetFloat("AttackSpeed", playerState.AttackSpeed.CurrentValue);
     }
 
     private bool IsAttacking()
     {
-        return state == State.AttackInProgress || state == State.AttackWaitingContinuation;
+        return ActionState == PlayerActionState.AttackInProgress || ActionState == PlayerActionState.AttackWaitingContinuation;
     }
 
     CharacterStat IDestructible.GetHPStat()
@@ -1085,17 +1090,31 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 모든 상태를 깔끔하게 정리하고 IdleOrRun 상태로 복귀함.
     private void CancelCurrentAction()
     {
-        if (state == State.StickToWall)
+        if (ActionState == PlayerActionState.StickToWall)
         {
             StopStickingToWall();
         }
-        else if (state == State.Stagger)
+        else if (ActionState == PlayerActionState.Stagger)
         {
             // CancellationTokenSource는 리셋이 불가능해서
             // 한 번 cancel하면 새로 만들어줘야 함.
             staggerCancellation.Cancel();
             staggerCancellation.Dispose();
             staggerCancellation = new();
+        }
+        else if (ActionState == PlayerActionState.Stun)
+        {
+            stunCancellation.Cancel();
+            stunCancellation.Dispose();
+            stunCancellation = new();
+        }
+        else if (ActionState == PlayerActionState.Evade)
+        {
+            // 회피 이동을 처리하던 tweening 취소
+            rb.DOKill();
+
+            // 회피 상태 취소
+            OnEvadeEnd();
         }
         else if (IsAttacking())
         {
@@ -1114,21 +1133,34 @@ public class PlayerManager : MonoBehaviour, IDestructible
             }
         }
 
-        state = State.IdleOrRun;
+        ActionState = PlayerActionState.IdleOrRun;
     }
 
     private async UniTask SetStaggerStateForDurationAsync(float duration)
     {
-        state = State.Stagger;
+        ActionState = PlayerActionState.Stagger;
 
         await UniTask.WaitForSeconds(duration, cancellationToken: staggerCancellation.Token);
 
-        state = State.IdleOrRun;
+        ActionState = PlayerActionState.IdleOrRun;
     }
 
     void IDestructible.OnDestruction()
     {
         // TODO: 잠시 입력 비활성화, 은신처로 복귀 (결과창 표시?)
         animator.SetTrigger("Death");
+    }
+
+    // 챕터1 박스 기믹 등 특수한 상황에만 부여되는 기절 효과.
+    // 기절 상태에서 공격을 당하면 기절이 풀리고 경직 상태로 전환된다.
+    public async UniTask ApplyStunForDurationAsync(float duration)
+    {
+        CancelCurrentAction();
+
+        ActionState = PlayerActionState.Stun;
+
+        await UniTask.WaitForSeconds(duration, cancellationToken: stunCancellation.Token);
+
+        ActionState = PlayerActionState.IdleOrRun;
     }
 }
