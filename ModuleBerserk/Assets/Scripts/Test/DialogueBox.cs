@@ -5,6 +5,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
 
+// 등장인물 머리 위에 말풍선 모양으로 대사를 출력해주는 스크립트
+// TODO: 말풍선 꼬리가 가운데 또는 왼쪽인 버전도 만들기!
 public class DialogueBox : MonoBehaviour, IUserInterfaceController
 {
     [SerializeField] private SpriteRenderer backgroundRenderer;
@@ -24,7 +26,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         AssertConfiguration();
 
         // TODO: 테스트 끝나면 삭제할 것
-        TestDialogueSelection().Forget();
+        // TestDialogueSelection().Forget();
         // TestDialogueSequence().Forget();
     }
 
