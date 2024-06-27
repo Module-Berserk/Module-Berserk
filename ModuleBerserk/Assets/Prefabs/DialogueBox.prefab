@@ -217,12 +217,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 159f31687bb97ac4691cc8451a8e0d02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftBumpBackground: {fileID: 21300000, guid: 398196cc0e8ec3b4a9713dfd0c32ece6, type: 3}
+  rightBumpBackground: {fileID: 21300000, guid: f56cf9a5bbff2cb498774abf193018f1, type: 3}
+  centerBumpBackground: {fileID: 21300000, guid: e59ba3305d645314fa901d92fbe059ce, type: 3}
   backgroundRenderer: {fileID: 410414149887800825}
   textMesh: {fileID: 4377962823866250331}
   widthPadding: 1
   heightPadding: 1
   heightOffset: 0
   characterAppearanceDelay: 0.02
+  bumpLocation: 0
 --- !u!1 &7962927417697532627
 GameObject:
   m_ObjectHideFlags: 0

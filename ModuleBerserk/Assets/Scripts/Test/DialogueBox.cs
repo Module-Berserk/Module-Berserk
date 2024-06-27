@@ -6,16 +6,37 @@ using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
 
 // 등장인물 머리 위에 말풍선 모양으로 대사를 출력해주는 스크립트
-// TODO: 말풍선 꼬리가 가운데 또는 왼쪽인 버전도 만들기!
 public class DialogueBox : MonoBehaviour, IUserInterfaceController
 {
+    [Header("Background Sprite Variant")]
+    [SerializeField] private Sprite leftBumpBackground;
+    [SerializeField] private Sprite rightBumpBackground;
+
+
+    [Header("Component References")]
     [SerializeField] private SpriteRenderer backgroundRenderer;
     [SerializeField] private TextMeshPro textMesh;
 
+    
+    [Header("Dialogue Print Options")]
+    // 텍스트의 mesh보다 배경 이미지가 얼마나 커야 하는지 결정.
+    // 배경 이미지는 테두리에 빈 공간이 있어서 텍스트의 크기보다
+    // 약간 커야 말풍선 안에 대사가 예쁘게 들어간다.
     [SerializeField] private float widthPadding = 1f;
     [SerializeField] private float heightPadding = 1f;
+    // 말풍선의 꼬리가 스프라이트의 pivot보다 얼마나 위에 있어야 하는지 결정.
+    // 주인공은 pivot이 머리에 있어서 0으로 둬도 괜찮음.
     [SerializeField] private float heightOffset = 0f;
+    // 대사를 한 글자씩 출력할 때 글자 하나마다 소요되는 시간
     [SerializeField] private float characterAppearanceDelay = 0.02f;
+
+    // 말풍선 꼬리의 위치
+    private enum BumpLocation
+    {
+        Left,
+        Right,
+    }
+    [SerializeField] private BumpLocation bumpLocation = BumpLocation.Left;
 
     private bool isSelectingDialogueOption = false;
     private int selectedDialogueOptionIndex;
@@ -24,10 +45,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
     private void Start()
     {
         AssertConfiguration();
-
-        // TODO: 테스트 끝나면 삭제할 것
-        // TestDialogueSelection().Forget();
-        // TestDialogueSequence().Forget();
+        ChooseBacgroundSpriteWithCorrectBump();
     }
 
     // 정상적인 대화창 prefab 설정인지 확인
@@ -46,6 +64,19 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         // 직접 개행 문자를 넣지 않는 이상 대화창이 가로로 쭉 늘어남
         Assert.IsFalse(textMesh.enableWordWrapping);
         Assert.IsTrue(textMesh.overflowMode == TextOverflowModes.Overflow);
+    }
+
+    // 설정된 말풍선 꼬리의 위치에 맞는 배경 이미지 선택
+    private void ChooseBacgroundSpriteWithCorrectBump()
+    {
+        if (bumpLocation == BumpLocation.Left)
+        {
+            backgroundRenderer.sprite = leftBumpBackground;
+        }
+        else
+        {
+            backgroundRenderer.sprite = rightBumpBackground;
+        }
     }
 
     public void ShowBox()
@@ -123,9 +154,17 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         // 3. mesh의 크기를 기준으로 약간의 padding을 더해 배경 이미지 크기를 조정한다
         backgroundRenderer.size = new Vector2(textMesh.renderedWidth + widthPadding, textMesh.renderedHeight + heightPadding);
 
-        // 4. 배경 이미지는 중앙에 정렬되므로
-        // 말풍선 꼬리가 제자리에 머물도록 약간 오른쪽으로 중심을 옮긴다
-        transform.localPosition = backgroundRenderer.size / 2f + Vector2.up * heightOffset;
+        // 4. 말풍선 꼬리가 제자리에 머물도록 중심을 옮긴다
+        var position = Vector2.up * (heightOffset + backgroundRenderer.size.y / 2f);
+        if (bumpLocation == BumpLocation.Left)
+        {
+            position.x += backgroundRenderer.size.x / 2f;
+        }
+        else
+        {
+            position.x -= backgroundRenderer.size.x / 2f;
+        }
+        transform.localPosition =  position;
     }
 
     public async UniTask<int> BeginDialogueSelection(List<string> options)
