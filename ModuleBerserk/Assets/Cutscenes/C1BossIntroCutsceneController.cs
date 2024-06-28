@@ -1,14 +1,13 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-
-
-// 챕터1 보스전 인트로 컷신에서 보스와 플레이어의 대화창 출력을 담당하는 클래스.
-// 타임라인에서 signal을 받아 순차적으로 대사를 출력한다.
-public class C1BossIntroDialogues : MonoBehaviour
+// 챕터1 보스전 인트로 컷신에서 보스 및 플레이어의 대사 출력과
+// 플레이어 입력 비활성화/활성화를 담당하는 클래스.
+//
+// 타임라인이 signal을 보내주면 Signal Receiver 컴포넌트가
+// 이 스크립트의 함수들을 적절히 호출하는 방식으로 작동함.
+public class C1BossIntroCutsceneController : MonoBehaviour
 {
     [SerializeField] private DialogueBox playerDialogueBox;
     [SerializeField] private DialogueBox bossDialogueBox;
@@ -37,10 +36,26 @@ public class C1BossIntroDialogues : MonoBehaviour
     };
     private int nextDialogueIndex = 0;
 
-    // C1BossIntro 타임라인의 시그널에 의해 호출됨
+    // 컷신의 시작과 끝에 호출되는 함수.
+    // 잠시 플레이어 조작을 막아준다.
+    public void DisablePlayerControl()
+    {
+        InputManager.InputActions.Player.Disable();
+    }
+
+    public void EnablePlayerControl()
+    {
+        InputManager.InputActions.Player.Enable();
+    }
+
+    public void BeginPlayerWalk()
+    {
+        
+    }
+
+    // 다음 대사가 출력되어야 할 타이밍에 호출됨
     public void BeginNextDialogue()
     {
-        Debug.Log("대사 출력중...");
         // 화자에 맞게 대사창 선택 및 대사 출력
         Dialogue nextDialogue = dialogues[nextDialogueIndex++];
         DialogueBox dialogueBox = nextDialogue.speaker == Speaker.Boss ? bossDialogueBox : playerDialogueBox;

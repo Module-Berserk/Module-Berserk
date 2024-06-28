@@ -434,7 +434,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4.21875
+  orthographic size: 3.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -764,7 +764,7 @@ Transform:
   m_GameObject: {fileID: 694454625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.8, y: -1.9, z: -0.048488528}
+  m_LocalPosition: {x: -6.7000003, y: -1.9, z: -0.048488528}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1253,6 +1253,8 @@ PlayableDirector:
     value: {fileID: 519420033}
   - key: {fileID: 7801864406708925090, guid: d793a899c45167a44befc624aa5c653a, type: 2}
     value: {fileID: 1256533916}
+  - key: {fileID: 2399321435980156178, guid: d793a899c45167a44befc624aa5c653a, type: 2}
+    value: {fileID: 1811368077613159406}
   m_ExposedReferences:
     m_References:
     - c2428fc20c09db245bbc47d5e8755663: {fileID: 81349872}
@@ -1303,12 +1305,42 @@ MonoBehaviour:
   m_Events:
     m_Signals:
     - {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
+    - {fileID: 11400000, guid: d27485ec63fd77a41916dcaa749fee5b, type: 2}
+    - {fileID: 11400000, guid: 8566105bc9068024abd113668c32662a, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1256533915}
           m_TargetAssemblyTypeName: C1BossIntroDialogues, Assembly-CSharp
           m_MethodName: BeginNextDialogue
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossIntroDialogues, Assembly-CSharp
+          m_MethodName: DisablePlayerControl
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossIntroDialogues, Assembly-CSharp
+          m_MethodName: EnablePlayerControl
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1745,7 +1777,7 @@ Transform:
   m_GameObject: {fileID: 1454554044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.7000003, y: -1.3000001, z: -10}
+  m_LocalPosition: {x: -6.7000003, y: -1.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1840,7 +1872,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.764151, g: 0.35224077, b: 0, a: 1}
   m_FlipX: 0
@@ -2135,11 +2167,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.7000003
+      value: -6.7000003
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.3000001
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2210,6 +2242,11 @@ PrefabInstance:
       addedObject: {fileID: 1412133576}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+--- !u!95 &1811368077613159406 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5290044610603506198, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+  m_PrefabInstance: {fileID: 1811368077613159405}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8602893245577955615
 PrefabInstance:
   m_ObjectHideFlags: 0
