@@ -22,10 +22,10 @@ public class C1BoxGimmick : MonoBehaviour
         cameraShake = GetComponent<CinemachineImpulseSource>();
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionStay2D(Collision2D other)
     {
-        Debug.Log("플레이어가 상자에 대쉬함");
-        if (other.gameObject.CompareTag("Player"))
+        bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.contacts[0].normal, Vector2.up), 0f);
+        if (other.gameObject.CompareTag("Player") && isCollisionHorizontal)
         {
             var playerManager = other.gameObject.GetComponent<PlayerManager>();
             Assert.IsNotNull(playerManager);
