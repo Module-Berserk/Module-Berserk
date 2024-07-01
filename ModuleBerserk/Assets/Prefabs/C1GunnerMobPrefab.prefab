@@ -695,6 +695,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  RawDamage:
+    OnValueChange:
+      m_PersistentCalls:
+        m_Calls: []
+  DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -790,6 +795,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 2
+  RawDamage:
+    OnValueChange:
+      m_PersistentCalls:
+        m_Calls: []
+  DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
