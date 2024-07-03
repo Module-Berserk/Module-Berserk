@@ -492,10 +492,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirectionByInput();
 
-        // 공격 도중에는 공격 모션에 의한 약간의 이동을 제외한 모든 움직임이 멈춤
-        rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
-
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
         {
@@ -601,18 +597,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
         {
             // 회피 도중에는 아무것도 처리하지 않음
         }
-        // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
-        // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
-        // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
-        else if (IsAttacking())
-        {
-            ApplyAttackRootMotion();
-        }
         // one way platform을 위로 스쳐 지나가는 상황에서
         // 공격 상태에 진입해 정지하면 IsGrounded가 true가 되어버림.
         // 실제로는 공중에 떠 있는 것으로 취급해야 하므로 공격 중이 아닐 때만 상태를 갱신함.
         else
         {
+            // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
+            // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
+            // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
+            if (IsAttacking())
+            {
+                ApplyAttackRootMotion();
+            }
+
             groundContact.TestContact();
             if (groundContact.IsGrounded)
             {
@@ -632,7 +629,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             else
             {
                 StopStickingToElevator();
-                if (ActionState == PlayerActionState.IdleOrRun)
+                if (ActionState == PlayerActionState.IdleOrRun || IsAttacking())
                 {
                     HandleCoyoteTime();
                     HandleFallingVelocity();
@@ -755,7 +752,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            rb.velocity = (IsFacingLeft ? Vector2.left : Vector2.right) * rootMotion * 1.2f;
+            float verticalVelocity = rb.velocity.y;
+            float horizontalVelocity = (IsFacingLeft ? -1f : 1f) * rootMotion * 1.2f;
+            rb.velocity =  new Vector2(horizontalVelocity, verticalVelocity);
         }
 
         prevSpritePivotX = currSpritePivotX;
@@ -1123,7 +1122,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             attackCount = 0;
             isAttackInputBufferingAllowed = false;
             isAttackInputBuffered = false;
-            rb.gravityScale = defaultGravityScale;
             OnDisableAttackCollider();
 
             // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼

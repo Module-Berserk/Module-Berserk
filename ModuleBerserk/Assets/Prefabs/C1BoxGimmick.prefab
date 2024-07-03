@@ -173,9 +173,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shouldDropCreditOnDestroy: 0
-  playerStunDurationOnDashImpact: 2
+  playerStunDurationOnDashImpact: 0.5
   cameraShakeForce: 0.1
-  pushImpulse: 10
+  pushVelocity: 2
 --- !u!114 &3135049815916480169
 MonoBehaviour:
   m_ObjectHideFlags: 0
