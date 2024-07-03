@@ -49,7 +49,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
             Assert.IsNotNull(playerManager);
 
             // 플레이어가 대쉬로 충돌한 경우 상자 파괴
-            if (playerManager.ActionState == PlayerActionState.Evade)
+            if (playerManager.ActionState == PlayerActionState.Evade && playerManager.IsNormalEvasion)
             {
                 DestroyBox();
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();

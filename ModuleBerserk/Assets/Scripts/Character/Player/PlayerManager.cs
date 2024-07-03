@@ -189,6 +189,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인하기 위해 사용함.
     private int numPendingDamages = 0;
 
+    // 회피를 할 때마다 해당 회피 타입을 여기에 기록해둔다.
+    // 챕터 1 박스 기믹에서 일반 대쉬에만 박스가 파괴되도록 구분하기 위해 사용함.
+    public bool IsNormalEvasion {get; private set;}
+
     public PlayerActionState ActionState {get; private set;} = PlayerActionState.IdleOrRun;
 
     private void Awake()
@@ -399,6 +403,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         
             // 쿨타임 계산 시작
             timeSinceLastEmergencyEvasion = 0f;
+            
+            // 챕터1 박스 기믹에서 일반 회피에만 반응할 수 있게 회피 타입 기록
+            IsNormalEvasion = false;
         }
     }
 
@@ -445,6 +452,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // 회피 모션 재생
         animator.SetTrigger("Evade");
+
+        // 챕터1 박스 기믹에서 일반 회피에만 반응할 수 있게 회피 타입 기록
+        IsNormalEvasion = true;
 
         float targetX = transform.position.x + evasionDistance * (IsFacingLeft ? -1f : 1f);
         rb.DOMoveX(targetX, evasionDuration)
