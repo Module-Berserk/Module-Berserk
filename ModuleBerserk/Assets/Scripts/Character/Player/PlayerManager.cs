@@ -68,8 +68,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.2f;
     // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
-    // 최대 공중공격 콤보 횟수
-    [SerializeField] private int maxOnAirAttackCount = 2;
 
 
     [Header("Ground Contact")]
@@ -159,7 +157,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     //Prototype 공격용 변수들
     private bool isAttackInputBufferingAllowed = false; // 공격 모션 중에서 선입력 기록이 가능한 시점에 도달했는지
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
-    private bool isAirAttackPossible = true; // 공중 공격을 시작할 수 있는지
+    private bool isAirAttackPerformed = false; // 공중 공격을 이미 했는지 (점프마다 한 번 가능)
     private int attackCount = 0;
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
     // 공격 애니메이션에 루트 모션을 적용하기 위한 변수.
@@ -484,7 +482,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void TriggerNextAttack()
     {
         // 이미 공중 공격을 했으면 착지하기 전까지는 공격 불가
-        if (!groundContact.IsGrounded && !isAirAttackPossible)
+        if (!groundContact.IsGrounded && isAirAttackPerformed)
         {
             return;
         }
@@ -502,10 +500,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             attackCount = 1;
         }
 
-        // 공중에서는 최대 2회까지만 공격 가능
-        if (attackCount >= maxOnAirAttackCount && !groundContact.IsGrounded)
+        // 공중에서는 최대 1회까지만 공격 가능
+        if (!groundContact.IsGrounded)
         {
-            isAirAttackPossible = false;
+            isAirAttackPerformed = true;
         }
 
         // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐
@@ -613,6 +611,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
             groundContact.TestContact();
             if (groundContact.IsGrounded)
             {
+                // 공격 모션 중에서 예외적으로 착지 모션이 공중 공격 모션보다 우선순위가 높아서
+                // 딱 착지하기 직전에 공중 공격을 하면 OnAttackMotionEnd() 등이
+                // 호출되지 않은 상태에서 착지 모션으로 전환될 수 있음.
+                // 이 경우 수동으로 공격 상태를 정리해줘야 함...
+                //
+                // Note:
+                // ResetJumpRelatedStates()에서 isAirAttackPerformed의 값을
+                // false로 바꿔버리므로 반드시 해당 함수보다 먼저 처리해줘야 함!!!
+                if (isAirAttackPerformed && IsAttacking())
+                {
+                    CancelCurrentAction();
+                }
+
                 ResetJumpRelatedStates();
 
                 // 움직이는 엘리베이터 위에서도 안정적으로
@@ -688,7 +699,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void ResetJumpRelatedStates()
     {
         jumpCount = 0;
-        isAirAttackPossible = true;
+        isAirAttackPerformed = false;
         shouldWallJump = false;
         coyoteTimeCounter = 0f;
         rb.gravityScale = defaultGravityScale;
@@ -1123,14 +1134,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAttackInputBufferingAllowed = false;
             isAttackInputBuffered = false;
             OnDisableAttackCollider();
-
-            // 만약 공중 공격이었다면 설령 maxAirAttackCount만큼
-            // 연속 공격을 하지 않았더라도 착지하기 전까지 공격을 금지함.
-            // 공중 공격은 점프 당 1회, 최대 maxAirAttackCount만큼 연격.
-            if (!groundContact.IsGrounded)
-            {
-                isAirAttackPossible = false;
-            }
         }
 
         ActionState = PlayerActionState.IdleOrRun;
