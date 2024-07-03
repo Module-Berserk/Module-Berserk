@@ -32,6 +32,20 @@ GameStateManager.ActiveGameState에 해당 세이브 데이터가 할당됨.
 하지만 테스트 도중에는 미션 한가운데에서 시작하게 될 수도 있으므로 (ex. 보스전만 테스트)  
 이 경우에는 더미 GameState를 생성해 사용함.
 
+### Scene 내부의 카메라 transition
+- 미션은 여러개의 stage로 구성되는데, stage 사이에는 카메라를 공유하지 않음
+- 한 stage의 카메라는 cinemachine camera confiner로 정의된 범위 안에서만 움직임
+- 새로운 맵을 만들 때 해야하는 일
+  1. stage마다 Follow Camera 프리팹 하나씩 배치
+  2. 처음에 보여줄 카메라를 제외하면 virtual camera의 priority를 5로 낮추기
+  3. Follow Camera 하나마다 Camera Confinement 프리팹 배치하고  
+  PolygonCollider2D를 카메라가 움직일 수 있는 영역에 맞게 조정하기
+  4. Follow Camera의 Cinemachine Confiner 2D 컴포넌트의  
+  Bounding Shape 2D에 방금 만든 콜라이더 레퍼런스로 넣어주기
+  5. 다른 stage로 넘어가는 입구마다 CameraTransitionOnContact 프리팹을 배치하고  
+  해당 영역의 virtual camera를 PlayerContactTrigger 스크립트에 레퍼런스로 넣어주기
+- 참고: 카메라 blending 시간은 main camera의 cinemachine brain 컴포넌트에서 수정 가능
+
 ### Project Setting에서 Physics2D multithreading 옵션 활성화함
 - 혹시 나중에 물리 관련해서 오류 발생하면 멀티스레딩을 의심해볼 것
 
