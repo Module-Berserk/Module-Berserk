@@ -206,7 +206,7 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         return Team.Enemy;
     }
 
-    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
         (this as IDestructible).HandleHPDecrease(finalDamage);
         
@@ -218,6 +218,8 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         {
             state = State.Stagger;
         }
+
+        return true;
     }
 
     void IDestructible.OnDestruction()

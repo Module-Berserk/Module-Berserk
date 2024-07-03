@@ -159,7 +159,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 0
   m_CollisionDetection: 0
-  m_Constraints: 5
+  m_Constraints: 4
 --- !u!114 &110026841799635974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,6 +174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shouldDropCreditOnDestroy: 0
   playerStunDurationOnDashImpact: 2
+  cameraShakeForce: 0.1
+  pushImpulse: 10
 --- !u!114 &3135049815916480169
 MonoBehaviour:
   m_ObjectHideFlags: 0

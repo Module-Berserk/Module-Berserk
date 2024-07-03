@@ -56,10 +56,12 @@ public interface IDestructible
     }
 
     // 공격을 받을 때마다 호출되며, HP 차감이나 경직 처리 등을 구현해야 함.
+    // 챕터1 박스 기믹처럼 공격을 단순히 넉백 방향을 알아내기 위해 사용하는 경우도 존재하므로
+    // 최종적으로 이 공격을 성공으로 봐야 할지 리턴 값으로 알려줘야 함.
     // 
     // HP 차감의 경우 플레이어처럼 긴급회피로 나중에 데미지를 무효화할 수 있는
     // 특수한 경우가 아니라면 그냥 HandleHPDecrease(finalDamage)를 호출하면 된다!
-    void OnDamage(float finalDamage, StaggerInfo staggerInfo);
+    bool OnDamage(float finalDamage, StaggerInfo staggerInfo);
 
     // 공격을 받아 HP가 0이 된 경우 호출됨
     void OnDestruction();
@@ -94,10 +96,9 @@ public interface IDestructible
         float damageReduction = (def.CurrentValue - 10f) * damageReductionPerDefense;
         float finalDamage = rawDamage * (1f - damageReduction);
 
-        // 데미지 처리 요청
-        OnDamage(finalDamage, staggerInfo);
-
-        return true;
+        // 데미지 처리 요청.
+        // 대상이 이 공격이 성공이라고 판단하면 true를 반환할 것임.
+        return OnDamage(finalDamage, staggerInfo);
     }
 
     // HP 차감 및 사망 처리의 기본 구현.

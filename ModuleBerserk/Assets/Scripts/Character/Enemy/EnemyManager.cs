@@ -85,11 +85,13 @@ public class EnemyManager : MonoBehaviour, IDestructible {
         return Team.Enemy;
     }
 
-    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
 
         ApplyStaggerForDurationAsync(staggerInfo.direction * 3.0f, 0.4f).Forget();
+
+        return true;
     }
 
     // 데미지를 입으면 잠시 경직 상태에 빠진 후 다시 해당 위치부터 순찰 시작

@@ -1033,7 +1033,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         return isInvincible;
     }
 
-    void IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
 
@@ -1048,6 +1048,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         ApplyDamageWithDelayAsync(finalDamage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
+
+        return true;
     }
 
     // 플레이어가 긴급회피로 데미지를 무효화할 수 있으니 잠시 유예 시간을 부여함.

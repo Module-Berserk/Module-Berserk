@@ -1419,7 +1419,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: d793a899c45167a44befc624aa5c653a, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -1728,7 +1728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7922915529864126293, guid: f1a3d99a45b7ddb4c8a965c8b0a70c49, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2
+      value: 0.56
       objectReference: {fileID: 0}
     - target: {fileID: 7922915529864126293, guid: f1a3d99a45b7ddb4c8a965c8b0a70c49, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2605,7 +2605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7922915529864126293, guid: f1a3d99a45b7ddb4c8a965c8b0a70c49, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2
+      value: 0.56
       objectReference: {fileID: 0}
     - target: {fileID: 7922915529864126293, guid: f1a3d99a45b7ddb4c8a965c8b0a70c49, type: 3}
       propertyPath: m_LocalPosition.z
