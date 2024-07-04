@@ -15,6 +15,9 @@ public class C1BoxGimmickGenerator : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // 선반에는 박스가 이미 준비된 상태로 시작해야 함
+        TryGenerateNewBox();
     }
 
     // 박스가 이미 사용되었다면 새로 생성함.
