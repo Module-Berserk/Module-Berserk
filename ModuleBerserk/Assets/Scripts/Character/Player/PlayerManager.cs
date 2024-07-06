@@ -48,6 +48,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private float turnAcceleration = 150f;
     [SerializeField] private float moveAcceleration = 100f;
     [SerializeField] private float moveDecceleration = 150f;
+    // 서있을 때는 마찰력을 높게 줘서 경사로에서도 미끄러지지 않도록 만듦
+    [SerializeField] private PhysicsMaterial2D zeroFrictionMat;
+    [SerializeField] private PhysicsMaterial2D maxFrictionMat;
 
 
     [Header("Jump / Fall")]
@@ -728,7 +731,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void HandleMoveInput()
     {
         float moveInput = InputManager.InputActions.Player.Move.ReadValue<float>();
-        
         if (ActionState == PlayerActionState.IdleOrRun)
         {
             UpdateFacingDirectionByInput();
@@ -741,10 +743,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 UpdateMoveVelocity(moveInput);
             }
 
+            ApplyStaticFrictionOnNoInput();
         }
         else if (ActionState == PlayerActionState.StickToWall && ShouldStopStickingToWall(moveInput))
         {
             StopStickingToWall();
+        }
+    }
+
+    private void ApplyStaticFrictionOnNoInput()
+    {
+        if (InputManager.InputActions.Player.Move.IsPressed())
+        {
+            rb.sharedMaterial = zeroFrictionMat;
+        }
+        else
+        {
+            rb.sharedMaterial = maxFrictionMat;
         }
     }
 
@@ -1042,6 +1057,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         CancelCurrentAction();
 
         rb.velocity = staggerForce;
+
+        // 가만히 서있는 상태인 경우 마찰력이 높은 상태를 유지하므로
+        // 움직이다가 피격당하는 경우와 밀려나는 정도가 일관적이지 않음!
+        // 그러니 일단 넉백 당한다 하면 무조건 마찰력를 없애줘야 함.
+        rb.sharedMaterial = zeroFrictionMat;
         SetStaggerStateForDurationAsync(staggerDuration).Forget();
 
         // TODO:

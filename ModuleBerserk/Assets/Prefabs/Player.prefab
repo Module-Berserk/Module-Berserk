@@ -303,6 +303,8 @@ MonoBehaviour:
   turnAcceleration: 150
   moveAcceleration: 100
   moveDecceleration: 150
+  zeroFrictionMat: {fileID: 6200000, guid: 195e42bf05cfc7b438afe094730109e1, type: 2}
+  maxFrictionMat: {fileID: 6200000, guid: a36093154ff63a6448d6cf82048dbdd2, type: 2}
   jumpVelocity: 12
   wallJumpVelocity: {x: 10, y: 10}
   coyoteTime: 0.15
