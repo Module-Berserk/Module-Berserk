@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 4895742193337405064}
   - component: {fileID: 6683100023457001669}
   - component: {fileID: 5967063454063742748}
+  - component: {fileID: 8017939143549858306}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -311,11 +312,11 @@ MonoBehaviour:
   defaultAirControl: 0.5
   airControlWhileWallJumping: 0.2
   wallJumpAirControlPenaltyDuration: 0.3
-  maxOnAirAttackCount: 2
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  contactDistanceThreshold: 0.2
+  groundContactDistanceThreshold: 0.2
+  wallContactDistanceThreshold: 0.02
   cameraFollowTarget: {fileID: 0}
   cameraLookAheadDistance: 0
   weakStaggerKnockbackForce: 10
@@ -389,6 +390,18 @@ MonoBehaviour:
   descriptionText: {fileID: 0}
   gaugeSlider: {fileID: 0}
   gaugeArrow: {fileID: 0}
+--- !u!114 &8017939143549858306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053644641385332747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc7c22087af4fae4aaf17710094507d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2448791050619999344
 GameObject:
   m_ObjectHideFlags: 0

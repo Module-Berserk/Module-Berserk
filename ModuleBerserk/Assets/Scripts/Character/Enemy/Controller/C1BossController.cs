@@ -55,6 +55,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private SpriteRootMotion spriteRootMotion;
     private CinemachineImpulseSource cameraShake;
     private GameObject player;
 
@@ -65,6 +67,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private float backstepPatternCooltime = 0f;
     private float meleeAttackPatternCooltime = 0f;
+    private bool isDashMotionStarted = false;
 
     // 돌진 도중에 박스 기믹과 충돌한 경우 돌진을 멈추고 기절 상태에 진입
     private CancellationTokenSource dashAttackCancellation = new();
@@ -84,12 +87,20 @@ public class C1BossController : MonoBehaviour, IDestructible
         ReinforceMobs, // 체력이 25% 감소할 때마다 잡몹 소환
     }
     private ActionState actionState = ActionState.Chase;
+    
+    public bool IsFacingLeft
+    {
+        get => spriteRenderer.flipX;
+        protected set => spriteRenderer.flipX = value;
+    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRootMotion = GetComponent<SpriteRootMotion>();
         cameraShake = GetComponent<CinemachineImpulseSource>();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -142,6 +153,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
         else if (actionState == ActionState.Chase)
         {
+            // 플레이어 방향 바라보기
+            IsFacingLeft = player.transform.position.x < rb.position.x;
+
             // TODO: 맨 앞에 체력 25% 지점마다 쓰는 잡몹 소환 패턴 끼워넣기 (이게 제일 우선순위 높음)
             if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
             {
@@ -228,10 +242,12 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         actionState = ActionState.DashAttack;
 
-        float dashTargetX = GetDashTargetX();
-
-        // rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
         animator.SetTrigger("DashAttack");
+        spriteRootMotion.HandleAnimationChange();
+
+        // 애니메이션 이벤트에 의해 돌진이 시작되기를 기다림
+        isDashMotionStarted = false;
+        await UniTask.WaitUntil(() => isDashMotionStarted);
 
         // 박스 기믹과 충돌하는 경우를 대비해 cancellation token을 넣어준다
         await UniTask.WaitForSeconds(dashDuration, cancellationToken: dashAttackCancellation.Token);
@@ -244,6 +260,17 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             boxGenerator.TryGenerateNewBox();
         }
+
+        // 돌진 패턴 후딜레이
+        await UniTask.WaitForSeconds(1f);
+    }
+
+    // 돌진 공격 애니메이션에서 앞으로 튀어나가야 하는 순간에 호출해주는 이벤트.
+    public void BeginDashAttackMovement()
+    {
+        float dashTargetX = GetDashTargetX();
+        rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
+        isDashMotionStarted = true;
     }
 
     // 돌진 목적지는 맵의 양쪽 끝 중에서 더 멀리 있는 곳
