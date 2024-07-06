@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 4727030366414579878}
   - component: {fileID: 3620528243376873997}
   - component: {fileID: 7559437205155655123}
+  - component: {fileID: 8782019491417139179}
   m_Layer: 7
   m_Name: C1Boss
   m_TagString: Untagged
@@ -283,7 +284,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 77214122, guid: 943bf3d599d3c0c4ca68d5339c71a187, type: 3}
-  m_Color: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
@@ -423,9 +424,10 @@ MonoBehaviour:
   mapRightEnd: {fileID: 0}
   backstepJumpMaxDuration: 2
   backstepJumpMaxImpulse: 9
-  dashDuration: 0.4
+  dashDuration: 0.2
   dashMotionEase: 32
   dashImpactCameraShakeForce: 1
+  cannonExplodePrefab: {fileID: 7140365216682225963, guid: bb145a9935bf7de44a3b7cd9480bc5c5, type: 3}
   boxGenerators:
   - {fileID: 0}
   - {fileID: 0}
@@ -483,6 +485,20 @@ MonoBehaviour:
     m_DissipationDistance: 100
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 1, y: 1, z: 0}
+--- !u!114 &8782019491417139179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5432116050934168534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
+  flashDuration: 0.15
 --- !u!1 &8469068301973273362
 GameObject:
   m_ObjectHideFlags: 0

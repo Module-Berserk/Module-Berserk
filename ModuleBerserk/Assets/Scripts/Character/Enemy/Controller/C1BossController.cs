@@ -50,6 +50,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     [SerializeField] private float dashImpactCameraShakeForce;
 
 
+    [Header("Cannon Pattern")]
+    [SerializeField] private GameObject cannonExplodePrefab;
+
+
     [Header("Box Gimmick")]
     // 돌진 패턴이 벽에 충돌하며 끝나는 경우 상자 기믹을 리필함
     [SerializeField] private List<C1BoxGimmickGenerator> boxGenerators;
@@ -68,6 +72,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private SpriteRootMotion spriteRootMotion;
+    private FlashEffectOnHit flashEffectOnHit;
     private CinemachineImpulseSource cameraShake;
     private GameObject player;
 
@@ -79,6 +84,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private float backstepPatternCooltime = 0f;
     private float meleeAttackPatternCooltime = 0f;
     private bool isDashMotionStarted = false;
+    private bool isCannonShotStarted = false;
 
     // 돌진 도중에 박스 기믹과 충돌한 경우 돌진을 멈추고 기절 상태에 진입
     private CancellationTokenSource dashAttackCancellation = new();
@@ -112,6 +118,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
+        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         cameraShake = GetComponent<CinemachineImpulseSource>();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -288,7 +295,14 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
-        await PerformDashAttackPatternAsync();
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            await PerformDashAttackPatternAsync();
+        }
+        else
+        {
+            await PerformCannonPatternAsync();
+        }
 
         // 백스텝 패턴 쿨타임 부여하고 기본 상태로 복귀
         // TODO: 쿨타임 수치는 기획에 따라 바꿀 것
@@ -313,6 +327,46 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             return mapRightEnd.position.x;
         }
+    }
+
+    private async UniTask PerformCannonPatternAsync()
+    {
+        animator.SetTrigger("CannonShot");
+
+        // 준비 동작 끝나면 애니메이션에서 이벤트로 설정해줌
+        isCannonShotStarted = false;
+        await UniTask.WaitUntil(() => isCannonShotStarted);
+
+        float playerX = player.transform.position.x;
+        List<float> explodePositions = new()
+        {
+            playerX,
+            playerX + Random.Range(1.5f, 3f),
+            playerX - Random.Range(1.5f, 3f),
+        };
+
+        // TODO: explodePositions 셔플하기
+
+        for (int i = 0; i < 3; ++ i)
+        {
+            Vector3 spawnPosition = new Vector3(explodePositions[i], transform.position.y);
+            Instantiate(cannonExplodePrefab, spawnPosition, Quaternion.identity);
+            
+            await UniTask.WaitForSeconds(0.2f);
+        }
+
+        // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
+        await UniTask.WaitUntil(() => !isCannonShotStarted);
+    }
+
+    public void BeginCannonShot()
+    {
+        isCannonShotStarted = true;
+    }
+
+    public void StopCannonShot()
+    {
+        isCannonShotStarted = false;
     }
 
     private async UniTask PerformDashAttackPatternAsync()
@@ -386,7 +440,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         return Team.Enemy;
     }
 
-    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
     {
         if (staggerInfo.strength > staggerResistance)
         {
@@ -395,6 +449,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         (this as IDestructible).HandleHPDecrease(finalDamage);
+
+        flashEffectOnHit.StartEffectAsync().Forget();
 
         // 챕터1 보스는 무적 시간 없음
         return true;

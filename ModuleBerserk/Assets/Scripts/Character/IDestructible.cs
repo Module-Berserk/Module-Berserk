@@ -61,7 +61,7 @@ public interface IDestructible
     // 
     // HP 차감의 경우 플레이어처럼 긴급회피로 나중에 데미지를 무효화할 수 있는
     // 특수한 경우가 아니라면 그냥 HandleHPDecrease(finalDamage)를 호출하면 된다!
-    bool OnDamage(float finalDamage, StaggerInfo staggerInfo);
+    bool OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo);
 
     // 공격을 받아 HP가 0이 된 경우 호출됨
     void OnDestruction();
@@ -98,7 +98,7 @@ public interface IDestructible
 
         // 데미지 처리 요청.
         // 대상이 이 공격이 성공이라고 판단하면 true를 반환할 것임.
-        return OnDamage(finalDamage, staggerInfo);
+        return OnDamage(damageSource, finalDamage, staggerInfo);
     }
 
     // HP 차감 및 사망 처리의 기본 구현.

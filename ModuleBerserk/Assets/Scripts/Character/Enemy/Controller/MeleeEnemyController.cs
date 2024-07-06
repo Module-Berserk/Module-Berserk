@@ -173,7 +173,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         return Team.Enemy;
     }
 
-    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
     {
         (this as IDestructible).HandleHPDecrease(finalDamage);
 

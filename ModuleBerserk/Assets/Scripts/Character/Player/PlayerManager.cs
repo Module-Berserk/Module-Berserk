@@ -997,7 +997,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         return isInvincible;
     }
 
-    bool IDestructible.OnDamage(float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
 
