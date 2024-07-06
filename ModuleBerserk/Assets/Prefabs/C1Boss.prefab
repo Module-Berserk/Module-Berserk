@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc7c22087af4fae4aaf17710094507d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  motionScale: 1.2
 --- !u!114 &3620528243376873997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,16 +312,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeAttackRange: {fileID: 3306134738073383657}
   backstepRange: {fileID: 7428477975634683749}
+  walkSpeed: 1
+  chaseStopDistance: 0.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   mapLeftEnd: {fileID: 0}
   mapRightEnd: {fileID: 0}
   backstepJumpMaxDuration: 2
-  backstepJumpMaxImpulse: 10
-  dashDuration: 1
-  dashMotionEase: 2
-  dashImpactCameraShakeForce: 0
+  backstepJumpMaxImpulse: 9
+  dashDuration: 0.4
+  dashMotionEase: 32
+  dashImpactCameraShakeForce: 1
   boxGenerators:
   - {fileID: 0}
   - {fileID: 0}

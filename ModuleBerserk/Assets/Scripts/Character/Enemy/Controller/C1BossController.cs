@@ -19,6 +19,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 플레이어가 이 범위 밖으로 나가면 맵 끝으로 백스텝한 뒤 후속 패턴을 시전함
     [SerializeField] private PlayerDetectionRange backstepRange;
 
+    [Header("Chase Pattern")]
+    [SerializeField] private float walkSpeed = 1f;
+    // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
+    [SerializeField] private float chaseStopDistance = 0.5f;
 
     [Header("Backstep Pattern")]
     // 점프 후 착지 여부를 판단할 때 사용
@@ -32,7 +36,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 실제로는 백스텝 거리에 비례하는 수치가 사용됨
     // ex) 맵 중앙에서 출발하면 시간과 속도가 절반
     [SerializeField] private float backstepJumpMaxDuration = 2f;
-    [SerializeField] private float backstepJumpMaxImpulse = 20f;
+    [SerializeField] private float backstepJumpMaxImpulse = 9f;
 
 
     [Header("Dash Attack Pattern")]
@@ -161,9 +165,13 @@ public class C1BossController : MonoBehaviour, IDestructible
             {
                 PerformBackstepPatternAsync().Forget();
             }
-            else if (meleeAttackPatternCooltime <= 0f)
-            {
+            // else if (meleeAttackPatternCooltime <= 0f)
+            // {
                 // TODO: 근접공격 패턴 시작
+            // }
+            else
+            {
+                WalkTowardsPlayer();
             }
         }
 
@@ -174,6 +182,22 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         backstepPatternCooltime -= Time.fixedDeltaTime;
         meleeAttackPatternCooltime -= Time.fixedDeltaTime;
+    }
+
+    private void WalkTowardsPlayer()
+    {
+        // 플레이어가 너무 가깝지 않은 경우에만 걸어서 다가감.
+        // 이 조건이 없으면 플레이어와 정확히 겹쳐서 좌우로 왔다갔다하는 이상한 모습이 연출됨...
+        float distanceToPlayer = Mathf.Abs(player.transform.position.x - rb.position.x);
+        if (distanceToPlayer > chaseStopDistance)
+        {
+            // Note: 걷기 상태인 경우 FixedUpdate에서 먼저 플레이어를 바라보게 IsFacingLeft 값을 설정해줌
+            rb.velocity = (IsFacingLeft ? Vector2.left : Vector2.right) * walkSpeed;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+        }
     }
 
     private async UniTask PerformBackstepPatternAsync()
