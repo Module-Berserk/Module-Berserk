@@ -413,6 +413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeAttackRange: {fileID: 3306134738073383657}
   backstepRange: {fileID: 7428477975634683749}
+  meleeAttackHitbox: {fileID: 4679903115679224296}
   walkSpeed: 1
   chaseStopDistance: 1
   groundLayer:

@@ -103,11 +103,11 @@ public class PlayerDetectionRange : MonoBehaviour
         return true;
     }
 
-    public void SetDetectorDirection(bool flipX)
+    public void SetDetectorDirection(bool isFacingLeft)
     {
         // BoxCollider2D처럼 대칭적인 범위를 사용한다고 가정하면
         // x축 offset을 반전시키는 것만으로 대칭 이동이 가능함!
-        float newOffsetX = Mathf.Abs(detectionRange.offset.x) * (flipX ? -1f : 1f);
+        float newOffsetX = Mathf.Abs(detectionRange.offset.x) * (isFacingLeft ? -1f : 1f);
         detectionRange.offset = new Vector2(newOffsetX, detectionRange.offset.y);
     }
 

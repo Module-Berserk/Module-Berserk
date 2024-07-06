@@ -19,6 +19,9 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 플레이어가 이 범위 밖으로 나가면 맵 끝으로 백스텝한 뒤 후속 패턴을 시전함
     [SerializeField] private PlayerDetectionRange backstepRange;
 
+    [Header("Melee Attack Pattern")]
+    [SerializeField] private ApplyDamageOnContact meleeAttackHitbox;
+
     [Header("Chase Pattern")]
     [SerializeField] private float walkSpeed = 1f;
     // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
@@ -170,7 +173,6 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private void FixedUpdate()
     {
-        // TODO: detection range들과 보스 스프라이트 렌더러 바라보는 방향으로 flipping 처리
         groundContact.TestContact();
 
         UpdatePatternCooltimes();
@@ -189,8 +191,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         else if (actionState == ActionState.Chase)
         {
             // 플레이어 방향 바라보기
-            IsFacingLeft = player.transform.position.x < rb.position.x;
-            meleeAttackRange.SetDetectorDirection(IsFacingLeft);
+            LookAtPlayer();
 
             // TODO: 맨 앞에 체력 25% 지점마다 쓰는 잡몹 소환 패턴 끼워넣기 (이게 제일 우선순위 높음)
             if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
@@ -208,6 +209,13 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         UpdateAnimatorState();
+    }
+
+    public void LookAtPlayer()
+    {
+        IsFacingLeft = player.transform.position.x < rb.position.x;
+        meleeAttackRange.SetDetectorDirection(IsFacingLeft);
+        meleeAttackHitbox.SetHitboxDirection(IsFacingLeft);
     }
 
     private void PerformMeleeAttackPattern()
