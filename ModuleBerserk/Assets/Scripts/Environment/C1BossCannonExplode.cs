@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -6,12 +7,15 @@ public class C1BossCannonExplode : MonoBehaviour
 {
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float damage;
+    [SerializeField] private float cameraShakeForce;
 
     private BoxCollider2D boxCollider;
+    private CinemachineImpulseSource cameraShake;
 
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        cameraShake = GetComponent<CinemachineImpulseSource>();
         GetComponent<ApplyDamageOnContact>().RawDamage = new CharacterStat(damage);
 
         AlignPositionToGround();
@@ -29,6 +33,11 @@ public class C1BossCannonExplode : MonoBehaviour
         // 콜라이더가 딱 지면과 접하는 상황을 만들 수 있음
         float newY = hit.point.y + boxCollider.size.y / 2f;
         transform.position = new Vector2(transform.position.x, newY);
+    }
+
+    public void ApplyCameraShake()
+    {
+        cameraShake.GenerateImpulse(cameraShakeForce);
     }
 
     // 폭발 애니메이션이 끝나면 호출되는 함수

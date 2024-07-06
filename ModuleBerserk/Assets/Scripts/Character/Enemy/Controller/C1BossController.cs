@@ -295,11 +295,11 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
-        if (Random.Range(0f, 1f) < 0.5f)
-        {
-            await PerformDashAttackPatternAsync();
-        }
-        else
+        // if (Random.Range(0f, 1f) < 0.5f)
+        // {
+            // await PerformDashAttackPatternAsync();
+        // }
+        // else
         {
             await PerformCannonPatternAsync();
         }

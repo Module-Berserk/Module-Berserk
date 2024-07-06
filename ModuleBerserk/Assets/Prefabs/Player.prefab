@@ -319,7 +319,7 @@ MonoBehaviour:
   wallContactDistanceThreshold: 0.02
   cameraFollowTarget: {fileID: 0}
   cameraLookAheadDistance: 0
-  weakStaggerKnockbackForce: 10
+  weakStaggerKnockbackForce: 13
   strongStaggerKnockbackForce: 23
   weaponHitbox: {fileID: 6389424330828841407}
   emergencyEvadeHitbox: {fileID: 6405362062228367109}
@@ -402,6 +402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc7c22087af4fae4aaf17710094507d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  motionScale: 1.2
 --- !u!1 &2448791050619999344
 GameObject:
   m_ObjectHideFlags: 0

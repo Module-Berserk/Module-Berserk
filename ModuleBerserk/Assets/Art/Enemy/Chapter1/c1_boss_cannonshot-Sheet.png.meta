@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c3dd2fa45285fa943a1ff121ca2538a8
+guid: b37d3e8f23163454ead0f93ee1318c14
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -97,631 +97,631 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_0
+      name: c1_boss_cannonshot-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 738c4ddc4970b864a82e8ba87a7ba9bb
-      internalID: -1777276766
+      spriteID: e45ab9b88f474f14fae1155739e9cbfa
+      internalID: 775321686
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_1
+      name: c1_boss_cannonshot-Sheet_1
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0381b133d919874f9d493755d7a0dde
-      internalID: 462747635
+      spriteID: d9d3d3360691e8441bfa63045944c56d
+      internalID: -897634447
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_2
+      name: c1_boss_cannonshot-Sheet_2
       rect:
         serializedVersion: 2
         x: 192
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 705f4bcdc90597a49b6bb320a48363c5
-      internalID: -1033268624
+      spriteID: 05a94a94e594b714893f467faa57b959
+      internalID: -674709700
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_3
+      name: c1_boss_cannonshot-Sheet_3
       rect:
         serializedVersion: 2
         x: 288
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e581f7cf17760ed4098e493a031ab6f9
-      internalID: -1663372497
+      spriteID: d889457550d0c4e46b2a0a34d61c2289
+      internalID: -2109078545
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_4
+      name: c1_boss_cannonshot-Sheet_4
       rect:
         serializedVersion: 2
         x: 384
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c3217b6771dd47749a612fb0296cc606
-      internalID: -1300760212
+      spriteID: fcdd6c0d42f495648830df738c04302e
+      internalID: -1225470433
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_5
+      name: c1_boss_cannonshot-Sheet_5
       rect:
         serializedVersion: 2
         x: 480
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0c8d95f3ac722246b81915e4126aaf0
-      internalID: 1037639830
+      spriteID: 1c658ebdf401c7f46b58f0202e24de94
+      internalID: 1455141214
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_6
+      name: c1_boss_cannonshot-Sheet_6
       rect:
         serializedVersion: 2
         x: 576
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e643945df50d73146b0593132f6bdace
-      internalID: 1858517845
+      spriteID: 27f87d7882977f142b2f293b9f67d8cb
+      internalID: -864266543
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_7
+      name: c1_boss_cannonshot-Sheet_7
       rect:
         serializedVersion: 2
         x: 672
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3400baf3d6b7bce428b466e9cd1a8325
-      internalID: 1615075932
+      spriteID: 70c8605ad8ca84e43a941dc69fd977ff
+      internalID: -750820448
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_8
+      name: c1_boss_cannonshot-Sheet_8
       rect:
         serializedVersion: 2
         x: 768
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b9e0fda038fd0ae4aae6393f44847d90
-      internalID: -600368246
+      spriteID: f966657506549b146bd93d9fac247336
+      internalID: 914746535
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_9
+      name: c1_boss_cannonshot-Sheet_9
       rect:
         serializedVersion: 2
         x: 864
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c71b9687ad4e1f4fa6840bf0db478f8
-      internalID: -493375047
+      spriteID: e20877e4170cc18489031e780fb86fc9
+      internalID: -2068295433
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_10
+      name: c1_boss_cannonshot-Sheet_10
       rect:
         serializedVersion: 2
         x: 960
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cba5b19f2a4a3604497a2ae8404e45df
-      internalID: -2081343522
+      spriteID: e86c95b44a0d1b649996490b07beba84
+      internalID: 1995340455
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_11
+      name: c1_boss_cannonshot-Sheet_11
       rect:
         serializedVersion: 2
         x: 1056
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2641602b241220f4caea8bde293f069b
-      internalID: 308303094
+      spriteID: 4b3efc72e3b2ecb4eb7a6851c7d9e17c
+      internalID: -984887680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_12
+      name: c1_boss_cannonshot-Sheet_12
       rect:
         serializedVersion: 2
         x: 1152
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d4f655386f522884ca557b2670089def
-      internalID: -21615180
+      spriteID: 6b77903ca80b7e549a4c5a0fa7287cec
+      internalID: 414766291
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_13
+      name: c1_boss_cannonshot-Sheet_13
       rect:
         serializedVersion: 2
         x: 1248
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77c502f637088e64580354734b07bc04
-      internalID: -1040420787
+      spriteID: 35e5544d85b993841b6b5bb62ce7d3bc
+      internalID: -934548952
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_14
+      name: c1_boss_cannonshot-Sheet_14
       rect:
         serializedVersion: 2
         x: 1344
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5c09ff1b1f475e847befb8ab1cebef8b
-      internalID: -831564774
+      spriteID: dc1bffd514faec24eba39231098d80df
+      internalID: 476540462
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_15
+      name: c1_boss_cannonshot-Sheet_15
       rect:
         serializedVersion: 2
         x: 1440
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 69c8ff41630290c43abb86f225240856
-      internalID: -955413507
+      spriteID: 269bdd06b54a6d047878ff90061260e7
+      internalID: -848355774
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_16
+      name: c1_boss_cannonshot-Sheet_16
       rect:
         serializedVersion: 2
         x: 1536
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 335bdf8b4e14ffb41b172ff11273fdc7
-      internalID: -25856753
+      spriteID: 1fa93e32491b9b142bf64ed0ac212c40
+      internalID: 1219687601
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_17
+      name: c1_boss_cannonshot-Sheet_17
       rect:
         serializedVersion: 2
         x: 1632
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 969fbe14c9bab9d44a3a88c5454b1ab5
-      internalID: 522674825
+      spriteID: 43556e8082605664e96d3a36a30d4ef4
+      internalID: 113095584
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_18
+      name: c1_boss_cannonshot-Sheet_18
       rect:
         serializedVersion: 2
         x: 1728
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aab72599303fe7243b175c175e170c07
-      internalID: -1488176029
+      spriteID: 0aa090e17eefdc844a859cf5823d0078
+      internalID: 1880982171
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_19
+      name: c1_boss_cannonshot-Sheet_19
       rect:
         serializedVersion: 2
         x: 1824
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77d28c0c5cde57c41a2d25fdea260884
-      internalID: 1736382021
+      spriteID: 626e1a1f707513445acf87cc8cd0e4a3
+      internalID: -1487054344
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_20
+      name: c1_boss_cannonshot-Sheet_20
       rect:
         serializedVersion: 2
         x: 1920
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9b7b26a2f33a9c2418ca1104e40af143
-      internalID: 224631737
+      spriteID: 805d26e990a75ae4aa14961b1e6e5b8d
+      internalID: -271474054
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_21
+      name: c1_boss_cannonshot-Sheet_21
       rect:
         serializedVersion: 2
         x: 2016
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7745195efcffef140afd9fe6db5da86f
-      internalID: 1562091129
+      spriteID: d7ca9ec4e3e411d48809aadab21390ac
+      internalID: 2128785340
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_22
+      name: c1_boss_cannonshot-Sheet_22
       rect:
         serializedVersion: 2
         x: 2112
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6cde8c03316cbb4aa81e700f6a27e3d
-      internalID: 1207435770
+      spriteID: 077f074275941954ba0f1b1386524958
+      internalID: 1653617464
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_23
+      name: c1_boss_cannonshot-Sheet_23
       rect:
         serializedVersion: 2
         x: 2208
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c16dbaa6cd86e914184a6d455a76b065
-      internalID: -1779674216
+      spriteID: 8989d7a7034315b4bbb7a6fe6aa4b5b9
+      internalID: 509543441
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_24
+      name: c1_boss_cannonshot-Sheet_24
       rect:
         serializedVersion: 2
         x: 2304
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3d9e2ea24e8d7264ca5b13ea2a806be0
-      internalID: 415280893
+      spriteID: dcec1cfcebf59bf43a75c5a446b1d2d3
+      internalID: -1351754804
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_25
+      name: c1_boss_cannonshot-Sheet_25
       rect:
         serializedVersion: 2
         x: 2400
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4df57e023736f9e48bff608fe6d5c9ae
-      internalID: 1228788537
+      spriteID: 318ce2cc2024f9a439dca62d5718df7b
+      internalID: -492562929
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_26
+      name: c1_boss_cannonshot-Sheet_26
       rect:
         serializedVersion: 2
         x: 2496
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 12b67d1e32db317408a5121a3950cf9a
-      internalID: -1551329235
+      spriteID: b279e9e04f3f8f84fa4e8c6296f3bdeb
+      internalID: -820927335
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_27
+      name: c1_boss_cannonshot-Sheet_27
       rect:
         serializedVersion: 2
         x: 2592
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 52d858769b94b434384086d15601c59c
-      internalID: 1574597594
+      spriteID: 77e90041a03d316418cb8feb80fad55f
+      internalID: 1750158612
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_28
+      name: c1_boss_cannonshot-Sheet_28
       rect:
         serializedVersion: 2
         x: 2688
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 498fe2a32d79b544b963feda44e97340
-      internalID: 787566789
+      spriteID: 57a71cac125eed24e8eed6f35efc6e8e
+      internalID: -272907549
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt3_cannonshot-Sheet_29
+      name: c1_boss_cannonshot-Sheet_29
       rect:
         serializedVersion: 2
         x: 2784
         y: 0
         width: 96
         height: 100
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7ae1505ff597bf84f9ff73a7bfb8c4ed
-      internalID: -231201484
+      spriteID: 1796c6a2504ad5745bdbccc1bb65391d
+      internalID: 874294962
       vertices: []
       indices: 
       edges: []
@@ -737,36 +737,36 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_boss_pt3_cannonshot-Sheet_0: -1777276766
-      c1_boss_pt3_cannonshot-Sheet_1: 462747635
-      c1_boss_pt3_cannonshot-Sheet_10: -2081343522
-      c1_boss_pt3_cannonshot-Sheet_11: 308303094
-      c1_boss_pt3_cannonshot-Sheet_12: -21615180
-      c1_boss_pt3_cannonshot-Sheet_13: -1040420787
-      c1_boss_pt3_cannonshot-Sheet_14: -831564774
-      c1_boss_pt3_cannonshot-Sheet_15: -955413507
-      c1_boss_pt3_cannonshot-Sheet_16: -25856753
-      c1_boss_pt3_cannonshot-Sheet_17: 522674825
-      c1_boss_pt3_cannonshot-Sheet_18: -1488176029
-      c1_boss_pt3_cannonshot-Sheet_19: 1736382021
-      c1_boss_pt3_cannonshot-Sheet_2: -1033268624
-      c1_boss_pt3_cannonshot-Sheet_20: 224631737
-      c1_boss_pt3_cannonshot-Sheet_21: 1562091129
-      c1_boss_pt3_cannonshot-Sheet_22: 1207435770
-      c1_boss_pt3_cannonshot-Sheet_23: -1779674216
-      c1_boss_pt3_cannonshot-Sheet_24: 415280893
-      c1_boss_pt3_cannonshot-Sheet_25: 1228788537
-      c1_boss_pt3_cannonshot-Sheet_26: -1551329235
-      c1_boss_pt3_cannonshot-Sheet_27: 1574597594
-      c1_boss_pt3_cannonshot-Sheet_28: 787566789
-      c1_boss_pt3_cannonshot-Sheet_29: -231201484
-      c1_boss_pt3_cannonshot-Sheet_3: -1663372497
-      c1_boss_pt3_cannonshot-Sheet_4: -1300760212
-      c1_boss_pt3_cannonshot-Sheet_5: 1037639830
-      c1_boss_pt3_cannonshot-Sheet_6: 1858517845
-      c1_boss_pt3_cannonshot-Sheet_7: 1615075932
-      c1_boss_pt3_cannonshot-Sheet_8: -600368246
-      c1_boss_pt3_cannonshot-Sheet_9: -493375047
+      c1_boss_cannonshot-Sheet_0: 775321686
+      c1_boss_cannonshot-Sheet_1: -897634447
+      c1_boss_cannonshot-Sheet_10: 1995340455
+      c1_boss_cannonshot-Sheet_11: -984887680
+      c1_boss_cannonshot-Sheet_12: 414766291
+      c1_boss_cannonshot-Sheet_13: -934548952
+      c1_boss_cannonshot-Sheet_14: 476540462
+      c1_boss_cannonshot-Sheet_15: -848355774
+      c1_boss_cannonshot-Sheet_16: 1219687601
+      c1_boss_cannonshot-Sheet_17: 113095584
+      c1_boss_cannonshot-Sheet_18: 1880982171
+      c1_boss_cannonshot-Sheet_19: -1487054344
+      c1_boss_cannonshot-Sheet_2: -674709700
+      c1_boss_cannonshot-Sheet_20: -271474054
+      c1_boss_cannonshot-Sheet_21: 2128785340
+      c1_boss_cannonshot-Sheet_22: 1653617464
+      c1_boss_cannonshot-Sheet_23: 509543441
+      c1_boss_cannonshot-Sheet_24: -1351754804
+      c1_boss_cannonshot-Sheet_25: -492562929
+      c1_boss_cannonshot-Sheet_26: -820927335
+      c1_boss_cannonshot-Sheet_27: 1750158612
+      c1_boss_cannonshot-Sheet_28: -272907549
+      c1_boss_cannonshot-Sheet_29: 874294962
+      c1_boss_cannonshot-Sheet_3: -2109078545
+      c1_boss_cannonshot-Sheet_4: -1225470433
+      c1_boss_cannonshot-Sheet_5: 1455141214
+      c1_boss_cannonshot-Sheet_6: -864266543
+      c1_boss_cannonshot-Sheet_7: -750820448
+      c1_boss_cannonshot-Sheet_8: 914746535
+      c1_boss_cannonshot-Sheet_9: -2068295433
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
