@@ -11,6 +11,7 @@ public class C1BossIntroCutsceneController : MonoBehaviour
 {
     [SerializeField] private DialogueBox playerDialogueBox;
     [SerializeField] private DialogueBox bossDialogueBox;
+    [SerializeField] private C1BossController bossController;
 
     private enum Speaker
     {
@@ -48,9 +49,10 @@ public class C1BossIntroCutsceneController : MonoBehaviour
         InputManager.InputActions.Player.Enable();
     }
 
-    public void BeginPlayerWalk()
+    // 인트로 컷신 끝나고 보스 AI를 활성화시킬 때 호출됨
+    public void EnableBossController()
     {
-        
+        bossController.enabled = true;
     }
 
     // 다음 대사가 출력되어야 할 타이밍에 호출됨

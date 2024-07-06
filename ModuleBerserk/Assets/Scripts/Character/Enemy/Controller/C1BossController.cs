@@ -62,10 +62,11 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Boss Defeat Cutscene")]
     [SerializeField] private PlayableDirector bossDefeatCutscene;
 
-    // 패턴별 쿨타임
+    // 패턴별 쿨타임 등 상수
     // TODO: 기획에 맞게 수치 조정할 것
     private const float BACKSTEP_PATTERN_COOLTIME = 2f;
     private const float MELEE_ATTACK_PATTERN_COOLTIME = 2f;
+    private const float BOX_GIMMICK_STUN_DURATION = 3f;
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
@@ -95,7 +96,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     public enum ActionState
     {
         Chase, // 천천히 플레이어에게 접근
-        Stagger, // 경직 또는 기절
+        Stun, // 박스 기믹으로 인한 그로기 상태
         DestroyBox, // 돌진 패턴이 아닌데 상자 기믹과 접촉한 경우 상자를 파괴함 (미리 깔아놓는 것 방지)
         MeleeAttack, // 3연타 근접 공격
         Backstep, // 포격 또는 돌진 패턴으로 이어지는 전조 동작
@@ -165,13 +166,11 @@ public class C1BossController : MonoBehaviour, IDestructible
         rb.velocity = Vector2.zero;
 
         // 잠시동안 방어력을 반으로 깎으며 기절 상태에 돌입
-        actionState = ActionState.Stagger;
+        actionState = ActionState.Stun;
+        animator.SetTrigger("Stun");
         defense.ApplyMultiplicativeModifier(0.5f);
 
-        // TODO: 기절 애니메이션 재생하기
-        // TODO: 기절 시간 파라미터로 바꾸기
-
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(BOX_GIMMICK_STUN_DURATION);
 
         // 기절이 끝나면 방어력 원상복구
         defense.ApplyMultiplicativeModifier(2f);
@@ -185,7 +184,11 @@ public class C1BossController : MonoBehaviour, IDestructible
         UpdatePatternCooltimes();
         
 
-        if (actionState == ActionState.Backstep && groundContact.IsGrounded)
+        if (actionState == ActionState.Stun)
+        {
+            // 기절 상태에서는 아무것도 하지 않음
+        }
+        else if (actionState == ActionState.Backstep && groundContact.IsGrounded)
         {
             // 백스텝 점프 후 착지하면 미끄러지지 않고 제자리에 멈추도록 함
             rb.velocity = Vector2.zero;
@@ -297,12 +300,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
         // if (Random.Range(0f, 1f) < 0.5f)
         // {
-            // await PerformDashAttackPatternAsync();
+            await PerformDashAttackPatternAsync();
         // }
         // else
-        {
-            await PerformCannonPatternAsync();
-        }
+        // {
+            // await PerformCannonPatternAsync();
+        // }
 
         // 백스텝 패턴 쿨타임 부여하고 기본 상태로 복귀
         // TODO: 쿨타임 수치는 기획에 따라 바꿀 것
@@ -423,6 +426,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         animator.SetBool("IsWalking", !Mathf.Approximately(rb.velocity.x, 0f));
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
+        animator.SetBool("IsStunned", actionState == ActionState.Stun);
     }
 
     CharacterStat IDestructible.GetDefenseStat()

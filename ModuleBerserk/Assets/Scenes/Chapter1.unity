@@ -673,7 +673,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4.21875
+  orthographic size: 3.1953425
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -698,7 +698,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.959982, y: -0.98999995, z: -10}
+  m_LocalPosition: {x: -0.08, y: -1.1833, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1623,6 +1623,111 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &849123450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 849123451}
+  - component: {fileID: 849123453}
+  - component: {fileID: 849123452}
+  m_Layer: 3
+  m_Name: BossRoomDoor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &849123451
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849123450}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.5, y: -1.7, z: 0}
+  m_LocalScale: {x: 0.4, y: 2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 931631431}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &849123452
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849123450}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!61 &849123453
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849123450}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1}
+  m_EdgeRadius: 0
 --- !u!114 &911965969 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3375511233112078748, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
@@ -1753,6 +1858,7 @@ Transform:
   m_Children:
   - {fileID: 565971038}
   - {fileID: 1360395332}
+  - {fileID: 849123451}
   - {fileID: 307822042}
   - {fileID: 1937523359}
   m_Father: {fileID: 0}
@@ -7206,6 +7312,8 @@ PlayableDirector:
     value: {fileID: 1187783947}
   - key: {fileID: 5666399950746672181, guid: d793a899c45167a44befc624aa5c653a, type: 2}
     value: {fileID: 1262821960}
+  - key: {fileID: 4568465769411107864, guid: d793a899c45167a44befc624aa5c653a, type: 2}
+    value: {fileID: 849123450}
   m_ExposedReferences:
     m_References:
     - 3526e2082360ba64fbfcd65d5a734864: {fileID: 1748615174}
@@ -7258,6 +7366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDialogueBox: {fileID: 1412133577}
   bossDialogueBox: {fileID: 911965969}
+  bossController: {fileID: 2036877063}
 --- !u!114 &1256533916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7275,6 +7384,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
     - {fileID: 11400000, guid: d27485ec63fd77a41916dcaa749fee5b, type: 2}
     - {fileID: 11400000, guid: 8566105bc9068024abd113668c32662a, type: 2}
+    - {fileID: 11400000, guid: 425ab6c5970010846a527a57e67edfa8, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
@@ -7318,6 +7428,20 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossIntroCutsceneController, Assembly-CSharp
+          m_MethodName: EnableBossController
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1262821960
 GameObject:
   m_ObjectHideFlags: 0
@@ -7335,7 +7459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1262821961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7819,7 +7943,7 @@ Transform:
   m_GameObject: {fileID: 1454554044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.2, y: -1.2, z: -10}
+  m_LocalPosition: {x: -4.5373335, y: -1.2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13638,6 +13762,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eacc0dd7aae18d458712ffa9f00ce76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2036877063 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+  m_PrefabInstance: {fileID: 7028648427441081638}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb8ba7e9ee41f9c44bc16642cbb7eacf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2093642422
 GameObject:
   m_ObjectHideFlags: 0
@@ -13749,7 +13884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.2
+      value: -1.7
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13993,7 +14128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: mapLeftEnd
