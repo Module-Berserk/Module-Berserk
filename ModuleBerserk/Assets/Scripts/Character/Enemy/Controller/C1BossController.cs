@@ -55,6 +55,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Boss Defeat Cutscene")]
     [SerializeField] private PlayableDirector bossDefeatCutscene;
 
+    // 패턴별 쿨타임
+    // TODO: 기획에 맞게 수치 조정할 것
+    private const float BACKSTEP_PATTERN_COOLTIME = 2f;
+    private const float MELEE_ATTACK_PATTERN_COOLTIME = 2f;
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
@@ -134,12 +138,34 @@ public class C1BossController : MonoBehaviour, IDestructible
                 cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
 
                 // TODO: 기절 상태 부여
-                actionState = ActionState.Chase;
-                
+                ApplyBoxGimmickKnockdownAsync().Forget();
+
                 // 쿨타임 처리를 해줄 기존 task가 취소되었으니 여기서 쿨타임 설정을 해줘야 함
                 RestartBackstepPatternCooltime();
             }
         }
+    }
+
+    // 플레이어가 돌진 패턴에 박스 기믹을 성공적으로 사용하여
+    // 보스가 벽이 아니라 박스에 먼저 충돌하면 잠깐 기절 상태에 들어가며
+    // 플레이어의 공격에 더 높은 데미지를 입게 됨
+    private async UniTask ApplyBoxGimmickKnockdownAsync()
+    {
+        // 일단 돌진하던 움직임을 멈추고
+        rb.velocity = Vector2.zero;
+
+        // 잠시동안 방어력을 반으로 깎으며 기절 상태에 돌입
+        actionState = ActionState.Stagger;
+        defense.ApplyMultiplicativeModifier(0.5f);
+
+        // TODO: 기절 애니메이션 재생하기
+        // TODO: 기절 시간 파라미터로 바꾸기
+
+        await UniTask.WaitForSeconds(1f);
+
+        // 기절이 끝나면 방어력 원상복구
+        defense.ApplyMultiplicativeModifier(2f);
+        actionState = ActionState.Chase;
     }
 
     private void FixedUpdate()
@@ -155,20 +181,26 @@ public class C1BossController : MonoBehaviour, IDestructible
             // 백스텝 점프 후 착지하면 미끄러지지 않고 제자리에 멈추도록 함
             rb.velocity = Vector2.zero;
         }
+        else if (actionState == ActionState.MeleeAttack)
+        {
+            // 근접 공격 3연타는 움직임이 복잡해서 루트 모션으로 처리함
+            spriteRootMotion.ApplyVelocity(IsFacingLeft);
+        }
         else if (actionState == ActionState.Chase)
         {
             // 플레이어 방향 바라보기
             IsFacingLeft = player.transform.position.x < rb.position.x;
+            meleeAttackRange.SetDetectorDirection(IsFacingLeft);
 
             // TODO: 맨 앞에 체력 25% 지점마다 쓰는 잡몹 소환 패턴 끼워넣기 (이게 제일 우선순위 높음)
             if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
             {
                 PerformBackstepPatternAsync().Forget();
             }
-            // else if (meleeAttackPatternCooltime <= 0f)
-            // {
-                // TODO: 근접공격 패턴 시작
-            // }
+            else if (meleeAttackRange.IsPlayerInRange && meleeAttackPatternCooltime <= 0f)
+            {
+                PerformMeleeAttackPattern();
+            }
             else
             {
                 WalkTowardsPlayer();
@@ -176,6 +208,19 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         UpdateAnimatorState();
+    }
+
+    private void PerformMeleeAttackPattern()
+    {
+        animator.SetTrigger("MeleeAttack");
+        actionState = ActionState.MeleeAttack;
+        spriteRootMotion.HandleAnimationChange();
+    }
+
+    public void OnMeleeAttackMotionEnd()
+    {
+        actionState = ActionState.Chase;
+        meleeAttackPatternCooltime = MELEE_ATTACK_PATTERN_COOLTIME;
     }
 
     private void UpdatePatternCooltimes()
@@ -245,7 +290,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private void RestartBackstepPatternCooltime()
     {
-        backstepPatternCooltime = 3f;
+        backstepPatternCooltime = BACKSTEP_PATTERN_COOLTIME;
     }
 
     private float GetBackstepJumpTargetX()

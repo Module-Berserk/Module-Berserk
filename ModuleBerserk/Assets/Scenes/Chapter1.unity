@@ -3315,12 +3315,28 @@ PrefabInstance:
       propertyPath: m_GravityScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Size.x
+      value: 2.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Size.y
+      value: 1.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: walkSpeed
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
@@ -3332,22 +3348,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1226002676}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: dashDuration
-      value: 0.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: dashMotionEase
-      value: 32
-      objectReference: {fileID: 0}
-    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: backstepJumpMaxImpulse
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: dashImpactCameraShakeForce
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: boxGenerators.Array.data[0]
       value: 
       objectReference: {fileID: 1955540664}
@@ -3357,7 +3357,7 @@ PrefabInstance:
       objectReference: {fileID: 2094170578}
     - target: {fileID: 4407223915672609459, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.14
+      value: -3.7
       objectReference: {fileID: 0}
     - target: {fileID: 4407223915672609459, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3398,6 +3398,10 @@ PrefabInstance:
     - target: {fileID: 5432116050934168534, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_Name
       value: C1Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 6844388411748321469, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_FlipX
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
