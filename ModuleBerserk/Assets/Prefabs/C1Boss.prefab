@@ -668,7 +668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4766975312345546367, guid: c5501eef690defd4db114dc56178e76b, type: 3}
       propertyPath: heightOffset
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4766975312345546367, guid: c5501eef690defd4db114dc56178e76b, type: 3}
       propertyPath: characterAppearanceDelay
