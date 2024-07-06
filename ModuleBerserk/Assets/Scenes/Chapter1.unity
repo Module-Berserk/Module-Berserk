@@ -14091,6 +14091,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2459423335897564201, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -979158457, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -14322,26 +14326,6 @@ PrefabInstance:
     - target: {fileID: 2450257142255415594, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_GravityScale
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_Size.x
-      value: 2.76
-      objectReference: {fileID: 0}
-    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_Size.y
-      value: 1.46
-      objectReference: {fileID: 0}
-    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_Offset.x
-      value: 0.57
-      objectReference: {fileID: 0}
-    - target: {fileID: 2812936248406633120, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_Offset.y
-      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_Enabled
