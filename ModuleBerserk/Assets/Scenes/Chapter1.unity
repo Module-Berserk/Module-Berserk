@@ -3307,6 +3307,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2450257142255415594, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 195e42bf05cfc7b438afe094730109e1, type: 2}
+    - target: {fileID: 2450257142255415594, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_GravityScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: mapLeftEnd
       value: 
@@ -3315,6 +3327,10 @@ PrefabInstance:
       propertyPath: mapRightEnd
       value: 
       objectReference: {fileID: 1226002676}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: backstepJumpMaxImpulse
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: boxGenerators.Array.data[0]
       value: 
@@ -3329,7 +3345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4407223915672609459, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.8000001
+      value: -1.44
       objectReference: {fileID: 0}
     - target: {fileID: 4407223915672609459, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_LocalPosition.z

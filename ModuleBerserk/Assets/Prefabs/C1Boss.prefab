@@ -109,6 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4407223915672609459}
   - component: {fileID: 6844388411748321469}
+  - component: {fileID: 8016393372756206220}
   - component: {fileID: 2450257142255415594}
   - component: {fileID: 3714191530058762664}
   - component: {fileID: 3620528243376873997}
@@ -179,9 +180,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_Sprite: {fileID: 77214122, guid: 943bf3d599d3c0c4ca68d5339c71a187, type: 3}
   m_Color: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 2}
@@ -190,6 +191,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &8016393372756206220
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5432116050934168534}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 22450c412af00554fbeac04ab45aba15, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 1
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!50 &2450257142255415594
 Rigidbody2D:
   serializedVersion: 4
@@ -205,7 +227,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -249,18 +271,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.4002074}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 2}
+    oldSize: {x: 3, y: 2.625}
     newSize: {x: 1, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2}
+  m_Size: {x: 1, y: 1.8648651}
   m_EdgeRadius: 0
 --- !u!114 &3620528243376873997
 MonoBehaviour:
@@ -276,12 +298,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeAttackRange: {fileID: 3306134738073383657}
   backstepRange: {fileID: 7428477975634683749}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   mapLeftEnd: {fileID: 0}
   mapRightEnd: {fileID: 0}
   backstepJumpMaxDuration: 2
-  backstepJumpMaxImpulse: 20
+  backstepJumpMaxImpulse: 10
   dashDuration: 1
   dashMotionEase: 2
+  dashImpactCameraShakeForce: 0
   boxGenerators:
   - {fileID: 0}
   - {fileID: 0}

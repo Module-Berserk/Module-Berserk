@@ -21,6 +21,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Backstep Pattern")]
+    // 점프 후 착지 여부를 판단할 때 사용
+    [SerializeField] private LayerMask groundLayer;
     // 백스텝 패턴 점프 목적지(맵의 양 끝 지점)의 x 좌표를 얻기 위해 참조
     [SerializeField] private Transform mapLeftEnd;
     [SerializeField] private Transform mapRightEnd;
@@ -52,8 +54,11 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private Animator animator;
     private CinemachineImpulseSource cameraShake;
     private GameObject player;
+
+    private GroundContact groundContact;
 
     private CharacterStat hp;
     private CharacterStat defense;
@@ -84,8 +89,11 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
         cameraShake = GetComponent<CinemachineImpulseSource>();
         player = GameObject.FindGameObjectWithTag("Player");
+
+        groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
         hp = new CharacterStat(100f, 0f, 100f);
         defense = new CharacterStat(10f, 0f);
@@ -122,10 +130,17 @@ public class C1BossController : MonoBehaviour, IDestructible
     private void FixedUpdate()
     {
         // TODO: detection range들과 보스 스프라이트 렌더러 바라보는 방향으로 flipping 처리
+        groundContact.TestContact();
 
         UpdatePatternCooltimes();
         
-        if (actionState == ActionState.Chase)
+
+        if (actionState == ActionState.Backstep && groundContact.IsGrounded)
+        {
+            // 백스텝 점프 후 착지하면 미끄러지지 않고 제자리에 멈추도록 함
+            rb.velocity = Vector2.zero;
+        }
+        else if (actionState == ActionState.Chase)
         {
             // TODO: 맨 앞에 체력 25% 지점마다 쓰는 잡몹 소환 패턴 끼워넣기 (이게 제일 우선순위 높음)
             if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
@@ -137,6 +152,8 @@ public class C1BossController : MonoBehaviour, IDestructible
                 // TODO: 근접공격 패턴 시작
             }
         }
+
+        UpdateAnimatorState();
     }
 
     private void UpdatePatternCooltimes()
@@ -148,9 +165,11 @@ public class C1BossController : MonoBehaviour, IDestructible
     private async UniTask PerformBackstepPatternAsync()
     {
         actionState = ActionState.Backstep;
+        animator.SetTrigger("Backstep");
 
         // 전조도 없이 점프하면 이상하니까 준비 동작 끝날 때까지 잠깐 기다리기
-        await UniTask.WaitForSeconds(1f);
+        // Note: 애니메이션을 받아보니 준비 동작이 없어서 일단 주석처리함
+        // await UniTask.WaitForSeconds(1f);
 
         // 플레이어를 등지는 방향으로 맵 끝까지 점프
         // x축으로는 tweening, y축으로는 점프 거리에 비례한 속도 부여
@@ -158,20 +177,23 @@ public class C1BossController : MonoBehaviour, IDestructible
         float jumpDistance = Mathf.Abs(rb.position.x - jumpTargetX);
         float maxJumpDistance = Mathf.Abs(mapRightEnd.position.x - mapLeftEnd.position.x);
         float jumpDistanceRatio = jumpDistance / maxJumpDistance; // 맵 끝에서 끝까지 점프하는걸 1로 잡았을 때의 점프 거리
-        jumpDistanceRatio = Mathf.Max(0.3f, jumpDistanceRatio); // 이미 끝에 가까운 경우에도 살짝은 점프하도록 최소치를 부여함
+        jumpDistanceRatio = Mathf.Max(0.4f, jumpDistanceRatio); // 이미 끝에 가까운 경우에도 살짝은 점프하도록 최소치를 부여함
 
         float jumpDuration = backstepJumpMaxDuration * jumpDistanceRatio;
-        rb.DOMoveX(jumpTargetX, jumpDuration).SetEase(Ease.OutSine);
         rb.AddForce(Vector2.up * backstepJumpMaxImpulse * jumpDistanceRatio, ForceMode2D.Impulse);
+        rb.AddForce(Vector2.right * (jumpTargetX - rb.position.x) / jumpDuration, ForceMode2D.Impulse);
+
+        // await UniTask.WaitForSeconds(jumpDuration * 0.1f);
+        // rb.DOMoveX(jumpTargetX, jumpDuration).SetEase(Ease.OutSine).SetUpdate(UpdateType.Fixed);
 
         // 백스텝 모션 끝날 때까지 기다리기...
         // 점프하는 동안은 위에 대기중인 박스 기믹 등과
         // 충돌하면 안되므로 일단 콜라이더를 비활성화하고
         // 착지 직전에 다시 활성화하는 방식으로 처리함!
         boxCollider.enabled = false;
-        await UniTask.WaitForSeconds(jumpDuration * 0.7f);
+        await UniTask.WaitForSeconds(jumpDuration * 0.8f);
         boxCollider.enabled = true;
-        await UniTask.WaitForSeconds(jumpDuration * 0.3f);
+        await UniTask.WaitForSeconds(jumpDuration * 0.2f);
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
@@ -208,7 +230,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         float dashTargetX = GetDashTargetX();
 
-        rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
+        // rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
+        animator.SetTrigger("DashAttack");
 
         // 박스 기믹과 충돌하는 경우를 대비해 cancellation token을 넣어준다
         await UniTask.WaitForSeconds(dashDuration, cancellationToken: dashAttackCancellation.Token);
@@ -236,6 +259,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             return mapLeftEnd.position.x;
         }
+    }
+
+    private void UpdateAnimatorState()
+    {
+        animator.SetBool("IsWalking", !Mathf.Approximately(rb.velocity.x, 0f));
+        animator.SetBool("IsGrounded", groundContact.IsGrounded);
     }
 
     CharacterStat IDestructible.GetDefenseStat()
