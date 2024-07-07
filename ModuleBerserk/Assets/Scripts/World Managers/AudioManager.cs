@@ -39,6 +39,7 @@ public class AudioManager : MonoBehaviour {
         }
 
         audioSource.volume = volume / 100f;
+        audioSource.pitch = Random.Range(0.7f, 1.3f); //추후 적절한 값 찾을 예정
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
     }

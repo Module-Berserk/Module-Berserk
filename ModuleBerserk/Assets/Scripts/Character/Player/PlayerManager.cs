@@ -1175,8 +1175,28 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     // 본인 이 함수 어따가 달아야할지 모르겠음
     // 좋은 아이디어 추천 바람
-    private void PlayAttack1SFX() {
-        int[] attack1Indices = { 0, 1, 2, 3, 4 };
-        AudioManager.instance.PlaySFX(attack1Indices);
+    private void PlayAttack1and2SFX() {
+        int[] attack1and2Indices = {0, 1, 2, 3, 4};
+        AudioManager.instance.PlaySFX(attack1and2Indices);
+    }
+    private void PlayAttack3SFX() {
+        int[] attack3Indices = {5, 6};
+        AudioManager.instance.PlaySFX(attack3Indices);
+    }
+    private void PlayAttack4SFX() {
+        int[] attack4Indices = {7, 8};
+        AudioManager.instance.PlaySFX(attack4Indices);
+    }
+    private void PlayLandSFX() {
+        int[] landingIndices = {9};
+        AudioManager.instance.PlaySFX(landingIndices);        
+    }
+    private void PlayDashSFX() {
+        int[] dashingIndices = {10};
+        AudioManager.instance.PlaySFX(dashingIndices);        
+    }
+    private void PlayEscapeSFX() {
+        int[] escapingIndices = {11};
+        AudioManager.instance.PlaySFX(escapingIndices);        
     }
 }

@@ -35,10 +35,18 @@ public class C1ElevatorLever : Trigger, IInteractable
     private async UniTask ActivateForDurationAsync(float duration)
     {
         Activate();
+        //SFX 시전! Lever On
+        int[] leveronIndices = {12};
+        AudioManager.instance.PlaySFX(leveronIndices);
+
         spriteRenderer.sprite = activeSprite;
         await UniTask.WaitForSeconds(duration);
         spriteRenderer.sprite = inactiveSprite;
         Deactivate();
+
+        //SFX 시전! Lever Off
+        int[] leveroffIndices = {13};
+        AudioManager.instance.PlaySFX(leveroffIndices);
     }
 
     bool IInteractable.IsInteractionPossible()
