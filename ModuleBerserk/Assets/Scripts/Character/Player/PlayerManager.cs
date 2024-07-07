@@ -291,6 +291,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (groundContact.IsSteppingOnOneWayPlatform())
         {
+            StopStickingToElevator();
+            groundContact.PreventTestForDuration(0.2f);
             groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f).Forget();
         }
     }
