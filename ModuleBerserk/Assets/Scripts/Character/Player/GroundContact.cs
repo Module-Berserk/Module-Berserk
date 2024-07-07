@@ -126,7 +126,7 @@ public class GroundContact
         // 경사로를 따라 움직일 수도 있으니 속도의 y축 성분이 아니라
         // 지면과의 normal 벡터 방향 성분을 기준으로 삼아야 함!!!
         var isElevator = platform.GetComponent<Elevator>() != null;
-        var relativeNormalVelocity = Mathf.Abs(Vector2.Dot(GroundNormal, rigidbody.velocity));
+        var relativeNormalVelocity = Vector2.Dot(GroundNormal, rigidbody.velocity);
         if (!isElevator && !IsGrounded && relativeNormalVelocity > 0.1f)
         {
             return null;

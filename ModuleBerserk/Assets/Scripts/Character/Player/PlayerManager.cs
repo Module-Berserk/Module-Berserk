@@ -124,6 +124,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         protected set => spriteRenderer.flipX = value;
     }
 
+    // 엘리베이터 위에서는 수직 움직임을 동기화하기 위해
+    // child object로 플레이어를 넣어주므로 parent가
+    // null인지 확인하면 지금 탑승 중인지 판단할 수 있다.
+    public bool IsRidingElevator { get => transform.parent != null; }
+
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
@@ -847,10 +852,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
             acceleration *= airControl;
         }
 
-        // 원하는 속도에 부드럽게 도달하도록 보간 (공중인 경우 수직 속도 변경 x)
+        // 원하는 속도에 부드럽게 도달하도록 보간.
+        // 공중에 있거나 엘리베이터에 탑승 중인 경우는 수직 속도 변경 x
         float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
         Vector2 updatedVelocity = moveDirection * updatedSpeed;
-        if (!groundContact.IsGrounded)
+        if (!groundContact.IsGrounded || IsRidingElevator)
         {
             updatedVelocity.y = rb.velocity.y;
         }

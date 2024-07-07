@@ -4,10 +4,12 @@
 public interface IInteractable
 {
     // 플레이어가 상호작용 범위에 들어올 때 호출됨
-    void OnPlayerEnter();
+    // 레버처럼 따로 UI 표시가 없는 경우도 있어서 빈 기본 구현체를 제공함
+    void OnPlayerEnter() {}
 
     // 플레이어가 상호작용 범위 밖으로 나갈 때 호출됨
-    void OnPlayerExit();
+    // 레버처럼 따로 UI 표시가 없는 경우도 있어서 빈 기본 구현체를 제공함
+    void OnPlayerExit() {}
 
     // 플레이어가 상호작용을 시도할 때 호출됨
     void StartInteraction();

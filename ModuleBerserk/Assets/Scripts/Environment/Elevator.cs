@@ -110,6 +110,7 @@ public class Elevator : MonoBehaviour
     private void PlayerElevatorMoveStartEffect()
     {
         // TODO: 이제 곧 엘리베이터 움직인다는 효과 재생 ex) "덜그럭" 하는 효과음, 약간의 진동
-        Debug.Log("엘리베이터가 곧 움직입니다...");
+        // Debug.Log("엘리베이터가 곧 움직입니다...");
+        rb.transform.DOShakePosition(duration: 0.5f, strength: 0.05f, vibrato: 20);
     }
 }

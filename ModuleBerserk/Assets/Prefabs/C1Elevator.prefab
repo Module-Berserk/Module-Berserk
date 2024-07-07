@@ -605,7 +605,7 @@ MonoBehaviour:
   movementRange: 3
   upwardMovementDuration: 2
   downwardMovementDuration: 2
-  movementEase: 4
+  movementEase: 1
   initialMovementDelay: 1
   delayBeforeReturning: 3
 --- !u!1 &6256950591871347375
