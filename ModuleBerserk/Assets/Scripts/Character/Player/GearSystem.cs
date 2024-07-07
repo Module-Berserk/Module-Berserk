@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -82,7 +84,6 @@ public class GearSystem : MonoBehaviour
     // 임시 UI
     // TODO: 테스트 끝나면 삭제할 것
     public Text descriptionText;
-    public Slider gaugeSlider;
     public RectTransform gaugeArrow;
 
     // scene 로딩이 끝난 뒤 PlayerManager에 의해 호출되는 함수.
@@ -97,7 +98,20 @@ public class GearSystem : MonoBehaviour
         lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[state.GearLevel];
 
         // TODO: UI 상태 복원하기
-        // TODO: 기어가 0단계인 경우 미션 시작이므로 0단계에서 1단계까지 쭉 올라가는 모습 보여주기
+    }
+
+    // 미션을 시작할 때 플레이어 접촉 트리거 등에 의해 실행되는 함수로
+    // 0단계에서 실질적인 시작 상태인 1단계까지 게이지가 쭉 올라가는 모습을 보여준다.
+    public void StartInitialRampUpAnimation()
+    {
+        InitialRampUpAnimationAsync().Forget();
+    }
+
+    private async UniTask InitialRampUpAnimationAsync()
+    {
+        DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, 25f, 3f);
+        await UniTask.WaitForSeconds(3.5f);
+        IncreaseGearLevel();
     }
 
     // 공격에 성공한 경우 호출되는 함수
@@ -253,7 +267,6 @@ public class GearSystem : MonoBehaviour
         // 아직 정식 UI가 없어서 수치 확인용으로 구현함
         // TODO: 테스트 끝나면 삭제할 것
         descriptionText.text = $"gauge: {CurrentState.GearGauge}\nlevel: {CurrentState.GearLevel}";
-        gaugeSlider.value = CurrentState.GearGauge / 100f;
 
         float targetZAngle = Mathf.Lerp(359f, 142f, CurrentState.GearGauge / MAX_GEAR_GAUGE);
         float newZAngle = Mathf.Lerp(gaugeArrow.eulerAngles.z, targetZAngle, 0.1f);
@@ -273,7 +286,8 @@ public class GearSystem : MonoBehaviour
         CurrentState.GearGauge = Mathf.Max(0f, CurrentState.GearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime);
 
         // 하한선에 도달한 경우 잠깐의 유예 시간을 준 뒤 단계를 하나 감소시킴
-        if (CurrentState.GearGauge == 0f)
+        // 단, 기어 레벨이 1인 경우는 더 떨어질 레벨이 없으므로 현상태를 유지함
+        if (CurrentState.GearGauge == 0f && CurrentState.GearLevel > 1)
         {
             gaugeLowerBoundDuration += Time.deltaTime;
             if (gaugeLowerBoundDuration > NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME)
