@@ -161,7 +161,7 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         rangedAttackRange.SetDetectorDirection(spriteRenderer.flipX);
     }
 
-    void HandlePlayerDetection()
+    public void HandlePlayerDetection()
     {
         // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
         if (state == State.Patrol)

@@ -415,6 +415,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeAttackRange: {fileID: 3306134738073383657}
   backstepRange: {fileID: 7428477975634683749}
+  tonpaMobPrefab: {fileID: 3685673258423367676, guid: 6dfded6a8a69dc34ca3030924f276932, type: 3}
+  gunnerMobPrefab: {fileID: 2230194136603300056, guid: 112b131d06325c145b5ba5dbca3c527d, type: 3}
+  mobSpawnPoint: {fileID: 0}
   meleeAttackHitbox: {fileID: 4679903115679224296}
   walkSpeed: 1
   chaseStopDistance: 1
@@ -432,6 +435,7 @@ MonoBehaviour:
   boxGenerators:
   - {fileID: 0}
   - {fileID: 0}
+  healthUISlider: {fileID: 0}
   bossDefeatCutscene: {fileID: 0}
 --- !u!114 &7559437205155655123
 MonoBehaviour:

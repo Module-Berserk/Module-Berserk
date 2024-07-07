@@ -20,13 +20,23 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 플레이어가 이 범위 밖으로 나가면 맵 끝으로 백스텝한 뒤 후속 패턴을 시전함
     [SerializeField] private PlayerDetectionRange backstepRange;
 
+
+    [Header("Enemy Spawn Pattern")]
+    [SerializeField] private GameObject tonpaMobPrefab;
+    [SerializeField] private GameObject gunnerMobPrefab;
+    // 보스방 왼쪽 문 안쪽에서 소환하면 됨.
+    [SerializeField] private Transform mobSpawnPoint;
+
+
     [Header("Melee Attack Pattern")]
     [SerializeField] private ApplyDamageOnContact meleeAttackHitbox;
+
 
     [Header("Chase Pattern")]
     [SerializeField] private float walkSpeed = 1f;
     // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
     [SerializeField] private float chaseStopDistance = 0.5f;
+
 
     [Header("Backstep Pattern")]
     // 점프 후 착지 여부를 판단할 때 사용
@@ -92,8 +102,13 @@ public class C1BossController : MonoBehaviour, IDestructible
     private bool isDashMotionStarted = false;
     private bool isCannonShotStarted = false;
 
-    // 돌진 도중에 박스 기믹과 충돌한 경우 돌진을 멈추고 기절 상태에 진입
-    private CancellationTokenSource dashAttackCancellation = new();
+    // 체력이 이 값보다 떨어지면 잡몹 소환 패턴을 시전함.
+    // 기본적으로 75%, 50%, 25% 지점에서 3번 사용.
+    private float nextEnemySpawnPatternHPThreshold;
+
+    // 돌진 도중에 박스 기믹과 충돌한 경우 돌진을 멈추고 기절 상태에 진입.
+    // 보스가 죽는 경우에도 진행중인 패턴을 모두 종료할 때 사용함.
+    private CancellationTokenSource attackCancellation = new();
 
     // 보스는 기본적으로 약한 경직 저항을 가짐
     private StaggerStrength staggerResistance = StaggerStrength.Weak;
@@ -130,10 +145,14 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(100f, 0f, 100f);
+        hp = new CharacterStat(100f, 0f, 1000f);
         defense = new CharacterStat(10f, 0f);
 
+        // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
+
+        // 다음 잡몹 소환 패턴이 일어날 체력 기준치는 75% 지점
+        nextEnemySpawnPatternHPThreshold = hp.MaxValue * 0.75f;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -146,9 +165,9 @@ public class C1BossController : MonoBehaviour, IDestructible
             if (actionState == ActionState.DashAttack)
             {
                 // 돌진 멈추기
-                dashAttackCancellation.Cancel();
-                dashAttackCancellation.Dispose();
-                dashAttackCancellation = new();
+                attackCancellation.Cancel();
+                attackCancellation.Dispose();
+                attackCancellation = new();
                 rb.DOKill();
 
                 // 상자 파괴 & 화면 진동
@@ -177,7 +196,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         animator.SetTrigger("Stun");
         defense.ApplyMultiplicativeModifier(0.5f);
 
-        await UniTask.WaitForSeconds(BOX_GIMMICK_STUN_DURATION);
+        await UniTask.WaitForSeconds(BOX_GIMMICK_STUN_DURATION, cancellationToken: attackCancellation.Token);
 
         // 기절이 끝나면 방어력 원상복구
         defense.ApplyMultiplicativeModifier(2f);
@@ -210,8 +229,11 @@ public class C1BossController : MonoBehaviour, IDestructible
             // 플레이어 방향 바라보기
             LookAtPlayer();
 
-            // TODO: 맨 앞에 체력 25% 지점마다 쓰는 잡몹 소환 패턴 끼워넣기 (이게 제일 우선순위 높음)
-            if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
+            if (hp.CurrentValue < nextEnemySpawnPatternHPThreshold)
+            {
+                PerformEnemySpawnPatternAsync().Forget();
+            }
+            else if (!backstepRange.IsPlayerInRange && backstepPatternCooltime <= 0f)
             {
                 PerformBackstepPatternAsync().Forget();
             }
@@ -233,6 +255,47 @@ public class C1BossController : MonoBehaviour, IDestructible
         IsFacingLeft = player.transform.position.x < rb.position.x;
         meleeAttackRange.SetDetectorDirection(IsFacingLeft);
         meleeAttackHitbox.SetHitboxDirection(IsFacingLeft);
+    }
+
+    private async UniTask PerformEnemySpawnPatternAsync()
+    {
+        // 다음 소환 패턴은 다시 체력 25%를 잃은 이후에 발생
+        nextEnemySpawnPatternHPThreshold -= hp.MaxValue * 0.25f;
+
+        // TODO: 잡몹 소환 애니메이션 추가되면 stun 대신 ReinforceMob으로 바꾸기.
+        // 지금은 그냥 패턴 진행중인거 시각적으로 확인하려고 스턴 모션 넣어둠.
+        actionState = ActionState.Stun;
+        animator.SetTrigger("Stun");
+
+        // 준비 동작
+        await UniTask.WaitForSeconds(1f, cancellationToken: attackCancellation.Token);
+
+        // 75% 미만 => 2 (톤파 1, 샷건 1)
+        // 50% 미만 => 1 (톤파 1, 샷건 2)
+        // 25% 미만 => 0 (톤파 2, 샷건 2)
+        int remainingHPQuarter = Mathf.FloorToInt(hp.CurrentValue / hp.MaxValue * 4f);
+        int numTonpaMob = remainingHPQuarter > 0 ? 1 : 2;
+        int numGunnerMob = remainingHPQuarter > 1 ? 1 : 2;
+
+        // 생성하고 잠깐 기다렸다가 플레이어를 감지하게 하는 이유:
+        // spawnPoint가 정확하지 않으면 spawn 직후에 IsGrounded가 false가 나와버려
+        // 잡몹이 즉시 추적을 중지하고 patrol 상태로 돌입해버림!
+        // rigidbody가 지면 위에 안정적으로 올라갈 때까지 기다려줘야 플레이어를 잘 따라온다.
+        for (int i = 0; i < numTonpaMob; ++i)
+        {
+            var tonpaMob = Instantiate(tonpaMobPrefab, mobSpawnPoint.position, Quaternion.identity);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
+            tonpaMob.GetComponent<MeleeEnemyController>().HandlePlayerDetection();
+        }
+
+        for (int i = 0; i < numGunnerMob; ++i)
+        {
+            var gunnerMob = Instantiate(gunnerMobPrefab, mobSpawnPoint.position, Quaternion.identity);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
+            gunnerMob.GetComponent<RangedEnemyController>().HandlePlayerDetection();
+        }
+
+        actionState = ActionState.Chase;
     }
 
     private void PerformMeleeAttackPattern()
@@ -299,9 +362,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 충돌하면 안되므로 일단 콜라이더를 비활성화하고
         // 착지 직전에 다시 활성화하는 방식으로 처리함!
         boxCollider.enabled = false;
-        await UniTask.WaitForSeconds(jumpDuration * 0.8f);
+        await UniTask.WaitForSeconds(jumpDuration * 0.8f, cancellationToken: attackCancellation.Token);
         boxCollider.enabled = true;
-        await UniTask.WaitForSeconds(jumpDuration * 0.2f);
+        await UniTask.WaitForSeconds(jumpDuration * 0.2f, cancellationToken: attackCancellation.Token);
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
@@ -345,24 +408,23 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 준비 동작 끝나면 애니메이션에서 이벤트로 설정해줌
         isCannonShotStarted = false;
-        await UniTask.WaitUntil(() => isCannonShotStarted);
+        await UniTask.WaitUntil(() => isCannonShotStarted, cancellationToken: attackCancellation.Token);
 
+        // 맵을 벗어나지 않는 선에서 플레이어 중심, 왼쪽, 오른쪽에 하나씩 생성
         float playerX = player.transform.position.x;
         List<float> explodePositions = new()
         {
             playerX,
-            playerX + Random.Range(1.5f, 3f),
-            playerX - Random.Range(1.5f, 3f),
+            Mathf.Clamp(playerX + Random.Range(1.5f, 3f), mapLeftEnd.position.x, mapRightEnd.position.x),
+            Mathf.Clamp(playerX - Random.Range(1.5f, 3f), mapLeftEnd.position.x, mapRightEnd.position.x),
         };
-
-        // TODO: explodePositions 셔플하기
 
         for (int i = 0; i < 3; ++ i)
         {
             Vector3 spawnPosition = new Vector3(explodePositions[i], transform.position.y);
             Instantiate(cannonExplodePrefab, spawnPosition, Quaternion.identity);
             
-            await UniTask.WaitForSeconds(0.2f);
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
         }
 
         // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
@@ -388,10 +450,10 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 애니메이션 이벤트에 의해 돌진이 시작되기를 기다림
         isDashMotionStarted = false;
-        await UniTask.WaitUntil(() => isDashMotionStarted);
+        await UniTask.WaitUntil(() => isDashMotionStarted, cancellationToken: attackCancellation.Token);
 
         // 박스 기믹과 충돌하는 경우를 대비해 cancellation token을 넣어준다
-        await UniTask.WaitForSeconds(dashDuration, cancellationToken: dashAttackCancellation.Token);
+        await UniTask.WaitForSeconds(dashDuration, cancellationToken: attackCancellation.Token);
 
         // task cancellation 없이 이 라인에 도달했다는건
         // 박스에 부딛히지 않고 벽에 충돌했다는 뜻이므로
@@ -403,7 +465,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         // 돌진 패턴 후딜레이
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(1f, cancellationToken: attackCancellation.Token);
     }
 
     // 돌진 공격 애니메이션에서 앞으로 튀어나가야 하는 순간에 호출해주는 이벤트.
@@ -469,8 +531,29 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
+        // 진행중인 행동 모두 종료
+        attackCancellation.Cancel();
+        rb.velocity = Vector2.zero;
+
+        // TODO: 아트 완성되면 스턴 대신 제대로된 패배 애니메이션 재생
+        actionState = ActionState.Stun;
+        animator.SetTrigger("Stun");
+
         // 챕터1 보스전 종료 컷신 시작하기 (살리기 vs 죽이기 선택)
         bossDefeatCutscene.Play();
+
+        // 삭제할 오브젝트에 tweening이 살아있을 수 있으니 오류 방지를 위해 모두 종료
+        DOTween.KillAll();
+
+        // 남아있는 잡몹은 컷신에 방해되니까 다 없애기
+        foreach(var meleeEnemy in FindObjectsByType<MeleeEnemyController>(FindObjectsSortMode.None))
+        {
+            Destroy(meleeEnemy.gameObject);
+        }
+        foreach(var rangedEnemy in FindObjectsByType<RangedEnemyController>(FindObjectsSortMode.None))
+        {
+            Destroy(rangedEnemy.gameObject);
+        }
 
         // 보스전이 끝났으니 더이상 AI가 조종하지 못하도록 막기
         enabled = false;

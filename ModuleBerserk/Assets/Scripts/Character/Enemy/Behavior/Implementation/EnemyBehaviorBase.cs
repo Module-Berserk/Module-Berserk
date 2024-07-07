@@ -280,6 +280,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 플레이어어가 존재하지 않는 경우
         if (!player)
         {
+            Debug.Log("플레이어가 없어서 추적 실패");
             return false;
         }
 
@@ -287,6 +288,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         Vector2 chaseDirection = player.transform.position - transform.position;
         if (IsOnBrink(chaseDirection.x))
         {
+            Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
             return false;
         }
 
@@ -297,6 +299,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 다른 Behavior 클래스를 만들던지, 여기에 플래그로 if-else 처리를 하던지 해야 함
         if (chaseDirection.magnitude > chaseMaxDistance)
         {
+            Debug.Log("플레이어가 너무 멀어서 추적 실패");
             return false;
         }
 
