@@ -405,7 +405,7 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  contactDistanceThreshold: 0.02
+  contactDistanceThreshold: 0.3
   minPatrolSubbehaviorDuration: 1
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
