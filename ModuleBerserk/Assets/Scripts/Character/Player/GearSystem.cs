@@ -23,7 +23,12 @@ public class GearSystem : MonoBehaviour
     // 한 번 적의 공격에 맞으면 잃는 게이지
     private const float GEAR_GAUGE_LOSS_PER_HIT = 10f;
     // 다음 기어 단계로 넘어가기 위해 게이지 최대치를 유지해야 하는 시간
-    private const float MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE = 3f;
+    private const float MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE = 2f;
+    // 미션 시작 시 기어가 0단계부터 1단계까지 쭉 상승하는 연출에 들일 시간.
+    // 이 시간동안 게이지가 최대치로 차오르고
+    // MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE만큼 대기한 다음
+    // 기어 단계를 1로 올리며 미션이 시작된다.
+    private const float INITIAL_GUAGE_RAMPUP_TIME = 1f;
     // 비전투 상태에서 1초마다 깎이는 게이지
     private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
     // 최대 기어 단계에 도달했을 때 게이지 수치 하락을 막는 기간
@@ -109,8 +114,14 @@ public class GearSystem : MonoBehaviour
 
     private async UniTask InitialRampUpAnimationAsync()
     {
-        DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, 25f, 3f);
-        await UniTask.WaitForSeconds(3.5f);
+        DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, MAX_GEAR_GAUGE, INITIAL_GUAGE_RAMPUP_TIME);
+        await UniTask.WaitForSeconds(INITIAL_GUAGE_RAMPUP_TIME);
+
+        // 혹시 모르니 확실하게 최대치로 설정
+        CurrentState.GearGauge = MAX_GEAR_GAUGE;
+
+        // 다음 기어 단계로 올릴 수 있을 때까지 대기
+        await UniTask.WaitForSeconds(MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE * 1.5f);
         IncreaseGearLevel();
     }
 
@@ -264,13 +275,27 @@ public class GearSystem : MonoBehaviour
             maxGaugeTime = 0f;
         }
 
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
         // 아직 정식 UI가 없어서 수치 확인용으로 구현함
         // TODO: 테스트 끝나면 삭제할 것
         descriptionText.text = $"gauge: {CurrentState.GearGauge}\nlevel: {CurrentState.GearLevel}";
 
-        float targetZAngle = Mathf.Lerp(359f, 142f, CurrentState.GearGauge / MAX_GEAR_GAUGE);
+        // 기어 단계 상승이 가능한 상황이라면 빨간 영역에서 랜덤하게 바늘이 흔들리고
+        // 그게 아니라면 정직하게 게이지에 비례해서 회전.
+        float gearGuagePercent = CurrentState.GearGauge / MAX_GEAR_GAUGE;
+        if (IsNextGearLevelReady())
+        {
+            gearGuagePercent = Random.Range(1f, 1.1f);
+            Debug.Log("Ready");
+        }
+
+        float targetZAngle = Mathf.LerpUnclamped(359f, 142f, gearGuagePercent);
         float newZAngle = Mathf.Lerp(gaugeArrow.eulerAngles.z, targetZAngle, 0.1f);
-        gaugeArrow.rotation =  Quaternion.Euler(0f, 0f, newZAngle);
+        gaugeArrow.rotation = Quaternion.Euler(0f, 0f, newZAngle);
     }
 
     // 비전투 상태에서의 기어 게이지 하락 로직

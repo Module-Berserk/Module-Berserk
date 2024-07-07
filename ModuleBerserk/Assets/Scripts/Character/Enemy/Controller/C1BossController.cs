@@ -145,7 +145,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(100f, 0f, 1000f);
+        hp = new CharacterStat(1000f, 0f, 1000f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
@@ -368,14 +368,14 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
-        // if (Random.Range(0f, 1f) < 0.5f)
-        // {
-            // await PerformDashAttackPatternAsync();
-        // }
-        // else
-        // {
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            await PerformDashAttackPatternAsync();
+        }
+        else
+        {
             await PerformCannonPatternAsync();
-        // }
+        }
 
         // 백스텝 패턴 쿨타임 부여하고 기본 상태로 복귀
         // TODO: 쿨타임 수치는 기획에 따라 바꿀 것
