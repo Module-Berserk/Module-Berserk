@@ -226,4 +226,15 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
     {
         Destroy(gameObject);
     }
+
+    // 얘가 이 모자샷건맨의 고유한 스크립트인지 아닌지 몰라서 일단 여따가 씀
+    // 만약 원거리 잡몹 모두가 공유하는 스크립트라면 옮길게영 ㅠㅜ
+    private void PlayReloadSFX() {
+        int[] reloadIndices = {16};
+        AudioManager.instance.PlaySFX(reloadIndices);
+    }
+    private void PlayShotGunSFX() {
+        int[] shotIndices = {17};
+        AudioManager.instance.PlaySFX(shotIndices);
+    }
 }

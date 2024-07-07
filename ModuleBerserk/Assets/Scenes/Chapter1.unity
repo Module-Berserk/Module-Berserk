@@ -3446,6 +3446,34 @@ PrefabInstance:
       propertyPath: sfxList.Array.data[11]
       value: 
       objectReference: {fileID: 8300000, guid: 664d72307a8dea347a91760ca03f0156, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[12]
+      value: 
+      objectReference: {fileID: 8300000, guid: ef3575920eebca043a984895035e8639, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[13]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9aa6e8585228603429588b0b2322fe82, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[14]
+      value: 
+      objectReference: {fileID: 8300000, guid: 36038d2ce8313c846a461bd999bc1634, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[15]
+      value: 
+      objectReference: {fileID: 8300000, guid: bf6aae447e99e6e4f925f4bfe30289c4, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[16]
+      value: 
+      objectReference: {fileID: 8300000, guid: b05981b628043564db7298e324b2d5fd, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[17]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9835e775310cb664ab070e9ca059e750, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[18]
+      value: 
+      objectReference: {fileID: 8300000, guid: 88abe02e5609b8e4d92537c427d0f252, type: 3}
     - target: {fileID: 1304789424901213751, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: -91.313446

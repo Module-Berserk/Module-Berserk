@@ -1199,4 +1199,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         int[] escapingIndices = {11};
         AudioManager.instance.PlaySFX(escapingIndices);        
     }
+    private void PlayJumpingSFX() {
+        int[] jumpingIndices = {18};
+        AudioManager.instance.PlaySFX(jumpingIndices);        
+    }
 }

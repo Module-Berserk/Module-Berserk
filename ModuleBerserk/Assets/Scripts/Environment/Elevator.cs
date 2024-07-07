@@ -66,7 +66,9 @@ public class Elevator : MonoBehaviour
         {
             return;
         }
-
+        //SFX
+        int[] elevatorIndices = {14, 15};
+        AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightLowerBound, downwardMovementDuration).Forget();
     }
 
@@ -77,7 +79,9 @@ public class Elevator : MonoBehaviour
         {
             return;
         }
-
+        //SFX
+        int[] elevatorIndices = {14, 15};
+        AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightUpperBound, upwardMovementDuration).Forget();
     }
 
