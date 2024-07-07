@@ -821,13 +821,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb.gravityScale = defaultGravityScale;
     }
 
+    // 지면에 서있는 경우는 지면과 평행하게, 공중인 경우는 그냥 좌우로 이동.
+    //
+    // Note:
+    // 경사로에 있는 경우 GroundTangent가 수평이 아니다!
+    // 이 상황에서 수평으로 움직이면 낙하-착지를 반복하게 될 수 있으므로
+    // 지면과 평행하게 움직여주는게 중요함.
     private void UpdateMoveVelocity(float moveInput)
     {
-        // 원하는 속도를 계산
-        float desiredVelocityX = playerState.MoveSpeed.CurrentValue * moveInput;
+        // 도달하고 싶은 속도 (좌우 방향 고려 o)
+        float desiredSpeed = playerState.MoveSpeed.CurrentValue * moveInput;
+
+        // 가속해야 할 방향으로의 속도 성분 (공중인 경우 중력 고려 x)
+        Vector2 moveDirection = groundContact.IsGrounded ? groundContact.GroundTangent : Vector2.right;
+        float currentSpeed = Vector2.Dot(moveDirection, rb.velocity);
 
         // 방향 전환 여부에 따라 다른 가속도 사용
-        float acceleration = ChooseAcceleration(moveInput, desiredVelocityX);
+        float acceleration = ChooseAcceleration(moveInput, desiredSpeed);
 
         // 공중이라면 AirControl 수치(0.0 ~ 1.0)에 비례해 가속도 감소
         if (!groundContact.IsGrounded)
@@ -835,9 +845,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
             acceleration *= airControl;
         }
 
-        // x축 속도가 원하는 속도에 부드럽게 도달하도록 보간
-        float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, desiredVelocityX, acceleration * Time.deltaTime);
-        rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
+        // 원하는 속도에 부드럽게 도달하도록 보간 (공중인 경우 수직 속도 변경 x)
+        float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
+        Vector2 updatedVelocity = moveDirection * updatedSpeed;
+        if (!groundContact.IsGrounded)
+        {
+            updatedVelocity.y = rb.velocity.y;
+        }
+
+        rb.velocity = updatedVelocity;
     }
 
     private float ChooseAcceleration(float moveInput, float desiredVelocityX)
@@ -932,6 +948,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
         // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
         rb.gravityScale = defaultGravityScale;
+        
+        // 경사로를 타고 올라가다가 점프하면 바로 착지해버리는 상황을
+        // 잠시동안 지면 검출을 멈추는 방식으로 방지함.
+        groundContact.PreventTestForDuration(0.1f);
 
         // 점프 애니메이션 재생
         animator.SetTrigger("Jump");

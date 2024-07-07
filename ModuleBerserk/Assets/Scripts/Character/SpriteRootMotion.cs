@@ -56,15 +56,9 @@ public class SpriteRootMotion : MonoBehaviour
             float verticalVelocity = rb.velocity.y;
             float horizontalVelocity = (isFacingLeft ? -1f : 1f) * rootMotion * motionScale;
             rb.velocity =  new Vector2(horizontalVelocity, verticalVelocity);
-
-            if (!Mathf.Approximately(horizontalVelocity, 0f))
-            {
-                Debug.Log(horizontalVelocity);
-            }
         }
 
         prevSpritePivotX = currSpritePivotX;
-        Debug.Log($"pivot: {currSpritePivotX}");
     }
 
     // 애니메이션의 pivot 변화로 루트모션을
