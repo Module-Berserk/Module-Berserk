@@ -307,11 +307,11 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
         // if (Random.Range(0f, 1f) < 0.5f)
         // {
-            await PerformDashAttackPatternAsync();
+            // await PerformDashAttackPatternAsync();
         // }
         // else
         // {
-            // await PerformCannonPatternAsync();
+            await PerformCannonPatternAsync();
         // }
 
         // 백스텝 패턴 쿨타임 부여하고 기본 상태로 복귀
