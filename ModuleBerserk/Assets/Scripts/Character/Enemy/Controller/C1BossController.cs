@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.UI;
 
 // 챕터1 보스의 AI로 스크립트가 활성화된 동안 정해진 패턴대로 움직이게 만든다.
 // 컷신 도중에는 이 스크립트를 비활성화해줘야 한다.
@@ -57,6 +58,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Box Gimmick")]
     // 돌진 패턴이 벽에 충돌하며 끝나는 경우 상자 기믹을 리필함
     [SerializeField] private List<C1BoxGimmickGenerator> boxGenerators;
+
+
+    [Header("Health Bar UI")]
+    [SerializeField] private Slider healthUISlider;
 
 
     [Header("Boss Defeat Cutscene")]
@@ -127,6 +132,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         hp = new CharacterStat(100f, 0f, 100f);
         defense = new CharacterStat(10f, 0f);
+
+        hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
