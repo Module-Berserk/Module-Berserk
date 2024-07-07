@@ -1167,4 +1167,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         ActionState = PlayerActionState.IdleOrRun;
     }
+
+
+
+
+
+
+    // 본인 이 함수 어따가 달아야할지 모르겠음
+    // 좋은 아이디어 추천 바람
+    private void PlayAttack1SFX() {
+        int[] attack1Indices = { 0, 1, 2, 3, 4 };
+        AudioManager.instance.PlaySFX(attack1Indices);
+    }
 }
