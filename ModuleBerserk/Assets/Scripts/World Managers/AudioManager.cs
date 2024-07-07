@@ -3,44 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour {
-    // Instance
     public static AudioManager instance = null;
 
-    // List of SFX
     [SerializeField] private AudioClip[] sfxList;
+    [SerializeField] private int initialAudioSourceCount = 10; // Number of initial AudioSources in the pool
 
-    // Volume
     [Range(0, 100)]
     public int volume = 100;
 
-    private AudioSource audioSource;
+    private List<AudioSource> audioSources = new List<AudioSource>();
 
     private void Awake() {
         if (instance == null) {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
+            InitializeAudioSources();
         } else {
             Destroy(gameObject);
         }
-        
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null) {
-            audioSource = gameObject.AddComponent<AudioSource>();
+    }
+
+    private void InitializeAudioSources() {
+        for (int i = 0; i < initialAudioSourceCount; i++) {
+            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSources.Add(audioSource);
         }
     }
 
-    //Play SFX Function based on index given.
-    public void PlaySFX(int[] indices) {
-        int randomIndex = indices[Random.Range(0, indices.Length)];
-        
-        if (randomIndex < 0 || randomIndex >= sfxList.Length) {
-            Debug.LogWarning("이게 나오면 자살해야함");
-            return;
+    private AudioSource GetAvailableAudioSource() {
+        foreach (var audioSource in audioSources) {
+            if (!audioSource.isPlaying) {
+                return audioSource;
+            }
         }
+        // If no available audio source, create a new one
+        AudioSource newAudioSource = gameObject.AddComponent<AudioSource>();
+        newAudioSource.playOnAwake = false;
+        audioSources.Add(newAudioSource);
+        return newAudioSource;
+    }
 
+    public void PlaySFX(int[] indices) { 
+        int randomIndex = indices[Random.Range(0, indices.Length)];
+        AudioSource audioSource = GetAvailableAudioSource();
         audioSource.volume = volume / 100f;
-        audioSource.pitch = Random.Range(0.7f, 1.3f); //추후 적절한 값 찾을 예정
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
     }
 }
+

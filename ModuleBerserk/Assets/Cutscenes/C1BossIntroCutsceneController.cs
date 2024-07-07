@@ -61,6 +61,8 @@ public class C1BossIntroCutsceneController : MonoBehaviour
         // 화자에 맞게 대사창 선택 및 대사 출력
         Dialogue nextDialogue = dialogues[nextDialogueIndex++];
         DialogueBox dialogueBox = nextDialogue.speaker == Speaker.Boss ? bossDialogueBox : playerDialogueBox;
+        int[] talkingIndices = nextDialogue.speaker == Speaker.Boss ? new int[] { 19 } : new int[] { 20 };
+        AudioManager.instance.PlaySFX(talkingIndices);
         BeginTypingAnimationAsync(dialogueBox, nextDialogue).Forget();
     }
 

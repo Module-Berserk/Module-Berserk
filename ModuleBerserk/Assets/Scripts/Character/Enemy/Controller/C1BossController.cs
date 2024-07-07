@@ -558,4 +558,30 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 보스전이 끝났으니 더이상 AI가 조종하지 못하도록 막기
         enabled = false;
     }
+
+    //SFX
+    private void PlayCannonShotSFX() {
+        int[] cannonIndices = {21};
+        AudioManager.instance.PlaySFX(cannonIndices);  
+    }
+    private void PlayJumpingSFX() {
+        int[] jumpingIndices = {18};
+        AudioManager.instance.PlaySFX(jumpingIndices);        
+    }
+    private void PlayLandSFX() {
+        int[] landingIndices = {9};
+        AudioManager.instance.PlaySFX(landingIndices);        
+    }
+    private void PlayChargeSFX() {
+        int[] chargingIndices = {22};
+        AudioManager.instance.PlaySFX(chargingIndices);        
+    }
+    private void PlayCrashSFX() {
+        int[] crashingIndices = {23, 24};
+        AudioManager.instance.PlaySFX(crashingIndices);        
+    }
+    private void PlayPunchSFX() {
+        int[] punchIndices = {25, 26, 27, 28};
+        AudioManager.instance.PlaySFX(punchIndices);        
+    }
 }

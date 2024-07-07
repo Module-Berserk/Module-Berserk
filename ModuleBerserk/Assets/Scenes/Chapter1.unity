@@ -3474,6 +3474,30 @@ PrefabInstance:
       propertyPath: sfxList.Array.data[18]
       value: 
       objectReference: {fileID: 8300000, guid: 88abe02e5609b8e4d92537c427d0f252, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[19]
+      value: 
+      objectReference: {fileID: 8300000, guid: bf133582d9cf59f42b9d83a515276553, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[20]
+      value: 
+      objectReference: {fileID: 8300000, guid: 68e155e7bb4d3994f83bbe1440947d1f, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[21]
+      value: 
+      objectReference: {fileID: 8300000, guid: 32b5045d23800ab44905b12bbd13d5d7, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[22]
+      value: 
+      objectReference: {fileID: 8300000, guid: d415c25a701e5c540a8252cc2eb68c7d, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[23]
+      value: 
+      objectReference: {fileID: 8300000, guid: f64c08fd11bcbbe488fe9d50fb4ed483, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[24]
+      value: 
+      objectReference: {fileID: 8300000, guid: 4927910af2c4a4243b27921399bf8d50, type: 3}
     - target: {fileID: 1304789424901213751, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: -91.313446
@@ -3518,7 +3542,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2593466658431674257, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
