@@ -8,7 +8,14 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Elevator : MonoBehaviour
 {
-    // 현재 위치에서 얼마나 높이 올라갈지
+    [Header("Initial State")]
+    // 아랫층에서 시작하는 경우 true를 주면 되고
+    // 윗층에서 시작하는 경우 false를 주면 됨.
+    [SerializeField] private bool isInitialPositionDown = true;
+
+
+    [Header("Movement Setting")]
+    // 현재 위치에서 얼마나 멀리 위/아래로 움직일지
     [SerializeField] private float movementRange;
     // 이동에 걸리는 시간 및 속도 커브
     [SerializeField] private float upwardMovementDuration;
@@ -18,6 +25,7 @@ public class Elevator : MonoBehaviour
     [SerializeField] private float initialMovementDelay = 1f;
     // 꼭대기에 도달한 뒤 다시 아래로 내려오기 전에 기다리는 시간
     [SerializeField] private float delayBeforeReturning = 3f;
+    
 
     // 이동을 멈추기 위한 목적지와의 거리 조건
     private const float MOVEMENT_STOP_DISTANCE_THRESHOLD = 0.1f;
@@ -37,11 +45,21 @@ public class Elevator : MonoBehaviour
     // 엘리베이터의 y축 이동 범위를 계산함
     private void CalculateMovementBoundary()
     {
-        heightLowerBound = rb.position.y;
-        heightUpperBound = heightLowerBound + movementRange;
+        // 하강 상태로 시작하는 경우
+        if (isInitialPositionDown)
+        {
+            heightLowerBound = rb.position.y;
+            heightUpperBound = rb.position.y + movementRange;
+        }
+        // 상승 상태로 시작하는 경우
+        else
+        {
+            heightLowerBound = rb.position.y - movementRange;
+            heightUpperBound = rb.position.y;
+        }
     }
 
-    public void ActivateElevator()
+    public void ActivateElevatorDown()
     {
         // 이미 이동 중이라면 요청 무시
         if (isActive)
@@ -49,14 +67,62 @@ public class Elevator : MonoBehaviour
             return;
         }
 
-        StartElevatorMovementAsync().Forget();
+        StartOneWayMovementAsync(heightLowerBound, downwardMovementDuration).Forget();
     }
 
-    private async UniTask StartElevatorMovementAsync()
+    public void ActivateElevatorUp()
+    {
+        // 이미 이동 중이라면 요청 무시
+        if (isActive)
+        {
+            return;
+        }
+
+        StartOneWayMovementAsync(heightUpperBound, upwardMovementDuration).Forget();
+    }
+
+    private async UniTask StartOneWayMovementAsync(float targetHeight, float movementDuration)
     {
         // 엘리베이터 움직임은 비활성화 상태에서만 시작될 수 있음.
         // 중간에 취소하거나 재시작하는 상황이 일어나면 안됨.
         Assert.IsFalse(isActive);
+
+        // 목표 지점에 이미 도착한 상태에서 호출되었다면
+        // 어디선가 버그가 발생했을 확률이 높음...
+        Assert.AreNotApproximatelyEqual(rb.position.y, targetHeight);
+
+        isActive = true;
+
+        // 1. 이펙트 출력하고 잠시 기다린다
+        PlayerElevatorMoveStartEffect();
+        await UniTask.WaitForSeconds(initialMovementDelay);
+
+        // 2. 목표 위치로 이동한다
+        await MoveToAsync(targetHeight, movementDuration);
+
+        isActive = false;
+    }
+
+    // 아래에 있는 상태에서 위로 올라갔다가 다시 내려오는 움직임
+    public void ActivateElevatorUpDown()
+    {
+        // 이미 이동 중이라면 요청 무시
+        if (isActive)
+        {
+            return;
+        }
+
+        StartBackAndForthMovementAsync().Forget();
+    }
+
+    private async UniTask StartBackAndForthMovementAsync()
+    {
+        // 엘리베이터 움직임은 비활성화 상태에서만 시작될 수 있음.
+        // 중간에 취소하거나 재시작하는 상황이 일어나면 안됨.
+        Assert.IsFalse(isActive);
+
+        // 왕복 이동은 엘리베이터가 아래에 있는 상태에서만 호출되어야 함.
+        Assert.AreApproximatelyEqual(rb.position.y, heightLowerBound);
 
         isActive = true;
 

@@ -781,15 +781,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
+    // 로그 타입만 가능한 벽타기.
     // 공중에 있고 이동하려는 방향의 벽과 접촉한 경우에 한해 true 반환.
     private bool ShouldStickToWall(float moveInput)
     {
-        // TODO:
-        // 1. 벽붙기는 로그 타입만 가능하도록 수정
-        // 2. 이미 한 번 붙었다가 떨어진 벽에는 다시 붙을 수 없도록 제한 (무한 벽타기 방지)
+        // TODO: 이미 한 번 붙었다가 떨어진 벽에는 다시 붙을 수 없도록 제한 (무한 벽타기 방지)
         bool shouldStickRight = moveInput > 0f && groundContact.IsInContactWithRightWall;
         bool shouldStickLeft = moveInput < 0f && groundContact.IsInContactWithLeftWall;
-        return !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
+        return playerState.PlayerType == PlayerType.Rogue && !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
     }
 
     // 벽에 붙은 방향과 반대로 이동하는 경우 벽붙기 중지

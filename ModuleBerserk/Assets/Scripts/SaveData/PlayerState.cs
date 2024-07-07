@@ -39,8 +39,8 @@ public class PlayerState
         return new PlayerState
         {
             PlayerType = PlayerType.Loyal,
-            HP = new CharacterStat(100f, 0f),
-            AttackDamage = new CharacterStat(1f, 0f),
+            HP = new CharacterStat(10f, 0f),
+            AttackDamage = new CharacterStat(20f, 0f),
             AttackSpeed = new CharacterStat(1f, 0f),
             Defense = new CharacterStat(10f, 0f),
             MoveSpeed = new CharacterStat(3.5f, 0f),

@@ -152,4 +152,4 @@ MonoBehaviour:
   requiredTrigger: {fileID: 0}
   activeSprite: {fileID: 1519145976, guid: 9a91d65cc02523a4d92a2b186884f160, type: 3}
   inactiveSprite: {fileID: 853039504, guid: 9a91d65cc02523a4d92a2b186884f160, type: 3}
-  timeToReactivate: 3
+  timeToReactivate: 8
