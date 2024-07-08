@@ -10,10 +10,12 @@ public class BGMManager : MonoBehaviour
     private int volume = 100;
 
     private AudioSource audioSource;
+    [SerializeField] private AudioClip[] audioClips;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        audioSource.clip = audioClips[0];
         audioSource.loop = true;
         audioSource.volume = volume / 100;
         audioSource.Play();
@@ -23,6 +25,15 @@ public class BGMManager : MonoBehaviour
     {
         audioSource.volume = volume;
         //TODO: 브금 바꾸기 ㅇㅅㅇ
+    }
+
+    public void ChangeBGM() {
+        audioSource.Stop();
+        Debug.Log("stop");
+        audioSource.clip = audioClips[1];
+    }
+    public void playBGM() {
+        audioSource.Play();
     }
 }
 

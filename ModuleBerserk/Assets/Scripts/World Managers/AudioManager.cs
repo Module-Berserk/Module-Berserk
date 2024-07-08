@@ -47,7 +47,7 @@ public class AudioManager : MonoBehaviour {
     public void PlaySFX(int[] indices) { 
         int randomIndex = indices[Random.Range(0, indices.Length)];
         AudioSource audioSource = GetAvailableAudioSource();
-        audioSource.volume = volume / 100f;
+        audioSource.volume = volume / 200f;
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
