@@ -99,8 +99,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private float backstepPatternCooltime = 0f;
     private float meleeAttackPatternCooltime = 0f;
-    private bool isDashMotionStarted = false;
-    private bool isCannonShotStarted = false;
+    private bool isDashMotionOngoing = false;
+    private bool isCannonShotOngoing = false;
 
     // 체력이 이 값보다 떨어지면 잡몹 소환 패턴을 시전함.
     // 기본적으로 75%, 50%, 25% 지점에서 3번 사용.
@@ -131,6 +131,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         get => spriteRenderer.flipX;
         protected set => spriteRenderer.flipX = value;
     }
+
+    // 2페이즈는 체력 50%부터 시작
+    public bool IsSecondPhase { get => hp.CurrentValue < hp.MaxValue * 0.5f; }
 
     private void Awake()
     {
@@ -338,24 +341,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Backstep;
         animator.SetTrigger("Backstep");
 
-        // 전조도 없이 점프하면 이상하니까 준비 동작 끝날 때까지 잠깐 기다리기
-        // Note: 애니메이션을 받아보니 준비 동작이 없어서 일단 주석처리함
-        // await UniTask.WaitForSeconds(1f);
-
         // 플레이어를 등지는 방향으로 맵 끝까지 점프
-        // x축으로는 tweening, y축으로는 점프 거리에 비례한 속도 부여
         float jumpTargetX = GetBackstepJumpTargetX();
-        float jumpDistance = Mathf.Abs(rb.position.x - jumpTargetX);
-        float maxJumpDistance = Mathf.Abs(mapRightEnd.position.x - mapLeftEnd.position.x);
-        float jumpDistanceRatio = jumpDistance / maxJumpDistance; // 맵 끝에서 끝까지 점프하는걸 1로 잡았을 때의 점프 거리
-        jumpDistanceRatio = Mathf.Max(0.4f, jumpDistanceRatio); // 이미 끝에 가까운 경우에도 살짝은 점프하도록 최소치를 부여함
-
-        float jumpDuration = backstepJumpMaxDuration * jumpDistanceRatio;
-        rb.AddForce(Vector2.up * backstepJumpMaxImpulse * jumpDistanceRatio, ForceMode2D.Impulse);
-        rb.AddForce(Vector2.right * (jumpTargetX - rb.position.x) / jumpDuration, ForceMode2D.Impulse);
-
-        // await UniTask.WaitForSeconds(jumpDuration * 0.1f);
-        // rb.DOMoveX(jumpTargetX, jumpDuration).SetEase(Ease.OutSine).SetUpdate(UpdateType.Fixed);
+        float jumpDuration = ApplyBackstepJumpForce(jumpTargetX);
 
         // 백스텝 모션 끝날 때까지 기다리기...
         // 점프하는 동안은 위에 대기중인 박스 기믹 등과
@@ -370,17 +358,41 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
         if (Random.Range(0f, 1f) < 0.5f)
         {
+            // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴이 연계됨
+            // TODO: 돌진 이후 근접 공격 패턴 연계와 50% 확률로 나오도록 수정
+            if (IsSecondPhase)
+            {
+                await PerformShortCannonPatternAsync();
+            }
             await PerformDashAttackPatternAsync();
         }
         else
         {
-            await PerformCannonPatternAsync();
+            await PerformLongCannonPatternAsync();
         }
 
         // 백스텝 패턴 쿨타임 부여하고 기본 상태로 복귀
         // TODO: 쿨타임 수치는 기획에 따라 바꿀 것
         RestartBackstepPatternCooltime();
         actionState = ActionState.Chase;
+    }
+
+    // 한 번의 점프로 x축 좌표를 목적지까지 움직일 수 있게
+    // rigidbody를 밀고 목적지까지의 거리에 비례한 체공 시간을 반환함
+    private float ApplyBackstepJumpForce(float jumpTargetX)
+    {
+        float jumpDistance = Mathf.Abs(rb.position.x - jumpTargetX);
+        float maxJumpDistance = Mathf.Abs(mapRightEnd.position.x - mapLeftEnd.position.x);
+        float jumpDistanceRatio = jumpDistance / maxJumpDistance; // 맵 끝에서 끝까지 점프하는걸 1로 잡았을 때의 점프 거리
+        jumpDistanceRatio = Mathf.Max(0.4f, jumpDistanceRatio); // 이미 끝에 가까운 경우에도 살짝은 점프하도록 최소치를 부여함
+
+        float jumpDuration = backstepJumpMaxDuration * jumpDistanceRatio;
+
+        float velocityX = (jumpTargetX - rb.position.x) / jumpDuration;
+        float velocityY = backstepJumpMaxImpulse * jumpDistanceRatio;
+        rb.velocity = new Vector2(velocityX, velocityY);
+        
+        return jumpDuration;
     }
 
     private void RestartBackstepPatternCooltime()
@@ -402,13 +414,49 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
     }
 
-    private async UniTask PerformCannonPatternAsync()
+    private async UniTask PerformLongCannonPatternAsync()
     {
-        animator.SetTrigger("CannonShot");
+        animator.SetTrigger("LongCannonShot");
 
         // 준비 동작 끝나면 애니메이션에서 이벤트로 설정해줌
-        isCannonShotStarted = false;
-        await UniTask.WaitUntil(() => isCannonShotStarted, cancellationToken: attackCancellation.Token);
+        isCannonShotOngoing = false;
+        await UniTask.WaitUntil(() => isCannonShotOngoing, cancellationToken: attackCancellation.Token);
+
+        // 8발의 포탄을 순차적으로 보스 앞에서부터 떨어트림
+        List<float> explodePositions = new();
+        for (int i = 0; i < 8; ++i)
+        {
+            const float offsetFromBoss = 1f; // 보스 앞으로 얼마나 멀리서 떨어지기 시작할 것인지
+            const float distanceBetweenExplosions = 1.5f; // 포탄 사이의 간격
+            float relativePosition = (IsFacingLeft ? -1f : 1f) * (distanceBetweenExplosions * i + offsetFromBoss);
+            explodePositions.Add(rb.position.x + relativePosition);
+        }
+
+        // 절반의 확률로 떨어지는 순서가 반대로 바뀜
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            explodePositions.Reverse();
+        }
+
+        foreach (float explodePosition in explodePositions)
+        {
+            Vector3 spawnPosition = new Vector3(explodePosition, transform.position.y);
+            Instantiate(cannonExplodePrefab, spawnPosition, Quaternion.identity);
+            
+            await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
+        }
+
+        // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
+        await UniTask.WaitUntil(() => !isCannonShotOngoing);
+    }
+
+    private async UniTask PerformShortCannonPatternAsync()
+    {
+        animator.SetTrigger("ShortCannonShot");
+
+        // 준비 동작 끝나면 애니메이션에서 이벤트로 설정해줌
+        isCannonShotOngoing = false;
+        await UniTask.WaitUntil(() => isCannonShotOngoing, cancellationToken: attackCancellation.Token);
 
         // 맵을 벗어나지 않는 선에서 플레이어 중심, 왼쪽, 오른쪽에 하나씩 생성
         float playerX = player.transform.position.x;
@@ -428,17 +476,19 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
-        await UniTask.WaitUntil(() => !isCannonShotStarted);
+        await UniTask.WaitUntil(() => !isCannonShotOngoing, cancellationToken: attackCancellation.Token);
     }
 
+    // 애니메이션에서 실제 포격 시작과 끝에 호출해주는 이벤트.
+    // UniTask.WaitUntil()에서 대기 조건으로 사용된다.
     public void BeginCannonShot()
     {
-        isCannonShotStarted = true;
+        isCannonShotOngoing = true;
     }
 
-    public void StopCannonShot()
+    public void EndCannonShot()
     {
-        isCannonShotStarted = false;
+        isCannonShotOngoing = false;
     }
 
     private async UniTask PerformDashAttackPatternAsync()
@@ -449,8 +499,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         spriteRootMotion.HandleAnimationChange();
 
         // 애니메이션 이벤트에 의해 돌진이 시작되기를 기다림
-        isDashMotionStarted = false;
-        await UniTask.WaitUntil(() => isDashMotionStarted, cancellationToken: attackCancellation.Token);
+        isDashMotionOngoing = false;
+        await UniTask.WaitUntil(() => isDashMotionOngoing, cancellationToken: attackCancellation.Token);
 
         // 박스 기믹과 충돌하는 경우를 대비해 cancellation token을 넣어준다
         await UniTask.WaitForSeconds(dashDuration, cancellationToken: attackCancellation.Token);
@@ -464,8 +514,8 @@ public class C1BossController : MonoBehaviour, IDestructible
             boxGenerator.TryGenerateNewBox();
         }
 
-        // 돌진 패턴 후딜레이
-        await UniTask.WaitForSeconds(1f, cancellationToken: attackCancellation.Token);
+        // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
+        await UniTask.WaitUntil(() => !isDashMotionOngoing, cancellationToken: attackCancellation.Token);
     }
 
     // 돌진 공격 애니메이션에서 앞으로 튀어나가야 하는 순간에 호출해주는 이벤트.
@@ -473,7 +523,13 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         float dashTargetX = GetDashTargetX();
         rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
-        isDashMotionStarted = true;
+        isDashMotionOngoing = true;
+    }
+
+    // 돌진 패턴의 UniTask를 애니메이션이 종료될 때까지 기다리도록 만드는 데에 사용됨.
+    public void EndDashAttackMovement()
+    {
+        isDashMotionOngoing = false;
     }
 
     // 돌진 목적지는 맵의 양쪽 끝 중에서 더 멀리 있는 곳

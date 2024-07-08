@@ -290,7 +290,6 @@ public class GearSystem : MonoBehaviour
         if (IsNextGearLevelReady())
         {
             gearGuagePercent = Random.Range(1f, 1.1f);
-            Debug.Log("Ready");
         }
 
         float targetZAngle = Mathf.LerpUnclamped(359f, 142f, gearGuagePercent);

@@ -29,7 +29,6 @@ public class BGMManager : MonoBehaviour
 
     public void ChangeBGM() {
         audioSource.Stop();
-        Debug.Log("stop");
         audioSource.clip = audioClips[1];
     }
     public void playBGM() {

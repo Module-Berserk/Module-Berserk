@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: c1_boss_cannonshot
+  m_Name: c1_boss_3cannonshot
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -172,7 +172,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 2.4166667
-    functionName: StopCannonShot
+    functionName: EndCannonShot
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
