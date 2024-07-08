@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UI;
 
+
 // 챕터1 보스의 AI로 스크립트가 활성화된 동안 정해진 패턴대로 움직이게 만든다.
 // 컷신 도중에는 이 스크립트를 비활성화해줘야 한다.
 //
@@ -135,6 +136,16 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 2페이즈는 체력 50%부터 시작
     public bool IsSecondPhase { get => hp.CurrentValue < hp.MaxValue * 0.5f; }
 
+    
+    // 백스텝 패턴에서 2페이즈에 나오는 연계 공격 종류.
+    // 50% 확률로 둘 중 하나를 골라 사용한다.
+    private enum ChainAttack
+    {
+        None, // 1페이즈에서는 연계 x
+        CannonShotBeforeDash, // 3발 포격 후 돌진
+        MeleeAttackAfterDash, // 돌진 후 즉시 근거리 공격 3연타
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -148,7 +159,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(1000f, 0f, 1000f);
+        hp = new CharacterStat(100f, 0f, 1000f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
@@ -242,7 +253,7 @@ public class C1BossController : MonoBehaviour, IDestructible
             }
             else if (meleeAttackRange.IsPlayerInRange && meleeAttackPatternCooltime <= 0f)
             {
-                PerformMeleeAttackPattern();
+                PerformMeleeAttackPatternAsync().Forget();
             }
             else
             {
@@ -301,11 +312,15 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
-    private void PerformMeleeAttackPattern()
+    private async UniTask PerformMeleeAttackPatternAsync()
     {
         animator.SetTrigger("MeleeAttack");
         actionState = ActionState.MeleeAttack;
         spriteRootMotion.HandleAnimationChange();
+
+        // 공격 끝날 때까지 기다리기.
+        // 애니메이션 끝나면 OnMeleeAttackMotionEnd()에서 값 설정해줌.
+        await UniTask.WaitUntil(() => actionState == ActionState.Chase);
     }
 
     public void OnMeleeAttackMotionEnd()
@@ -358,13 +373,25 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
         if (Random.Range(0f, 1f) < 0.5f)
         {
-            // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴이 연계됨
-            // TODO: 돌진 이후 근접 공격 패턴 연계와 50% 확률로 나오도록 수정
+            // 1페이즈에서는 그냥 백스텝->돌진만 하고 끝나지만
+            // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴 중에서 하나가 랜덤하게 연계됨
+            var chainAttack = ChainAttack.None;
             if (IsSecondPhase)
+            {
+                chainAttack = Random.Range(0f, 1f) < 0.5f ? ChainAttack.CannonShotBeforeDash : ChainAttack.MeleeAttackAfterDash;
+            }
+
+            if (chainAttack == ChainAttack.CannonShotBeforeDash)
             {
                 await PerformShortCannonPatternAsync();
             }
+
             await PerformDashAttackPatternAsync();
+
+            if (chainAttack == ChainAttack.MeleeAttackAfterDash)
+            {
+                await PerformMeleeAttackPatternAsync();
+            }
         }
         else
         {
