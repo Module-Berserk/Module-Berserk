@@ -41,7 +41,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     private Rigidbody2D rb;
 
     // IDestructible이 요구하는 스탯
-    private CharacterStat hp = new(100f, 0f, 100f);
+    private CharacterStat hp = new(50f, 0f, 100f);
     private CharacterStat defense = new(10f, 0f);
 
     private enum State

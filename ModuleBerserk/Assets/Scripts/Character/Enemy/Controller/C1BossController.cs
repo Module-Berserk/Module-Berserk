@@ -45,13 +45,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 백스텝 패턴 점프 목적지(맵의 양 끝 지점)의 x 좌표를 얻기 위해 참조
     [SerializeField] private Transform mapLeftEnd;
     [SerializeField] private Transform mapRightEnd;
-    // 맵 끝에서 끝까지 점프할 때를 기준으로 점프 모션이
-    // 몇 초 안에, 그리고 위로 얼마나 빠르게 솟아오르는가?
-    //
-    // 실제로는 백스텝 거리에 비례하는 수치가 사용됨
+    // 맵 끝에서 끝까지 점프할 때를 기준으로 얼마의 시간이 소요되는지 결정.
+    // 실제로는 백스텝 거리에 비례하는 수치가 사용됨.
     // ex) 맵 중앙에서 출발하면 시간과 속도가 절반
     [SerializeField] private float backstepJumpMaxDuration = 2f;
-    [SerializeField] private float backstepJumpMaxImpulse = 9f;
 
 
     [Header("Dash Attack Pattern")]
@@ -158,7 +155,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(501f, 0f, 1000f);
+        hp = new CharacterStat(250f, 0f, 250f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
@@ -223,11 +220,6 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             // 기절 상태에서는 아무것도 하지 않음
         }
-        else if (actionState == ActionState.Backstep && groundContact.IsGrounded)
-        {
-            // 백스텝 점프 후 착지하면 미끄러지지 않고 제자리에 멈추도록 함
-            rb.velocity = Vector2.zero;
-        }
         else if (actionState == ActionState.MeleeAttack)
         {
             // 근접 공격 3연타는 움직임이 복잡해서 루트 모션으로 처리함
@@ -271,16 +263,22 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 잡몹 소환은 2페이즈 시작할 때 한 번만 해야하니 이미 끝났다고 기록
         isEnemySpawnPatternDone = true;
 
-        actionState = ActionState.ReinforceMobs;
-
-        // 일단 맵 오른쪽 끝으로 백스텝 점프
+        // 일단 왼쪽 보면서 맵 오른쪽 끝으로 백스텝 점프
         IsFacingLeft = true;
-        float jumpDuration = ApplyBackstepJumpForce(mapRightEnd.position.x);
-        await UniTask.WaitForSeconds(jumpDuration);
+        animator.SetTrigger("Backstep");
+        actionState = ActionState.Backstep;
 
-        // 잡몹 소환 애니메이션 재생
-        // TODO: 아트 완성되면 애니메이터에서 c1_boss_spawn_enemy_temp 클립 교체하기
+        float jumpDuration = ApplyBackstepJumpForce(mapRightEnd.position.x);
+        await WaitUntilBackstepJumpEnd(jumpDuration);
+
+        // 착지 모션 잠깐 보여주기
+        // 너무 빨리 다음 모션으로 넘어가니까 어색했음
+        await UniTask.WaitForSeconds(0.15f, cancellationToken: attackCancellation.Token);
+
+        // 스프라이트 반전 없이 잡몹 소환 애니메이션 재생 (얘만 원본 애니메이션이 왼쪽을 보고있음...)
+        IsFacingLeft = false;
         animator.SetTrigger("SpawnEnemy");
+        actionState = ActionState.ReinforceMobs;
 
         // 준비 동작
         await UniTask.WaitForSeconds(1f, cancellationToken: attackCancellation.Token);
@@ -305,14 +303,12 @@ public class C1BossController : MonoBehaviour, IDestructible
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
             gunnerMob.GetComponent<RangedEnemyController>().HandlePlayerDetection();
         }
-    }
 
-    // 적 소환 모션 끝나면 애니메이션에서 이벤트로 상태 변경해줌
-    public void OnSpawnEnemyMotionEnd()
-    {
+        // 모션 끝나고 잡몹 걸어오는 것까지 볼 수 있게 잠깐 대기
+        await UniTask.WaitForSeconds(2f, cancellationToken: attackCancellation.Token);
+
         actionState = ActionState.Chase;
     }
-
     private async UniTask PerformMeleeAttackPatternAsync()
     {
         animator.SetTrigger("MeleeAttack");
@@ -365,10 +361,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 점프하는 동안은 위에 대기중인 박스 기믹 등과
         // 충돌하면 안되므로 일단 콜라이더를 비활성화하고
         // 착지 직전에 다시 활성화하는 방식으로 처리함!
-        boxCollider.enabled = false;
-        await UniTask.WaitForSeconds(jumpDuration * 0.8f, cancellationToken: attackCancellation.Token);
-        boxCollider.enabled = true;
-        await UniTask.WaitForSeconds(jumpDuration * 0.2f, cancellationToken: attackCancellation.Token);
+        await WaitUntilBackstepJumpEnd(jumpDuration);
 
         // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
         // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
@@ -405,10 +398,25 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
+    // 백스텝 점프로 맵의 끝으로 이동하는 동안 콜라이더를 잠시 해제하고 기다림.
+    // 위에 있는 선반이나 박스에 충돌해 멈추지 않도록 하기 위함.
+    // 정확히 착지할 때 콜라이더를 켜면 땅 아래로 꺼질 위험이 있으니 살짝 먼저 활성화함.
+    private async UniTask WaitUntilBackstepJumpEnd(float jumpDuration)
+    {
+        boxCollider.enabled = false;
+        await UniTask.WaitForSeconds(jumpDuration * 0.9f, cancellationToken: attackCancellation.Token);
+        boxCollider.enabled = true;
+        await UniTask.WaitForSeconds(jumpDuration * 0.1f, cancellationToken: attackCancellation.Token);
+
+        // 착지 후 미끄러지지 않도록 속도 제거
+        rb.velocity = Vector2.zero;
+    }
+
     // 한 번의 점프로 x축 좌표를 목적지까지 움직일 수 있게
     // rigidbody를 밀고 목적지까지의 거리에 비례한 체공 시간을 반환함
     private float ApplyBackstepJumpForce(float jumpTargetX)
     {
+        // 점프의 가로 거리를 보고 이에 비례해서 체공 시간을 결정함
         float jumpDistance = Mathf.Abs(rb.position.x - jumpTargetX);
         float maxJumpDistance = Mathf.Abs(mapRightEnd.position.x - mapLeftEnd.position.x);
         float jumpDistanceRatio = jumpDistance / maxJumpDistance; // 맵 끝에서 끝까지 점프하는걸 1로 잡았을 때의 점프 거리
@@ -416,8 +424,10 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         float jumpDuration = backstepJumpMaxDuration * jumpDistanceRatio;
 
+        // 체공 시간동안 목적지에 포물선 운동으로 도착할 수 있는 초기 속도 벡터를 계산.
+        // Note: y축은 jumpDuration이 지났을 때 원래 높이로 돌아온다는 방정식을 풀면 나오는 값임
+        float velocityY = -rb.gravityScale * Physics2D.gravity.y * jumpDuration * 0.5f;
         float velocityX = (jumpTargetX - rb.position.x) / jumpDuration;
-        float velocityY = backstepJumpMaxImpulse * jumpDistanceRatio;
         rb.velocity = new Vector2(velocityX, velocityY);
         
         return jumpDuration;
@@ -577,7 +587,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private void UpdateAnimatorState()
     {
-        animator.SetBool("IsWalking", !Mathf.Approximately(rb.velocity.x, 0f));
+        animator.SetBool("IsWalking", actionState == ActionState.Chase && !Mathf.Approximately(rb.velocity.x, 0f));
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetBool("IsStunned", actionState == ActionState.Stun);
     }
