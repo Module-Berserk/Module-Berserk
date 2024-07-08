@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -39,16 +38,6 @@ public class C1BoxGimmickGenerator : MonoBehaviour
         if (other.transform.parent != null && other.transform.parent.CompareTag("Player"))
         {
             rb.transform.DOShakePosition(1f, shakeStrength);
-
-            // 테스트를 위해 흔들릴 때마다 위에 박스가 없으면 새로 만들어줌
-            // TODO: 보스 패턴 완성하면 삭제할 것
-            TestGenerateBoxAsync().Forget();
         }
-    }
-
-    private async UniTask TestGenerateBoxAsync()
-    {
-        await UniTask.WaitForSeconds(1f);
-        TryGenerateNewBox();
     }
 }
