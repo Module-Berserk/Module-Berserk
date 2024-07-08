@@ -103,9 +103,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     private bool isDashMotionOngoing = false;
     private bool isCannonShotOngoing = false;
 
-    // 체력이 이 값보다 떨어지면 잡몹 소환 패턴을 시전함.
-    // 기본적으로 75%, 50%, 25% 지점에서 3번 사용.
-    private float nextEnemySpawnPatternHPThreshold;
+    // 2페이즈가 시작될 때 한 번 시전되는 잡몹 소환 패턴이 이미 끝났는지 기록하는 플래그.
+    private bool isEnemySpawnPatternDone = false;
 
     // 돌진 도중에 박스 기믹과 충돌한 경우 돌진을 멈추고 기절 상태에 진입.
     // 보스가 죽는 경우에도 진행중인 패턴을 모두 종료할 때 사용함.
@@ -123,7 +122,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         Backstep, // 포격 또는 돌진 패턴으로 이어지는 전조 동작
         BombardAttack, // 3회 포격
         DashAttack, // 맵 끝에서 끝까지 돌진 (상자 기믹과 충돌하면 기절)
-        ReinforceMobs, // 체력이 25% 감소할 때마다 잡몹 소환
+        ReinforceMobs, // 2페이즈 돌입할 때 백스텝 후 잡몹 소환
     }
     private ActionState actionState = ActionState.Chase;
     
@@ -159,14 +158,11 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(100f, 0f, 1000f);
+        hp = new CharacterStat(501f, 0f, 1000f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
-
-        // 다음 잡몹 소환 패턴이 일어날 체력 기준치는 75% 지점
-        nextEnemySpawnPatternHPThreshold = hp.MaxValue * 0.75f;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -188,7 +184,7 @@ public class C1BossController : MonoBehaviour, IDestructible
                 boxGimmick.DestroyBox();
                 cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
 
-                // TODO: 기절 상태 부여
+                // 기절 상태 부여
                 ApplyBoxGimmickKnockdownAsync().Forget();
 
                 // 쿨타임 처리를 해줄 기존 task가 취소되었으니 여기서 쿨타임 설정을 해줘야 함
@@ -222,7 +218,6 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact.TestContact();
 
         UpdatePatternCooltimes();
-        
 
         if (actionState == ActionState.Stun)
         {
@@ -243,7 +238,7 @@ public class C1BossController : MonoBehaviour, IDestructible
             // 플레이어 방향 바라보기
             LookAtPlayer();
 
-            if (hp.CurrentValue < nextEnemySpawnPatternHPThreshold)
+            if (!isEnemySpawnPatternDone && IsSecondPhase)
             {
                 PerformEnemySpawnPatternAsync().Forget();
             }
@@ -273,23 +268,25 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private async UniTask PerformEnemySpawnPatternAsync()
     {
-        // 다음 소환 패턴은 다시 체력 25%를 잃은 이후에 발생
-        nextEnemySpawnPatternHPThreshold -= hp.MaxValue * 0.25f;
+        // 잡몹 소환은 2페이즈 시작할 때 한 번만 해야하니 이미 끝났다고 기록
+        isEnemySpawnPatternDone = true;
 
-        // TODO: 잡몹 소환 애니메이션 추가되면 stun 대신 ReinforceMob으로 바꾸기.
-        // 지금은 그냥 패턴 진행중인거 시각적으로 확인하려고 스턴 모션 넣어둠.
-        actionState = ActionState.Stun;
-        animator.SetTrigger("Stun");
+        actionState = ActionState.ReinforceMobs;
+
+        // 일단 맵 오른쪽 끝으로 백스텝 점프
+        IsFacingLeft = true;
+        float jumpDuration = ApplyBackstepJumpForce(mapRightEnd.position.x);
+        await UniTask.WaitForSeconds(jumpDuration);
+
+        // 잡몹 소환 애니메이션 재생
+        // TODO: 아트 완성되면 애니메이터에서 c1_boss_spawn_enemy_temp 클립 교체하기
+        animator.SetTrigger("SpawnEnemy");
 
         // 준비 동작
         await UniTask.WaitForSeconds(1f, cancellationToken: attackCancellation.Token);
 
-        // 75% 미만 => 2 (톤파 1, 샷건 1)
-        // 50% 미만 => 1 (톤파 1, 샷건 2)
-        // 25% 미만 => 0 (톤파 2, 샷건 2)
-        int remainingHPQuarter = Mathf.FloorToInt(hp.CurrentValue / hp.MaxValue * 4f);
-        int numTonpaMob = remainingHPQuarter > 0 ? 1 : 2;
-        int numGunnerMob = remainingHPQuarter > 1 ? 1 : 2;
+        const int numTonpaMob = 2;
+        const int numGunnerMob = 1;
 
         // 생성하고 잠깐 기다렸다가 플레이어를 감지하게 하는 이유:
         // spawnPoint가 정확하지 않으면 spawn 직후에 IsGrounded가 false가 나와버려
@@ -308,7 +305,11 @@ public class C1BossController : MonoBehaviour, IDestructible
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
             gunnerMob.GetComponent<RangedEnemyController>().HandlePlayerDetection();
         }
+    }
 
+    // 적 소환 모션 끝나면 애니메이션에서 이벤트로 상태 변경해줌
+    public void OnSpawnEnemyMotionEnd()
+    {
         actionState = ActionState.Chase;
     }
 
