@@ -32,9 +32,9 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Chase Pattern")]
-    [SerializeField] private float walkSpeed = 1f;
+    [SerializeField] private float walkSpeed = 1.6f;
     // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
-    [SerializeField] private float chaseStopDistance = 0.5f;
+    [SerializeField] private float chaseStopDistance = 1f;
 
 
     [Header("Backstep Pattern")]
@@ -73,8 +73,11 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Boss Defeat Cutscene")]
     [SerializeField] private PlayableDirector bossDefeatCutscene;
 
-    // 쿨타임 등 상수
-    private const float COOLTIME_BETWEEN_PATTERNS = 2f;
+    // 쿨타임은 패턴을 두 가지 분류로 나누어서 적용함
+    // 1. 근접공격: 3연타/화염방사기
+    // 2. 백스텝: 백스텝 후 돌진/포격/연계공격
+    private const float CLOSE_RANGE_PATTERNS_COOLTIME = 2f;
+    private const float BACKSTEP_PATTERNS_COOLTIME = 5f;
     private const float BOX_GIMMICK_STUN_DURATION = 3f;
 
     private Rigidbody2D rb;
@@ -91,7 +94,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     private CharacterStat hp;
     private CharacterStat defense;
 
-    private float attackPatternCooltime = 0f;
+    private float closeRangePatternCooltime = 0f;
+    private float backstepPatternCooltime = 0f;
     private bool isDashMotionOngoing = false;
     private bool isCannonShotOngoing = false;
 
@@ -150,7 +154,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(250f, 0f, 250f);
+        hp = new CharacterStat(500f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
@@ -180,7 +184,7 @@ public class C1BossController : MonoBehaviour, IDestructible
                 ApplyBoxGimmickKnockdownAsync().Forget();
 
                 // 쿨타임 처리를 해줄 백스텝 패턴 task 전체가 취소되었으니 여기서 쿨타임 설정을 해줘야 함
-                RestartAttackPatternCooltime();
+                RestartBackstepPatternCooltime();
             }
         }
     }
@@ -229,18 +233,14 @@ public class C1BossController : MonoBehaviour, IDestructible
             {
                 PerformEnemySpawnPatternAsync().Forget();
             }
-            else if (attackPatternCooltime <= 0f)
+            else if (backstepPatternCooltime <= 0f)
             {
-                // 패턴 쿨타임이 돌았다면 근접공격과 백스텝 패턴을 반반 확률로 시전함.
-                // 만약 근접공격 범위에 플레이어가 없다면 그냥 백스텝 패턴 사용.
-                if (meleeAttackRange.IsPlayerInRange && Random.Range(0f, 1f) < 0.5f)
-                {
-                    PerformMeleeAttackPatternAsync().Forget();
-                }
-                else
-                {
-                    PerformBackstepPatternAsync().Forget();
-                }
+                PerformBackstepPatternAsync().Forget();
+            }
+            else if (closeRangePatternCooltime <= 0f && meleeAttackRange.IsPlayerInRange)
+            {
+                // TODO: 화염방사기 패턴 추가하고 둘 중에 랜덤하게 선택하기
+                PerformMeleeAttackPatternAsync().Forget();
             }
             else
             {
@@ -320,7 +320,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         await UniTask.WaitUntil(() => actionState == ActionState.Chase);
 
         // 쿨타임은 패턴이 끝난 시점부터 적용
-        RestartAttackPatternCooltime();
+        RestartCloseRangePatternCooltime();
     }
 
     public void OnMeleeAttackMotionEnd()
@@ -330,7 +330,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private void UpdatePatternCooltime()
     {
-        attackPatternCooltime -= Time.fixedDeltaTime;
+        closeRangePatternCooltime -= Time.fixedDeltaTime;
+        backstepPatternCooltime -= Time.fixedDeltaTime;
     }
 
     private void WalkTowardsPlayer()
@@ -397,7 +398,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
         
         // 쿨타임은 패턴이 끝난 시점부터 적용
-        RestartAttackPatternCooltime();
+        RestartBackstepPatternCooltime();
     }
 
     // 백스텝 점프로 맵의 끝으로 이동하는 동안 콜라이더를 잠시 해제하고 기다림.
@@ -435,9 +436,14 @@ public class C1BossController : MonoBehaviour, IDestructible
         return jumpDuration;
     }
 
-    private void RestartAttackPatternCooltime()
+    private void RestartCloseRangePatternCooltime()
     {
-        attackPatternCooltime = COOLTIME_BETWEEN_PATTERNS;
+        closeRangePatternCooltime = CLOSE_RANGE_PATTERNS_COOLTIME;
+    }
+
+    private void RestartBackstepPatternCooltime()
+    {
+        backstepPatternCooltime = BACKSTEP_PATTERNS_COOLTIME;
     }
 
     private float GetBackstepJumpTargetX()
