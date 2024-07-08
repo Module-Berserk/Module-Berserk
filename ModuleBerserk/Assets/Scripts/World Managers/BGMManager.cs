@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class C1BGMManager : MonoBehaviour
+public class BGMManager : MonoBehaviour
 {
     [SerializeField]
     [Range(0, 100)]
