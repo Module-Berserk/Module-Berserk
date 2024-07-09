@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -25,10 +26,16 @@ public class ApplyDamageOnContact : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
     [SerializeField] private StaggerStrength staggerStrength;
+    // 콜라이더가 오래 켜있는 지속 데미지의 경우 몇 초마다 데미지를 입힐 수 있는지 결정.
+    [SerializeField] private float delayBetweenDamageTick = 0.1f;
 
     // Note: 공격 모션마다 다른 히트박스 범위를 원하는 경우
     // 여러 콜라이더를 만들어두고 그 중에 하나를 활성화하는 방식을 사용함
     private Collider2D[] hitboxes;
+
+    // 최근에 데미지를 입힌 대상이 다시 데미지를 입기까지 몇 초나 남았는지 기록.
+    // 장판 패턴처럼 긴 시간동안 반복적으로 데미지를 입히는 경우에 매우 중요한 역할을 맡는다.
+    private Dictionary<IDestructible, float> recentDamages = new();
 
     public bool IsHitboxEnabled
     {
@@ -79,18 +86,45 @@ public class ApplyDamageOnContact : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void FixedUpdate()
+    {
+        if (recentDamages.Count > 0)
+        {
+            // 최근에 데미지를 입은 대상들을 순회하며 데미지 틱 간격이 지났는지 확인한다.
+            // foreach 루프에서는 딕셔너리를 직접 수정할 수 없기 때문에 keys를 복사해 사용함.
+            List<IDestructible> keys = new(recentDamages.Keys);
+            foreach (IDestructible destructible in keys)
+            {
+                recentDamages[destructible] -= Time.fixedDeltaTime;
+
+                // 다시 데미지를 입힐 수 있을 만큼 시간이 지난 대상은 recentDamages 목록에서 제거한다.
+                if (recentDamages[destructible] < 0f)
+                {
+                    recentDamages.Remove(destructible);
+                }
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
     {
         if (other.TryGetComponent(out IDestructible destructible))
         {
-            // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
-            Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
-            StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f); // TODO: 경직 시간을 외부에서 설정할 수 있도록 수정
-
-            // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
-            if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue * DamageCoefficient, staggerInfo))
+            // 데미지 틱 간격 안에는 다시 데미지를 입히지 않음.
+            if (!recentDamages.ContainsKey(destructible))
             {
-                OnApplyDamageSuccess.Invoke();
+                // 이제 delayBetweenDamageTick만큼 시간이 지날 때까지 이 대상에게 데미지를 입히지 않음
+                recentDamages.Add(destructible, delayBetweenDamageTick);
+
+                // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
+                Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
+                StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f);
+
+                // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
+                if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue * DamageCoefficient, staggerInfo))
+                {
+                    OnApplyDamageSuccess.Invoke();
+                }
             }
         }
     }

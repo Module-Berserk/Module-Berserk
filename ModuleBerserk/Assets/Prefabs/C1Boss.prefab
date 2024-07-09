@@ -841,6 +841,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  delayBetweenDamageTick: 0.3
   RawDamage:
     OnValueChange:
       m_PersistentCalls:

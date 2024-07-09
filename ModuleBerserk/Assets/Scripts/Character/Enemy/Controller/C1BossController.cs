@@ -253,7 +253,7 @@ public class C1BossController : MonoBehaviour, IDestructible
             else if (closeRangePatternCooltime <= 0f && meleeAttackRange.IsPlayerInRange)
             {
                 // 거리가 가까운 경우 화염방사기 패턴과 근접 공격 3연타 중에서 랜덤하게 시전
-                if (Random.Range(0f, 1f) < 0.0f)
+                if (Random.Range(0f, 1f) < 0.5f)
                 {
                     PerformMeleeAttackPatternAsync().Forget();
                 }
@@ -412,7 +412,6 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 맵에 떨어진 상자가 없다면 반반 확률로 포격 또는 돌진 패턴 사용.
         // 그게 아니라면 무조건 포격 패턴만 사용
-        Debug.Log($"box: {noBoxGimmickNearbyTrigger.IsActive}");
         if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 0.5f)
         {
             // 1페이즈에서는 그냥 백스텝->돌진만 하고 끝나지만
