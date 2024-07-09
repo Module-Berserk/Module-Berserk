@@ -21,6 +21,12 @@ public class C1BossController : MonoBehaviour, IDestructible
     [SerializeField] private PlayerDetectionRange meleeAttackRange;
 
 
+    [Header("Stagger")]
+    [SerializeField] private float staggerDuration = 0.5f;
+    [SerializeField] private float staggerForce = 7f;
+    [SerializeField] private float knockbackDecceleration = 60f;
+
+
     [Header("Enemy Spawn Pattern")]
     [SerializeField] private GameObject tonpaMobPrefab;
     [SerializeField] private GameObject gunnerMobPrefab;
@@ -109,12 +115,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 보스가 죽는 경우에도 진행중인 패턴을 모두 종료할 때 사용함.
     private CancellationTokenSource attackCancellation = new();
 
-    // 보스는 기본적으로 약한 경직 저항을 가짐
-    private StaggerStrength staggerResistance = StaggerStrength.Weak;
-
     public enum ActionState
     {
         Chase, // 천천히 플레이어에게 접근
+        Stagger, // 패턴 시전 중이 아닐 때 강한 경직 공격에 당한 상태
         Stun, // 박스 기믹으로 인한 그로기 상태
         DestroyBox, // 돌진 패턴이 아닌데 상자 기믹과 접촉한 경우 상자를 파괴함 (미리 깔아놓는 것 방지)
         MeleeAttack, // 3연타 근접 공격
@@ -222,6 +226,11 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             // 기절 상태에서는 아무것도 하지 않음
         }
+        else if (actionState == ActionState.Stagger)
+        {
+            DecreaseKnockbackVelocity();
+
+        }
         else if (actionState == ActionState.MeleeAttack)
         {
             // 근접 공격 3연타는 움직임이 복잡해서 루트 모션으로 처리함
@@ -252,6 +261,13 @@ public class C1BossController : MonoBehaviour, IDestructible
         }
 
         UpdateAnimatorState();
+    }
+
+    // 경직 상태인 경우 넉백 효과를 부드럽게 감소시킴
+    private void DecreaseKnockbackVelocity()
+    {
+        float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, knockbackDecceleration * Time.fixedDeltaTime);
+        rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
     }
 
     public void LookAtPlayer()
@@ -612,6 +628,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         animator.SetBool("IsWalking", actionState == ActionState.Chase && !Mathf.Approximately(rb.velocity.x, 0f));
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetBool("IsStunned", actionState == ActionState.Stun);
+        animator.SetBool("IsStaggered", actionState == ActionState.Stagger);
     }
 
     CharacterStat IDestructible.GetDefenseStat()
@@ -629,12 +646,23 @@ public class C1BossController : MonoBehaviour, IDestructible
         return Team.Enemy;
     }
 
+    private bool IsAttackPatternOngoing()
+    {
+        if (actionState == ActionState.Chase) return false;
+        if (actionState == ActionState.Stun) return false;
+        return true;
+    }
+
     bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
     {
-        if (staggerInfo.strength > staggerResistance)
+        // 보스는 패턴 시전 중이 아닌 경우에 한해 강한 경직의 영향만 받음
+        if (staggerInfo.strength == StaggerStrength.Strong && !IsAttackPatternOngoing())
         {
-            // TODO: 경직 부여
-            Debug.Log("보스 경직");
+            // 기절은 경직보다 더 강한 상태이상이므로 기절 상태는 덮어쓰지 않음
+            if (actionState != ActionState.Stun)
+            {
+                ApplyStaggerForDurationAsync(staggerInfo.direction, staggerDuration).Forget();
+            }
         }
 
         (this as IDestructible).HandleHPDecrease(finalDamage);
@@ -643,6 +671,16 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 챕터1 보스는 무적 시간 없음
         return true;
+    }
+
+    private async UniTask ApplyStaggerForDurationAsync(Vector2 direction, float duration)
+    {
+        rb.AddForce(direction * staggerForce, ForceMode2D.Impulse);
+
+        animator.SetTrigger("Stagger");
+        actionState = ActionState.Stagger;
+        await UniTask.WaitForSeconds(duration, cancellationToken: attackCancellation.Token);
+        actionState = ActionState.Chase;
     }
 
     void IDestructible.OnDestruction()

@@ -126200,10 +126200,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: C1Boss
       objectReference: {fileID: 0}
-    - target: {fileID: 6844388411748321469, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
-      propertyPath: m_FlipX
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
