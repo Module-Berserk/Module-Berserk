@@ -122,6 +122,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         Stun, // 박스 기믹으로 인한 그로기 상태
         DestroyBox, // 돌진 패턴이 아닌데 상자 기믹과 접촉한 경우 상자를 파괴함 (미리 깔아놓는 것 방지)
         MeleeAttack, // 3연타 근접 공격
+        FlameThrower, // 근접 화염방사기 패턴
         Backstep, // 포격 또는 돌진 패턴으로 이어지는 전조 동작
         BombardAttack, // 3회 포격
         DashAttack, // 맵 끝에서 끝까지 돌진 (상자 기믹과 충돌하면 기절)
@@ -251,8 +252,15 @@ public class C1BossController : MonoBehaviour, IDestructible
             }
             else if (closeRangePatternCooltime <= 0f && meleeAttackRange.IsPlayerInRange)
             {
-                // TODO: 화염방사기 패턴 추가하고 둘 중에 랜덤하게 선택하기
-                PerformMeleeAttackPatternAsync().Forget();
+                // 거리가 가까운 경우 화염방사기 패턴과 근접 공격 3연타 중에서 랜덤하게 시전
+                if (Random.Range(0f, 1f) < 0.0f)
+                {
+                    PerformMeleeAttackPatternAsync().Forget();
+                }
+                else
+                {
+                    PerformFlamethrowerPatternAsync().Forget();
+                }
             }
             else
             {
@@ -328,6 +336,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         actionState = ActionState.Chase;
     }
+
     private async UniTask PerformMeleeAttackPatternAsync()
     {
         animator.SetTrigger("MeleeAttack");
@@ -341,7 +350,24 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 쿨타임은 패턴이 끝난 시점부터 적용
         RestartCloseRangePatternCooltime();
     }
+    
+    private async UniTask PerformFlamethrowerPatternAsync()
+    {
+        animator.SetTrigger("FlameThrower");
+        actionState = ActionState.FlameThrower;
 
+        // 얘는 루트모션 없어서 수동으로 멈춰줘야 함
+        rb.velocity = Vector2.zero;
+
+        // 공격 끝날 때까지 기다리기.
+        // 애니메이션 끝나면 OnMeleeAttackMotionEnd()에서 값 설정해줌.
+        await UniTask.WaitUntil(() => actionState == ActionState.Chase);
+
+        // 쿨타임은 패턴이 끝난 시점부터 적용
+        RestartCloseRangePatternCooltime();
+    }
+
+    // 근접공격 3연타와 화염방사기 패턴의 마지막 애니메이션 프레임에서 호출됨
     public void OnMeleeAttackMotionEnd()
     {
         actionState = ActionState.Chase;
