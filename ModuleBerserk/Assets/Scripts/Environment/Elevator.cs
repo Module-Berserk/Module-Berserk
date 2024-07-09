@@ -25,10 +25,12 @@ public class Elevator : MonoBehaviour
     [SerializeField] private float initialMovementDelay = 1f;
     // 꼭대기에 도달한 뒤 다시 아래로 내려오기 전에 기다리는 시간
     [SerializeField] private float delayBeforeReturning = 3f;
-    
 
-    // 이동을 멈추기 위한 목적지와의 거리 조건
-    private const float MOVEMENT_STOP_DISTANCE_THRESHOLD = 0.1f;
+
+    [Header("Shake Effect")]
+    // rigidbody 자체를 흔들면 물리가 불안정하니까 tilemap 등 시각적인 요소만
+    // 다 하나의 child object에 넣어두고 얘를 흔드는 방식으로 처리함
+    [SerializeField] private Transform visualElements;
 
     private Rigidbody2D rb;
     private float heightUpperBound;
@@ -159,6 +161,6 @@ public class Elevator : MonoBehaviour
     {
         // TODO: 이제 곧 엘리베이터 움직인다는 효과 재생 ex) "덜그럭" 하는 효과음, 약간의 진동
         // Debug.Log("엘리베이터가 곧 움직입니다...");
-        rb.transform.DOShakePosition(duration: 0.5f, strength: 0.05f, vibrato: 20);
+        visualElements.DOShakePosition(duration: 0.5f, strength: 0.05f, vibrato: 20);
     }
 }

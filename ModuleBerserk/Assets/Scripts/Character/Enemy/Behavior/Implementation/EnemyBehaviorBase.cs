@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -58,6 +56,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     protected SpriteRenderer spriteRenderer;
     protected Rigidbody2D rb;
     protected BoxCollider2D boxCollider;
+    protected SliderJoint2D sliderJoint;
 
     // 플레이어 추적용 레퍼런스
     protected GameObject player;
@@ -106,6 +105,21 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
 
+        // 엘리베이터 위에 있을 때 수직 속도 동기화 (slider joint 사용)
+        if (groundContact.IsGrounded)
+        {
+            if (!sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>() != null)
+            {
+                sliderJoint.enabled = true;
+                sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
+            }
+        }
+        else
+        {
+            sliderJoint.enabled = false;
+            sliderJoint.connectedBody = null;
+        }
+
         // 순찰 상태
         if (isPatrolling)
         {
@@ -126,6 +140,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        sliderJoint = GetComponent<SliderJoint2D>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
@@ -249,6 +264,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         if (!IsOnBrink(patrolSpeed))
         {
             rb.velocity = new Vector2(patrolSpeed, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
         }
     }
 

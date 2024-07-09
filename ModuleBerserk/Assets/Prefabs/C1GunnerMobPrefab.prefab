@@ -214,6 +214,7 @@ GameObject:
   - component: {fileID: 7519242659052398728}
   - component: {fileID: 2695420284089087774}
   - component: {fileID: 7891498920023006573}
+  - component: {fileID: -3377798624792864121}
   m_Layer: 7
   m_Name: C1GunnerMobPrefab
   m_TagString: Enemy
@@ -385,7 +386,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &7519242659052398728
 MonoBehaviour:
@@ -450,6 +451,33 @@ MonoBehaviour:
   rangedAttackRange: {fileID: 7673278922297699979}
   runAwayRange: {fileID: 4146443792908265846}
   repelAttackRange: {fileID: 4253292232917693304}
+--- !u!234 &-3377798624792864121
+SliderJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2230194136603300056}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 1
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0, y: 0}
+  m_AutoConfigureAngle: 0
+  m_Angle: 0
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 0
+  m_TranslationLimits:
+    m_LowerTranslation: 0
+    m_UpperTranslation: 0
 --- !u!1 &2594391396815688968
 GameObject:
   m_ObjectHideFlags: 0
