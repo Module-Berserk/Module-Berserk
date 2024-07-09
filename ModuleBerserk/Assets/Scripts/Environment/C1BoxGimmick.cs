@@ -40,6 +40,17 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         defense = new CharacterStat(10);
     }
 
+    // 상자가 머리 위로 떨어지는 경우 즉시 파괴
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        bool isGroundCollision = other.rigidbody.bodyType == RigidbodyType2D.Static;
+        bool isFalling = rb.velocity.y < -0.1f;
+        if (!isGroundCollision && isFalling)
+        {
+            DestroyBox();
+        }
+    }
+
     private void OnCollisionStay2D(Collision2D other)
     {
         bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.contacts[0].normal, Vector2.up), 0f);
