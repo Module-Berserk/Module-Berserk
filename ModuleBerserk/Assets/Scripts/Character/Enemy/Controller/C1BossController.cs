@@ -34,8 +34,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     [SerializeField] private Transform mobSpawnPoint;
 
 
-    [Header("Melee Attack Pattern")]
-    [SerializeField] private ApplyDamageOnContact meleeAttackHitbox;
+    [Header("Hixbox")]
+    [SerializeField] private ApplyDamageOnContact hitboxes;
 
 
     [Header("Chase Pattern")]
@@ -274,7 +274,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         IsFacingLeft = player.transform.position.x < rb.position.x;
         meleeAttackRange.SetDetectorDirection(IsFacingLeft);
-        meleeAttackHitbox.SetHitboxDirection(IsFacingLeft);
+        hitboxes.SetHitboxDirection(IsFacingLeft);
     }
 
     private async UniTask PerformEnemySpawnPatternAsync()

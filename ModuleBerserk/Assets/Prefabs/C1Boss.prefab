@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5267738266894914344}
   - component: {fileID: 2812936248406633120}
-  - component: {fileID: 4679903115679224296}
   m_Layer: 6
-  m_Name: MeleeAttackHitbox
+  m_Name: MeleeAttack1Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,12 +25,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 656853922651202603}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4407223915672609459}
+  m_Father: {fileID: 2970297265812155368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &2812936248406633120
 BoxCollider2D:
@@ -65,7 +64,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.57, y: -0.01}
+  m_Offset: {x: 0.41711438, y: -0.39221418}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -76,31 +75,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.76, y: 1.46}
+  m_Size: {x: 2.4542286, y: 0.810236}
   m_EdgeRadius: 0
---- !u!114 &4679903115679224296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656853922651202603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DamageSource: 1
-  staggerStrength: 1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
-  DamageCoefficient: 1
-  OnApplyDamageSuccess:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!1 &4664845888447901704
+--- !u!1 &1993370890169595837
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,39 +85,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 766381758430196026}
-  - component: {fileID: 4606134287736738303}
-  - component: {fileID: 7428477975634683749}
-  m_Layer: 8
-  m_Name: BackstepRange
+  - component: {fileID: 6798498846392954878}
+  - component: {fileID: 2114709825079684392}
+  m_Layer: 6
+  m_Name: 'MeleeAttack2Hitbox '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &766381758430196026
+--- !u!4 &6798498846392954878
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4664845888447901704}
+  m_GameObject: {fileID: 1993370890169595837}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4407223915672609459}
+  m_Father: {fileID: 2970297265812155368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &4606134287736738303
+--- !u!61 &2114709825079684392
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4664845888447901704}
-  m_Enabled: 1
+  m_GameObject: {fileID: 1993370890169595837}
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -165,7 +141,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.32156086, y: -0.13421959}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -176,29 +152,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.51, y: 1}
+  m_Size: {x: 3.3715425, y: 1.2115608}
   m_EdgeRadius: 0
---- !u!114 &7428477975634683749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4664845888447901704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d84d36b0cf2e02428639f297cf73e27, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionSharingRadius: 0
-  detectionBlockingLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  shouldConsiderLineOfSight: 0
-  IsDetectionShared: 0
-  OnPlayerDetect:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5432116050934168534
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,9 +193,7 @@ Transform:
   m_Children:
   - {fileID: 6857884592949366971}
   - {fileID: 1623436322660849237}
-  - {fileID: 766381758430196026}
-  - {fileID: 5267738266894914344}
-  - {fileID: 7198852622325205922}
+  - {fileID: 2970297265812155368}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6844388411748321469
@@ -420,7 +373,7 @@ MonoBehaviour:
   tonpaMobPrefab: {fileID: 3685673258423367676, guid: 6dfded6a8a69dc34ca3030924f276932, type: 3}
   gunnerMobPrefab: {fileID: 2230194136603300056, guid: 112b131d06325c145b5ba5dbca3c527d, type: 3}
   mobSpawnPoint: {fileID: 0}
-  meleeAttackHitbox: {fileID: 4679903115679224296}
+  hitboxes: {fileID: 5204460066286976703}
   walkSpeed: 1.7
   chaseStopDistance: 1
   groundLayer:
@@ -506,6 +459,83 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
   flashDuration: 0.15
+--- !u!1 &8092985255213557379
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3470360700160167281}
+  - component: {fileID: 8636860683814462734}
+  m_Layer: 6
+  m_Name: MeleeAttack3Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3470360700160167281
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8092985255213557379}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2970297265812155368}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &8636860683814462734
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8092985255213557379}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.3120054, y: 0.042554498}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.7982213, y: 1.565109}
+  m_EdgeRadius: 0
 --- !u!1 &8469068301973273362
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,7 +601,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.45, y: 0}
+  m_Offset: {x: 0.3749559, y: -0.48254538}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -582,7 +612,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.4996762, y: 1.238884}
   m_EdgeRadius: 0
 --- !u!114 &3306134738073383657
 MonoBehaviour:
@@ -615,7 +645,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7198852622325205922}
   - component: {fileID: 5904141127077743963}
-  - component: {fileID: 1131525090034445852}
   m_Layer: 6
   m_Name: DashAttackHitbox
   m_TagString: Untagged
@@ -631,12 +660,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8764309848886690269}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4407223915672609459}
+  m_Father: {fileID: 2970297265812155368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &5904141127077743963
 BoxCollider2D:
@@ -683,13 +712,50 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.7573992, y: 0.60704124}
   m_EdgeRadius: 0
---- !u!114 &1131525090034445852
+--- !u!1 &8950348187008437846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2970297265812155368}
+  - component: {fileID: 5204460066286976703}
+  - component: {fileID: 6030461943942147217}
+  m_Layer: 6
+  m_Name: Hitboxes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2970297265812155368
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950348187008437846}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7198852622325205922}
+  - {fileID: 5267738266894914344}
+  - {fileID: 6798498846392954878}
+  - {fileID: 3470360700160167281}
+  m_Father: {fileID: 4407223915672609459}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5204460066286976703
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8764309848886690269}
+  m_GameObject: {fileID: 8950348187008437846}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
@@ -705,6 +771,33 @@ MonoBehaviour:
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
+--- !u!50 &6030461943942147217
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8950348187008437846}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &7854149516664358883
 PrefabInstance:
   m_ObjectHideFlags: 0
