@@ -61,9 +61,6 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
 
         // 공격 애니메이션 재생 중
         isAttackMotionFinished = false;
-
-        // 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
-        StaggerResistance = StaggerStrength.Weak;
     }
 
     bool IMeleeEnemyBehavior.IsMeleeAttackReady()
@@ -93,6 +90,9 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     public void EnableMeleeAttackHitbox()
     {
         meleeAttackHitbox.IsHitboxEnabled = true;
+
+        // 근거리 몹도 선딜레이 끝난 뒤부터 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
+        StaggerResistance = StaggerStrength.Weak;
     }
 
     public void DisableMeleeAttackHitbox()
