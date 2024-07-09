@@ -168,7 +168,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPerformed = false; // 공중 공격을 이미 했는지 (점프마다 한 번 가능)
     private int attackCount = 0;
-    private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
+    private int maxAttackCount = 4; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
     // 무적 판정
     private bool isInvincible = false;

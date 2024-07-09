@@ -183,7 +183,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -1421665010, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -390,7 +390,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   descriptionText: {fileID: 0}
-  gaugeSlider: {fileID: 0}
   gaugeArrow: {fileID: 0}
 --- !u!114 &8017939143549858306
 MonoBehaviour:
