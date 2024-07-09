@@ -7,6 +7,20 @@ using UnityEngine.Events;
 // 플레이어의 공격처럼 상황마다 다른 모양의 콜라이더를 사용하는 경우를 고려해
 // 하나의 오브젝트에 여러 개의 콜라이더와 하나의 ApplyDamageOnContact 스크립트가 있다고 가정함.
 // 콜라이더 중에서는 한 번에 하나만 활성화되는 것이 정상!
+//
+// object hierarchy 예시:
+//
+//    Player
+//    ├─ ApplyDamageOnHit   <-- kinematic rigidbody, layer는 Weapon
+//    │  ├─ Collider1       <-- 1타 공격의 범위에 맞는 콜라이더, layer는 Weapon
+//    │  ├─ Collider2       <-- 2타 공격의 범위에 맞는 콜라이더, layer는 Weapon
+//
+//    1타 모션의 애니메이션 클립은 Collider1.enabled를 토글,
+//    2타 모션의 애니메이션 클립은 Collider2.enabled를 토글, ...
+//
+// 콜라이더를 하나만 쓴다면 kinematic rigidbody 없이
+// ApplyDamageOnHit 스크립트 붙은 자식 오브젝트에
+// 바로 콜라이더 하나만 달아주면 된다
 public class ApplyDamageOnContact : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
