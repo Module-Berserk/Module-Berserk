@@ -8,6 +8,7 @@ TagManager:
   - Attack
   - Enemy
   - TestSpawnPoint
+  - C1BoxGimmick
   layers:
   - Default
   - TransparentFX

@@ -1155,6 +1155,104 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 806263080925575317, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
   m_PrefabInstance: {fileID: 8602893245577955615}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &326798881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 326798884}
+  - component: {fileID: 326798883}
+  - component: {fileID: 326798882}
+  m_Layer: 8
+  m_Name: NoBoxGimmickNearbyTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &326798882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326798881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d90539c82d5fad24d82e4a5074829780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
+  objectTag: C1BoxGimmick
+  isInitiallyActive: 1
+--- !u!61 &326798883
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326798881}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 14.3, y: 1.95}
+  m_EdgeRadius: 0
+--- !u!4 &326798884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326798881}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &335837298
 GameObject:
   m_ObjectHideFlags: 0
@@ -1499,6 +1597,8 @@ MonoBehaviour:
   OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
+  objectTag: Enemy
+  isInitiallyActive: 0
 --- !u!61 &445232736
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -114618,6 +114718,8 @@ MonoBehaviour:
   OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
+  objectTag: Enemy
+  isInitiallyActive: 0
 --- !u!1001 &1412133575
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -125447,6 +125549,8 @@ MonoBehaviour:
   OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
+  objectTag: Enemy
+  isInitiallyActive: 0
 --- !u!61 &2134138118
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -126041,6 +126145,10 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: noBoxGimmickNearbyTrigger
+      value: 
+      objectReference: {fileID: 326798882}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: boxGenerators.Array.data[0]
       value: 
       objectReference: {fileID: 1955540664}
@@ -126348,6 +126456,7 @@ SceneRoots:
   - {fileID: 620476319}
   - {fileID: 1907163854}
   - {fileID: 784374029}
+  - {fileID: 326798884}
   - {fileID: 1781259652}
   - {fileID: 1680269746}
   - {fileID: 389233344}

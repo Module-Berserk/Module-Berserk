@@ -51,6 +51,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Dash Attack Pattern")]
+    // 돌진 패턴은 바닥에 떨어진 박스 기믹이 없어야만 시전됨
+    [SerializeField] private NoObjectNearbyTrigger noBoxGimmickNearbyTrigger;
     // 맵 반대편 끝까지 돌진하는데에 걸리는 시간
     [SerializeField] private float dashDuration;
     [SerializeField] private Ease dashMotionEase;
@@ -366,9 +368,10 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 착지 직전에 다시 활성화하는 방식으로 처리함!
         await WaitUntilBackstepJumpEnd(jumpDuration);
 
-        // TODO: 맵에 떨어진 상자가 남아있다면 무조건 포격 패턴만 사용
-        // 그게 아니라면 반반 확률로 포격 또는 돌진 패턴 사용
-        if (Random.Range(0f, 1f) < 0.5f)
+        // 맵에 떨어진 상자가 없다면 반반 확률로 포격 또는 돌진 패턴 사용.
+        // 그게 아니라면 무조건 포격 패턴만 사용
+        Debug.Log($"box: {noBoxGimmickNearbyTrigger.IsActive}");
+        if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 0.5f)
         {
             // 1페이즈에서는 그냥 백스텝->돌진만 하고 끝나지만
             // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴 중에서 하나가 랜덤하게 연계됨
