@@ -541,15 +541,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격 판정이 들어가는 FixedUpdate보다 애니메이션 상태 갱신이
         // 나중에 일어나기 때문에 이 함수가 호출되는 프레임에 정확히 피격 경직을 당하는 경우
         // Stagger 상태에서 무기 히트박스를 켜버리는 상황이 발생할 수 있음!
+        //
+        // Note:
+        // 어떤 콜라이더를 활성화할지는 지금이 몇 번째 타격인지에 따라 애니메이션 클립에서 처리한다
+        // 플레이어의 공격 모션마다 타격 범위가 다르기 때문
+        // ex) loyal 타입 4타는 지팡이에서 총을 쏘는 모션이라 훨씬 앞에 히트박스가 있어야 함
         if (ActionState == PlayerActionState.Stagger)
         {
+            OnDisableAttackCollider();
             return;
         }
 
         // 바라보는 방향에 따라 콜라이더 위치 조정
         weaponHitbox.SetHitboxDirection(IsFacingLeft);
-
-        weaponHitbox.IsHitboxEnabled = true;
     }
 
     public void OnBeginAttackInputBuffering()

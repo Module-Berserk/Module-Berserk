@@ -4,19 +4,39 @@ using UnityEngine.Events;
 // 플레이어의 무기 또는 적의 공격 콜라이더와 접촉할 때 데미지를 입히는 컴포넌트.
 // 대칭적인 모양의 Collider2D가 필요하고 layer는 Weapon으로 설정해야 한다.
 //
-// TODO:
-// 실제 공격 판정 구현할 때는 짧은 시간 안에 TriggerEnter와 TriggerExit을 반복해
-// 중복으로 데미지를 입히는 경우가 없도록 edge case를 잘 처리해줘야 함!!!
-[RequireComponent(typeof(Collider2D))]
+// 플레이어의 공격처럼 상황마다 다른 모양의 콜라이더를 사용하는 경우를 고려해
+// 하나의 오브젝트에 여러 개의 콜라이더와 하나의 ApplyDamageOnContact 스크립트가 있다고 가정함.
+// 콜라이더 중에서는 한 번에 하나만 활성화되는 것이 정상!
 public class ApplyDamageOnContact : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
     [SerializeField] private StaggerStrength staggerStrength;
 
+    // Note: 공격 모션마다 다른 히트박스 범위를 원하는 경우
+    // 여러 콜라이더를 만들어두고 그 중에 하나를 활성화하는 방식을 사용함
+    private Collider2D[] hitboxes;
+
     public bool IsHitboxEnabled
     {
-        get => hitbox.enabled;
-        set => hitbox.enabled = value;
+        get
+        {
+            // 하나라도 켜있으면 true
+            foreach (Collider2D hitbox in hitboxes)
+            {
+                if (hitbox.enabled) return true;
+            }
+            return false;
+        }
+        set
+        {
+            // 전체를 활성화하거나 비활성화.
+            // 플레이어처럼 여러 콜라이더 중 하나만 활성화하는 경우는
+            // 애니메이션 클립에서 직접 골라서 처리한다.
+            foreach (Collider2D hitbox in hitboxes)
+            {
+                hitbox.enabled = value;
+            }
+        }
     }
 
     // 공격의 주체가 설정해줘야하는 스탯
@@ -29,19 +49,20 @@ public class ApplyDamageOnContact : MonoBehaviour
     // 기어 시스템에서 게이지를 회복하는 조건으로 활용한다.
     public UnityEvent OnApplyDamageSuccess;
 
-    private Collider2D hitbox;
-
     private void Awake()
     {
-        hitbox = GetComponent<Collider2D>();
+        hitboxes = GetComponentsInChildren<Collider2D>();
     }
 
     public void SetHitboxDirection(bool isFacingLeft)
     {
         // 콜라이더가 대칭적인 형태라고 가정하고
         // 바라보는 방향에 따라 콜라이더 위치 조정
-        float newOffsetX = Mathf.Abs(hitbox.offset.x) * (isFacingLeft ? -1f : 1f);
-        hitbox.offset = new Vector2(newOffsetX, hitbox.offset.y);
+        foreach (Collider2D hitbox in hitboxes)
+        {
+            float newOffsetX = Mathf.Abs(hitbox.offset.x) * (isFacingLeft ? -1f : 1f);
+            hitbox.offset = new Vector2(newOffsetX, hitbox.offset.y);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
