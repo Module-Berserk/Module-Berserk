@@ -140,6 +140,10 @@ PrefabInstance:
       value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: screenShakeOnLand
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: isInitialPositionDown
       value: 0
       objectReference: {fileID: 0}
@@ -199,7 +203,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
-      insertIndex: 2
+      insertIndex: -1
       addedObject: {fileID: 1140230023}
     - targetCorrespondingSourceObject: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       insertIndex: -1
@@ -1473,6 +1477,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: screenShakeOnLand
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: isInitialPositionDown
       value: 0
       objectReference: {fileID: 0}
@@ -1532,7 +1540,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
-      insertIndex: 2
+      insertIndex: -1
       addedObject: {fileID: 827070758}
     - targetCorrespondingSourceObject: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       insertIndex: -1
@@ -1668,6 +1676,10 @@ PrefabInstance:
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: movementRange
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: screenShakeOnLand
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: isInitialPositionDown
@@ -114001,6 +114013,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: screenShakeOnLand
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: isInitialPositionDown
       value: 0
       objectReference: {fileID: 0}
@@ -123150,6 +123166,10 @@ PrefabInstance:
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: movementRange
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: screenShakeOnLand
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: isInitialPositionDown

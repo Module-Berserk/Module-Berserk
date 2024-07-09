@@ -31,8 +31,13 @@ public class Elevator : MonoBehaviour
     // rigidbody 자체를 흔들면 물리가 불안정하니까 tilemap 등 시각적인 요소만
     // 다 하나의 child object에 넣어두고 얘를 흔드는 방식으로 처리함
     [SerializeField] private Transform visualElements;
+    // 엘리베이터가 "쾅"하고 떨어지는 수준인 경우 화면 흔들림을 주고 싶을 수 있음
+    [SerializeField] private bool screenShakeOnLand;
+    [SerializeField] private float screenShakeForce;
+    [SerializeField] private float screenShakeDuration;
 
     private Rigidbody2D rb;
+    private ScreenShake screenShake;
     private float heightUpperBound;
     private float heightLowerBound;
     private bool isActive = false;
@@ -40,6 +45,7 @@ public class Elevator : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        screenShake = GetComponent<ScreenShake>();
 
         CalculateMovementBoundary();
     }
@@ -155,6 +161,12 @@ public class Elevator : MonoBehaviour
             .SetUpdate(UpdateType.Fixed);
 
         await UniTask.WaitForSeconds(movementDuration);
+
+        // 엘리베이터가 "쾅"하고 떨어지는 경우 추가적인 화면 흔들림 효과 부여
+        if (screenShakeOnLand && Mathf.Approximately(destinationHeight, heightLowerBound))
+        {
+            screenShake.ApplyScreenShake(screenShakeForce, screenShakeDuration);
+        }
     }
 
     private void PlayerElevatorMoveStartEffect()
