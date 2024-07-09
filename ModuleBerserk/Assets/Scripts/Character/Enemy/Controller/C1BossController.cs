@@ -4,6 +4,7 @@ using Cinemachine;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Playables;
 using UnityEngine.UI;
 
@@ -484,9 +485,10 @@ public class C1BossController : MonoBehaviour, IDestructible
             explodePositions.Reverse();
         }
 
+        float groundY = GetGroundHeight();
         foreach (float explodePosition in explodePositions)
         {
-            Vector3 spawnPosition = new Vector3(explodePosition, transform.position.y);
+            Vector3 spawnPosition = new Vector3(explodePosition, groundY);
             Instantiate(cannonExplodePrefab, spawnPosition, Quaternion.identity);
             
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
@@ -506,6 +508,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 맵을 벗어나지 않는 선에서 플레이어 중심, 왼쪽, 오른쪽에 하나씩 생성
         float playerX = player.transform.position.x;
+        float groundY = GetGroundHeight();
         List<float> explodePositions = new()
         {
             playerX,
@@ -515,7 +518,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         for (int i = 0; i < 3; ++ i)
         {
-            Vector3 spawnPosition = new Vector3(explodePositions[i], transform.position.y);
+            Vector3 spawnPosition = new Vector3(explodePositions[i], groundY);
             Instantiate(cannonExplodePrefab, spawnPosition, Quaternion.identity);
             
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
@@ -523,6 +526,14 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
         await UniTask.WaitUntil(() => !isCannonShotOngoing, cancellationToken: attackCancellation.Token);
+    }
+
+    private float GetGroundHeight()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, Mathf.Infinity, groundLayer);
+        Assert.IsNotNull(hit.collider);
+
+        return hit.point.y;
     }
 
     // 애니메이션에서 실제 포격 시작과 끝에 호출해주는 이벤트.
