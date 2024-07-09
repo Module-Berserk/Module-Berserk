@@ -71,6 +71,9 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
     {
         animator.SetTrigger("RangedAttack");
 
+        // 추적 혹은 도주 중지
+        rb.velocity = new Vector2(0f, rb.velocity.y);
+
         // 약간의 랜덤성을 부여한 쿨타임 시작
         // 적들이 동일한 간격으로 공격하는 것을 방지해 조금 더 자연스럽게 느껴지도록 한다
         remainingRangedAttackCooltime = delayBetweenRangedAttacks * SampleRandomizationFactor();
@@ -100,6 +103,9 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
     void IRangedEnemyBehavior.RepelAttack()
     {
         animator.SetTrigger("RepelAttack");
+
+        // 도주 취소
+        rb.velocity = new Vector2(0f, rb.velocity.y);
 
         // 최소 사정거리를 확보하기 위해 도주하는 상태에는
         // 플레이어를 등지고 있으므로 공격을 위해 뒤로 돌아봐야 함
