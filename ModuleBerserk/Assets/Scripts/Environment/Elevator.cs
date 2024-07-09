@@ -148,33 +148,11 @@ public class Elevator : MonoBehaviour
 
     private async UniTask MoveToAsync(float destinationHeight, float movementDuration)
     {
-        // 목적지 방향으로 일정한 속도 부여
         rb.DOMoveY(destinationHeight, movementDuration)
             .SetEase(movementEase)
             .SetUpdate(UpdateType.Fixed);
 
-        // 이동 속도가 너무 빨라서 목적지를 지나쳐버리지 않는 한
-        // 한 프레임씩 기다리며 거리가 충분히 가까워졌는지 체크
-        while (IsWithinBoundary())
-        {
-            float heightDiff = destinationHeight - rb.position.y;
-            bool isCloseEnough = Mathf.Abs(heightDiff) < MOVEMENT_STOP_DISTANCE_THRESHOLD;
-            if (isCloseEnough)
-            {
-                break;
-            }
-
-            await UniTask.NextFrame();
-        }
-        
-        // 충분히 가까워진 상태이므로 정확한 도착 좌표로 이동
-        rb.position = new Vector2(rb.position.x, destinationHeight);
-        rb.velocity = Vector2.zero;
-    }
-
-    private bool IsWithinBoundary()
-    {
-        return rb.position.y >= heightLowerBound && rb.position.y <= heightUpperBound;
+        await UniTask.WaitForSeconds(movementDuration);
     }
 
     private void PlayerElevatorMoveStartEffect()

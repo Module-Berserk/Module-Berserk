@@ -132,6 +132,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private SliderJoint2D sliderJoint;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private SpriteRootMotion spriteRootMotion;
@@ -208,6 +209,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        sliderJoint = GetComponent<SliderJoint2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
@@ -504,6 +506,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirectionByInput();
 
+        // 가로로 움직이는 플랫폼 위에서도 가만히 서있도록 큰 마찰력 사용
+        rb.sharedMaterial = maxFrictionMat;
+
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
         {
@@ -670,26 +675,28 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateAnimatorState();
     }
 
-    // 엘리베이터 위에서 벗어났을 때 parent object 설정을 원래대로 돌려놓음.
-    // parent 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
-    private void StopStickingToElevator()
-    {
-        transform.SetParent(null);
-    }
-
-    // IsGrounded가 true인 경우 호출되는 함수로,
-    // 밟고 있는 플랫폼이 엘리베이터인 경우 플랫폼을 자신의 parent object로 설정한다.
+    // IsGrounded가 true인 경우 매 프레임 호출되는 함수로,
+    // 밟고 있는 플랫폼이 엘리베이터인 경우 slider joint를 사용해
+    // 엘리베이터와 나 사이에 수평 움직임만 가능하도록 제한한다.
     //
     // 아래로 움직이는 엘리베이터의 이동 속도를 중력이
     // 바로 따라잡지 못해 낙하와 착지를 반복하는 현상을 막아줌.
     private void HandleStickingToElevator()
     {
-        // GetComponent와 SetParent가 무거운 연산이므로
-        // parent가 null인 경우에만 (i.e. 엘리베이터에 서있지 않은 상태) 실행한다.
-        if (transform.parent == null && groundContact.CurrentPlatform.GetComponent<Elevator>())
+        // 매 프레임 호출되는 함수라서 이미 처리되었으면 굳이 설정할 필요 없음
+        if (!sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>())
         {
-            transform.SetParent(groundContact.CurrentPlatform.transform);
+            sliderJoint.enabled = true;
+            sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
         }
+    }
+
+    // 엘리베이터 위에서 벗어났을 때 slider joint 설정을 원래대로 돌려놓음.
+    // joint 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
+    private void StopStickingToElevator()
+    {
+        sliderJoint.enabled = false;
+        sliderJoint.connectedBody = null;
     }
 
     private void HandleEvasionCooltime()
@@ -852,10 +859,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // 원하는 속도에 부드럽게 도달하도록 보간.
-        // 공중에 있거나 엘리베이터에 탑승 중인 경우는 수직 속도 변경 x
+        // 공중에 있는 경우는 수직 속도 변경 x
         float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
         Vector2 updatedVelocity = moveDirection * updatedSpeed;
-        if (!groundContact.IsGrounded || IsRidingElevator)
+        if (!groundContact.IsGrounded)
         {
             updatedVelocity.y = rb.velocity.y;
         }
@@ -930,6 +937,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void PerformJump()
     {
+        // 혹시 엘리베이터 위에 있었다면 수직 움직임을 동기화하기
+        // 위해 설정된 slider joint가 점프를 방해할 것이므로 이를 먼저 해제해야 함
+        StopStickingToElevator();
+
         // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
         if (shouldWallJump)
         {
