@@ -219,7 +219,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2.12, y: -0.48254538}
+  m_Offset: {x: 3.02, y: -0.8}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -484,9 +484,12 @@ MonoBehaviour:
   mapRightEnd: {fileID: 0}
   backstepJumpMaxDuration: 2
   noBoxGimmickNearbyTrigger: {fileID: 0}
+  dashAttackHitbox: {fileID: 5904141127077743963}
   dashDuration: 0.2
   dashMotionEase: 32
   dashImpactCameraShakeForce: 1
+  playerWallReboundDistance: 1.5
+  playerWallReboundDuration: 0.5
   cannonExplodePrefab: {fileID: 7140365216682225963, guid: bb145a9935bf7de44a3b7cd9480bc5c5, type: 3}
   boxGenerators:
   - {fileID: 0}

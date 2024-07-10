@@ -1980,6 +1980,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &509884096 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5432116050934168534, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+  m_PrefabInstance: {fileID: 7028648427441081638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2112,7 +2117,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -144.5, y: -14.699989, z: -10}
+  m_LocalPosition: {x: -0.08, y: -1.1833, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -114438,7 +114443,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1262821961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124957,7 +124962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2011123101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125148,12 +125153,39 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
   m_PrefabInstance: {fileID: 7028648427441081638}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_GameObject: {fileID: 509884096}
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb8ba7e9ee41f9c44bc16642cbb7eacf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!234 &2036877071
+SliderJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509884096}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0, y: 0}
+  m_AutoConfigureAngle: 0
+  m_Angle: 90
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 0
+  m_TranslationLimits:
+    m_LowerTranslation: 0
+    m_UpperTranslation: 0
 --- !u!114 &2040246867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
@@ -125797,7 +125829,7 @@ PrefabInstance:
       objectReference: {fileID: -979158457, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.3
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -126120,7 +126152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: mapLeftEnd
@@ -126145,6 +126177,18 @@ PrefabInstance:
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: backstepJumpMaxImpulse
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: playerWallReboundForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: playerWallReboundForce.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      propertyPath: playerWallReboundForce.y
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3620528243376873997, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       propertyPath: noBoxGimmickNearbyTrigger
@@ -126206,6 +126250,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5432116050934168534, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2036877071}
     - targetCorrespondingSourceObject: {fileID: 7214580116732781661, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}

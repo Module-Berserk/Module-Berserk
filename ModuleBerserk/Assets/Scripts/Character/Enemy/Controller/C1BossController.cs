@@ -61,11 +61,17 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Dash Attack Pattern")]
     // 돌진 패턴은 바닥에 떨어진 박스 기믹이 없어야만 시전됨
     [SerializeField] private NoObjectNearbyTrigger noBoxGimmickNearbyTrigger;
+    // 돌진은 모션을 DOTween으로 처리해서 히트박스를 켜고 끄는 시점을 애니메이션 클립으로 지정할 수 없음.
+    // 그러므로 공격 함수에서 직접 콜라이더에 접근해야 함.
+    [SerializeField] private BoxCollider2D dashAttackHitbox;
     // 맵 반대편 끝까지 돌진하는데에 걸리는 시간
     [SerializeField] private float dashDuration;
     [SerializeField] private Ease dashMotionEase;
     // 돌진이 벽이나 상자에 충돌했을 때의 카메라 흔들림 강도
     [SerializeField] private float dashImpactCameraShakeForce;
+    // 플레이어가 돌진 패턴에 끌려와서 벽에 충돌했을 때 반동으로 튕겨나오는 거리와 시간
+    [SerializeField] private float playerWallReboundDistance;
+    [SerializeField] private float playerWallReboundDuration;
 
 
     [Header("Cannon Pattern")]
@@ -93,12 +99,13 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private SliderJoint2D sliderJoint;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private SpriteRootMotion spriteRootMotion;
     private FlashEffectOnHit flashEffectOnHit;
     private CinemachineImpulseSource cameraShake;
-    private GameObject player;
+    private PlayerManager playerManager;
 
     private GroundContact groundContact;
 
@@ -155,12 +162,13 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        sliderJoint = GetComponent<SliderJoint2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         cameraShake = GetComponent<CinemachineImpulseSource>();
-        player = GameObject.FindGameObjectWithTag("Player");
+        playerManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>();
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
@@ -169,6 +177,9 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
+
+        // 돌진 패턴에서 플레이어 끌고가는 효과 줄 때 사용됨
+        hitboxes.OnApplyDamageSuccess.AddListener(OnAttackSuccess);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -196,6 +207,17 @@ public class C1BossController : MonoBehaviour, IDestructible
                 // 쿨타임 처리를 해줄 백스텝 패턴 task 전체가 취소되었으니 여기서 쿨타임 설정을 해줘야 함
                 RestartBackstepPatternCooltime();
             }
+        }
+    }
+
+    public void OnAttackSuccess()
+    {
+        // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵
+        if (actionState == ActionState.DashAttack)
+        {
+            Debug.Log("grab!");
+            sliderJoint.connectedBody = playerManager.GetComponent<Rigidbody2D>();
+            sliderJoint.enabled = true;
         }
     }
 
@@ -284,7 +306,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     public void LookAtPlayer()
     {
-        IsFacingLeft = player.transform.position.x < rb.position.x;
+        IsFacingLeft = playerManager.transform.position.x < rb.position.x;
         meleeAttackRange.SetDetectorDirection(IsFacingLeft);
         flameThrowerRange.SetDetectorDirection(IsFacingLeft);
         hitboxes.SetHitboxDirection(IsFacingLeft);
@@ -388,7 +410,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         // 플레이어가 너무 가깝지 않은 경우에만 걸어서 다가감.
         // 이 조건이 없으면 플레이어와 정확히 겹쳐서 좌우로 왔다갔다하는 이상한 모습이 연출됨...
-        float distanceToPlayer = Mathf.Abs(player.transform.position.x - rb.position.x);
+        float distanceToPlayer = Mathf.Abs(playerManager.transform.position.x - rb.position.x);
         if (distanceToPlayer > chaseStopDistance)
         {
             // Note: 걷기 상태인 경우 FixedUpdate에서 먼저 플레이어를 바라보게 IsFacingLeft 값을 설정해줌
@@ -417,7 +439,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 맵에 떨어진 상자가 없다면 반반 확률로 포격 또는 돌진 패턴 사용.
         // 그게 아니라면 무조건 포격 패턴만 사용
-        if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 0.5f)
+        if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 10.5f)
         {
             // 1페이즈에서는 그냥 백스텝->돌진만 하고 끝나지만
             // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴 중에서 하나가 랜덤하게 연계됨
@@ -499,7 +521,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private float GetBackstepJumpTargetX()
     {
         // 플레이어가 나보다 오른쪽에 있다면 왼쪽으로 점프
-        if (player.transform.position.x > transform.position.x)
+        if (playerManager.transform.position.x > transform.position.x)
         {
             return mapLeftEnd.position.x;
         }
@@ -556,7 +578,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         await UniTask.WaitUntil(() => isCannonShotOngoing, cancellationToken: attackCancellation.Token);
 
         // 맵을 벗어나지 않는 선에서 플레이어 중심, 왼쪽, 오른쪽에 하나씩 생성
-        float playerX = player.transform.position.x;
+        float playerX = playerManager.transform.position.x;
         float groundY = GetGroundHeight();
         List<float> explodePositions = new()
         {
@@ -600,16 +622,34 @@ public class C1BossController : MonoBehaviour, IDestructible
     private async UniTask PerformDashAttackPatternAsync()
     {
         actionState = ActionState.DashAttack;
-
         animator.SetTrigger("DashAttack");
-        spriteRootMotion.HandleAnimationChange();
 
         // 애니메이션 이벤트에 의해 돌진이 시작되기를 기다림
         isDashMotionOngoing = false;
         await UniTask.WaitUntil(() => isDashMotionOngoing, cancellationToken: attackCancellation.Token);
 
+        dashAttackHitbox.enabled = true;
+
         // 박스 기믹과 충돌하는 경우를 대비해 cancellation token을 넣어준다
         await UniTask.WaitForSeconds(dashDuration, cancellationToken: attackCancellation.Token);
+
+        PlayCrashSFX();
+        dashAttackHitbox.enabled = false;
+
+        // 공격 성공에 의한 slider joint 설정이 확실히 끝날 때까지 잠깐 기다림.
+        // 히트박스를 끄는 프레임에 바로 벽쿵 처리를 해버리면 slider joint 설정이
+        // 다음 프레임에 일어나서 둘이 계속 joint로 묶여있는 버그가 발생함.
+        await UniTask.WaitForSeconds(0.1f, cancellationToken: attackCancellation.Token);
+
+        // 플레이어가 돌진 패턴에 맞은 경우 벽쿵
+        if (sliderJoint.enabled)
+        {
+            sliderJoint.enabled = false;
+
+            // 경직과 함께 벽에서 튕겨나오는 효과
+            var reboundDistance = playerWallReboundDistance * (IsFacingLeft ? 1f : -1f);
+            playerManager.ApplyWallReboundAsync(reboundDistance, playerWallReboundDuration).Forget();
+        }
 
         // task cancellation 없이 이 라인에 도달했다는건
         // 박스에 부딛히지 않고 벽에 충돌했다는 뜻이므로
@@ -628,7 +668,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     public void BeginDashAttackMovement()
     {
         float dashTargetX = GetDashTargetX();
-        rb.DOMoveX(dashTargetX, dashDuration).SetEase(dashMotionEase);
+        rb.DOMoveX(dashTargetX, dashDuration)
+            .SetEase(dashMotionEase)
+            .SetUpdate(UpdateType.Fixed);
+        
         isDashMotionOngoing = true;
     }
 

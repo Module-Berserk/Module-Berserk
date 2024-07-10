@@ -778,7 +778,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         platformerMovement.ApplyZeroFriction();
         SetStaggerStateForDurationAsync(staggerDuration).Forget();
 
-        // TODO:
+        // TO:
         // 경직 애니메이션 재생 (약한 경직 -> 제자리 경직 모션, 강한 경직 -> 뒤로 넘어지는 모션)
         // 지금은 점프 모션 중 프레임 하나 훔쳐와서 경직 모션이라 치고 박아둔 상태 (player_loyal_stagger_temp)이고,
         // 애니메이터의 IsStaggered 파라미터를 설정해서 임시 경직 애니메이션을 재생하도록 했음.
@@ -852,6 +852,24 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetTrigger("Stun");
 
         await UniTask.WaitForSeconds(duration, cancellationToken: stunCancellation.Token);
+
+        ActionState = PlayerActionState.IdleOrRun;
+    }
+
+    // 챕터1 보스의 돌진 패턴에 맞아 끌려간 뒤 벽에 튕겨나오는 모션.
+    // 그냥 힘만 주면 플레이어 조작에 의해 바로 정지해버리니까 잠시 경직 상태를 부여한다.
+    // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수)
+    public async UniTask ApplyWallReboundAsync(float distance, float duration)
+    {
+        ActionState = PlayerActionState.Stun;
+        platformerMovement.ApplyZeroFriction();
+        IsFacingLeft = distance > 0f;
+
+        rb.DOMoveX(rb.position.x + distance, duration)
+            .SetEase(Ease.OutCubic)
+            .SetUpdate(UpdateType.Fixed);
+
+        await UniTask.WaitForSeconds(duration);
 
         ActionState = PlayerActionState.IdleOrRun;
     }
