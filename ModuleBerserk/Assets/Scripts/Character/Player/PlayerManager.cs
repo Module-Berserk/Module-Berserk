@@ -44,50 +44,6 @@ public enum PlayerActionState
 // 1. cameraFollowTarget - cinemachine 카메라의 추적 대상으로 설정된 빈 오브젝트
 public class PlayerManager : MonoBehaviour, IDestructible
 {
-    [Header("Walk / Run")]
-    [SerializeField] private float turnAcceleration = 150f;
-    [SerializeField] private float moveAcceleration = 100f;
-    [SerializeField] private float moveDecceleration = 150f;
-    // 서있을 때는 마찰력을 높게 줘서 경사로에서도 미끄러지지 않도록 만듦
-    [SerializeField] private PhysicsMaterial2D zeroFrictionMat;
-    [SerializeField] private PhysicsMaterial2D maxFrictionMat;
-
-
-    [Header("Jump / Fall")]
-    [SerializeField] private float jumpVelocity = 12f;
-    [SerializeField] private Vector2 wallJumpVelocity = new(10f, 10f);
-    // 땅에서 떨어져도 점프를 허용하는 time window
-    [SerializeField] private float coyoteTime = 0.15f;
-    // 공중에 있지만 위로 이동하는 중이라면 DefaultGravityScale을 사용하고
-    // 아래로 이동하는 중이라면 GravityScaleWhenFalling을 사용해
-    // 더 빨리 추락해서 공중에 붕 뜨는 이상한 느낌을 줄임.
-    [SerializeField] private float defaultGravityScale = 3f;
-    [SerializeField] private float gravityScaleWhileFalling = 6f;
-    // 아주 높은 곳에서 떨어질 때 부담스러울 정도로 아래로 가속하는 상황 방지
-    [SerializeField] private float maxFallSpeed = 15f;
-    // 공중 조작이 지상 조작보다 둔하게 만드는 파라미터 (0: 조작 불가, 1: 변화 없음)
-    [SerializeField, Range(0f, 1f)] private float defaultAirControl = 0.5f;
-    // wall jump 이후 벽으로 돌아오는데에 걸리는 시간을 조정하는 파라미터 (airControl을 잠시 이 값으로 대체함)
-    [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.2f;
-    // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
-    [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
-
-
-    [Header("Ground Contact")]
-    // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
-    [SerializeField] private LayerMask groundLayerMask;
-    // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급.
-    // 
-    // 바닥과의 충돌 판정 거리는 생각보다 크게 줘야 함.
-    // 엘리베이터를 타고 하강하는 상황이라면
-    // 엘리베이터가 먼저 떨어지고 플레이어가 중력으로 낙하하는
-    // 구조여서 의외로 수직 거리가 크게 벌어지기 때문!
-    //
-    // 벽과의 충돌은 충돌 판정 거리를 작게 잡아줘도 됨.
-    [SerializeField] private float groundContactDistanceThreshold = 0.2f;
-    [SerializeField] private float wallContactDistanceThreshold = 0.02f;
-
-
     [Header("Follow Camera Target")]
     // Cinemachine Virtual Camera의 Follow로 등록된 오브젝트를 지정해줘야 함!
     // 새로운 높이의 플랫폼에 착지하기 전까지 카메라의 y축 좌표를 일정하게 유지하는 용도.
@@ -100,7 +56,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
     [SerializeField] private float weakStaggerKnockbackForce = 10f;
     [SerializeField] private float strongStaggerKnockbackForce = 23f;
-
 
 
     [Header("Hitbox")]
@@ -124,17 +79,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         protected set => spriteRenderer.flipX = value;
     }
 
-    // 엘리베이터 위에서는 수직 움직임을 동기화하기 위해
-    // child object로 플레이어를 넣어주므로 parent가
-    // null인지 확인하면 지금 탑승 중인지 판단할 수 있다.
-    public bool IsRidingElevator { get => transform.parent != null; }
-
     // 컴포넌트 레퍼런스
     private Rigidbody2D rb;
-    private BoxCollider2D boxCollider;
-    private SliderJoint2D sliderJoint;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private PlatformerMovement platformerMovement;
     private SpriteRootMotion spriteRootMotion;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
@@ -143,26 +92,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // GameState에서 가져온 저장 가능한 플레이어 상태들
     private PlayerState playerState;
 
-    // 지면 접촉 테스트 관리자
-    private GroundContact groundContact;
-    // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
-    // 이 값이 CoyoteTime보다 낮을 경우 isGrounded가 false여도 점프 가능.
-    private float coyoteTimeCounter = 0f;
-    // 땅에 닿기 전에 점프한 횟수.
-    // 더블 점프 처리에 사용됨.
-    private int jumpCount = 0;
-    // 벽에 붙어있다가 떨어지는 순간의 coyote time과
-    // 그냥 달리다가 떨어지는 순간의 coyote time을 구분하기 위한 상태 변수.
-    // 점프를 일반 점프로 할지 wall jump로 할지 결정한다.
-    private bool shouldWallJump = false;
-    // 키 입력은 physics 루프와 다른 시점에 처리되니까
-    // 여기에 기록해두고 물리 연산은 FixedUpdate에서 처리함
     private bool isJumpKeyPressed = false;
-    // 현재 어느 쪽을 바라보고 있는지 기록.
-    // 스프라이트 반전과 카메라 추적 위치 조정에 사용됨.
-    private bool isStickingToRightWall;
-    // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
-    private float airControl;
     
     //Prototype 공격용 변수들
     private bool isAttackInputBufferingAllowed = false; // 공격 모션 중에서 선입력 기록이 가능한 시점에 도달했는지
@@ -200,18 +130,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Awake()
     {
         FindComponentReferences();
-        
-        groundContact = new(rb, boxCollider, groundLayerMask, groundContactDistanceThreshold, wallContactDistanceThreshold);
-        airControl = defaultAirControl;
     }
 
     private void FindComponentReferences()
     {
         rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        sliderJoint = GetComponent<SliderJoint2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        platformerMovement = GetComponent<PlatformerMovement>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
@@ -296,11 +222,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void OnFallDown(InputAction.CallbackContext context)
     {
-        if (groundContact.IsSteppingOnOneWayPlatform())
+        if (platformerMovement.IsSteppingOnOneWayPlatform)
         {
-            StopStickingToElevator();
-            groundContact.PreventTestForDuration(0.2f);
-            groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f).Forget();
+            platformerMovement.FallThroughPlatform();
         }
     }
 
@@ -476,7 +400,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         isInvincible = false;
 
         // 회피 끝났으면 다시 추락 가능
-        rb.gravityScale = defaultGravityScale;
+        platformerMovement.UseDefaultGravityScale();
     }
 
     // 공격 애니메이션 중 타격 프레임이 지나간 이후부터
@@ -498,7 +422,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void TriggerNextAttack()
     {
         // 이미 공중 공격을 했으면 착지하기 전까지는 공격 불가
-        if (!groundContact.IsGrounded && isAirAttackPerformed)
+        if (!platformerMovement.IsGrounded && isAirAttackPerformed)
         {
             return;
         }
@@ -507,7 +431,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         UpdateFacingDirectionByInput();
 
         // 가로로 움직이는 플랫폼 위에서도 가만히 서있도록 큰 마찰력 사용
-        rb.sharedMaterial = maxFrictionMat;
+        platformerMovement.ApplyHighFriction();
 
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
@@ -520,7 +444,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // 공중에서는 최대 1회까지만 공격 가능
-        if (!groundContact.IsGrounded)
+        if (!platformerMovement.IsGrounded)
         {
             isAirAttackPerformed = true;
         }
@@ -573,7 +497,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 마지막 모션의 경우 별도의 OnStartWaitingAttackContinuation() 이벤트 없이
         // 바로 OnAttackMotionEnd()가 호출되므로 선입력이 있는 경우를 따로 체크해야 함.
         // 공중에 있는 경우는 최대 공격 횟수에 도달하면 무조건 공격을 멈춰야 하므로 취급 x
-        if (attackCount == maxAttackCount && groundContact.IsGrounded && isAttackInputBuffered)
+        if (attackCount == maxAttackCount && platformerMovement.IsGrounded && isAttackInputBuffered)
         {
             isAttackInputBuffered = false;
             TriggerNextAttack();
@@ -619,44 +543,36 @@ public class PlayerManager : MonoBehaviour, IDestructible
                 spriteRootMotion.ApplyVelocity(IsFacingLeft);
             }
 
-            groundContact.TestContact();
-            if (groundContact.IsGrounded)
+            platformerMovement.HandleGroundContact();
+            if (platformerMovement.IsGrounded)
             {
                 // 공격 모션 중에서 예외적으로 착지 모션이 공중 공격 모션보다 우선순위가 높아서
                 // 딱 착지하기 직전에 공중 공격을 하면 OnAttackMotionEnd() 등이
                 // 호출되지 않은 상태에서 착지 모션으로 전환될 수 있음.
                 // 이 경우 수동으로 공격 상태를 정리해줘야 함...
-                //
-                // Note:
-                // ResetJumpRelatedStates()에서 isAirAttackPerformed의 값을
-                // false로 바꿔버리므로 반드시 해당 함수보다 먼저 처리해줘야 함!!!
                 if (isAirAttackPerformed && IsAttacking())
                 {
                     CancelCurrentAction();
                 }
-
-                ResetJumpRelatedStates();
-
-                // 움직이는 엘리베이터 위에서도 안정적으로
-                // 서있을 수 있게 parent object로 설정해줌
-                HandleStickingToElevator();
+                isAirAttackPerformed = false;
 
                 // 벽에 붙은 상태에서 엘리베이터가 올라와
                 // IsGrounded = true가 되어버리는 상황 처리
+                // TODO: PlatformerMovement 스크립트로 이식
                 if (ActionState == PlayerActionState.StickToWall)
                 {
-                    StopStickingToWall();
+                    platformerMovement.StopStickingToWall();
                 }
             }
-            else
-            {
-                StopStickingToElevator();
-                if (ActionState == PlayerActionState.IdleOrRun || IsAttacking())
-                {
-                    HandleCoyoteTime();
-                    HandleFallingVelocity();
-                }
-            }
+            // TODO: PlatformerMovement 스크립트 테스트 끝나면 삭제할 것
+            // else
+            // {
+            //     if (ActionState == PlayerActionState.IdleOrRun || IsAttacking())
+            //     {
+            //         HandleCoyoteTime();
+            //         HandleFallingVelocity();
+            //     }
+            // }
         }
 
         HandleEvasionCooltime();
@@ -671,36 +587,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
         if (ActionState == PlayerActionState.Stagger)
         {
             // 넉백 효과로 생긴 velocity 부드럽게 감소
-            UpdateMoveVelocity(0f);
+            platformerMovement.UpdateMoveVelocity(0f);
         }
 
         // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
-    }
-
-    // IsGrounded가 true인 경우 매 프레임 호출되는 함수로,
-    // 밟고 있는 플랫폼이 엘리베이터인 경우 slider joint를 사용해
-    // 엘리베이터와 나 사이에 수평 움직임만 가능하도록 제한한다.
-    //
-    // 아래로 움직이는 엘리베이터의 이동 속도를 중력이
-    // 바로 따라잡지 못해 낙하와 착지를 반복하는 현상을 막아줌.
-    private void HandleStickingToElevator()
-    {
-        // 매 프레임 호출되는 함수라서 이미 처리되었으면 굳이 설정할 필요 없음
-        if (!sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>())
-        {
-            sliderJoint.enabled = true;
-            sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
-        }
-    }
-
-    // 엘리베이터 위에서 벗어났을 때 slider joint 설정을 원래대로 돌려놓음.
-    // joint 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
-    private void StopStickingToElevator()
-    {
-        sliderJoint.enabled = false;
-        sliderJoint.connectedBody = null;
     }
 
     private void HandleEvasionCooltime()
@@ -709,75 +601,28 @@ public class PlayerManager : MonoBehaviour, IDestructible
         timeSinceLastEmergencyEvasion += Time.fixedDeltaTime;
     }
 
-    private void ResetJumpRelatedStates()
-    {
-        jumpCount = 0;
-        isAirAttackPerformed = false;
-        shouldWallJump = false;
-        coyoteTimeCounter = 0f;
-        rb.gravityScale = defaultGravityScale;
-    }
-
-    private void HandleCoyoteTime()
-    {
-        coyoteTimeCounter += Time.fixedDeltaTime;
-
-        // 방금 전까지 벽에 매달려있었더라도 coyote time을 넘어서면
-        // 일반적인 더블 점프로 취급 (점프해도 위로만 상승)
-        if (coyoteTimeCounter > coyoteTime)
-        {
-            shouldWallJump = false;
-        }
-    }
-    
-    private void HandleFallingVelocity()
-    {
-        // 현재 추락하는 중이라면 더 강한 중력을 사용해서 붕 뜨는 느낌을 줄임.
-        bool isFalling = rb.velocity.y < -0.01f;
-        if (isFalling)
-        {
-            rb.gravityScale = gravityScaleWhileFalling;
-        }
-
-        // 최대 추락 속도 제한
-        if (rb.velocity.y < -maxFallSpeed)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, -maxFallSpeed);
-        }
-    }
-
     private void HandleMoveInput()
     {
         float moveInput = InputManager.InputActions.Player.Move.ReadValue<float>();
         if (ActionState == PlayerActionState.IdleOrRun)
         {
             UpdateFacingDirectionByInput();
-            if (ShouldStickToWall(moveInput))
+            if (playerState.PlayerType == PlayerType.Rogue && platformerMovement.ShouldStickToWall(moveInput))
             {
-                StartStickingToWall(moveInput);
+                ActionState = PlayerActionState.StickToWall;
+                platformerMovement.StartStickingToWall(moveInput);
             }
             else
             {
-                UpdateMoveVelocity(moveInput);
+                float desiredSpeed = playerState.MoveSpeed.CurrentValue * moveInput;
+                platformerMovement.UpdateMoveVelocity(desiredSpeed);
+                platformerMovement.UpdateFriction(desiredSpeed);
             }
-
-            ApplyStaticFrictionOnNoInput();
         }
-        else if (ActionState == PlayerActionState.StickToWall && ShouldStopStickingToWall(moveInput))
+        else if (ActionState == PlayerActionState.StickToWall && platformerMovement.ShouldStopStickingToWall(moveInput))
         {
-            StopStickingToWall();
-        }
-    }
-
-    private void ApplyStaticFrictionOnNoInput()
-    {
-        if (InputManager.InputActions.Player.Move.IsPressed())
-        {
-            rb.sharedMaterial = zeroFrictionMat;
-        }
-        else
-        {
-            rb.sharedMaterial = maxFrictionMat;
+            ActionState = PlayerActionState.IdleOrRun;
+            platformerMovement.StopStickingToWall();
         }
     }
 
@@ -792,126 +637,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    // 로그 타입만 가능한 벽타기.
-    // 공중에 있고 이동하려는 방향의 벽과 접촉한 경우에 한해 true 반환.
-    private bool ShouldStickToWall(float moveInput)
-    {
-        // TODO: 이미 한 번 붙었다가 떨어진 벽에는 다시 붙을 수 없도록 제한 (무한 벽타기 방지)
-        bool shouldStickRight = moveInput > 0f && groundContact.IsInContactWithRightWall;
-        bool shouldStickLeft = moveInput < 0f && groundContact.IsInContactWithLeftWall;
-        return playerState.PlayerType == PlayerType.Rogue && !groundContact.IsGrounded && (shouldStickRight || shouldStickLeft);
-    }
-
-    // 벽에 붙은 방향과 반대로 이동하는 경우 벽붙기 중지
-    private bool ShouldStopStickingToWall(float moveInput)
-    {
-        return
-            (isStickingToRightWall && moveInput < 0f) || // 오른쪽 벽에 붙은 상태에서 왼쪽으로 이동
-            (!isStickingToRightWall && moveInput > 0f); // 왼쪽 벽에 붙은 상태에서 오른쪽으로 이동
-    }
-
-    private void StartStickingToWall(float moveInput)
-    {
-        ActionState = PlayerActionState.StickToWall;
-
-        // 매달린 방향과 반대로 이동하는 경우 매달리기 취소해야 하므로 현재 방향 기록
-        isStickingToRightWall = moveInput > 0f;
-
-        // wall jump 가능하게 설정
-        jumpCount = 0;
-        shouldWallJump = true;
-
-        // coyote time 리셋
-        coyoteTimeCounter = 0f;
-
-        rb.velocity = Vector2.zero;
-        rb.gravityScale = 0f;
-
-        // TODO: 벽에 붙어도 공중 공격 가능 여부를 초기화해야 한다면 isAirAttackPossible = true 넣기
-    }
-
-    private void StopStickingToWall()
-    {
-        ActionState = PlayerActionState.IdleOrRun;
-
-        // 중력 활성화
-        rb.gravityScale = defaultGravityScale;
-    }
-
-    // 지면에 서있는 경우는 지면과 평행하게, 공중인 경우는 그냥 좌우로 이동.
-    //
-    // Note:
-    // 경사로에 있는 경우 GroundTangent가 수평이 아니다!
-    // 이 상황에서 수평으로 움직이면 낙하-착지를 반복하게 될 수 있으므로
-    // 지면과 평행하게 움직여주는게 중요함.
-    private void UpdateMoveVelocity(float moveInput)
-    {
-        // 도달하고 싶은 속도 (좌우 방향 고려 o)
-        float desiredSpeed = playerState.MoveSpeed.CurrentValue * moveInput;
-
-        // 가속해야 할 방향으로의 속도 성분 (공중인 경우 중력 고려 x)
-        Vector2 moveDirection = groundContact.IsGrounded ? groundContact.GroundTangent : Vector2.right;
-        float currentSpeed = Vector2.Dot(moveDirection, rb.velocity);
-
-        // 방향 전환 여부에 따라 다른 가속도 사용
-        float acceleration = ChooseAcceleration(moveInput, desiredSpeed);
-
-        // 공중이라면 AirControl 수치(0.0 ~ 1.0)에 비례해 가속도 감소
-        if (!groundContact.IsGrounded)
-        {
-            acceleration *= airControl;
-        }
-
-        // 원하는 속도에 부드럽게 도달하도록 보간.
-        // 공중에 있는 경우는 수직 속도 변경 x
-        float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
-        Vector2 updatedVelocity = moveDirection * updatedSpeed;
-        if (!groundContact.IsGrounded)
-        {
-            updatedVelocity.y = rb.velocity.y;
-        }
-
-        rb.velocity = updatedVelocity;
-    }
-
-    private float ChooseAcceleration(float moveInput, float desiredVelocityX)
-    {
-        // Case 1) 이동을 멈추는 경우
-        bool isStopping = moveInput == 0f;
-        if (isStopping)
-        {
-            return moveDecceleration;
-        }
-
-        // Case 2) 반대 방향으로 이동하려는 경우
-        bool isTurningDirection = rb.velocity.x * desiredVelocityX < 0f;
-        if (isTurningDirection)
-        {
-            return turnAcceleration;
-        }
-
-        // Case 3) 기존 방향으로 계속 이동하는 경우
-        return moveAcceleration;
-    }
-
     private void HandleJumpInput()
     {
         // 공격, 경직 등 다른 상태에서는 점프 불가능
         if (ActionState == PlayerActionState.IdleOrRun || ActionState == PlayerActionState.StickToWall)
         {
-            // 점프에는 두 가지 경우가 있음
-            // 1. 1차 점프 - 플랫폼과 접촉한 경우 또는 coyote time이 아직 유효한 경우
-            // 2. 2차 점프 - 이미 점프한 경우 또는 coyote time이 유효하지 않은 경우
-            if (IsInitialJump())
+            bool success = platformerMovement.TryJump();
+            if (success)
             {
-                jumpCount = 1;
-                PerformJump();
-            }
-            else if (IsDoubleJump())
-            {
-                // TODO: 더블 점프는 로그 타입만 가능하도록 수정
-                jumpCount = 2;
-                PerformJump();
+                // 점프 애니메이션 재생
+                animator.SetTrigger("Jump");
+
+                // 점프하는 방향 바라보기
+                IsFacingLeft = rb.velocity.x < 0f;
             }
         }
 
@@ -919,76 +657,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         isJumpKeyPressed = false;
     }
 
-    // 최초의 점프로 취급하는 경우
-    // 1. 바닥에 서있는 경우
-    // 2. 벽에 매달려있는 경우
-    // 3. 1또는 2의 상황에서 추락을 시작한지 얼마 지나지 않은 경우 (coyote time 유효)
-    private bool IsInitialJump()
-    {
-        return jumpCount == 0 && coyoteTimeCounter < coyoteTime;
-    }
-
-    // 더블 점프로 취급하는 경우
-    // 1. 이미 최초의 점프를 완료한 경우
-    // 2. 아직 점프를 하지는 않았지만 추락 시간이 허용된 coyote time을
-    //    초과해서 공중에 떠있는 것으로 취급하는 경우
-    private bool IsDoubleJump()
-    {
-        // 더블 점프는 일단 폐기...
-        return false;
-        //return jumpCount == 1 || (jumpCount == 0 && coyoteTimeCounter > coyoteTime);
-    }
-
-    private void PerformJump()
-    {
-        // 혹시 엘리베이터 위에 있었다면 수직 움직임을 동기화하기
-        // 위해 설정된 slider joint가 점프를 방해할 것이므로 이를 먼저 해제해야 함
-        StopStickingToElevator();
-
-        // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
-        if (shouldWallJump)
-        {
-            // 더블 점프에서도 wall jump가 실행되는 것 방지
-            shouldWallJump = false;
-
-            StopStickingToWall();
-
-            ApplyWallJumpAirControlForDurationAsync(wallJumpAirControlPenaltyDuration).Forget();
-
-            // wallJumpVelocity는 오른쪽으로 박차고 나가는 기준이라서
-            // 왼쪽으로 가야 하는 경우 x축 속도를 반전시켜야 함.
-            rb.velocity = new(wallJumpVelocity.x * (isStickingToRightWall ? -1f : 1f), wallJumpVelocity.y);
-
-            // 점프하는 방향 바라보기
-            IsFacingLeft = rb.velocity.x < 0f;
-        }
-        else
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-        }
-
-        // Coyote time에 점프한 경우 중력이 gravityScaleWhenFalling으로
-        // 설정되어 있으므로 점프 시 중력으로 덮어쓰기.
-        rb.gravityScale = defaultGravityScale;
-        
-        // 경사로를 타고 올라가다가 점프하면 바로 착지해버리는 상황을
-        // 잠시동안 지면 검출을 멈추는 방식으로 방지함.
-        groundContact.PreventTestForDuration(0.1f);
-
-        // 점프 애니메이션 재생
-        animator.SetTrigger("Jump");
-    }
-
-    // wall jump 직후에 너무 빨리 벽으로 돌아오는 것을
-    // 막기 위해 잠시 더 낮은 airControl 수치를 적용함.
-    private async UniTask ApplyWallJumpAirControlForDurationAsync(float duration)
-    {
-        airControl = airControlWhileWallJumping;
-
-        await UniTask.WaitForSeconds(duration);
-
-        airControl = defaultAirControl;
-    }
 
     // 평지에서 점프할 때 카메라가 위 아래로 흔들리는 것을 방지하기 위해
     // 카메라 추적 대상을 플레이어와 별개의 오브젝트로 설정하고
@@ -1007,7 +675,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         newPosition.x += IsFacingLeft ? -cameraLookAheadDistance : cameraLookAheadDistance;
 
         // 벽에 매달리거나 새로운 플랫폼에 착지하지 않았다면 y 좌표는 유지.
-        if (!groundContact.IsGrounded && ActionState != PlayerActionState.StickToWall)
+        if (!platformerMovement.IsGrounded && ActionState != PlayerActionState.StickToWall)
         {
             newPosition.y = cameraFollowTarget.transform.position.y;
         }
@@ -1018,7 +686,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 매 프레임 갱신해야 하는 애니메이터 파라미터 관리
     private void UpdateAnimatorState()
     {
-        animator.SetBool("IsGrounded", groundContact.IsGrounded);
+        animator.SetBool("IsGrounded", platformerMovement.IsGrounded);
         animator.SetFloat("HorizontalVelocity", rb.velocity.y);
         animator.SetBool("IsRunning", InputManager.InputActions.Player.Move.IsPressed());
         animator.SetBool("IsAttacking", IsAttacking());
@@ -1103,7 +771,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 가만히 서있는 상태인 경우 마찰력이 높은 상태를 유지하므로
         // 움직이다가 피격당하는 경우와 밀려나는 정도가 일관적이지 않음!
         // 그러니 일단 넉백 당한다 하면 무조건 마찰력를 없애줘야 함.
-        rb.sharedMaterial = zeroFrictionMat;
+        platformerMovement.ApplyZeroFriction();
         SetStaggerStateForDurationAsync(staggerDuration).Forget();
 
         // TODO:
@@ -1120,7 +788,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (ActionState == PlayerActionState.StickToWall)
         {
-            StopStickingToWall();
+            platformerMovement.StopStickingToWall();
         }
         else if (ActionState == PlayerActionState.Stagger)
         {
