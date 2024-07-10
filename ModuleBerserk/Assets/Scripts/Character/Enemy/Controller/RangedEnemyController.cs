@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
@@ -205,6 +203,12 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         return defense;
     }
 
+    bool IDestructible.IsInvincible()
+    {
+        // 이미 죽은 경우는 공격에 반응하면 안됨
+        return hp.CurrentValue <= 0f;
+    }
+
     Team IDestructible.GetTeam()
     {
         return Team.Enemy;
@@ -228,7 +232,11 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
-        Destroy(gameObject);
+        // 이동중이었을 수도 있으니 멈추고 사망 처리
+        rangedEnemyBehavior.Idle();
+        rangedEnemyBehavior.HandleDeath();
+
+        enabled = false;
     }
 
     // 얘가 이 모자샷건맨의 고유한 스크립트인지 아닌지 몰라서 일단 여따가 씀

@@ -394,4 +394,17 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         platformerMovement.UpdateMoveVelocity(0f);
         platformerMovement.ApplyHighFriction();
     }
+
+    void IEnemyBehavior.HandleDeath()
+    {
+        // TODO: 크레딧 드랍 등 처리하기
+        // 필요하면 virtual 함수로 만들어서 자식 클래스에서 override 가능하도록 변경
+        animator.SetTrigger("Die");
+    }
+
+    // 사망 애니메이션의 마지막 프레임에 호출되는 함수.
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
 }

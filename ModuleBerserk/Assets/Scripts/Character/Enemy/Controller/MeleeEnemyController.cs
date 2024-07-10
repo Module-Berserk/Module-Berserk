@@ -172,6 +172,11 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         return defense;
     }
 
+    bool IDestructible.IsInvincible()
+    {
+        return hp.CurrentValue <= 0f;
+    }
+
     Team IDestructible.GetTeam()
     {
         return Team.Enemy;
@@ -200,6 +205,10 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
-        Destroy(gameObject);
+        // 이동중이었을 수도 있으니 멈추고 사망 처리
+        meleeEnemyBehavior.Idle();
+        meleeEnemyBehavior.HandleDeath();
+
+        enabled = false;
     }
 }

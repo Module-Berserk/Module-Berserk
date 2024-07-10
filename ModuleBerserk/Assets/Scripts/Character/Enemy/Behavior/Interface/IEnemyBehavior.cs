@@ -27,4 +27,7 @@ public interface IEnemyBehavior
 
     // 공격 쿨타임이 도는 중이라 기다리는 등 가만히 서있어야 할 때 매 스텝 호출됨
     void Idle();
+
+    // 죽었을 때 한 번 호출되는 함수
+    void HandleDeath();
 }
