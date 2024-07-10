@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7de9277fae6f5514592a71ba3e12fa3b
+guid: b1c2952a06b8b1a419407a1e48d43c07
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_0
+      name: player_loyal_stun-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3323f82afa8924d4ba4292b177fc6bb7
-      internalID: 706224544
+      spriteID: 6f5a6fc9c074d024dbccc5b0ecb91b6c
+      internalID: 1658390085
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_1
+      name: player_loyal_stun-Sheet_1
       rect:
         serializedVersion: 2
         x: 96
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9dba525c6baae2645884b38aba342c28
-      internalID: 987425217
+      spriteID: 38e86d7aaa3a6054fb93fbaee7869c08
+      internalID: 690914144
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_2
+      name: player_loyal_stun-Sheet_2
       rect:
         serializedVersion: 2
         x: 192
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 32d304880dd326243a6237812edc9d7a
-      internalID: 1371435274
+      spriteID: 94a3c47dfdceefe408e7676b423029ba
+      internalID: 1076645342
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_3
+      name: player_loyal_stun-Sheet_3
       rect:
         serializedVersion: 2
         x: 288
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60bab807ce0f9de42a3e39cbb0591761
-      internalID: 86261427
+      spriteID: a93c35c52bf7a6648b5ff18177eeb401
+      internalID: -427196145
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_4
+      name: player_loyal_stun-Sheet_4
       rect:
         serializedVersion: 2
         x: 384
@@ -195,14 +195,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1bb6f29f9d28ee44784f420ba9b4f3dd
-      internalID: -2029637715
+      spriteID: 1d33007ca038de6438a6cd29f1e3729e
+      internalID: 1777616151
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_5
+      name: player_loyal_stun-Sheet_5
       rect:
         serializedVersion: 2
         x: 480
@@ -216,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa41ae24f84f5f6438878f57a37ceac6
-      internalID: 963573240
+      spriteID: b2e981635a6271341bd0e7550630201a
+      internalID: -25373577
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_6
+      name: player_loyal_stun-Sheet_6
       rect:
         serializedVersion: 2
         x: 576
@@ -237,14 +237,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6a1225d8b7f509f4595a8b5f3357e687
-      internalID: -761795833
+      spriteID: 8850f87857402a6499bb7fd003de1210
+      internalID: -1955737264
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_stun-Sheet_7
+      name: player_loyal_stun-Sheet_7
       rect:
         serializedVersion: 2
         x: 672
@@ -258,8 +258,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e1d254f71a87a03429b0325a68395fc7
-      internalID: 1320705747
+      spriteID: 0ad7305c42b683a4a886ce884bdda383
+      internalID: -1618203886
       vertices: []
       indices: 
       edges: []
@@ -275,14 +275,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_boss_stun-Sheet_0: 706224544
-      c1_boss_stun-Sheet_1: 987425217
-      c1_boss_stun-Sheet_2: 1371435274
-      c1_boss_stun-Sheet_3: 86261427
-      c1_boss_stun-Sheet_4: -2029637715
-      c1_boss_stun-Sheet_5: 963573240
-      c1_boss_stun-Sheet_6: -761795833
-      c1_boss_stun-Sheet_7: 1320705747
+      player_loyal_stun-Sheet_0: 1658390085
+      player_loyal_stun-Sheet_1: 690914144
+      player_loyal_stun-Sheet_2: 1076645342
+      player_loyal_stun-Sheet_3: -427196145
+      player_loyal_stun-Sheet_4: 1777616151
+      player_loyal_stun-Sheet_5: -25373577
+      player_loyal_stun-Sheet_6: -1955737264
+      player_loyal_stun-Sheet_7: -1618203886
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -849,6 +849,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         CancelCurrentAction();
 
         ActionState = PlayerActionState.Stun;
+        animator.SetTrigger("Stun");
 
         await UniTask.WaitForSeconds(duration, cancellationToken: stunCancellation.Token);
 
