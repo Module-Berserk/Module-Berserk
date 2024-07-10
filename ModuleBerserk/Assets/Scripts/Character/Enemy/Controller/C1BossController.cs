@@ -439,7 +439,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 맵에 떨어진 상자가 없다면 반반 확률로 포격 또는 돌진 패턴 사용.
         // 그게 아니라면 무조건 포격 패턴만 사용
-        if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 10.5f)
+        if (noBoxGimmickNearbyTrigger.IsActive && Random.Range(0f, 1f) < 0.5f)
         {
             // 1페이즈에서는 그냥 백스텝->돌진만 하고 끝나지만
             // 2페이즈에서는 3연속 포격 패턴과 돌진 패턴 중에서 하나가 랜덤하게 연계됨
