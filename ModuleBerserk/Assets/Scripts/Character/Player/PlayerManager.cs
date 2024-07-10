@@ -147,6 +147,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Start()
     {
         InitializePlayerState();
+
+        platformerMovement.OnLand.AddListener(PlayLandSFX);
     }
 
     // scene 로딩이 끝난 뒤 호출되는 함수.

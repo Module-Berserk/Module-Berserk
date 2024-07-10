@@ -407,7 +407,7 @@ MonoBehaviour:
   minPatrolSubbehaviorDuration: 1
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
-  weakStaggerForce: 5
+  weakStaggerForce: 7
   strongStaggerForce: 10
   randomizationFactor: 0.1
   delayBetweenRangedAttacks: 3
@@ -505,6 +505,9 @@ MonoBehaviour:
     m_Bits: 8
   groundContactDistanceThreshold: 0.3
   wallContactDistanceThreshold: 0.02
+  OnLand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2594391396815688968
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,7 +769,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7868964346505182190}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -867,7 +870,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9133254563186267984}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:

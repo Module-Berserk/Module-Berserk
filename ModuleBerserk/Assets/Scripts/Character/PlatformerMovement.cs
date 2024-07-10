@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlatformerMovement : MonoBehaviour
 {
@@ -61,10 +62,15 @@ public class PlatformerMovement : MonoBehaviour
     // defaultAirControl과 airControlWhileWallJumping 중 실제로 적용될 수치
     private float airControl;
 
+    // 착지 시점을 판단하기 위해 이전 프레임에 플랫폼을 밟고 있었는지 기록함
+    private GameObject prevFramePlatform = null;
+
     public bool IsGrounded { get => groundContact.IsGrounded; }
     public bool IsSteppingOnOneWayPlatform { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<PlatformEffector2D>() != null; }
     public bool IsStickingToElevator { get => sliderJoint.enabled; }
     public bool IsOnElevator { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<Elevator>(); }
+
+    public UnityEvent OnLand;
 
     private void Awake()
     {
@@ -81,7 +87,13 @@ public class PlatformerMovement : MonoBehaviour
         groundContact.TestContact();
         if (IsGrounded)
         {
-            ResetJumpStates();
+            // 착지 이벤트
+            if (prevFramePlatform == null)
+            {
+                OnLand.Invoke();
+
+                ResetJumpStates();
+            }
 
             // 엘리베이터 위에 서있는 동안은 slider joint로 수직 움직임 동기화
             if (ShouldStickToElevator())
@@ -105,6 +117,8 @@ public class PlatformerMovement : MonoBehaviour
                 StopStickingToElevator();
             }
         }
+
+        prevFramePlatform = groundContact.CurrentPlatform;
     }
 
     private void ResetJumpStates()
