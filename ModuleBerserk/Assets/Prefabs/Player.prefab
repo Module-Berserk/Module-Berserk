@@ -438,7 +438,7 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  groundContactDistanceThreshold: 0.02
+  groundContactDistanceThreshold: 0.1
   wallContactDistanceThreshold: 0.02
 --- !u!114 &4895742193337405064
 MonoBehaviour:

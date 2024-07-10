@@ -376,6 +376,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 회피 도중에는 추락 및 넉백 x
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
+
+        // 지면에 멈춰있는 상태에서는 엄청 큰 마찰력이 사용되므로
+        // 확실히 마찰력을 없애주지 않으면 땅 위에 가만히 멈춰있을 위험이 있음.
+        platformerMovement.ApplyZeroFriction();
         
         // 쿨타임 계산 시작
         timeSinceLastEvasion = 0f;
