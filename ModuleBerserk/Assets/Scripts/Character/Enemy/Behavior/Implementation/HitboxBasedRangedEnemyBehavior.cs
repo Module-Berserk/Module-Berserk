@@ -49,4 +49,11 @@ public class HitboxBasedRangedEnemyBehavior : RangedEnemyBehaviorBase
 
         return isStaggered;
     }
+
+    public override void HandleDeath()
+    {
+        base.HandleDeath();
+
+        DisableRangedAttackHitbox();
+    }
 }

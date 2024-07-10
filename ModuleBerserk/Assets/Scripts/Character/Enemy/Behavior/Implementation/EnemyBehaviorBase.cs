@@ -395,10 +395,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         platformerMovement.ApplyHighFriction();
     }
 
-    void IEnemyBehavior.HandleDeath()
+    // 자식 클래스는 이 함수를 override해서 히트박스 비활성화 등의 정리 작업을 해줘야 함
+    public virtual void HandleDeath()
     {
         // TODO: 크레딧 드랍 등 처리하기
-        // 필요하면 virtual 함수로 만들어서 자식 클래스에서 override 가능하도록 변경
         animator.SetTrigger("Die");
     }
 

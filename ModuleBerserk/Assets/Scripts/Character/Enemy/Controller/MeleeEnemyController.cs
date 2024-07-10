@@ -38,7 +38,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     private IMeleeEnemyBehavior meleeEnemyBehavior;
     private FlashEffectOnHit flashEffectOnHit;
     private SpriteRenderer spriteRenderer;
-    private Rigidbody2D rb;
 
     // IDestructible이 요구하는 스탯
     private CharacterStat hp = new(50f, 0f, 100f);
@@ -58,7 +57,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         meleeEnemyBehavior = GetComponent<IMeleeEnemyBehavior>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()

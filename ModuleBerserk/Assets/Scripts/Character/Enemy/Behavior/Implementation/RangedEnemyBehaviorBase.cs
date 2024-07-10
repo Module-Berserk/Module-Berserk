@@ -168,4 +168,11 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         platformerMovement.UpdateMoveVelocity(desiredSpeed);
         platformerMovement.UpdateFriction(desiredSpeed);
     }
+
+    public override void HandleDeath()
+    {
+        base.HandleDeath();
+
+        DisableRepelAttackHitbox();
+    }
 }

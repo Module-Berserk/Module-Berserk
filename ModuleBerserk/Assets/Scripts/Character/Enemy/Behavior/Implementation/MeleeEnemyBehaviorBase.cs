@@ -120,4 +120,11 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
             animator.SetTrigger("ChangeIdleAnimation");
         }
     }
+
+    public override void HandleDeath()
+    {
+        base.HandleDeath();
+
+        DisableMeleeAttackHitbox();
+    }
 }
