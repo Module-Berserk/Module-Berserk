@@ -11,9 +11,10 @@ public class ScreenShake : MonoBehaviour
         impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
-    public void ApplyScreenShake(float strength, float duration)
+    public void ApplyScreenShake(float strength, float duration, float frequencyGain = 1f)
     {
         impulseSource.m_ImpulseDefinition.m_ImpulseDuration = duration;
+        impulseSource.m_ImpulseDefinition.m_FrequencyGain = frequencyGain;
         impulseSource.GenerateImpulse(strength);
     }
 }

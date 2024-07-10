@@ -87,6 +87,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private SpriteRootMotion spriteRootMotion;
     private InteractionManager interactionManager;
     private FlashEffectOnHit flashEffectOnHit;
+    private ScreenShake screenShake;
     private GearSystem gearSystem;
 
     // GameState에서 가져온 저장 가능한 플레이어 상태들
@@ -141,6 +142,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         spriteRootMotion = GetComponent<SpriteRootMotion>();
         interactionManager = GetComponent<InteractionManager>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
+        screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
     }
 
@@ -396,6 +398,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         rb.DOMoveX(targetX, evasionDuration)
             .SetEase(evasionEase)
             .SetUpdate(UpdateType.Fixed);
+
+        screenShake.ApplyScreenShake(strength: 0.05f, duration: 0.2f, frequencyGain: 2f);
     }
 
     // 회피 애니메이션의 마지막 프레임에 호출되는 이벤트.
