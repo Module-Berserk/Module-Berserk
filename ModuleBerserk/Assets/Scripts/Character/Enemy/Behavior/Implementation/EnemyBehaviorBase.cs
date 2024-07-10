@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(PlatformerMovement))]
 public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 {
     [Header("Chase")]
@@ -16,11 +16,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     [SerializeField] private float chaseMinDistance = 0.5f;
     [SerializeField] private float chaseMaxDistance = 5f;
     [SerializeField] private float chaseSpeed = 1f;
-
-
-    [Header("Ground Contact")]
-    [SerializeField] private LayerMask groundLayerMask;
-    [SerializeField] private float contactDistanceThreshold = 0.02f;
 
 
     [Header("Patrol")]
@@ -35,7 +30,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     [Header("Stagger")]
     [SerializeField] private float weakStaggerForce = 5f;
     [SerializeField] private float strongStaggerForce = 10f;
-    [SerializeField] private float knockbackDecceleration = 30f;
 
 
     [Header("Stat Randomization")]
@@ -54,15 +48,11 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     // 컴포넌트 레퍼런스
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
+    protected PlatformerMovement platformerMovement;
     protected Rigidbody2D rb;
-    protected BoxCollider2D boxCollider;
-    protected SliderJoint2D sliderJoint;
 
     // 플레이어 추적용 레퍼런스
     protected GameObject player;
-
-    // 플레이어를 추적할 때 낙하하지 않을 상태인지 확인하기 위해 사용
-    protected GroundContact groundContact;
 
     // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
     protected bool isAttackMotionFinished = true;
@@ -92,8 +82,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         FindComponentReferences();
         RandomizeSpeedStats();
 
-        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold, contactDistanceThreshold);
-
         // 잡몹은 평상시에 경직 저항력이 없고,
         // 몹의 종류에 따라 공격 모션에 일부 약한 경직 저항이 부여됨.
         StaggerResistance = StaggerStrength.None;
@@ -101,24 +89,9 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 
     protected void FixedUpdate()
     {
-        groundContact.TestContact();
+        platformerMovement.HandleGroundContact();
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
-
-        // 엘리베이터 위에 있을 때 수직 속도 동기화 (slider joint 사용)
-        if (groundContact.IsGrounded)
-        {
-            if (!sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>() != null)
-            {
-                sliderJoint.enabled = true;
-                sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
-            }
-        }
-        else
-        {
-            sliderJoint.enabled = false;
-            sliderJoint.connectedBody = null;
-        }
 
         // 순찰 상태
         if (isPatrolling)
@@ -127,10 +100,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         // 경직과 같이 부여된 넉백 효과 부드럽게 감소
+        // Note: 마찰력은 피격 시점에 zero friction으로 설정되므로 이 값을 유지해야 정상적으로 밀려남!
         if (isStaggered)
         {
-            float updatedVelocityX = Mathf.MoveTowards(rb.velocity.x, 0f, knockbackDecceleration * Time.fixedDeltaTime);
-            rb.velocity = new Vector2(updatedVelocityX, rb.velocity.y);
+            platformerMovement.UpdateMoveVelocity(0f);
         }
     }
 
@@ -138,9 +111,8 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        platformerMovement = GetComponent<PlatformerMovement>();
         rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        sliderJoint = GetComponent<SliderJoint2D>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
@@ -155,14 +127,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     protected float SampleRandomizationFactor()
     {
         return Random.Range(1 + randomizationFactor, 1 - randomizationFactor);
-    }
-
-    // 주어진 방향이 낭떠러지인지 반환
-    protected bool IsOnBrink(float direction)
-    {
-        return 
-            (direction > 0f && !groundContact.IsRightFootGrounded) ||
-            (direction < 0f && !groundContact.IsLeftFootGrounded);
     }
 
     void IEnemyBehavior.StartPatrol()
@@ -213,7 +177,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         // 만약 같은 순찰 방향이 3회 이상 걸렸거나 해당 방향이 낭떠러지인 경우 반대 방향 선택
-        if (samePatrolDirectionCount >= 3 || IsOnBrink(patrolSpeed))
+        if (samePatrolDirectionCount >= 3 || platformerMovement.IsOnBrink(patrolSpeed))
         {
             patrolSpeed *= -1f;
             samePatrolDirectionCount = 1;
@@ -261,20 +225,23 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         IsFacingLeft = patrolSpeed < 0f;
 
         // 해당 방향이 낭떠러지가 아니라면 이동
-        if (!IsOnBrink(patrolSpeed))
+        if (!platformerMovement.IsOnBrink(patrolSpeed))
         {
-            rb.velocity = new Vector2(patrolSpeed, rb.velocity.y);
+            platformerMovement.UpdateMoveVelocity(patrolSpeed);
+            platformerMovement.UpdateFriction(patrolSpeed);
         }
         else
         {
-            rb.velocity = new Vector2(0f, rb.velocity.y);
+            platformerMovement.UpdateMoveVelocity(0f);
+            platformerMovement.ApplyHighFriction();
         }
     }
 
     // 순찰 하위 상태 중 '대기'에 해당하는 행동
     private void PatrolPause()
     {
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        platformerMovement.UpdateMoveVelocity(0f);
+        platformerMovement.ApplyHighFriction();
     }
 
     void IEnemyBehavior.Chase()
@@ -290,7 +257,14 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
         if (Mathf.Abs(displacement) > chaseMinDistance)
         {
-            rb.velocity = new Vector2(Mathf.Sign(displacement) * chaseSpeed, rb.velocity.y);
+            float desiredSpeed = Mathf.Sign(displacement) * chaseSpeed;
+            platformerMovement.UpdateMoveVelocity(desiredSpeed);
+            platformerMovement.UpdateFriction(desiredSpeed);
+        }
+        else
+        {
+            platformerMovement.UpdateMoveVelocity(0f);
+            platformerMovement.ApplyHighFriction();
         }
     }
 
@@ -305,7 +279,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 
         // 플레이어가 있는 방향이 낭떠러지인 경우
         Vector2 chaseDirection = player.transform.position - transform.position;
-        if (IsOnBrink(chaseDirection.x))
+        if (platformerMovement.IsOnBrink(chaseDirection.x))
         {
             Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
             return false;
@@ -380,6 +354,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         IsFacingLeft = staggerInfo.direction.x > 0f;
 
         // 넉백 효과
+        platformerMovement.ApplyZeroFriction();
         rb.AddForce(staggerInfo.direction * GetKnockbackForce(staggerInfo.strength), ForceMode2D.Impulse);
 
         // 잠시 경직 상태에 돌입
@@ -412,5 +387,11 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         {
             return 0f; // StaggerStrength.None
         }
+    }
+
+    void IEnemyBehavior.Idle()
+    {
+        platformerMovement.UpdateMoveVelocity(0f);
+        platformerMovement.ApplyHighFriction();
     }
 }

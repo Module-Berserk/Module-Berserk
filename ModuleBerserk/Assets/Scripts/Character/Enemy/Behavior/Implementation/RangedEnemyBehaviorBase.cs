@@ -72,7 +72,7 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         animator.SetTrigger("RangedAttack");
 
         // 추적 혹은 도주 중지
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        platformerMovement.ApplyHighFriction();
 
         // 약간의 랜덤성을 부여한 쿨타임 시작
         // 적들이 동일한 간격으로 공격하는 것을 방지해 조금 더 자연스럽게 느껴지도록 한다
@@ -105,7 +105,7 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         animator.SetTrigger("RepelAttack");
 
         // 도주 취소
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        platformerMovement.ApplyHighFriction();
 
         // 최소 사정거리를 확보하기 위해 도주하는 상태에는
         // 플레이어를 등지고 있으므로 공격을 위해 뒤로 돌아봐야 함
@@ -153,8 +153,10 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
 
         // 플레이어와 멀어지는 방향이 낭떠러지인 경우
         float runAwayDirection = transform.position.x - player.transform.position.x;
-        if (IsOnBrink(runAwayDirection))
+        if (platformerMovement.IsOnBrink(runAwayDirection))
         {
+            platformerMovement.UpdateMoveVelocity(0f);
+            platformerMovement.ApplyHighFriction();
             return;
         }
 
@@ -162,6 +164,8 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         IsFacingLeft = runAwayDirection < 0f;
 
         // 도주
-        rb.velocity = new Vector2(Mathf.Sign(runAwayDirection) * runAwaySpeed, rb.velocity.y);
+        float desiredSpeed = Mathf.Sign(runAwayDirection) * runAwaySpeed;
+        platformerMovement.UpdateMoveVelocity(desiredSpeed);
+        platformerMovement.UpdateFriction(desiredSpeed);
     }
 }

@@ -24,4 +24,7 @@ public interface IEnemyBehavior
 
     // 경직 효과가 끝났는지 반환
     bool IsStaggerFinished();
+
+    // 공격 쿨타임이 도는 중이라 기다리는 등 가만히 서있어야 할 때 매 스텝 호출됨
+    void Idle();
 }

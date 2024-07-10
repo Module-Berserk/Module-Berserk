@@ -105,6 +105,10 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
                 {
                     rangedEnemyBehavior.RangedAttack();
                 }
+                else
+                {
+                    rangedEnemyBehavior.Idle();
+                }
             }
             // 플레이어가 너무 멀거나 가까워서 공격 범위를 벗어난 경우
             else

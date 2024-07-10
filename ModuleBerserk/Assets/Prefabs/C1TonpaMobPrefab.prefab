@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
       m_PersistentCalls:
@@ -216,6 +217,7 @@ GameObject:
   - component: {fileID: 753227502174625611}
   - component: {fileID: 7054442615863630989}
   - component: {fileID: 2231267205746315127}
+  - component: {fileID: 6860080865006008720}
   m_Layer: 7
   m_Name: C1TonpaMobPrefab
   m_TagString: Enemy
@@ -415,16 +417,11 @@ MonoBehaviour:
   chaseMinDistance: 0.5
   chaseMaxDistance: 30
   chaseSpeed: 2
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
-  contactDistanceThreshold: 0.3
   minPatrolSubbehaviorDuration: 1
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
   weakStaggerForce: 5
   strongStaggerForce: 10
-  knockbackDecceleration: 30
   randomizationFactor: 0.1
   meleeAttackDamage: 0
   delayBetweenMeleeAttacks: 3
@@ -470,6 +467,37 @@ SliderJoint2D:
   m_TranslationLimits:
     m_LowerTranslation: 0
     m_UpperTranslation: 0
+--- !u!114 &6860080865006008720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d2dedca0ac1e684a86704c15171c767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnAcceleration: 150
+  moveAcceleration: 100
+  moveDecceleration: 150
+  zeroFrictionMat: {fileID: 6200000, guid: 195e42bf05cfc7b438afe094730109e1, type: 2}
+  maxFrictionMat: {fileID: 6200000, guid: a36093154ff63a6448d6cf82048dbdd2, type: 2}
+  jumpVelocity: 12
+  wallJumpVelocity: {x: 10, y: 10}
+  coyoteTime: 0.15
+  defaultGravityScale: 3
+  gravityScaleWhileFalling: 6
+  maxFallSpeed: 15
+  defaultAirControl: 0.5
+  airControlWhileWallJumping: 0.2
+  wallJumpAirControlPenaltyDuration: 0.3
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  groundContactDistanceThreshold: 0.5
+  wallContactDistanceThreshold: 0.02
 --- !u!1 &8408449600811310982
 GameObject:
   m_ObjectHideFlags: 0

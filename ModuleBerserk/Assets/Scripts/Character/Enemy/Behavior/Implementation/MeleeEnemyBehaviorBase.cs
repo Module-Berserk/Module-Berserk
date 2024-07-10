@@ -51,7 +51,7 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     void IMeleeEnemyBehavior.MeleeAttack()
     {
         // 추적 중이었을 수 있으니 정지
-        rb.velocity = new Vector2(0f, rb.velocity.y);
+        platformerMovement.ApplyHighFriction();
 
         // 바라보는 방향으로 히트박스 이동
         meleeAttackHitbox.SetHitboxDirection(IsFacingLeft);

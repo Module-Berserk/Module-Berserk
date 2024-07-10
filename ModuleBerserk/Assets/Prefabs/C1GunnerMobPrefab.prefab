@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 2695420284089087774}
   - component: {fileID: 7891498920023006573}
   - component: {fileID: -3377798624792864121}
+  - component: {fileID: 7642742389301358313}
   m_Layer: 7
   m_Name: C1GunnerMobPrefab
   m_TagString: Enemy
@@ -348,7 +349,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.630784}
+  m_Offset: {x: 0, y: -0.63490486}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -359,7 +360,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.65458, y: 1.3329748}
+  m_Size: {x: 0.47, y: 1.3412166}
   m_EdgeRadius: 0
 --- !u!50 &6353533966102477883
 Rigidbody2D:
@@ -400,19 +401,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcced9e137343614da1fb7f3a0193e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chaseMinDistance: 0.5
+  chaseMinDistance: 1.5
   chaseMaxDistance: 30
   chaseSpeed: 1
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
-  contactDistanceThreshold: 0.3
   minPatrolSubbehaviorDuration: 1
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
   weakStaggerForce: 5
   strongStaggerForce: 10
-  knockbackDecceleration: 30
   randomizationFactor: 0.1
   delayBetweenRangedAttacks: 3
   delayBetweenRepelAttacks: 5
@@ -478,6 +474,37 @@ SliderJoint2D:
   m_TranslationLimits:
     m_LowerTranslation: 0
     m_UpperTranslation: 0
+--- !u!114 &7642742389301358313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2230194136603300056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d2dedca0ac1e684a86704c15171c767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnAcceleration: 150
+  moveAcceleration: 100
+  moveDecceleration: 150
+  zeroFrictionMat: {fileID: 6200000, guid: 195e42bf05cfc7b438afe094730109e1, type: 2}
+  maxFrictionMat: {fileID: 6200000, guid: a36093154ff63a6448d6cf82048dbdd2, type: 2}
+  jumpVelocity: 12
+  wallJumpVelocity: {x: 10, y: 10}
+  coyoteTime: 0.15
+  defaultGravityScale: 3
+  gravityScaleWhileFalling: 6
+  maxFallSpeed: 15
+  defaultAirControl: 0.5
+  airControlWhileWallJumping: 0.2
+  wallJumpAirControlPenaltyDuration: 0.3
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  groundContactDistanceThreshold: 0.3
+  wallContactDistanceThreshold: 0.02
 --- !u!1 &2594391396815688968
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,6 +750,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
       m_PersistentCalls:
@@ -823,6 +851,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 2
+  delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
       m_PersistentCalls:

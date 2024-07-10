@@ -64,6 +64,7 @@ public class PlatformerMovement : MonoBehaviour
     public bool IsGrounded { get => groundContact.IsGrounded; }
     public bool IsSteppingOnOneWayPlatform { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<PlatformEffector2D>() != null; }
     public bool IsStickingToElevator { get => sliderJoint.enabled; }
+    public bool IsOnElevator { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<Elevator>(); }
 
     private void Awake()
     {
@@ -86,6 +87,10 @@ public class PlatformerMovement : MonoBehaviour
             if (ShouldStickToElevator())
             {
                 StartStickingToElevator();
+            }
+            else if (IsStickingToElevator && !IsOnElevator)
+            {
+                StopStickingToElevator();
             }
         }
         else
@@ -393,5 +398,13 @@ public class PlatformerMovement : MonoBehaviour
         await UniTask.WaitForSeconds(duration);
 
         airControl = defaultAirControl;
+    }
+
+    // 주어진 방향이 낭떠러지인지 반환
+    public bool IsOnBrink(float direction)
+    {
+        return 
+            (direction > 0f && !groundContact.IsRightFootGrounded) ||
+            (direction < 0f && !groundContact.IsLeftFootGrounded);
     }
 }
