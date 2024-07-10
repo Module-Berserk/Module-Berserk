@@ -27,6 +27,13 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     [SerializeField] private float patrolSpeed = 1f;
 
 
+    [Header("Optional Move Restriction")]
+    // 수문장 역할의 AI는 일정 범위에서만 순찰/추적을 해야 함.
+    // 여기에 콜라이더를 넣어주면 해당 범위를 벗어나지 않는 방향으로만 움직임.
+    // 아무것도 할당하지 않으면 이동범위 제약 없이 활동함.
+    [SerializeField] private BoxCollider2D moveRestrictionArea;
+
+
     [Header("Stagger")]
     [SerializeField] private float weakStaggerForce = 5f;
     [SerializeField] private float strongStaggerForce = 10f;
@@ -176,8 +183,11 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
             ++samePatrolDirectionCount;
         }
 
-        // 만약 같은 순찰 방향이 3회 이상 걸렸거나 해당 방향이 낭떠러지인 경우 반대 방향 선택
-        if (samePatrolDirectionCount >= 3 || platformerMovement.IsOnBrink(patrolSpeed))
+        // 다음과 같은 경우 반대 방향 선택:
+        // 1. 같은 순찰 방향이 3회 이상 걸림
+        // 2. 해당 방향이 낭떠러지
+        // 3. 해당 방향으로 가면 활동 제한 범위를 벗어남 (optional)
+        if (samePatrolDirectionCount >= 3 || platformerMovement.IsOnBrink(patrolSpeed) || IsMovingOutsideRestrictedArea(patrolSpeed))
         {
             patrolSpeed *= -1f;
             samePatrolDirectionCount = 1;
@@ -225,7 +235,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         IsFacingLeft = patrolSpeed < 0f;
 
         // 해당 방향이 낭떠러지가 아니라면 이동
-        if (!platformerMovement.IsOnBrink(patrolSpeed))
+        if (!platformerMovement.IsOnBrink(patrolSpeed) && !IsMovingOutsideRestrictedArea(patrolSpeed))
         {
             platformerMovement.UpdateMoveVelocity(patrolSpeed);
             platformerMovement.UpdateFriction(patrolSpeed);
@@ -254,8 +264,9 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 플레이어 방향으로 스프라이트 설정
         IsFacingLeft = displacement < 0f;
 
+        // 활동 제한 범위(optional)를 벗어나지 않으면서
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
-        if (Mathf.Abs(displacement) > chaseMinDistance)
+        if (Mathf.Abs(displacement) > chaseMinDistance && !IsMovingOutsideRestrictedArea(displacement))
         {
             float desiredSpeed = Mathf.Sign(displacement) * chaseSpeed;
             platformerMovement.UpdateMoveVelocity(desiredSpeed);
@@ -286,10 +297,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
-        //
-        // TODO:
-        // 일부 적은 플레이어와의 거리가 아니라 특정 영역 내부를 최우선으로 지키기도 함,
-        // 다른 Behavior 클래스를 만들던지, 여기에 플래그로 if-else 처리를 하던지 해야 함
         if (chaseDirection.magnitude > chaseMaxDistance)
         {
             Debug.Log("플레이어가 너무 멀어서 추적 실패");
@@ -297,6 +304,32 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         return true;
+    }
+
+    private bool IsMovingOutsideRestrictedArea(float direction)
+    {
+        if (moveRestrictionArea == null)
+        {
+            return false;
+        }
+
+        // 왼쪽 범위를 이미 넘었는데 더 왼쪽으로 가려는 경우
+        float globalOffsetX = moveRestrictionArea.transform.position.x + moveRestrictionArea.offset.x;
+        float leftEndX = globalOffsetX - moveRestrictionArea.size.x / 2f;
+        if (rb.position.x < leftEndX && direction < 0f)
+        {
+            return true;
+        }
+
+        // 오른쪽 범위를 이미 넘었는데 더 오른쪽으로 가려는 경우
+        float rightEndX = globalOffsetX + moveRestrictionArea.size.x / 2f;
+        if (rb.position.x > rightEndX && direction > 0f)
+        {
+            return true;
+        }
+
+        // 범위 안에 있거나 안으로 돌아오는 방향인 경우
+        return false;
     }
 
     bool IEnemyBehavior.IsStaggerFinished()
