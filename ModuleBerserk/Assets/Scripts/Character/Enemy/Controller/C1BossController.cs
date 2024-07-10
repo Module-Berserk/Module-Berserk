@@ -19,6 +19,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Player Detectors")]
     // 플레이어가 이 범위 안에 들어오면 3연타 근접 공격을 시도함
     [SerializeField] private PlayerDetectionRange meleeAttackRange;
+    // 플레이어가 이 범위 안에 있을 때만 화염방사기 패턴을 시도함
+    [SerializeField] private PlayerDetectionRange flameThrowerRange;
 
 
     [Header("Stagger")]
@@ -250,10 +252,12 @@ public class C1BossController : MonoBehaviour, IDestructible
             {
                 PerformBackstepPatternAsync().Forget();
             }
-            else if (closeRangePatternCooltime <= 0f && meleeAttackRange.IsPlayerInRange)
+            // 근거리 패턴 쿨 돌면 3연타/화염방사기 중에서 사용 가능한 패턴 랜덤하게 선택
+            else if (closeRangePatternCooltime <= 0f && (meleeAttackRange.IsPlayerInRange || flameThrowerRange.IsPlayerInRange))
             {
-                // 거리가 가까운 경우 화염방사기 패턴과 근접 공격 3연타 중에서 랜덤하게 시전
-                if (Random.Range(0f, 1f) < 0.5f)
+                float meleePriority = meleeAttackRange.IsPlayerInRange ? Random.Range(0f, 1f) : 0f;
+                float flamePriority = flameThrowerRange.IsPlayerInRange ? Random.Range(0f, 1f) : 0f;
+                if (meleePriority > flamePriority)
                 {
                     PerformMeleeAttackPatternAsync().Forget();
                 }
@@ -282,6 +286,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         IsFacingLeft = player.transform.position.x < rb.position.x;
         meleeAttackRange.SetDetectorDirection(IsFacingLeft);
+        flameThrowerRange.SetDetectorDirection(IsFacingLeft);
         hitboxes.SetHitboxDirection(IsFacingLeft);
     }
 
