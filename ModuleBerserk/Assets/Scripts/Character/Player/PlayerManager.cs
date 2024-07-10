@@ -13,6 +13,7 @@ public enum PlayerActionState
     Stagger, // 공격에 맞아 경직 판정인 상태
     AttackInProgress, // 공격 모션의 선딜 ~ 후딜까지의 기간 (선입력 대기하는 중)
     AttackWaitingContinuation, // 선입력은 없었지만 언제든 공격 키를 눌러 다음 공격을 이어나갈 수 있는 상태
+    AttackWaitingEnd, // AttackWaitingContinuation에서 더이상 다음 공격이 자연스럽게 이어지지 않는 경우 돌입하는 상태
     Evade, // 회피
     Stun, // 챕터1 박스 기믹 등에 의해 기절당한 상태. Stagger와 마찬가지로 최우선 판정.
 };
@@ -240,9 +241,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 만약 상호작용이 가능한 대상이 없었다면 2순위 행동인 공격을 시도한다.
         if (!isInteractionSuccessful)
         {
-            // 회피 중이거나 경직/기절 상태이거나 벽에 매달린 경우는 공격 불가
-            // TODO: 회피 모션 중에도 공격 선입력 허용하는 것 고려하기
-            if (ActionState == PlayerActionState.Evade || ActionState == PlayerActionState.Stagger || ActionState == PlayerActionState.Stun || ActionState == PlayerActionState.StickToWall)
+            // 회피 중이거나 경직/기절 상태이거나 벽에 매달린 경우는 공격 불가.
+            // 더이상 다음 공격 모션과 자연스럽게 이어지지 않는 경우도 공격키 입력을 무시한다.
+            if (ActionState == PlayerActionState.Evade ||
+                ActionState == PlayerActionState.Stagger ||
+                ActionState == PlayerActionState.Stun ||
+                ActionState == PlayerActionState.StickToWall ||
+                ActionState == PlayerActionState.AttackWaitingEnd)
             {
                 return;
             }
@@ -534,6 +539,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
+    // loyal 타입 3타처럼 다음 공격으로 자동으로 넘어가는 프레임을 지나치면
+    // 추가 입력 대기 없이 모션 끝까지 기다리는게 자연스러운 경우 사용되는 애니메이션 이벤트.
+    // 모션이 끝날 때까지 공격키에 반응하지 않도록 만든다.
+    public void OnStopWaitingAttackContinuation()
+    {
+        isAttackInputBuffered = false;
+        ActionState = PlayerActionState.AttackWaitingEnd;
+    }
+
     private void FixedUpdate()
     {
         if (ActionState == PlayerActionState.Evade)
@@ -709,7 +723,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private bool IsAttacking()
     {
-        return ActionState == PlayerActionState.AttackInProgress || ActionState == PlayerActionState.AttackWaitingContinuation;
+        return ActionState == PlayerActionState.AttackInProgress ||
+            ActionState == PlayerActionState.AttackWaitingContinuation ||
+            ActionState == PlayerActionState.AttackWaitingEnd;
     }
 
     CharacterStat IDestructible.GetHPStat()

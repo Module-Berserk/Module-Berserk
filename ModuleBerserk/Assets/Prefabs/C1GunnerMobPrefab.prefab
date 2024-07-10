@@ -407,8 +407,9 @@ MonoBehaviour:
   minPatrolSubbehaviorDuration: 1
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
-  weakStaggerForce: 7
-  strongStaggerForce: 10
+  moveRestrictionArea: {fileID: 0}
+  weakStaggerForce: 15
+  strongStaggerForce: 15
   randomizationFactor: 0.1
   delayBetweenRangedAttacks: 3
   delayBetweenRepelAttacks: 5

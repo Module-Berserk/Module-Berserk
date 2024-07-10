@@ -500,7 +500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc7c22087af4fae4aaf17710094507d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motionScale: 1.2
+  motionScale: 1.5
 --- !u!234 &8967889573082849027
 SliderJoint2D:
   m_ObjectHideFlags: 0

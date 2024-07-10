@@ -125991,6 +125991,10 @@ PrefabInstance:
       propertyPath: groundContactDistanceThreshold
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 8017939143549858306, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: motionScale
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8967889573082849027, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_Enabled
       value: 0

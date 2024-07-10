@@ -22,6 +22,10 @@ using UnityEngine.Events;
 // 콜라이더를 하나만 쓴다면 kinematic rigidbody 없이
 // ApplyDamageOnHit 스크립트 붙은 자식 오브젝트에
 // 바로 콜라이더 하나만 달아주면 된다
+//
+// 주의사항:
+// 모든 콜라이더의 위치 조정은 transform.position이 아니라 offset으로 해줘야
+// 왼쪽 오른쪽 방향 전환이 정상적으로 동작함!
 public class ApplyDamageOnContact : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
@@ -36,6 +40,10 @@ public class ApplyDamageOnContact : MonoBehaviour
     // 최근에 데미지를 입힌 대상이 다시 데미지를 입기까지 몇 초나 남았는지 기록.
     // 장판 패턴처럼 긴 시간동안 반복적으로 데미지를 입히는 경우에 매우 중요한 역할을 맡는다.
     private Dictionary<IDestructible, float> recentDamages = new();
+
+    // 넉백 방향을 결정할 때 참고하는 플래그.
+    // SetHitboxDirection()을 호출할 때마다 변경된다.
+    private bool isHitboxFacingLeft = false;
 
     public bool IsHitboxEnabled
     {
@@ -77,6 +85,8 @@ public class ApplyDamageOnContact : MonoBehaviour
 
     public void SetHitboxDirection(bool isFacingLeft)
     {
+        isHitboxFacingLeft = isFacingLeft;
+
         // 콜라이더가 대칭적인 형태라고 가정하고
         // 바라보는 방향에 따라 콜라이더 위치 조정
         foreach (Collider2D hitbox in hitboxes)
@@ -116,8 +126,8 @@ public class ApplyDamageOnContact : MonoBehaviour
                 // 이제 delayBetweenDamageTick만큼 시간이 지날 때까지 이 대상에게 데미지를 입히지 않음
                 recentDamages.Add(destructible, delayBetweenDamageTick);
 
-                // 공격 대상이 나보다 왼쪽에 있으면 경직 방향도 왼쪽으로 설정.
-                Vector2 staggerDirection = other.transform.position.x < transform.position.x ? Vector2.left : Vector2.right;
+                // 넉백 방향은 무조건 공격한 사람이 바라보는 방향 기준으로 들어감!
+                Vector2 staggerDirection = isHitboxFacingLeft ? Vector2.left : Vector2.right;
                 StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f);
 
                 // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)

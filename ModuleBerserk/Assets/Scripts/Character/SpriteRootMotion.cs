@@ -36,6 +36,7 @@ public class SpriteRootMotion : MonoBehaviour
     public void ApplyVelocity(bool isFacingLeft)
     {
         float currSpritePivotX = spriteRenderer.sprite.pivot.x;
+        float verticalVelocity = rb.velocity.y;
 
         // 모션이 방금 바뀐 경우에는 기준으로 삼아야 할 pivot 값을 아직 모르니까
         // 루트 모션 적용은 스킵하고 prevSpritePivotX 값만 갱신함.
@@ -43,6 +44,7 @@ public class SpriteRootMotion : MonoBehaviour
         if (numFramesDisableRootMotion > 0)
         {
             numFramesDisableRootMotion--;
+            rb.velocity =  new Vector2(0f, verticalVelocity);
         }
         else
         {
@@ -53,7 +55,6 @@ public class SpriteRootMotion : MonoBehaviour
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            float verticalVelocity = rb.velocity.y;
             float horizontalVelocity = (isFacingLeft ? -1f : 1f) * rootMotion * motionScale;
             rb.velocity =  new Vector2(horizontalVelocity, verticalVelocity);
         }
