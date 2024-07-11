@@ -1,14 +1,14 @@
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 // 근접 공격만 가능한 적의 행동을 제공하는 클래스.
-// 원거리 적과 다르게 공격 모션의 시작부터 후딜레이 직전까지 슈퍼아머가 부여된다.
+// 원거리 적과 마찬가지로 공격 모션의 시작부터 후딜레이 직전까지 슈퍼아머가 부여된다.
+//
+// 공격의 계수나 넉백 거리 등은 여기가 아니라 공격 애니메이션 클립에서 실시간으로 변경됨!
 //
 // 필요한 애니메이션 이벤트:
 // 1. OnAttackMotionEnd() - 공격 모션의 마지막 프레임
-// 2. EnableMeleeAttackHitbox() - 공격 판정 시작되는 프레임
-// 3. DisableMeleeAttackHitbox() - 공격 판정 끝나는 프레임
-// 4. DisableSuperArmor() - 공격 모션의 마지막 후딜레이가 시작되는 프레임
+// 2. EnableSuperArmor() - 공격 판정 시작되는 프레임
+// 3. DisableSuperArmor() - 공격 모션의 마지막 후딜레이가 시작되는 프레임
 //
 // 제공되는 애니메이션 트리거:
 // 1. Stagger - 경직 시작
@@ -90,17 +90,15 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
         return isStaggered;
     }
 
-    public void EnableMeleeAttackHitbox()
-    {
-        meleeAttackHitbox.IsHitboxEnabled = true;
-
-        // 근거리 몹도 선딜레이 끝난 뒤부터 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
-        StaggerResistance = StaggerStrength.Weak;
-    }
-
     public void DisableMeleeAttackHitbox()
     {
         meleeAttackHitbox.IsHitboxEnabled = false;
+    }
+
+    public void EnableSuperArmor()
+    {
+        // 근거리 몹도 선딜레이 끝난 뒤부터 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
+        StaggerResistance = StaggerStrength.Weak;
     }
 
     public void DisableSuperArmor()
