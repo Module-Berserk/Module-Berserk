@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -47,6 +45,8 @@ public class PlayerDetectionRange : MonoBehaviour
     // IsPlayerInRange가 true여도 벽 등에 시선이 가로막히면
     // IsPlayerDetected는 false가 될 수 있음.
     public bool IsPlayerDetected {get; private set;}
+
+    public Bounds Boundary {get => detectionRange.bounds; }
 
     // 컴포넌트 레퍼런스
     private Collider2D detectionRange;

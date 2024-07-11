@@ -31,7 +31,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     // 수문장 역할의 AI는 일정 범위에서만 순찰/추적을 해야 함.
     // 여기에 콜라이더를 넣어주면 해당 범위를 벗어나지 않는 방향으로만 움직임.
     // 아무것도 할당하지 않으면 이동범위 제약 없이 활동함.
-    [SerializeField] private BoxCollider2D moveRestrictionArea;
+    [SerializeField] private PlayerDetectionRange moveRestrictionArea;
 
 
     [Header("Stagger")]
@@ -264,9 +264,8 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 플레이어 방향으로 스프라이트 설정
         IsFacingLeft = displacement < 0f;
 
-        // 활동 제한 범위(optional)를 벗어나지 않으면서
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
-        if (Mathf.Abs(displacement) > chaseMinDistance && !IsMovingOutsideRestrictedArea(displacement))
+        if (Mathf.Abs(displacement) > chaseMinDistance)
         {
             float desiredSpeed = Mathf.Sign(displacement) * chaseSpeed;
             platformerMovement.UpdateMoveVelocity(desiredSpeed);
@@ -303,6 +302,13 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
             return false;
         }
 
+        // 활동 범위 제약이 존재하는데 플레이어가 그 범위 안에 아직 안 들어온 경우
+        if (moveRestrictionArea != null && !moveRestrictionArea.IsPlayerInRange)
+        {
+            Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
+            return false;
+        }
+
         return true;
     }
 
@@ -314,15 +320,14 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         // 왼쪽 범위를 이미 넘었는데 더 왼쪽으로 가려는 경우
-        float globalOffsetX = moveRestrictionArea.transform.position.x + moveRestrictionArea.offset.x;
-        float leftEndX = globalOffsetX - moveRestrictionArea.size.x / 2f;
+        float leftEndX = moveRestrictionArea.Boundary.min.x;
         if (rb.position.x < leftEndX && direction < 0f)
         {
             return true;
         }
 
         // 오른쪽 범위를 이미 넘었는데 더 오른쪽으로 가려는 경우
-        float rightEndX = globalOffsetX + moveRestrictionArea.size.x / 2f;
+        float rightEndX = moveRestrictionArea.Boundary.max.x;
         if (rb.position.x > rightEndX && direction > 0f)
         {
             return true;
