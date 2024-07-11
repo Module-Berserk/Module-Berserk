@@ -170,7 +170,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(500f, 0f, 500f);
+        hp = new CharacterStat(5f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
