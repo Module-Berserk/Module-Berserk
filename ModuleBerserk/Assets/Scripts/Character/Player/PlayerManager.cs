@@ -90,6 +90,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private FlashEffectOnHit flashEffectOnHit;
     private ScreenShake screenShake;
     private GearSystem gearSystem;
+    private HealthBarAnimation healthBarAnimation;
 
     // GameState에서 가져온 저장 가능한 플레이어 상태들
     private PlayerState playerState;
@@ -145,6 +146,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
+        healthBarAnimation = GetComponent<HealthBarAnimation>();
     }
 
     private void Start()
@@ -172,6 +174,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
+        playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
+
         // TODO: 인벤토리 상태 초기화하기 (아이템 종류, 쿨타임 등)
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
@@ -198,6 +202,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
         emergencyEvadeHitbox.IsHitboxEnabled = false;
     }
 
+    private void UpdateHealthBarUI(float diff)
+    {
+        Debug.Log($"hp 변동: {playerState.HP.CurrentValue}");
+        healthBarAnimation.UpdateCurrentValue(playerState.HP.CurrentValue / playerState.HP.MaxValue);
+    }
+
     private void OnEnable()
     {    
         var playerActions = InputManager.InputActions.Player;
@@ -205,8 +215,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed += OnFallDown;
         playerActions.PerformAction.performed += OnPerformAction;
         playerActions.Evade.performed += OnEvade;
-
-        // TODO: playerState.HP.OnValueChange에 체력바 UI 업데이트 함수 등록
     }
 
     private void OnDisable()
@@ -216,8 +224,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed -= OnFallDown;
         playerActions.PerformAction.performed -= OnPerformAction;
         playerActions.Evade.performed -= OnEvade;
-
-        // TODO: playerState.HP.OnValueChange에 체력바 UI 업데이트 함수 제거
     }
 
     private void OnJump(InputAction.CallbackContext context)

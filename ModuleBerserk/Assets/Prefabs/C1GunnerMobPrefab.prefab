@@ -413,10 +413,10 @@ MonoBehaviour:
   randomizationFactor: 0.1
   delayBetweenRangedAttacks: 3
   delayBetweenRepelAttacks: 5
-  repelAttackDamage: 0
+  repelAttackDamage: 1
   repelAttackHitbox: {fileID: 1500010488315644426}
   runAwaySpeed: 1
-  rangedAttackDamage: 0
+  rangedAttackDamage: 5
   rangedAttackHitbox: {fileID: 8031970817273493436}
 --- !u!114 &2695420284089087774
 MonoBehaviour:

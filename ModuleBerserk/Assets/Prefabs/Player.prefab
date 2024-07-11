@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 4895742193337405064}
   - component: {fileID: 6683100023457001669}
   - component: {fileID: 5967063454063742748}
+  - component: {fileID: 4169763342040205081}
   - component: {fileID: 8017939143549858306}
   - component: {fileID: 8967889573082849027}
   - component: {fileID: 8348982263639074738}
@@ -488,6 +489,22 @@ MonoBehaviour:
       m_Calls: []
   descriptionText: {fileID: 0}
   gaugeArrow: {fileID: 0}
+--- !u!114 &4169763342040205081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053644641385332747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db1e094b7b1d934ba745d1c8b3aff58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentValueSlider: {fileID: 0}
+  followUpSlider: {fileID: 0}
+  followUpLerpRatio: 0.02
+  followUpThreshold: 0.01
 --- !u!114 &8017939143549858306
 MonoBehaviour:
   m_ObjectHideFlags: 0

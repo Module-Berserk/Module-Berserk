@@ -424,7 +424,7 @@ MonoBehaviour:
   weakStaggerForce: 15
   strongStaggerForce: 15
   randomizationFactor: 0.1
-  meleeAttackDamage: 0
+  meleeAttackDamage: 5
   delayBetweenMeleeAttacks: 3
   meleeAttackHitbox: {fileID: 1667865729473829347}
 --- !u!114 &7054442615863630989
