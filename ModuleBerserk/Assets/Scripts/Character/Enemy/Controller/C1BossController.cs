@@ -39,7 +39,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Chase Pattern")]
-    [SerializeField] private float walkSpeed = 1.6f;
+    [SerializeField] private float walkSpeed = 2f;
     // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
     [SerializeField] private float chaseStopDistance = 1f;
 
@@ -53,7 +53,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 맵 끝에서 끝까지 점프할 때를 기준으로 얼마의 시간이 소요되는지 결정.
     // 실제로는 백스텝 거리에 비례하는 수치가 사용됨.
     // ex) 맵 중앙에서 출발하면 시간과 속도가 절반
-    [SerializeField] private float backstepJumpMaxDuration = 2f;
+    [SerializeField] private float backstepJumpMaxDuration = 1f;
 
 
     [Header("Dash Attack Pattern")]
@@ -63,13 +63,13 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 그러므로 공격 함수에서 직접 콜라이더에 접근해야 함.
     [SerializeField] private BoxCollider2D dashAttackHitbox;
     // 맵 반대편 끝까지 돌진하는데에 걸리는 시간
-    [SerializeField] private float dashDuration;
-    [SerializeField] private Ease dashMotionEase;
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private Ease dashMotionEase = Ease.Flash;
     // 돌진이 벽이나 상자에 충돌했을 때의 카메라 흔들림 강도
-    [SerializeField] private float dashImpactCameraShakeForce;
+    [SerializeField] private float dashImpactCameraShakeForce = 1f;
     // 플레이어가 돌진 패턴에 끌려와서 벽에 충돌했을 때 반동으로 튕겨나오는 거리와 시간
-    [SerializeField] private float playerWallReboundDistance;
-    [SerializeField] private float playerWallReboundDuration;
+    [SerializeField] private float playerWallReboundDistance = 1.5f;
+    [SerializeField] private float playerWallReboundDuration = 0.5f;
 
 
     [Header("Cannon Pattern")]

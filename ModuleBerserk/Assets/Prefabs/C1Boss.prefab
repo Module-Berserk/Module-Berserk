@@ -473,14 +473,14 @@ MonoBehaviour:
   gunnerMobPrefab: {fileID: 2230194136603300056, guid: 112b131d06325c145b5ba5dbca3c527d, type: 3}
   mobSpawnPoint: {fileID: 0}
   hitboxes: {fileID: 5204460066286976703}
-  walkSpeed: 1.7
+  walkSpeed: 2
   chaseStopDistance: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   mapLeftEnd: {fileID: 0}
   mapRightEnd: {fileID: 0}
-  backstepJumpMaxDuration: 2
+  backstepJumpMaxDuration: 1
   noBoxGimmickNearbyTrigger: {fileID: 0}
   dashAttackHitbox: {fileID: 5904141127077743963}
   dashDuration: 0.2

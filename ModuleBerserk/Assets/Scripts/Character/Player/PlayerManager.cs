@@ -59,11 +59,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
 
     [Header("Evasion")]
-    [SerializeField] private float evasionDuration = 0.4f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
-    [SerializeField] private float evasionDistance = 2f;
+    [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
+    [SerializeField] private float evasionDistance = 4f;
     [SerializeField] private Ease evasionEase = Ease.OutCubic;
-    [SerializeField] private float evasionCooltime = 2f;
-    [SerializeField] private float emergencyEvasionCooltime = 1f;
+    [SerializeField] private float evasionCooltime = 1.3f;
+    [SerializeField] private float emergencyEvasionCooltime = 1.3f;
     // 피격 시점 이후로 긴급 회피가 허용되는 시간.
     // 이 시간 안에 회피 버튼을 누르면 데미지를 무효화하고 반격할 수 있음.
     [SerializeField] private float emergencyEvasionTimeWindow = 0.3f;
