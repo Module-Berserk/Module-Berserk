@@ -19,21 +19,15 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     [SerializeField] private float meleeAttackDamage;
     // 다음 공격까지 기다려야 하는 시간
     [SerializeField] private float delayBetweenMeleeAttacks = 3f;
-    [SerializeField] private ApplyDamageOnContact meleeAttackHitbox;
 
-
-    // 현재 대기 애니메이션이 반복 재생된 횟수
-    private int idleAnimationRepetitionCount = 0;
-    // 다른 대기 애니메이션으로 전환되기 위한 반복 재생 횟수
-    private const int IDLE_ANIMATION_CHANGE_THRESHOLD = 6;
 
     // 근접 공격 쿨타임 (0이 되면 공격 가능)
     private float remainingMeleeAttackCooltime = 0f;
 
     private void Start()
     {
-        meleeAttackHitbox.RawDamage = new CharacterStat(meleeAttackDamage, 0f);
-        meleeAttackHitbox.IsHitboxEnabled = false;
+        hitboxes.RawDamage = new CharacterStat(meleeAttackDamage, 0f);
+        hitboxes.IsHitboxEnabled = false;
     }
 
     private new void FixedUpdate()
@@ -54,7 +48,7 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
         platformerMovement.ApplyHighFriction();
 
         // 바라보는 방향으로 히트박스 이동
-        meleeAttackHitbox.SetHitboxDirection(IsFacingLeft);
+        hitboxes.SetHitboxDirection(IsFacingLeft);
 
         animator.SetTrigger("MeleeAttack");
 
@@ -74,55 +68,5 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
     bool IMeleeEnemyBehavior.IsAttackMotionFinished()
     {
         return isAttackMotionFinished;
-    }
-
-    public override bool TryApplyStagger(AttackInfo attackInfo)
-    {
-        bool isStaggered = base.TryApplyStagger(attackInfo);
-
-        // 공격을 하던 도중에 경직당하면 히트박스가
-        // 활성화 상태로 방치될 위험이 있어 꼭 정리해줘야 함.
-        if (isStaggered)
-        {
-            DisableMeleeAttackHitbox();
-        }
-
-        return isStaggered;
-    }
-
-    public void DisableMeleeAttackHitbox()
-    {
-        meleeAttackHitbox.IsHitboxEnabled = false;
-    }
-
-    public void EnableSuperArmor()
-    {
-        // 근거리 몹도 선딜레이 끝난 뒤부터 후딜레이 전까지는 슈퍼아머 판정 (약한 경직 저항)
-        StaggerResistance = StaggerStrength.Weak;
-    }
-
-    public void DisableSuperArmor()
-    {
-        StaggerResistance = StaggerStrength.None;
-    }
-
-    // 대기 애니메이션의 마지막 프레임에 호출되는 이벤트
-    // TODO: idle 처리는 EnemyBehaviorBase로 옮기기
-    public void OnIdleAnimationEnd()
-    {
-        idleAnimationRepetitionCount++;
-
-        // 일정 횟수 이상 반복되면 다른 대기 애니메이션을 사용하도록 만든다
-        if (idleAnimationRepetitionCount > IDLE_ANIMATION_CHANGE_THRESHOLD)
-        {
-            animator.SetTrigger("ChangeIdleAnimation");
-        }
-    }
-
-    public override void HandleDeath()
-    {
-        base.HandleDeath();
-
-        DisableMeleeAttackHitbox();
     }
 }

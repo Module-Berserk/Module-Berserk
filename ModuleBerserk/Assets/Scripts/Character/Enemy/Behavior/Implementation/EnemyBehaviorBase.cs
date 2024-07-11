@@ -39,6 +39,9 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     [SerializeField] protected float randomizationFactor = 0.1f;
 
 
+    [Header("Hitboxes")]
+    [SerializeField] protected ApplyDamageOnContact hitboxes;
+
     public bool IsFacingLeft
     {
         get => spriteRenderer.flipX;
@@ -87,6 +90,27 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 
         // 잡몹은 평상시에 경직 저항력이 없고,
         // 몹의 종류에 따라 공격 모션에 일부 약한 경직 저항이 부여됨.
+        StaggerResistance = StaggerStrength.None;
+    }
+
+    // 넉백, 사망 애니메이션의 첫 프레임에서 혹시 활성화되어있을지
+    // 모를 히트박스를 모두 꺼버릴 때 사용하는 함수.
+    //
+    // 공격 판정이 일어나는 FixedUpdate보다 애니메이션 업데이트가 느려서
+    // 경직 상태에 돌입한 프레임에 뒤늦게 히트박스가 켜지는 상황이 발생할 수도 있다!
+    public void DisableAttackHitbox()
+    {
+        hitboxes.IsHitboxEnabled = false;
+    }
+
+    // 공격 애니메이션에서 이벤트로 슈퍼아머를 켜고 끄기 위한 함수.
+    public void EnableSuperArmor()
+    {
+        StaggerResistance = StaggerStrength.Weak;
+    }
+
+    public void DisableSuperArmor()
+    {
         StaggerResistance = StaggerStrength.None;
     }
 

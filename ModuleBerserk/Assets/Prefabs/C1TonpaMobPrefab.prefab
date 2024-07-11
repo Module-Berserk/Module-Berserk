@@ -423,9 +423,9 @@ MonoBehaviour:
   patrolSpeed: 1
   moveRestrictionArea: {fileID: 0}
   randomizationFactor: 0.1
+  hitboxes: {fileID: 1667865729473829347}
   meleeAttackDamage: 10
   delayBetweenMeleeAttacks: 3
-  meleeAttackHitbox: {fileID: 1667865729473829347}
 --- !u!114 &7054442615863630989
 MonoBehaviour:
   m_ObjectHideFlags: 0

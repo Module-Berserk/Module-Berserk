@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 // 원거리 공격이 가능한 적들의 공통적인 행동을 제공하는 클래스.
@@ -18,6 +17,7 @@ using UnityEngine;
 // 3. RangedAttack - 원거리 공격 시작
 public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyBehavior
 {
+
     [Header("Attack Delay")]
     // 다음 원거리 공격까지 기다려야 하는 시간
     [SerializeField] private float delayBetweenRangedAttacks = 3f;
@@ -25,20 +25,14 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
     [SerializeField] private float delayBetweenRepelAttacks = 5f;
 
 
-    [Header("Repel Attack")]
-    [SerializeField] private float repelAttackDamage;
-    [SerializeField] private ApplyDamageOnContact repelAttackHitbox;
+    [Header("Attack Stat")]
+    [SerializeField] private float baseDamage;
 
     
     [Header("Run Away")]
     // 최소 사정거리를 확보하기 위해 도주할 때의 이동 속도
     [SerializeField] private float runAwaySpeed = 1f;
 
-
-    // 현재 대기 애니메이션이 반복 재생된 횟수
-    private int idleAnimationRepetitionCount = 0;
-    // 다른 대기 애니메이션으로 전환되기 위한 반복 재생 횟수
-    private const int IDLE_ANIMATION_CHANGE_THRESHOLD = 6;
 
     // 원거리 공격 쿨타임 (0이 되면 가능)
     private float remainingRangedAttackCooltime = 0f;
@@ -47,8 +41,8 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
 
     protected void Start()
     {
-        repelAttackHitbox.RawDamage = new CharacterStat(repelAttackDamage, 0f);
-        repelAttackHitbox.IsHitboxEnabled = false;
+        hitboxes.RawDamage = new CharacterStat(baseDamage, 0f);
+        hitboxes.IsHitboxEnabled = false;
     }
 
     private new void FixedUpdate()
@@ -87,19 +81,6 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         return remainingRangedAttackCooltime <= 0f;
     }
 
-    // 대기 애니메이션의 마지막 프레임에 호출되는 이벤트
-    // TODO: idle 처리는 EnemyBehaviorBase로 옮기기
-    public void OnIdleAnimationEnd()
-    {
-        idleAnimationRepetitionCount++;
-
-        // 일정 횟수 이상 반복되면 다른 대기 애니메이션을 사용하도록 만든다
-        if (idleAnimationRepetitionCount > IDLE_ANIMATION_CHANGE_THRESHOLD)
-        {
-            animator.SetTrigger("ChangeIdleAnimation");
-        }
-    }
-
     void IRangedEnemyBehavior.RepelAttack()
     {
         animator.SetTrigger("RepelAttack");
@@ -110,7 +91,7 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         // 최소 사정거리를 확보하기 위해 도주하는 상태에는
         // 플레이어를 등지고 있으므로 공격을 위해 뒤로 돌아봐야 함
         IsFacingLeft = player.transform.position.x < transform.position.x;
-        repelAttackHitbox.SetHitboxDirection(IsFacingLeft);
+        hitboxes.SetHitboxDirection(IsFacingLeft);
 
         // 약간의 랜덤성을 부여한 쿨타임 시작
         // 적들이 동일한 간격으로 공격하는 것을 방지해 조금 더 자연스럽게 느껴지도록 한다
@@ -118,19 +99,6 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
 
         // 공격 애니메이션 재생 중
         isAttackMotionFinished = false;
-    }
-
-    public void EnableRepelAttackHitbox()
-    {
-        // 밀쳐내기 공격의 핵심 모션 도중에는 약한 경직 저항 부여
-        StaggerResistance = StaggerStrength.Weak;
-        repelAttackHitbox.IsHitboxEnabled = true;
-    }
-
-    public void DisableRepelAttackHitbox()
-    {
-        StaggerResistance = StaggerStrength.None;
-        repelAttackHitbox.IsHitboxEnabled = false;
     }
 
     bool IRangedEnemyBehavior.IsRepelAttackReady()
@@ -167,12 +135,5 @@ public abstract class RangedEnemyBehaviorBase : EnemyBehaviorBase, IRangedEnemyB
         float desiredSpeed = Mathf.Sign(runAwayDirection) * runAwaySpeed;
         platformerMovement.UpdateMoveVelocity(desiredSpeed);
         platformerMovement.UpdateFriction(desiredSpeed);
-    }
-
-    public override void HandleDeath()
-    {
-        base.HandleDeath();
-
-        DisableRepelAttackHitbox();
     }
 }
