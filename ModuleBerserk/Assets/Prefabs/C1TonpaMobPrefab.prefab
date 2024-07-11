@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  knockbackForce: 10
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
@@ -421,8 +422,6 @@ MonoBehaviour:
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
   moveRestrictionArea: {fileID: 0}
-  weakStaggerForce: 15
-  strongStaggerForce: 15
   randomizationFactor: 0.1
   meleeAttackDamage: 5
   delayBetweenMeleeAttacks: 3

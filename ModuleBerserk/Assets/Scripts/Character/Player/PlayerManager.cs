@@ -53,12 +53,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField, Range(0f, 5f)] private float cameraLookAheadDistance = 2f;
 
 
-    [Header("Stagger")]
-    // 경직을 주는 공격에 맞았을 때 얼마나 강하게 밀려날 것인지
-    [SerializeField] private float weakStaggerKnockbackForce = 10f;
-    [SerializeField] private float strongStaggerKnockbackForce = 23f;
-
-
     [Header("Hitbox")]
     [SerializeField] private ApplyDamageOnContact weaponHitbox; // 평타 범위
     [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
@@ -754,21 +748,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         return isInvincible;
     }
 
-    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
 
-        switch(staggerInfo.strength)
-        {
-            case StaggerStrength.Weak:
-                ApplyStagger(staggerInfo.direction * weakStaggerKnockbackForce, staggerInfo.duration);
-                break;
-            case StaggerStrength.Strong:
-                ApplyStagger(staggerInfo.direction * strongStaggerKnockbackForce, staggerInfo.duration);
-                break;
-        }
+        ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
 
-        ApplyDamageWithDelayAsync(finalDamage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
+        ApplyDamageWithDelayAsync(attackInfo.damage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
 
         return true;
     }

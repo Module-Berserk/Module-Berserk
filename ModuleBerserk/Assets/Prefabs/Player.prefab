@@ -92,6 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 0
   staggerStrength: 2
+  knockbackForce: 15
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
@@ -661,6 +662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 0
   staggerStrength: 1
+  knockbackForce: 15
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:

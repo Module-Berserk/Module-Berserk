@@ -24,8 +24,6 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Stagger")]
-    [SerializeField] private float staggerDuration = 0.5f;
-    [SerializeField] private float staggerForce = 7f;
     [SerializeField] private float knockbackDecceleration = 60f;
 
 
@@ -726,19 +724,19 @@ public class C1BossController : MonoBehaviour, IDestructible
         return true;
     }
 
-    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         // 보스는 패턴 시전 중이 아닌 경우에 한해 강한 경직의 영향만 받음
-        if (staggerInfo.strength == StaggerStrength.Strong && !IsAttackPatternOngoing())
+        if (attackInfo.staggerStrength == StaggerStrength.Strong && !IsAttackPatternOngoing())
         {
             // 기절은 경직보다 더 강한 상태이상이므로 기절 상태는 덮어쓰지 않음
             if (actionState != ActionState.Stun)
             {
-                ApplyStaggerForDurationAsync(staggerInfo.direction, staggerDuration).Forget();
+                ApplyStaggerForDurationAsync(attackInfo.knockbackForce, attackInfo.duration).Forget();
             }
         }
 
-        (this as IDestructible).HandleHPDecrease(finalDamage);
+        (this as IDestructible).HandleHPDecrease(attackInfo.damage);
 
         flashEffectOnHit.StartEffectAsync().Forget();
 
@@ -746,9 +744,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         return true;
     }
 
-    private async UniTask ApplyStaggerForDurationAsync(Vector2 direction, float duration)
+    private async UniTask ApplyStaggerForDurationAsync(Vector2 knockbackForce, float duration)
     {
-        rb.AddForce(direction * staggerForce, ForceMode2D.Impulse);
+        rb.AddForce(knockbackForce, ForceMode2D.Impulse);
 
         animator.SetTrigger("Stagger");
         actionState = ActionState.Stagger;

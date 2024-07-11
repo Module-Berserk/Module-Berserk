@@ -92,16 +92,16 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         return Team.Environment;
     }
 
-    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         // 박스 기믹은 공격으로 파괴되지 않지만 챕터1 보스전에서
         // 선반 위에 대기 중인 경우 플레이어의 공격에 의해 밀려나며 바닥으로 떨어질 수는 있음.
         //
         // 이 경우 넉백 효과와 함께 부모 오브젝트와의 충돌을 비활성화해주는 처리가 필요함
-        if (damageSource == Team.Player && transform.parent != null && transform.parent.TryGetComponent(out Collider2D shelfCollider))
+        if (attackInfo.damageSource == Team.Player && transform.parent != null && transform.parent.TryGetComponent(out Collider2D shelfCollider))
         {
             DropBoxFromBossRoomShelf(shelfCollider);
-            PushBoxHorizontally(staggerInfo.direction);
+            PushBoxHorizontally(attackInfo.knockbackForce.normalized);
         }
 
         // 공격 성공으로는 취급하지 않는다.

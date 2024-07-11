@@ -34,14 +34,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     [SerializeField] private PlayerDetectionRange moveRestrictionArea;
 
 
-    [Header("Stagger")]
-    [SerializeField] private float weakStaggerForce = 5f;
-    [SerializeField] private float strongStaggerForce = 10f;
-
-
     [Header("Stat Randomization")]
     // 이동 속도, 공격 딜레이 등 각종 수치를 몹마다 다르게 할 비율 (퍼센트 단위, 0이면 랜덤성 없음)
     [SerializeField] protected float randomizationFactor = 0.1f;
+
 
     public bool IsFacingLeft
     {
@@ -342,10 +338,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         return !isStaggered;
     }
 
-    public virtual bool TryApplyStagger(StaggerInfo staggerInfo)
+    public virtual bool TryApplyStagger(AttackInfo attackInfo)
     {
         // 경직 저항력에 의한 슈퍼아머
-        if (staggerInfo.strength <= StaggerResistance)
+        if (attackInfo.staggerStrength <= StaggerResistance)
         {
             return false;
         }
@@ -361,7 +357,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 애니메이션 재생
         animator.SetTrigger("Stagger");
 
-        GetStaggeredForDuration(staggerInfo).Forget();
+        GetStaggeredForDuration(attackInfo).Forget();
 
         return true;
     }
@@ -377,7 +373,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     //
     // * 순찰은 IEnemyBehavior 중에서 유일하게 stateful한 행동이라서
     //   수동으로 취소해주지 않으면 FixedUpdate()에서 계속 순찰을 시도해버림!
-    protected async UniTask GetStaggeredForDuration(StaggerInfo staggerInfo)
+    protected async UniTask GetStaggeredForDuration(AttackInfo attackInfo)
     {
         // 아직 경직이 끝나지 않은 경우 기존 task를 취소해서
         // 도중에 isStaggered = false가 되어버리는 것을 막아야 함
@@ -389,11 +385,11 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         }
 
         // 공격받은 방향 바라보기 (오른쪽으로 넉백 <=> 왼쪽에서 공격당함)
-        IsFacingLeft = staggerInfo.direction.x > 0f;
+        IsFacingLeft = attackInfo.knockbackForce.x > 0f;
 
         // 넉백 효과
         platformerMovement.ApplyZeroFriction();
-        rb.AddForce(staggerInfo.direction * GetKnockbackForce(staggerInfo.strength), ForceMode2D.Impulse);
+        rb.AddForce(attackInfo.knockbackForce, ForceMode2D.Impulse);
 
         // 잠시 경직 상태에 돌입
         isPatrolling = false;
@@ -402,28 +398,11 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 기존 경직이 끝나기 전에 새로운 경직 효과가 부여되는 경우
         // isStaggered를 true 상태로 유지한 채 바로 종료해야 함.
         var cancellationToken = staggerCancellation.Token;
-        await UniTask.WaitForSeconds(staggerInfo.duration, cancellationToken: cancellationToken);
+        await UniTask.WaitForSeconds(attackInfo.duration, cancellationToken: cancellationToken);
 
         if (!cancellationToken.IsCancellationRequested)
         {
             isStaggered = false;
-        }
-    }
-
-    // 경직 종류별 넉백 impulse 크기
-    private float GetKnockbackForce(StaggerStrength staggerStrength)
-    {
-        if (staggerStrength == StaggerStrength.Weak)
-        {
-            return weakStaggerForce;
-        }
-        else if (staggerStrength == StaggerStrength.Strong)
-        {
-            return strongStaggerForce;
-        }
-        else
-        {
-            return 0f; // StaggerStrength.None
         }
     }
 

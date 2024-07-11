@@ -30,6 +30,7 @@ public class ApplyDamageOnContact : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
     [SerializeField] private StaggerStrength staggerStrength;
+    [SerializeField] private float knockbackForce;
     // 콜라이더가 오래 켜있는 지속 데미지의 경우 몇 초마다 데미지를 입힐 수 있는지 결정.
     [SerializeField] private float delayBetweenDamageTick = 0.1f;
 
@@ -127,11 +128,18 @@ public class ApplyDamageOnContact : MonoBehaviour
                 recentDamages.Add(destructible, delayBetweenDamageTick);
 
                 // 넉백 방향은 무조건 공격한 사람이 바라보는 방향 기준으로 들어감!
-                Vector2 staggerDirection = isHitboxFacingLeft ? Vector2.left : Vector2.right;
-                StaggerInfo staggerInfo = new(staggerStrength, staggerDirection, 0.5f);
+                Vector2 knockbackDirection = isHitboxFacingLeft ? Vector2.left : Vector2.right;
+                AttackInfo attackInfo = new()
+                {
+                    damageSource = DamageSource,
+                    damage = RawDamage.CurrentValue * DamageCoefficient,
+                    staggerStrength = staggerStrength,
+                    knockbackForce = knockbackDirection * knockbackForce,
+                    duration = 0.5f
+                };
 
                 // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
-                if (destructible.TryApplyDamage(DamageSource, RawDamage.CurrentValue * DamageCoefficient, staggerInfo))
+                if (destructible.TryApplyDamage(attackInfo))
                 {
                     OnApplyDamageSuccess.Invoke();
                 }

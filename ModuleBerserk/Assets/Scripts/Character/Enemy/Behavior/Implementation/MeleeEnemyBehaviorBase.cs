@@ -76,9 +76,9 @@ public class MeleeEnemyBehaviorBase : EnemyBehaviorBase, IMeleeEnemyBehavior
         return isAttackMotionFinished;
     }
 
-    public override bool TryApplyStagger(StaggerInfo staggerInfo)
+    public override bool TryApplyStagger(AttackInfo attackInfo)
     {
-        bool isStaggered = base.TryApplyStagger(staggerInfo);
+        bool isStaggered = base.TryApplyStagger(attackInfo);
 
         // 공격을 하던 도중에 경직당하면 히트박스가
         // 활성화 상태로 방치될 위험이 있어 꼭 정리해줘야 함.

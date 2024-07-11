@@ -408,8 +408,6 @@ MonoBehaviour:
   maxPatrolSubbehaviorDuration: 4
   patrolSpeed: 1
   moveRestrictionArea: {fileID: 0}
-  weakStaggerForce: 15
-  strongStaggerForce: 15
   randomizationFactor: 0.1
   delayBetweenRangedAttacks: 3
   delayBetweenRepelAttacks: 5
@@ -754,6 +752,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
+  knockbackForce: 10
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
@@ -855,6 +854,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 2
+  knockbackForce: 20
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:

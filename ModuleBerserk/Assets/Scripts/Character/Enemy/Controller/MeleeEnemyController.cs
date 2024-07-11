@@ -180,15 +180,15 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         return Team.Enemy;
     }
 
-    bool IDestructible.OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo)
+    bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
-        (this as IDestructible).HandleHPDecrease(finalDamage);
+        (this as IDestructible).HandleHPDecrease(attackInfo.damage);
 
         // 피격 이펙트
         flashEffectOnHit.StartEffectAsync().Forget();
 
         // 경직 상태에 들어갔다면 잠시 기다렸다가 추적 시작
-        if (meleeEnemyBehavior.TryApplyStagger(staggerInfo))
+        if (meleeEnemyBehavior.TryApplyStagger(attackInfo))
         {
             state = State.Stagger;
         }

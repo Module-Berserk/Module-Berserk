@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // 플레이어의 공격이 플레이어를 자해하는 경우나
@@ -23,21 +20,18 @@ public enum StaggerStrength
     Strong, // 크게 뒤로 밀려나며 넘어지는 수준
 }
 
-public struct StaggerInfo
+// 공격을 시도하는 주체부터 공격을 당하는 대상에게까지 흘러가는 정보들.
+//
+// 주의사항:
+// damage는 TryApplyDamage()에 넘기는 시점에서는 raw damage이지만
+// OnDamage 이벤트로 넘어가는 시점에서는 방어력을 고려한 최종 데미지로 수정됨.
+public struct AttackInfo
 {
-    public StaggerStrength strength; // 경직 강도
-    public Vector2 direction; // 밀려날 방향
+    public Team damageSource; // 누가 데미지를 입혔는가? 적/플레이어/환경
+    public float damage;
+    public StaggerStrength staggerStrength; // 경직 강도
+    public Vector2 knockbackForce; // 경직 부여에 성공하면 적용될 넉백 벡터
     public float duration; // 경직 지속 시간
-
-    public StaggerInfo(StaggerStrength strength, Vector2 direction, float duration)
-    {
-        this.strength = strength;
-        this.direction = direction;
-        this.duration = duration;
-    }
-
-    // 경직 없이 데미지를 입히고 싶은 경우 사용
-    public static StaggerInfo NoStagger => new(StaggerStrength.None, Vector2.zero, 0f);
 }
 
 // 체력과 방어력이 존재하며 파괴 가능한 모든 물체
@@ -61,7 +55,7 @@ public interface IDestructible
     // 
     // HP 차감의 경우 플레이어처럼 긴급회피로 나중에 데미지를 무효화할 수 있는
     // 특수한 경우가 아니라면 그냥 HandleHPDecrease(finalDamage)를 호출하면 된다!
-    bool OnDamage(Team damageSource, float finalDamage, StaggerInfo staggerInfo);
+    bool OnDamage(AttackInfo attackInfo);
 
     // 공격을 받아 HP가 0이 된 경우 호출됨
     void OnDestruction();
@@ -80,25 +74,27 @@ public interface IDestructible
     //
     // damageSource: 공격을 시도한 주체. 공격 대상과 같은 팀인 경우 무시됨.
     // rawDamage: 방어력을 고려하지 않은 데미지.
-    // staggerInfo: 이 공격이 부여할 경직의 강도와 방향. 경직이 없는 공격은 StaggerInfo.NoStagger를 넘겨주면 됨.
-    bool TryApplyDamage(Team damageSource, float rawDamage, StaggerInfo staggerInfo)
+    // attackInfo: 이 공격이 부여할 경직의 강도와 방향. 경직이 없는 공격은 attackInfo.NoStagger를 넘겨주면 됨.
+    bool TryApplyDamage(AttackInfo attackInfo)
     {
         // 무적 판정이거나 같은 팀의 공격인 경우 무시함.
-        if (IsInvincible() || damageSource == GetTeam())
+        if (IsInvincible() || attackInfo.damageSource == GetTeam())
         {
             return false;
         }
 
-        CharacterStat def = GetDefenseStat();
-
+        // 넘겨받은 raw damage와 방어력을 기반으로 최종 데미지를 계산함.
         // 방어력 10을 기준으로 스탯 1마다 10%씩 최종 데미지가 차이남.
+        CharacterStat def = GetDefenseStat();
         const float damageReductionPerDefense = 0.1f;
         float damageReduction = (def.CurrentValue - 10f) * damageReductionPerDefense;
-        float finalDamage = rawDamage * (1f - damageReduction);
+        float finalDamage = attackInfo.damage * (1f - damageReduction);
+
+        attackInfo.damage = finalDamage;
 
         // 데미지 처리 요청.
         // 대상이 이 공격이 성공이라고 판단하면 true를 반환할 것임.
-        return OnDamage(damageSource, finalDamage, staggerInfo);
+        return OnDamage(attackInfo);
     }
 
     // HP 차감 및 사망 처리의 기본 구현.
