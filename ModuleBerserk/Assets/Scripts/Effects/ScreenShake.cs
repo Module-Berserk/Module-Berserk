@@ -15,6 +15,6 @@ public class ScreenShake : MonoBehaviour
     {
         impulseSource.m_ImpulseDefinition.m_ImpulseDuration = duration;
         impulseSource.m_ImpulseDefinition.m_FrequencyGain = frequencyGain;
-        impulseSource.GenerateImpulse(strength);
+        impulseSource.GenerateImpulseAt(transform.position, Vector3.one * strength);
     }
 }
