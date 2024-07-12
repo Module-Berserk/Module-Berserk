@@ -809,4 +809,14 @@ public class C1BossController : MonoBehaviour, IDestructible
         int[] punchIndices = {25, 26, 27, 28};
         AudioManager.instance.PlaySFX(punchIndices);        
     }
+    private void Play8CannonShotSFX() {
+        int [] cannonIndices = {29, 30};
+        AudioManager.instance.PlaySFX(cannonIndices);
+        int [] shellIndices = {31};
+        AudioManager.instance.PlaySFX(shellIndices); 
+    }
+    private void PlayFlameThrowSFX() {
+        int [] flameIndices = {32};
+        AudioManager.instance.PlaySFX(flameIndices);
+    }
 }
