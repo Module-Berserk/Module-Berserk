@@ -170,7 +170,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
-        hp = new CharacterStat(5f, 0f, 500f);
+        hp = new CharacterStat(500f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
 
         // 체력바 업데이트 콜백
@@ -201,6 +201,9 @@ public class C1BossController : MonoBehaviour, IDestructible
 
                 // 기절 상태 부여
                 ApplyBoxGimmickKnockdownAsync().Forget();
+
+                // 플레이어를 끌고가던 중일 수도 있으니 joint 해제하기
+                ReleasePlayerGrab();
 
                 // 쿨타임 처리를 해줄 백스텝 패턴 task 전체가 취소되었으니 여기서 쿨타임 설정을 해줘야 함
                 RestartBackstepPatternCooltime();
@@ -640,14 +643,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         await UniTask.WaitForSeconds(0.1f, cancellationToken: attackCancellation.Token);
 
         // 플레이어가 돌진 패턴에 맞은 경우 벽쿵
-        if (sliderJoint.enabled)
-        {
-            sliderJoint.enabled = false;
-
-            // 경직과 함께 벽에서 튕겨나오는 효과
-            var reboundDistance = playerWallReboundDistance * (IsFacingLeft ? 1f : -1f);
-            playerManager.ApplyWallReboundAsync(reboundDistance, playerWallReboundDuration).Forget();
-        }
+        ReleasePlayerGrab();
 
         // task cancellation 없이 이 라인에 도달했다는건
         // 박스에 부딛히지 않고 벽에 충돌했다는 뜻이므로
@@ -660,6 +656,20 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
         await UniTask.WaitUntil(() => !isDashMotionOngoing, cancellationToken: attackCancellation.Token);
+    }
+
+    // 돌진 패턴에서 플레이어를 공격하면 끌고가는데,
+    // 여기에 사용된 slider joint를 해제하고 플레이어에게 튕겨나오는 모션을 부여하는 함수.
+    private void ReleasePlayerGrab()
+    {
+        if (sliderJoint.enabled)
+        {
+            sliderJoint.enabled = false;
+
+            // 경직과 함께 벽에서 튕겨나오는 효과
+            var reboundDistance = playerWallReboundDistance * (IsFacingLeft ? 1f : -1f);
+            playerManager.ApplyWallReboundAsync(reboundDistance, playerWallReboundDuration).Forget();
+        }
     }
 
     // 돌진 공격 애니메이션에서 앞으로 튀어나가야 하는 순간에 호출해주는 이벤트.
