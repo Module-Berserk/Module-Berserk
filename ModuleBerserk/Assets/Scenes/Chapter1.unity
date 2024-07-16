@@ -3761,6 +3761,22 @@ PrefabInstance:
       propertyPath: sfxList.Array.data[28]
       value: 
       objectReference: {fileID: 8300000, guid: 5fe9f978acbcbae4390359f469d1c3c1, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[29]
+      value: 
+      objectReference: {fileID: 8300000, guid: e50a8f82087ec184b8dab40b538b16e5, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[30]
+      value: 
+      objectReference: {fileID: 8300000, guid: 266608d8202fb6b46a06c8535bebf1d1, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[31]
+      value: 
+      objectReference: {fileID: 8300000, guid: f0bf5f9c37c476249a11d986791dbedd, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[32]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9db447386fe609942a7c3c0473680383, type: 3}
     - target: {fileID: 1304789424901213751, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: -91.313446
@@ -125944,11 +125960,11 @@ PrefabInstance:
       objectReference: {fileID: -979158457, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.6000004
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.8
+      value: -0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.z

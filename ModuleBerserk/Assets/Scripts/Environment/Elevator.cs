@@ -42,6 +42,9 @@ public class Elevator : MonoBehaviour
     private float heightLowerBound;
     private bool isActive = false;
 
+    //SFX
+    private AudioSource elevatorAudioSource;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -76,7 +79,7 @@ public class Elevator : MonoBehaviour
         }
         //SFX
         int[] elevatorIndices = {14, 15};
-        AudioManager.instance.PlaySFX(elevatorIndices);
+        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightLowerBound, downwardMovementDuration).Forget();
     }
 
@@ -89,7 +92,7 @@ public class Elevator : MonoBehaviour
         }
         //SFX
         int[] elevatorIndices = {14, 15};
-        AudioManager.instance.PlaySFX(elevatorIndices);
+        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightUpperBound, upwardMovementDuration).Forget();
     }
 
@@ -161,6 +164,7 @@ public class Elevator : MonoBehaviour
             .SetUpdate(UpdateType.Fixed);
 
         await UniTask.WaitForSeconds(movementDuration);
+        AudioManager.instance.StopSFX(elevatorAudioSource);
 
         // 엘리베이터가 "쾅"하고 떨어지는 경우 추가적인 화면 흔들림 효과 부여
         if (screenShakeOnLand && Mathf.Approximately(destinationHeight, heightLowerBound))
