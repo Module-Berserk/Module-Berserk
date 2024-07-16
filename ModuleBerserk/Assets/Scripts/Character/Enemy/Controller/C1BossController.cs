@@ -42,6 +42,9 @@ public class C1BossController : MonoBehaviour, IDestructible
     [SerializeField] private float walkSpeed = 2f;
     // 플레이어가 이 거리보다 가까우면 추적 상태에서도 그냥 idle 모션으로 서있음
     [SerializeField] private float chaseStopDistance = 1f;
+    // 걷다가 박스 기믹을 만나서 파괴할 때 걸리는 시간.
+    // 모션이 끝나도 잠깐 idle 모션으로 서있게 할 수 있다.
+    [SerializeField] private float delayOnDestroyBox = 0.3f;
 
 
     [Header("Backstep Pattern")]
@@ -184,10 +187,15 @@ public class C1BossController : MonoBehaviour, IDestructible
     {
         if (other.gameObject.TryGetComponent(out C1BoxGimmick boxGimmick))
         {
-            // TODO: chase 상태였다면 공격으로 파괴하기
-
+            // 추적 중에 박스와 충돌하면 공격해서 파괴.
+            // 박스를 돌진 패턴 전에 깔아놓는 것을 방지하고
+            // 박스에 가로막혀서 제자리걸음하는 이상한 모션을 막아준다.
+            if (actionState == ActionState.Chase)
+            {
+                DestroyBoxAsync(boxGimmick).Forget();
+            }
             // 돌진 패턴 도중에 박스와 충돌한 경우 돌진을 멈추고 기절
-            if (actionState == ActionState.DashAttack)
+            else if (actionState == ActionState.DashAttack)
             {
                 // 돌진 멈추기
                 attackCancellation.Cancel();
@@ -209,6 +217,17 @@ public class C1BossController : MonoBehaviour, IDestructible
                 RestartBackstepPatternCooltime();
             }
         }
+    }
+
+    private async UniTask DestroyBoxAsync(C1BoxGimmick boxGimmick)
+    {
+        boxGimmick.DestroyBox();
+
+        animator.SetTrigger("DestroyBox");
+
+        actionState = ActionState.DestroyBox;
+        await UniTask.WaitForSeconds(delayOnDestroyBox);
+        actionState = ActionState.Chase;
     }
 
     public void OnAttackSuccess()
