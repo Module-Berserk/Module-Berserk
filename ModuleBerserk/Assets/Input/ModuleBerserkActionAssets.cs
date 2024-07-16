@@ -62,6 +62,33 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Evade"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e098b6b-a77e-43bd-a4ec-a1310ec15c9e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UpArrow"",
+                    ""type"": ""Value"",
+                    ""id"": ""48317ee1-a6c3-4795-a126-d4aa3d415aab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DownArrow"",
+                    ""type"": ""Value"",
+                    ""id"": ""07592c75-5883-4ef2-8e0e-d2d789bead62"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -130,6 +157,39 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""action"": ""PerformAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""906c912c-07a0-4f14-9c47-17a44c0dcac9"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Evade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46e12b64-1ae0-42e2-bfb9-a30febec6447"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UpArrow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7ec4995-8757-4029-b04d-e3e8b7154730"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DownArrow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -177,15 +237,6 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""name"": ""Down"",
                     ""type"": ""Button"",
                     ""id"": ""5a077ade-b4f0-47c8-a332-bc3ce0dfeddd"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Escape"",
-                    ""type"": ""Button"",
-                    ""id"": ""893f1228-b89c-4253-a202-d496f660bc00"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -239,23 +290,40 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                 },
                 {
                     ""name"": """",
-                    ""id"": ""bcf65711-42a4-4d68-aa09-1e0651476954"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Escape"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""c6e0f2fd-e9e5-48e9-8067-64f9c41b0afa"",
                     ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Common"",
+            ""id"": ""59d28192-6622-4361-aeb5-6169fbf13e64"",
+            ""actions"": [
+                {
+                    ""name"": ""Escape"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a30c441-2d8a-41a2-9aa1-85b3eea14870"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""c9846bd9-7048-4d18-a19a-24e755ea62cd"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -270,6 +338,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_FallDown = m_Player.FindAction("FallDown", throwIfNotFound: true);
         m_Player_PerformAction = m_Player.FindAction("PerformAction", throwIfNotFound: true);
+        m_Player_Evade = m_Player.FindAction("Evade", throwIfNotFound: true);
+        m_Player_UpArrow = m_Player.FindAction("UpArrow", throwIfNotFound: true);
+        m_Player_DownArrow = m_Player.FindAction("DownArrow", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
@@ -277,7 +348,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         m_UI_Right = m_UI.FindAction("Right", throwIfNotFound: true);
         m_UI_Up = m_UI.FindAction("Up", throwIfNotFound: true);
         m_UI_Down = m_UI.FindAction("Down", throwIfNotFound: true);
-        m_UI_Escape = m_UI.FindAction("Escape", throwIfNotFound: true);
+        // Common
+        m_Common = asset.FindActionMap("Common", throwIfNotFound: true);
+        m_Common_Escape = m_Common.FindAction("Escape", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -343,6 +416,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_FallDown;
     private readonly InputAction m_Player_PerformAction;
+    private readonly InputAction m_Player_Evade;
+    private readonly InputAction m_Player_UpArrow;
+    private readonly InputAction m_Player_DownArrow;
     public struct PlayerActions
     {
         private @ModuleBerserkActionAssets m_Wrapper;
@@ -351,6 +427,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @FallDown => m_Wrapper.m_Player_FallDown;
         public InputAction @PerformAction => m_Wrapper.m_Player_PerformAction;
+        public InputAction @Evade => m_Wrapper.m_Player_Evade;
+        public InputAction @UpArrow => m_Wrapper.m_Player_UpArrow;
+        public InputAction @DownArrow => m_Wrapper.m_Player_DownArrow;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -372,6 +451,15 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @PerformAction.started += instance.OnPerformAction;
             @PerformAction.performed += instance.OnPerformAction;
             @PerformAction.canceled += instance.OnPerformAction;
+            @Evade.started += instance.OnEvade;
+            @Evade.performed += instance.OnEvade;
+            @Evade.canceled += instance.OnEvade;
+            @UpArrow.started += instance.OnUpArrow;
+            @UpArrow.performed += instance.OnUpArrow;
+            @UpArrow.canceled += instance.OnUpArrow;
+            @DownArrow.started += instance.OnDownArrow;
+            @DownArrow.performed += instance.OnDownArrow;
+            @DownArrow.canceled += instance.OnDownArrow;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -388,6 +476,15 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @PerformAction.started -= instance.OnPerformAction;
             @PerformAction.performed -= instance.OnPerformAction;
             @PerformAction.canceled -= instance.OnPerformAction;
+            @Evade.started -= instance.OnEvade;
+            @Evade.performed -= instance.OnEvade;
+            @Evade.canceled -= instance.OnEvade;
+            @UpArrow.started -= instance.OnUpArrow;
+            @UpArrow.performed -= instance.OnUpArrow;
+            @UpArrow.canceled -= instance.OnUpArrow;
+            @DownArrow.started -= instance.OnDownArrow;
+            @DownArrow.performed -= instance.OnDownArrow;
+            @DownArrow.canceled -= instance.OnDownArrow;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -414,7 +511,6 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     private readonly InputAction m_UI_Right;
     private readonly InputAction m_UI_Up;
     private readonly InputAction m_UI_Down;
-    private readonly InputAction m_UI_Escape;
     public struct UIActions
     {
         private @ModuleBerserkActionAssets m_Wrapper;
@@ -424,7 +520,6 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         public InputAction @Right => m_Wrapper.m_UI_Right;
         public InputAction @Up => m_Wrapper.m_UI_Up;
         public InputAction @Down => m_Wrapper.m_UI_Down;
-        public InputAction @Escape => m_Wrapper.m_UI_Escape;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -449,9 +544,6 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @Down.started += instance.OnDown;
             @Down.performed += instance.OnDown;
             @Down.canceled += instance.OnDown;
-            @Escape.started += instance.OnEscape;
-            @Escape.performed += instance.OnEscape;
-            @Escape.canceled += instance.OnEscape;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -471,9 +563,6 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @Down.started -= instance.OnDown;
             @Down.performed -= instance.OnDown;
             @Down.canceled -= instance.OnDown;
-            @Escape.started -= instance.OnEscape;
-            @Escape.performed -= instance.OnEscape;
-            @Escape.canceled -= instance.OnEscape;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -491,12 +580,61 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // Common
+    private readonly InputActionMap m_Common;
+    private List<ICommonActions> m_CommonActionsCallbackInterfaces = new List<ICommonActions>();
+    private readonly InputAction m_Common_Escape;
+    public struct CommonActions
+    {
+        private @ModuleBerserkActionAssets m_Wrapper;
+        public CommonActions(@ModuleBerserkActionAssets wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Escape => m_Wrapper.m_Common_Escape;
+        public InputActionMap Get() { return m_Wrapper.m_Common; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CommonActions set) { return set.Get(); }
+        public void AddCallbacks(ICommonActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CommonActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CommonActionsCallbackInterfaces.Add(instance);
+            @Escape.started += instance.OnEscape;
+            @Escape.performed += instance.OnEscape;
+            @Escape.canceled += instance.OnEscape;
+        }
+
+        private void UnregisterCallbacks(ICommonActions instance)
+        {
+            @Escape.started -= instance.OnEscape;
+            @Escape.performed -= instance.OnEscape;
+            @Escape.canceled -= instance.OnEscape;
+        }
+
+        public void RemoveCallbacks(ICommonActions instance)
+        {
+            if (m_Wrapper.m_CommonActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICommonActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CommonActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CommonActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CommonActions @Common => new CommonActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnFallDown(InputAction.CallbackContext context);
         void OnPerformAction(InputAction.CallbackContext context);
+        void OnEvade(InputAction.CallbackContext context);
+        void OnUpArrow(InputAction.CallbackContext context);
+        void OnDownArrow(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
@@ -505,6 +643,9 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         void OnRight(InputAction.CallbackContext context);
         void OnUp(InputAction.CallbackContext context);
         void OnDown(InputAction.CallbackContext context);
+    }
+    public interface ICommonActions
+    {
         void OnEscape(InputAction.CallbackContext context);
     }
 }

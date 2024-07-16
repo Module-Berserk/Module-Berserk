@@ -40,6 +40,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Evade",
+                    "type": "Button",
+                    "id": "8e098b6b-a77e-43bd-a4ec-a1310ec15c9e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UpArrow",
+                    "type": "Value",
+                    "id": "48317ee1-a6c3-4795-a126-d4aa3d415aab",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DownArrow",
+                    "type": "Value",
+                    "id": "07592c75-5883-4ef2-8e0e-d2d789bead62",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -108,6 +135,39 @@
                     "action": "PerformAction",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "906c912c-07a0-4f14-9c47-17a44c0dcac9",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Evade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "46e12b64-1ae0-42e2-bfb9-a30febec6447",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UpArrow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d7ec4995-8757-4029-b04d-e3e8b7154730",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DownArrow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -155,15 +215,6 @@
                     "name": "Down",
                     "type": "Button",
                     "id": "5a077ade-b4f0-47c8-a332-bc3ce0dfeddd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Escape",
-                    "type": "Button",
-                    "id": "893f1228-b89c-4253-a202-d496f660bc00",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -217,23 +268,40 @@
                 },
                 {
                     "name": "",
-                    "id": "bcf65711-42a4-4d68-aa09-1e0651476954",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Escape",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c6e0f2fd-e9e5-48e9-8067-64f9c41b0afa",
                     "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Common",
+            "id": "59d28192-6622-4361-aeb5-6169fbf13e64",
+            "actions": [
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "8a30c441-2d8a-41a2-9aa1-85b3eea14870",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c9846bd9-7048-4d18-a19a-24e755ea62cd",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escape",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

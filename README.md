@@ -5,7 +5,7 @@
 - 아주 높은 곳에서 추락하는 상황에서 카메라 추적 좌표의 y값 조정하기
   - 지금은 땅에 닿을 때마다 y축 추적이 들어가서 플레이어가 시야 밖으로 나가는 상황도 가능함
   - 만약 맵의 수직 높이가 제한적이라면 지금 상태를 유지해도 상관 없음
-- 상태이상, 무적, 슈퍼아머 등 관리하는 클래스 설계하기
+- 엘리베이터의 slider joint 설정 플레이어/잡몹 모두 필요하니 공통 코드로 분리해보기
 
 
 ## Known Issues
@@ -15,14 +15,41 @@
 
 
 ## 리팩토링 후보 (생각날 때마다 기록)
-- PlayerManager
-  - 맡은 역할이 워낙 많아서 적어도 공격 정도는 다른 곳으로 분리하게 될듯
-- 피격 경직
-  - 플레이어와 보스를 제외한 적 모두 경직 처리가 비슷할 것 같음
-  - 각자 구현하는 대신 별개의 클래스로 분리해서 재사용하는 방식도 괜찮을 것 같음
 
 
-## 코드로 드러나지 않는 중요한 사항
+## 코드로 파악하기 힘든 중요한 사항
+### 게임의 저장/불러오기 구조
+- 모든 scene이 self-contained 하도록 만들기 위해 플레이어나 UI같은 요소는 scene마다 하나씩 생성됨
+- scene을 넘어갈 때 유지되는 정보는 모두 GameState라는 클래스로 관리함
+- 현재 세션의 GameState는 GameStateManager에서 가져올 수 있으며,  
+플레이어 등의 요소는 scene이 로딩된 직후 GameState를 참고해 이전 scene에서의 상태를 복원함
+  - GameState는 복사가 아니라 참조 형식으로 처리되므로  
+  peripheral한 플레이어같은 오브젝트와 다르게 실시간으로 변조/유지됨!
+  - 예를 들어, PlayerState를 참조 및 조작하는 PlayerManager 스크립트는  
+  scene마다 하나씩 생성/초기화되지만 PlayerState 자체는 scene 전환에도 삭제되지 않아서  
+  기어 시스템에 의한 버프나 HP 상태 등을 그대로 유지한 채로 이동하게 됨
+- 정상적인 게임플레이의 경우 메인 화면에서 세이브 데이터를 선택한 뒤 게임이 진행되므로  
+GameStateManager.ActiveGameState에 해당 세이브 데이터가 할당됨.  
+하지만 테스트 도중에는 미션 한가운데에서 시작하게 될 수도 있으므로 (ex. 보스전만 테스트)  
+이 경우에는 더미 GameState를 생성해 사용함.
+
+### Scene 내부의 카메라 transition
+- 미션은 여러개의 stage로 구성되는데, stage 사이에는 카메라를 공유하지 않음
+- 한 stage의 카메라는 cinemachine camera confiner로 정의된 범위 안에서만 움직임
+- 새로운 맵을 만들 때 해야하는 일
+  1. stage마다 Follow Camera 프리팹 하나씩 배치
+  2. 처음에 보여줄 카메라를 제외하면 virtual camera의 priority를 5로 낮추기
+  3. Follow Camera 하나마다 Camera Confinement 프리팹 배치하고  
+  PolygonCollider2D를 카메라가 움직일 수 있는 영역에 맞게 조정하기
+  4. Follow Camera의 Cinemachine Confiner 2D 컴포넌트의  
+  Bounding Shape 2D에 방금 만든 콜라이더 레퍼런스로 넣어주기
+  5. 다른 stage로 넘어가는 입구마다 CameraTransitionOnContact 프리팹을 배치하고  
+  해당 영역의 virtual camera를 PlayerContactTrigger 스크립트에 레퍼런스로 넣어주기
+- 참고: 카메라 blending 시간은 main camera의 cinemachine brain 컴포넌트에서 수정 가능
+
+### Project Setting에서 Physics2D multithreading 옵션 활성화함
+- 혹시 나중에 물리 관련해서 오류 발생하면 멀티스레딩을 의심해볼 것
+
 ### Pixels Per Unit 및 카메라 Ortho Size
 - 모든 스프라이트의 PPU는 32로 설정
 - 기준 해상도 480x270을 유니티 단위로 변환하면 아래와 같음
@@ -45,6 +72,12 @@
 - 적의 무기에는 Weapon 레이어
 - 이렇게 하면 주인공과 적은 서로를 지나칠 수 있으면서도 무기에 의한 충돌 트리거는 정상 작동함
 - 주인공 무기도 Weapon 레이어로 해야만 무기 공격 판정에 상호작용 가능한 물체가 반응하는 것을 예방할 수 있음
+
+### 경직 및 경직 저항력
+- None, Weak(평타), Strong(긴급 회피)으로 분류
+- 잡몹은 평상시에 경직 저항력이 None이지만 공격 모션에는 Weak 저항을 가짐
+- 보스는 평상시에 경직 저항력이 Weak이지만 패턴 시전 중에는 Strong 저항을 가짐
+- 경직 저항력 이하의 공격은 데미지는 입어도 경직 & 넉백은 무시함
 
 ### OneWayPlatform 태그
 - 아래 방향키를 두 번 빠르게 눌러 바닥으로 뚫고 들어가려면  
@@ -75,3 +108,12 @@ rigidbody의 이동으로 변환하기 위해 꼼수를 조금 썼음
 
 ### 캐릭터 콜라이더를 발보다 조금 위로 설정해야 지면과 접촉하는 것으로 표시됨
 - 정확히 발 밑까지 포함시키면 어째서인지 공중에 떠있는 것처럼 보임
+
+### 엘리베이터 위에 있을 때 slider joint로 엘리베이터와 연결하는 이유
+- parent 설정이 없으면 엘리베이터 하강 속도가 조금만 빨라져도 플레이어가 낙하와 착지를 반복함
+- 엘리베이터에 서있는 동안만 joint로 묶어주면 수직 속도가 동기화되어서 안정적으로 서있을 수 있다!
+
+### UI 요소들의 입력 처리 방식
+- 최상단 UI만 입력을 처리하도록 스택 구조를 채용함
+- UI가 생길 때 UserInterfaceStack.PushUserInterface(this),  
+UI가 사라질 때 UserInterfaceStack.PopUserInterface(this)를 호출해줘야 함.

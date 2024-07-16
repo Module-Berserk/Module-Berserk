@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d5b01114f25fb024e8a22ba2047e73d8
+guid: a810bbe5c950cd7448a6aabd1e2f5195
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,17 +102,17 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.5729167, y: 0.5}
+      pivot: {x: 0.27083334, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a6a19c6cb01ab24fb62dfc1fe917434
-      internalID: -1344488400
+      spriteID: d447c990302d52345a9e827e8ea8ca70
+      internalID: 1379397235
       vertices: []
       indices: 
       edges: []
@@ -121,19 +121,19 @@ TextureImporter:
       name: player_loyal_atk2-Sheet_1
       rect:
         serializedVersion: 2
-        x: 96
+        x: 192
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.5729167, y: 0.5}
+      pivot: {x: 0.33854166, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f81fa1cb669b9164fbeb533304c93997
-      internalID: -427969146
+      spriteID: a949e41ff65767d408faf9fcd7288cdf
+      internalID: -1077554632
       vertices: []
       indices: 
       edges: []
@@ -142,19 +142,19 @@ TextureImporter:
       name: player_loyal_atk2-Sheet_2
       rect:
         serializedVersion: 2
-        x: 192
+        x: 384
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.59375, y: 0.5}
+      pivot: {x: 0.359375, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 06ed536bc6c14c948ae2c07f1f657408
-      internalID: -1144022315
+      spriteID: 22176b678012000418c7c4b4e23b95b0
+      internalID: 823327905
       vertices: []
       indices: 
       edges: []
@@ -163,19 +163,19 @@ TextureImporter:
       name: player_loyal_atk2-Sheet_3
       rect:
         serializedVersion: 2
-        x: 288
+        x: 576
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.59375, y: 0.5}
+      pivot: {x: 0.359375, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: af59a2ab754e2574eb79285e8aa20922
-      internalID: 1665040443
+      spriteID: 7859090c80264c84694cb3d2516342c2
+      internalID: 1362432312
       vertices: []
       indices: 
       edges: []
@@ -184,19 +184,19 @@ TextureImporter:
       name: player_loyal_atk2-Sheet_4
       rect:
         serializedVersion: 2
-        x: 384
+        x: 768
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.6770833, y: 0.5}
+      pivot: {x: 0.390625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cda40ed87f8fd204986363e2e67b281f
-      internalID: 1652381040
+      spriteID: 9d861f2e0720e1548ba8258699396675
+      internalID: -1900109908
       vertices: []
       indices: 
       edges: []
@@ -205,40 +205,19 @@ TextureImporter:
       name: player_loyal_atk2-Sheet_5
       rect:
         serializedVersion: 2
-        x: 480
+        x: 960
         y: 0
-        width: 96
+        width: 192
         height: 84
       alignment: 9
-      pivot: {x: 0.6875, y: 0.5}
+      pivot: {x: 0.40104166, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe443f47ac6d6144ab12997da9cb5026
-      internalID: 213352377
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_loyal_atk2-Sheet_6
-      rect:
-        serializedVersion: 2
-        x: 576
-        y: 0
-        width: 96
-        height: 84
-      alignment: 9
-      pivot: {x: 0.6979167, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 314dc2d5d1c53ac458248d22864e16cd
-      internalID: 12926291
+      spriteID: 542d43e5c6ae1874ab25d7da8d6fb2c2
+      internalID: 2011430223
       vertices: []
       indices: 
       edges: []
@@ -254,13 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player_loyal_atk2-Sheet_0: -1344488400
-      player_loyal_atk2-Sheet_1: -427969146
-      player_loyal_atk2-Sheet_2: -1144022315
-      player_loyal_atk2-Sheet_3: 1665040443
-      player_loyal_atk2-Sheet_4: 1652381040
-      player_loyal_atk2-Sheet_5: 213352377
-      player_loyal_atk2-Sheet_6: 12926291
+      player_loyal_atk2-Sheet_0: 1379397235
+      player_loyal_atk2-Sheet_1: -1077554632
+      player_loyal_atk2-Sheet_2: 823327905
+      player_loyal_atk2-Sheet_3: 1362432312
+      player_loyal_atk2-Sheet_4: -1900109908
+      player_loyal_atk2-Sheet_5: 2011430223
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
