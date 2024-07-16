@@ -6,7 +6,7 @@ using Cinemachine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(CinemachineImpulseSource))]
+[RequireComponent(typeof(ScreenShake))]
 public class C1BoxGimmick : MonoBehaviour, IDestructible
 {
     // 일반 맵에서는 부수면 크레딧을 드랍해야 하지만
@@ -21,7 +21,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
-    private CinemachineImpulseSource cameraShake;
+    private ScreenShake screenShake;
     private Animator animator;
 
     // 플레이어의 공격에 밀려나게 만들기 위한 IDestructible 요구사항.
@@ -35,7 +35,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        cameraShake = GetComponent<CinemachineImpulseSource>();
+        screenShake = GetComponent<ScreenShake>();
         animator = GetComponent<Animator>();
 
         // IDestructible 인터페이스에 필요해서 만들기는 하지만
@@ -56,14 +56,19 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         }
     }
 
-    // 상자가 머리 위로 떨어지는 경우 즉시 파괴
     private void OnCollisionEnter2D(Collision2D other)
     {
+        // case 1) 상자가 머리 위로 떨어지는 경우 즉시 파괴
         bool isGroundCollision = other.rigidbody.bodyType == RigidbodyType2D.Static;
         bool isFalling = rb.velocity.y < -0.1f;
         if (!isGroundCollision && isFalling)
         {
             DestroyBox();
+        }
+        // case 2) 땅에 떨어지면 화면 흔들림
+        else if (isGroundCollision)
+        {
+            screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
         }
     }
 
@@ -80,11 +85,9 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
             {
                 DestroyBox();
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();
-                cameraShake.GenerateImpulse(cameraShakeForce);
+                screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
             }
         }
-
-        // TODO: 챕터1 보스의 상자 파괴 공격에 맞은 경우에도 DestroyBox(). 아마 이 경우에는 크레딧 드랍 x
     }
 
     public void DestroyBox()

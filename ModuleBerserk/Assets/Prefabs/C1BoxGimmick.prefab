@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 916000121876302219}
   - component: {fileID: 8304629946119169403}
   - component: {fileID: 110026841799635974}
+  - component: {fileID: 937925219785605685}
   - component: {fileID: 3135049815916480169}
   m_Layer: 3
   m_Name: C1BoxGimmick
@@ -170,7 +171,7 @@ Rigidbody2D:
   m_Mass: 100
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 6
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -198,6 +199,18 @@ MonoBehaviour:
   playerStunDurationOnDashImpact: 1
   cameraShakeForce: 0.1
   pushVelocity: 2
+--- !u!114 &937925219785605685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5603608241238377055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22f2e4eaea184d4d9e7989edbf25130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3135049815916480169
 MonoBehaviour:
   m_ObjectHideFlags: 0
