@@ -63,11 +63,15 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         bool isFalling = rb.velocity.y < -0.1f;
         if (!isGroundCollision && isFalling)
         {
+            int[] boxIndices = {33};
+            AudioManager.instance.PlaySFX(boxIndices);  
             DestroyBox();
         }
         // case 2) 땅에 떨어지면 화면 흔들림
         else if (isGroundCollision)
         {
+            int[] boxIndices = {34};
+            AudioManager.instance.PlaySFX(boxIndices); 
             screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
         }
     }
@@ -83,6 +87,8 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
             // 플레이어가 대쉬로 충돌한 경우 상자 파괴
             if (playerManager.ActionState == PlayerActionState.Evade && playerManager.IsNormalEvasion)
             {
+                int[] boxIndices = {33};
+                AudioManager.instance.PlaySFX(boxIndices);  
                 DestroyBox();
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();
                 screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
