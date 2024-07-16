@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b3b9bf3d40c40b947af08c09f0f631af
+guid: 16b7bf7a4bad8124db6a51b2486836ce
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_0
+      name: c1_boss_walk_new-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 335865505d1326a4fb4e1d6599ff01b8
-      internalID: 480037432
+      spriteID: e49b98075770983458a57a3e84e286da
+      internalID: -2119305102
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_1
+      name: c1_boss_walk_new-Sheet_1
       rect:
         serializedVersion: 2
         x: 96
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba1e6849bfa3c4b4180588e1aed9dbc2
-      internalID: -1416146197
+      spriteID: 3ac349e11adf7df4396a80075ed38a3f
+      internalID: 411666428
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_2
+      name: c1_boss_walk_new-Sheet_2
       rect:
         serializedVersion: 2
         x: 192
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2154c45f11b4daa4eb638709fb1db92c
-      internalID: -1295218766
+      spriteID: f924647f69a525840a2f25393554d664
+      internalID: -1403383746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_3
+      name: c1_boss_walk_new-Sheet_3
       rect:
         serializedVersion: 2
         x: 288
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b49358cf8bd2af24fbf61ebca1b53a42
-      internalID: -62756802
+      spriteID: c3dfbde5ffed2324e90a91d7ed1be12e
+      internalID: -2102796053
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_4
+      name: c1_boss_walk_new-Sheet_4
       rect:
         serializedVersion: 2
         x: 384
@@ -195,14 +195,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c61d1bbfb0cf95d4cba7e8b40d7b9a1c
-      internalID: 751927451
+      spriteID: 16d201f0327c85a4496e24558546f68f
+      internalID: 721621410
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_5
+      name: c1_boss_walk_new-Sheet_5
       rect:
         serializedVersion: 2
         x: 480
@@ -216,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49d19a372b6d2dc41b83658d0c8131f3
-      internalID: -1688328573
+      spriteID: e4ec365ce29970746877947faf2d414e
+      internalID: -1165669476
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_6
+      name: c1_boss_walk_new-Sheet_6
       rect:
         serializedVersion: 2
         x: 576
@@ -237,14 +237,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 88fbb40bae3566948b21d6f6b73336d9
-      internalID: 1333944641
+      spriteID: 8d0baba0ee788ea4496cf5ff5b7385d9
+      internalID: -696773449
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_walk-Sheet_7
+      name: c1_boss_walk_new-Sheet_7
       rect:
         serializedVersion: 2
         x: 672
@@ -258,8 +258,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9278d91755a38484aab6eb0740f08cd0
-      internalID: -1665773210
+      spriteID: 44079e91e0c81d1408e1ff6118e9014f
+      internalID: 432618123
       vertices: []
       indices: 
       edges: []
@@ -275,14 +275,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_boss_walk-Sheet_0: 480037432
-      c1_boss_walk-Sheet_1: -1416146197
-      c1_boss_walk-Sheet_2: -1295218766
-      c1_boss_walk-Sheet_3: -62756802
-      c1_boss_walk-Sheet_4: 751927451
-      c1_boss_walk-Sheet_5: -1688328573
-      c1_boss_walk-Sheet_6: 1333944641
-      c1_boss_walk-Sheet_7: -1665773210
+      c1_boss_walk_new-Sheet_0: -2119305102
+      c1_boss_walk_new-Sheet_1: 411666428
+      c1_boss_walk_new-Sheet_2: -1403383746
+      c1_boss_walk_new-Sheet_3: -2102796053
+      c1_boss_walk_new-Sheet_4: 721621410
+      c1_boss_walk_new-Sheet_5: -1165669476
+      c1_boss_walk_new-Sheet_6: -696773449
+      c1_boss_walk_new-Sheet_7: 432618123
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
