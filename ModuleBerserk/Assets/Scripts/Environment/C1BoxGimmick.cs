@@ -4,6 +4,7 @@ using UnityEngine.Assertions;
 using Cinemachine;
 
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(CinemachineImpulseSource))]
 public class C1BoxGimmick : MonoBehaviour, IDestructible
@@ -19,7 +20,9 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     [SerializeField] private float pushVelocity = 2f;
 
     private Rigidbody2D rb;
+    private BoxCollider2D boxCollider;
     private CinemachineImpulseSource cameraShake;
+    private Animator animator;
 
     // 플레이어의 공격에 밀려나게 만들기 위한 IDestructible 요구사항.
     // 방어력에 의한 데미지 감소를 100%로 설정되기 때문에 플레이어가 공격으로 파괴할 수는 없다.
@@ -31,13 +34,26 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         cameraShake = GetComponent<CinemachineImpulseSource>();
+        animator = GetComponent<Animator>();
 
         // IDestructible 인터페이스에 필요해서 만들기는 하지만
         // 실제로 데미지 처리를 하지는 않으므로 수치는 중요하지 않음.
         // Note: 박스 기믹은 보스의 박스 제거 공격 또는 플레이어 대쉬로만 파괴 가능
         hp = new CharacterStat(BOX_GIMMICK_HP, 0);
         defense = new CharacterStat(10);
+
+        ChooseRandomImage();
+    }
+
+    // 박스 이미지 2종 중에서 하나를 랜덤하게 선택!
+    private void ChooseRandomImage()
+    {
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            animator.SetTrigger("UseAlternative");
+        }
     }
 
     // 상자가 머리 위로 떨어지는 경우 즉시 파괴
@@ -113,6 +129,8 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     {
         transform.parent = null;
         Physics2D.IgnoreCollision(GetComponent<Collider2D>(), shelfCollider);
+
+        animator.SetTrigger("Roll");
     }
 
     private void PushBoxHorizontally(Vector2 direction)
@@ -127,7 +145,18 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         {
             // TODO: 크레딧이나 아이템 드랍
         }
-        // TODO: 파괴 이펙트 재생
+
+        // 제자리에 멈추고 충돌 판정 중지
+        rb.gravityScale = 0;
+        boxCollider.enabled = false;
+
+        // 파괴 애니메이션 재생
+        animator.SetTrigger("Break");
+    }
+
+    // 파괴 애니메이션의 마지막 프레임에서 호출되는 이벤트.
+    public void OnBreakAnimationEnd()
+    {
         Destroy(gameObject);
     }
 }
