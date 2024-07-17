@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c34fe06bc7e9dd94299440e6f1eb988d
+guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_boss_destroy_box-Sheet_0
+      name: c1_boss_counter_atk-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -105,41 +105,41 @@ TextureImporter:
         width: 132
         height: 84
       alignment: 9
-      pivot: {x: 0.34, y: 0.5}
+      pivot: {x: 0.50757575, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3faa665ef2e969e469ceb8e5ed7e7548
-      internalID: -1893143960
+      spriteID: 9b3fe46281a4e8e458bc056cb680eb16
+      internalID: 243469639
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_destroy_box-Sheet_1
+      name: c1_boss_counter_atk-Sheet_1
       rect:
         serializedVersion: 2
-        x: 133
+        x: 132
         y: 0
         width: 132
         height: 84
       alignment: 9
-      pivot: {x: 0.34, y: 0.5}
+      pivot: {x: 0.50757575, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a3a85335b7159ee4e8ada95c3b7d1d04
-      internalID: -2068351348
+      spriteID: a9d99f9612680754e8865e804221819f
+      internalID: -1511349983
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_destroy_box-Sheet_2
+      name: c1_boss_counter_atk-Sheet_2
       rect:
         serializedVersion: 2
         x: 264
@@ -147,14 +147,77 @@ TextureImporter:
         width: 132
         height: 84
       alignment: 9
-      pivot: {x: 0.47, y: 0.5}
+      pivot: {x: 0.5151515, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: acc0543aa6fb9ee42a0cf4ebfad312ee
-      internalID: -1732322803
+      spriteID: 8014ca066f99dfe4d99e88141cd92d15
+      internalID: -592084578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_counter_atk-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 0
+        width: 132
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5151515, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88beae2af3c3efd458e0190ffe790f81
+      internalID: 380432121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_counter_atk-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 0
+        width: 132
+        height: 84
+      alignment: 9
+      pivot: {x: 0.65909094, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da68fb74d12b737458839b36890b30d5
+      internalID: -1169701419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_counter_atk-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 0
+        width: 132
+        height: 84
+      alignment: 9
+      pivot: {x: 0.74242425, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4135b5a56f593b4d9ad7f3c2c6a180f
+      internalID: -1591291488
       vertices: []
       indices: 
       edges: []
@@ -170,9 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_boss_destroy_box-Sheet_0: -1893143960
-      c1_boss_destroy_box-Sheet_1: -2068351348
-      c1_boss_destroy_box-Sheet_2: -1732322803
+      c1_boss_counter_atk-Sheet_0: 243469639
+      c1_boss_counter_atk-Sheet_1: -1511349983
+      c1_boss_counter_atk-Sheet_2: -592084578
+      c1_boss_counter_atk-Sheet_3: 380432121
+      c1_boss_counter_atk-Sheet_4: -1169701419
+      c1_boss_counter_atk-Sheet_5: -1591291488
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

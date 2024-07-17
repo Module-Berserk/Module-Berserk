@@ -31,6 +31,7 @@ public class ApplyDamageOnContact : MonoBehaviour
     [SerializeField] private Team DamageSource;
     [SerializeField] private StaggerStrength staggerStrength;
     [SerializeField] private float knockbackForce;
+    [SerializeField] private float staggerDuration = 0.5f;
     // 콜라이더가 오래 켜있는 지속 데미지의 경우 몇 초마다 데미지를 입힐 수 있는지 결정.
     [SerializeField] private float delayBetweenDamageTick = 0.1f;
 
@@ -135,7 +136,7 @@ public class ApplyDamageOnContact : MonoBehaviour
                     damage = RawDamage.CurrentValue * DamageCoefficient,
                     staggerStrength = staggerStrength,
                     knockbackForce = knockbackDirection * knockbackForce,
-                    duration = 0.5f
+                    duration = staggerDuration
                 };
 
                 // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)

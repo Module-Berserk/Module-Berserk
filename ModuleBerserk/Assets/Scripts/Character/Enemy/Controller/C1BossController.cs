@@ -79,6 +79,12 @@ public class C1BossController : MonoBehaviour, IDestructible
     [SerializeField] private GameObject cannonExplodePrefab;
 
 
+    [Header("Counter Attack Pattern")]
+    [SerializeField] private float counterPatternDuration = 4f;
+    // 반격이 나간 후 다시 추적을 시작할 때까지의 후딜레이
+    [SerializeField] private float delayAfterCounterAttack = 2f;
+
+
     [Header("Box Gimmick")]
     // 돌진 패턴이 벽에 충돌하며 끝나는 경우 상자 기믹을 리필함
     [SerializeField] private List<C1BoxGimmickGenerator> boxGenerators;
@@ -117,6 +123,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private float backstepPatternCooltime = 0f;
     private bool isDashMotionOngoing = false;
     private bool isCannonShotOngoing = false;
+    private bool isCounterBeginMotionDone = false;
 
     // 2페이즈가 시작될 때 한 번 시전되는 잡몹 소환 패턴이 이미 끝났는지 기록하는 플래그.
     private bool isEnemySpawnPatternDone = false;
@@ -133,6 +140,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         DestroyBox, // 돌진 패턴이 아닌데 상자 기믹과 접촉한 경우 상자를 파괴함 (미리 깔아놓는 것 방지)
         MeleeAttack, // 3연타 근접 공격
         FlameThrower, // 근접 화염방사기 패턴
+        CounterBegin, // 반격 패턴 시작할 때 제자리에서 건틀릿 보여주는 모션. 이때는 걸어다니면 안돼서 CounterReady와 구분했음.
+        CounterReady, // 반격 대기 모션과 함께 플레이어를 추격하는 패턴 (몸에 가시 갑옷처럼 히트박스 생김)
+        CounterAttack, // CounterReady 상태에서 플레이어가 공격한 경우 반격 시전
         Backstep, // 포격 또는 돌진 패턴으로 이어지는 전조 동작
         BombardAttack, // 3회 포격
         DashAttack, // 맵 끝에서 끝까지 돌진 (상자 기믹과 충돌하면 기절)
@@ -173,8 +183,10 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
+        // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
         hp = new CharacterStat(500f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
+        hitboxes.RawDamage = new CharacterStat(1f);
 
         // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
@@ -274,12 +286,22 @@ public class C1BossController : MonoBehaviour, IDestructible
         else if (actionState == ActionState.Stagger)
         {
             DecreaseKnockbackVelocity();
-
         }
-        else if (actionState == ActionState.MeleeAttack)
+        else if (actionState == ActionState.MeleeAttack || actionState == ActionState.CounterAttack)
         {
-            // 근접 공격 3연타는 움직임이 복잡해서 루트 모션으로 처리함
+            // 근접 공격들은 움직임이 복잡해서 루트 모션으로 처리함
             spriteRootMotion.ApplyVelocity(IsFacingLeft);
+        }
+        else if (actionState == ActionState.FlameThrower || actionState == ActionState.CounterBegin)
+        {
+            // 제자리에 서있기.
+            // 위에서 상자가 떨어지는 등 각종 힘에 반응해서는 안된다!
+            rb.velocity = Vector2.zero;
+        }
+        else if (actionState == ActionState.CounterReady)
+        {
+            LookAtPlayer();
+            WalkTowardsPlayer(chaseStopDistance: 0f);
         }
         else if (actionState == ActionState.Chase)
         {
@@ -294,12 +316,17 @@ public class C1BossController : MonoBehaviour, IDestructible
             {
                 PerformBackstepPatternAsync().Forget();
             }
-            // 근거리 패턴 쿨 돌면 3연타/화염방사기 중에서 사용 가능한 패턴 랜덤하게 선택
+            // 근거리 패턴 쿨 돌면 반격/3연타/화염방사기 중에서 사용 가능한 패턴 랜덤하게 선택
             else if (closeRangePatternCooltime <= 0f && (meleeAttackRange.IsPlayerInRange || flameThrowerRange.IsPlayerInRange))
             {
+                float counterPriority = Random.Range(0f, 1f);
                 float meleePriority = meleeAttackRange.IsPlayerInRange ? Random.Range(0f, 1f) : 0f;
                 float flamePriority = flameThrowerRange.IsPlayerInRange ? Random.Range(0f, 1f) : 0f;
-                if (meleePriority > flamePriority)
+                if (counterPriority > meleePriority && counterPriority > flamePriority)
+                {
+                    PerformCounterAttackPatternAsync().Forget();
+                }
+                else if (meleePriority > flamePriority)
                 {
                     PerformMeleeAttackPatternAsync().Forget();
                 }
@@ -310,7 +337,7 @@ public class C1BossController : MonoBehaviour, IDestructible
             }
             else
             {
-                WalkTowardsPlayer();
+                WalkTowardsPlayer(chaseStopDistance);
             }
         }
 
@@ -414,7 +441,44 @@ public class C1BossController : MonoBehaviour, IDestructible
         RestartCloseRangePatternCooltime();
     }
 
-    // 근접공격 3연타와 화염방사기 패턴의 마지막 애니메이션 프레임에서 호출됨
+    private async UniTask PerformCounterAttackPatternAsync()
+    {
+        animator.SetTrigger("CounterBegin");
+
+        // 반격 패턴 시작 모션 끝날 때까지 기다리기.
+        // 이 동안은 걸어다니지 않는다.
+        actionState = ActionState.CounterBegin;
+        isCounterBeginMotionDone = false;
+        await UniTask.WaitUntil(() => isCounterBeginMotionDone, cancellationToken: attackCancellation.Token);
+
+        // 일정 시간 반격 대기 상태 유지.
+        // 반격에 성공하면 반격 대기 상태는 즉시 종료해야 함.
+        actionState = ActionState.CounterReady;
+        await UniTask.WaitForSeconds(counterPatternDuration, cancellationToken: attackCancellation.Token);
+        actionState = ActionState.Chase;
+
+        StopCounterAttackPattern();
+    }
+
+    // 반격 패턴 준비 모션이 끝날 때 이벤트로 호출되는 함수.
+    public void OnCounterBeginMotionDone()
+    {
+        isCounterBeginMotionDone = true;
+    }
+
+    // 반격 대기 시간이 끝날 때 PerformCounterAttackPatternAsync()에서 호출되거나
+    // 반격이 시전되어서 공격 모션의 마지막 프레임에 이벤트로 호출되는 함수.
+    public void StopCounterAttackPattern()
+    {
+        // 반격 대기 상태에서는 몸에 상시로 히트박스가 생겨서
+        // 애니메이션 클립에서 꺼줄 수가 없음!
+        // 수동으로 히트박스 정리.
+        hitboxes.IsHitboxEnabled = false;
+
+        RestartCloseRangePatternCooltime();
+    }
+
+    // 근접공격 3연타와 반격 패턴, 그리고 화염방사기 패턴의 마지막 애니메이션 프레임에서 호출됨
     public void OnMeleeAttackMotionEnd()
     {
         actionState = ActionState.Chase;
@@ -426,7 +490,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         backstepPatternCooltime -= Time.fixedDeltaTime;
     }
 
-    private void WalkTowardsPlayer()
+    private void WalkTowardsPlayer(float chaseStopDistance)
     {
         // 플레이어가 너무 가깝지 않은 경우에만 걸어서 다가감.
         // 이 조건이 없으면 플레이어와 정확히 겹쳐서 좌우로 왔다갔다하는 이상한 모습이 연출됨...
@@ -729,6 +793,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         animator.SetBool("IsGrounded", groundContact.IsGrounded);
         animator.SetBool("IsStunned", actionState == ActionState.Stun);
         animator.SetBool("IsStaggered", actionState == ActionState.Stagger);
+        animator.SetBool("IsCounterReady", actionState == ActionState.CounterReady);
+        animator.SetBool("IsCounterAttack", actionState == ActionState.CounterAttack);
     }
 
     CharacterStat IDestructible.GetDefenseStat()
@@ -765,12 +831,38 @@ public class C1BossController : MonoBehaviour, IDestructible
             }
         }
 
+        // 반격 패턴 시전하는 중이었다면 즉시 공격
+        if (actionState == ActionState.CounterReady)
+        {
+            TriggerCounterAttackAsync().Forget();
+        }
+
         (this as IDestructible).HandleHPDecrease(attackInfo.damage);
 
         flashEffectOnHit.StartEffectAsync().Forget();
 
         // 챕터1 보스는 무적 시간 없음
         return true;
+    }
+
+    private async UniTask TriggerCounterAttackAsync()
+    {
+        actionState = ActionState.CounterAttack;
+
+        spriteRootMotion.HandleAnimationChange();
+
+        // 반격 대기 task 취소
+        attackCancellation.Cancel();
+        attackCancellation.Dispose();
+        attackCancellation = new();
+
+        // 공격 모션 끝나서 OnMeleeAttackMotionEnd()가 호출되기를 기다림
+        await UniTask.WaitUntil(() => actionState == ActionState.Chase);
+
+        // 반격 모션 직후에 바로 추적 시작하면 어색해서 잠시 후딜레이 부여.
+        actionState = ActionState.CounterBegin;
+        await UniTask.WaitForSeconds(delayAfterCounterAttack);
+        actionState = ActionState.Chase;
     }
 
     private async UniTask ApplyStaggerForDurationAsync(Vector2 knockbackForce, float duration)
