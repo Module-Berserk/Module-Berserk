@@ -147,6 +147,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         BombardAttack, // 3회 포격
         DashAttack, // 맵 끝에서 끝까지 돌진 (상자 기믹과 충돌하면 기절)
         ReinforceMobs, // 2페이즈 돌입할 때 백스텝 후 잡몹 소환
+        Die, // 사망 모션 재생
     }
     private ActionState actionState = ActionState.Chase;
     
@@ -184,7 +185,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(500f, 0f, 500f);
+        hp = new CharacterStat(5f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(1f);
 
@@ -279,11 +280,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         UpdatePatternCooltime();
 
-        if (actionState == ActionState.Stun)
-        {
-            // 기절 상태에서는 아무것도 하지 않음
-        }
-        else if (actionState == ActionState.Stagger)
+        if (actionState == ActionState.Stagger)
         {
             DecreaseKnockbackVelocity();
         }
@@ -882,11 +879,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         rb.velocity = Vector2.zero;
 
         // TODO: 아트 완성되면 스턴 대신 제대로된 패배 애니메이션 재생
-        actionState = ActionState.Stun;
-        animator.SetTrigger("Stun");
-
-        // 챕터1 보스전 종료 컷신 시작하기 (살리기 vs 죽이기 선택)
-        bossDefeatCutscene.Play();
+        actionState = ActionState.Die;
+        animator.SetTrigger("Die");
 
         // 삭제할 오브젝트에 tweening이 살아있을 수 있으니 오류 방지를 위해 모두 종료
         DOTween.KillAll();
@@ -903,6 +897,12 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 보스전이 끝났으니 더이상 AI가 조종하지 못하도록 막기
         enabled = false;
+    }
+
+    public void OnDeathMotionEnd()
+    {
+        // 챕터1 보스전 종료 컷신 시작하기 (살리기 vs 죽이기 선택)
+        bossDefeatCutscene.Play();
     }
 
     //SFX

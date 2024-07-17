@@ -11,9 +11,19 @@ public class FadeEffect : MonoBehaviour
     {
         fadeEffectImage.DOFade(0f, fadeDuration);
     }
+
+    public void FadeInImmediate()
+    {
+        fadeEffectImage.DOFade(0f, 0.01f);
+    }
     
     public void FadeOut()
     {
         fadeEffectImage.DOFade(1f, fadeDuration);
+    }
+
+    public void FadeOutImmediate()
+    {
+        fadeEffectImage.DOFade(1f, 0.01f);
     }
 }
