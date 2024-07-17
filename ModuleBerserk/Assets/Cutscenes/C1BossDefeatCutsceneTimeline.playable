@@ -375,6 +375,9 @@ MonoBehaviour:
     - {fileID: -589761890968210422}
     - {fileID: 4818767165366371441}
     - {fileID: 8835282908475832537}
+    - {fileID: -384300345668747985}
+    - {fileID: 5076939340133040082}
+    - {fileID: 3122064041055364998}
 --- !u!114 &-4958617946672887695
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -644,6 +647,22 @@ MonoBehaviour:
   m_Retroactive: 0
   m_EmitOnce: 0
   m_Asset: {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
+--- !u!114 &-384300345668747985
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
+  m_Name: Signal Emitter
+  m_EditorClassIdentifier: 
+  m_Time: 0.03333333333333333
+  m_Retroactive: 0
+  m_EmitOnce: 0
+  m_Asset: {fileID: 11400000, guid: 77cc3254005c3934fa5f7793200bc09d, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1681,6 +1700,22 @@ MonoBehaviour:
     m_DisplayName: TweenClip
   m_Markers:
     m_Objects: []
+--- !u!114 &3122064041055364998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
+  m_Name: Signal Emitter
+  m_EditorClassIdentifier: 
+  m_Time: 0.05
+  m_Retroactive: 0
+  m_EmitOnce: 0
+  m_Asset: {fileID: 11400000, guid: d55d94a83e623344492847b56043be9a, type: 2}
 --- !u!114 &4023295030830965287
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1830,6 +1865,22 @@ MonoBehaviour:
   m_Retroactive: 0
   m_EmitOnce: 0
   m_Asset: {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
+--- !u!114 &5076939340133040082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
+  m_Name: Signal Emitter
+  m_EditorClassIdentifier: 
+  m_Time: 8.85
+  m_Retroactive: 0
+  m_EmitOnce: 0
+  m_Asset: {fileID: 11400000, guid: 3e9a90f01ed30dd42bd21e180bd8b3c9, type: 2}
 --- !u!114 &5319617070130399700
 MonoBehaviour:
   m_ObjectHideFlags: 1

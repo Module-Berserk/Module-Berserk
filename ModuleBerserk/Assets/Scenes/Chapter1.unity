@@ -4500,7 +4500,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4.21875
+  orthographic size: 3.8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -8806,6 +8806,8 @@ MonoBehaviour:
   playerDialogueBox: {fileID: 1412133577}
   bossDialogueBox: {fileID: 911965969}
   bossController: {fileID: 2036877063}
+  playerSpriteRenderer: {fileID: 1811368077613159421}
+  bossSpriteRenderer: {fileID: 2036877078}
 --- !u!114 &1256533916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8828,6 +8830,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 3fc7dc335950bb2419079b6de900cef5, type: 2}
     - {fileID: 11400000, guid: b13269bfc59ad9f4a8b1b14a147d78f5, type: 2}
     - {fileID: 11400000, guid: 383e38d390952e04abb420f6b6ef7891, type: 2}
+    - {fileID: 11400000, guid: 77cc3254005c3934fa5f7793200bc09d, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
@@ -8932,6 +8935,20 @@ MonoBehaviour:
         - m_Target: {fileID: 2040246867}
           m_TargetAssemblyTypeName: BGMManager, Assembly-CSharp
           m_MethodName: playBGM
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+          m_MethodName: SetPlayerSpriteRight
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -10182,7 +10199,7 @@ Transform:
   m_GameObject: {fileID: 1454554044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: -0.7, z: -10}
+  m_LocalPosition: {x: 5.4, y: -1.2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18590,6 +18607,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
     - {fileID: 11400000, guid: 6d5165709ee47d24db3cadd3dbed9902, type: 2}
     - {fileID: 11400000, guid: ac7f790a7ab12af449729061f681a2ef, type: 2}
+    - {fileID: 11400000, guid: 77cc3254005c3934fa5f7793200bc09d, type: 2}
+    - {fileID: 11400000, guid: 3e9a90f01ed30dd42bd21e180bd8b3c9, type: 2}
+    - {fileID: 11400000, guid: d55d94a83e623344492847b56043be9a, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
@@ -18666,6 +18686,48 @@ MonoBehaviour:
         - m_Target: {fileID: 2011123105}
           m_TargetAssemblyTypeName: FadeEffect, Assembly-CSharp
           m_MethodName: FadeOutImmediate
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+          m_MethodName: SetPlayerSpriteRight
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+          m_MethodName: SetPlayerSpriteLeft
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+          m_MethodName: SetBossSpriteLeft
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -21459,6 +21521,11 @@ SliderJoint2D:
   m_TranslationLimits:
     m_LowerTranslation: 0
     m_UpperTranslation: 0
+--- !u!212 &2036877078 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6844388411748321469, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+  m_PrefabInstance: {fileID: 7028648427441081638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2040246867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
@@ -22491,6 +22558,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18edc8e68713b14d8dca998c62d245b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &1811368077613159421 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2459423335897564201, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+  m_PrefabInstance: {fileID: 1811368077613159405}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1955191109856661768
 PrefabInstance:
   m_ObjectHideFlags: 0

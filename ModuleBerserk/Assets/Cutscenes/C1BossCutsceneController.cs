@@ -12,6 +12,8 @@ public class C1BossCutsceneController : MonoBehaviour
     [SerializeField] private DialogueBox playerDialogueBox;
     [SerializeField] private DialogueBox bossDialogueBox;
     [SerializeField] private C1BossController bossController;
+    [SerializeField] private SpriteRenderer playerSpriteRenderer;
+    [SerializeField] private SpriteRenderer bossSpriteRenderer;
 
     private enum Speaker
     {
@@ -64,6 +66,27 @@ public class C1BossCutsceneController : MonoBehaviour
     public void EnablePlayerControl()
     {
         InputManager.InputActions.Player.Enable();
+    }
+
+    // 플레이어와 보스의 스프라이트 방향을 원하는대로 고정하기 위해 사용되는 함수.
+    public void SetPlayerSpriteRight()
+    {
+        playerSpriteRenderer.flipX = false;
+    }
+
+    public void SetPlayerSpriteLeft()
+    {
+        playerSpriteRenderer.flipX = true;
+    }
+
+    public void SetBossSpriteRight()
+    {
+        bossSpriteRenderer.flipX = false;
+    }
+
+    public void SetBossSpriteLeft()
+    {
+        bossSpriteRenderer.flipX = true;
     }
 
     // 인트로 컷신 끝나고 보스 AI를 활성화시킬 때 호출됨
