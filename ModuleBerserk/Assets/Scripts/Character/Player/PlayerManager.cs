@@ -373,6 +373,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
+        // 긴급 회피와 다르게 일반 회피는 경직 상태에서 사용할 수 없음
+        if (ActionState == PlayerActionState.Stagger)
+        {
+            return;
+        }
+
         CancelCurrentAction();
 
         // 입력 방향으로 방향 전환
