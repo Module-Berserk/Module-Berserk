@@ -1,22 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DroppedItem : MonoBehaviour, IInteractable
 {
-    [SerializeField] private GameObject itemDescriptionUI;
+    [SerializeField] private TextMeshProUGUI itemName;
 
-    // TODO: 아이템 이름 대신 사용 가능한 IActiveItem 객체로 변경
-    [SerializeField] private string itemName;
+    public GameObject ItemPrefab;
+
+    private void Start()
+    {
+        var item = ItemPrefab.GetComponent<IActiveItem>();
+
+        // 아이템 아이콘 설정
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = item.GetItemSlotImage();
+
+        // 가까이 가면 뜨는 아이템 이름 설정
+        itemName.text = item.GetName();
+    }
 
     public void OnPlayerEnter()
     {
-        itemDescriptionUI.SetActive(true);
+        itemName.enabled = true;
     }
 
     public void OnPlayerExit()
     {
-        itemDescriptionUI.SetActive(false);
+        itemName.enabled = false;
     }
 
     public void StartInteraction()
@@ -24,8 +34,7 @@ public class DroppedItem : MonoBehaviour, IInteractable
         var player = GameObject.FindGameObjectWithTag("Player");
         var itemManager = player.GetComponent<ItemManager>();
 
-        // TODO: 아이템 이름 대신 사용 가능한 IActiveItem 객체로 변경
-        itemManager.HandleItemCollect(itemName);
+        itemManager.HandleItemCollect(ItemPrefab.GetComponent<IActiveItem>());
 
         Destroy(gameObject);
     }

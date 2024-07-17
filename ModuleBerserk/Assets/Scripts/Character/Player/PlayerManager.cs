@@ -166,11 +166,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
         
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
+        
+        // TODO: 인벤토리 상태 초기화하기 (아이템 종류, 쿨타임 등)
+
         InitializeHitbox(playerState.AttackDamage);
 
         playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
 
-        // TODO: 인벤토리 상태 초기화하기 (아이템 종류, 쿨타임 등)
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
 

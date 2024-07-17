@@ -5,13 +5,6 @@ using UnityEngine.InputSystem;
 // 필드에서 습득하는 아이템을 슬롯에 저장하고 사용하는 일을 담당하는 클래스
 public class ItemManager : MonoBehaviour, IUserInterfaceController
 {
-    // 아직 UI 없으니까 인스펙터에서 값 확인하기 위해 임시로 public으로 설정함
-    // TODO:
-    // 1. 아이템 슬롯 UI 추가되면 private으로 변경
-    // 2. 타입을 string 대신 IActiveItem으로 변경
-    public string slot1 = "";
-    public string slot2 = "";
-
     [SerializeField] private GameObject itemReplacementUI;
     [SerializeField] private GameObject itemReplacementSlot1Outline;
     [SerializeField] private GameObject itemReplacementSlot2Outline;
@@ -19,13 +12,14 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
     // 아이템 교체 UI에서 현재 어느 슬롯을 교체 대상으로 지정하고 있는지
     private bool isSelectingSlot1ForReplacement = true;
     // 새로 습득해서 교체하려는 아이템
-    // TODO: 타임을 string 대신 IActiveItem으로 변경
-    private string replacementPendingItem = "";
+    private IActiveItem replacementPendingItem = null;
+
+    // 각 슬롯에 들어있는 아이템
+    private IActiveItem slot1 = null;
+    private IActiveItem slot2 = null;
 
     void IUserInterfaceController.BindInputActions()
     {
-        // TODO: UI 스택의 최상단에 있는 메뉴만 UI 입력을 처리해야 함!
-        // ex) 아이템 교체 UI 뜬 상태에서 일시정지 => 일시정지 메뉴만 조작 가능
         var uiActions = InputManager.InputActions.UI;
         uiActions.Select.performed += SelectItemReplacementSlot;
         uiActions.Left.performed += ChangeItemReplacementSlot;
@@ -43,8 +37,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
     private void SelectItemReplacementSlot(InputAction.CallbackContext context)
     {
         Assert.IsTrue(itemReplacementUI.activeInHierarchy);
-
-        Debug.Log("아이템 교체 완료");
 
         // 아이템 교체 UI 숨기기
         UserInterfaceStack.PopUserInterface(this);
@@ -74,13 +66,13 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
         itemReplacementSlot2Outline.SetActive(!isSelectingSlot1ForReplacement);
     }
 
-    public void HandleItemCollect(string item)
+    public void HandleItemCollect(IActiveItem item)
     {
-        if (slot1 == "")
+        if (slot1 == null)
         {
             slot1 = item;
         }
-        else if (slot2 == "")
+        else if (slot2 == null)
         {
             slot2 = item;
         }
@@ -90,7 +82,7 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
         }
     }
 
-    private void ShowItemReplacementUI(string newItem)
+    private void ShowItemReplacementUI(IActiveItem newItem)
     {
         UserInterfaceStack.PushUserInterface(this);
 

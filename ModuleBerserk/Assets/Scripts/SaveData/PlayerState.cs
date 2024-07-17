@@ -32,7 +32,8 @@ public class PlayerState
 
     public GearSystemState GearSystemState {get; set;}
 
-    // TODO: 인벤토리 상태 추가
+    public ItemSlotState Slot1State {get; set;}
+    public ItemSlotState Slot2State {get; set;}
 
     public static PlayerState CreateDummyState()
     {
@@ -46,6 +47,8 @@ public class PlayerState
             MoveSpeed = new CharacterStat(3.5f, 0f),
             SpawnPointTag = null,
             GearSystemState = GearSystemState.CreateDummyState(),
+            Slot1State = ItemSlotState.CreateDummyState(),
+            Slot2State = ItemSlotState.CreateDummyState(),
         };
     }
 }
