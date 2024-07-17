@@ -872,6 +872,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
+    bool IDestructible.IsInvincible()
+    {
+        // 엔딩 컷신에서 공격 불가능하도록 무적 설정
+        return Mathf.Approximately(hp.CurrentValue, 0f);
+    }
+
     void IDestructible.OnDestruction()
     {
         // 진행중인 행동 모두 종료

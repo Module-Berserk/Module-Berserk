@@ -285,7 +285,7 @@ Transform:
   m_GameObject: {fileID: 22285591}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5999999, y: -1.2, z: 0}
+  m_LocalPosition: {x: -0.4, y: -1.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8808,6 +8808,8 @@ MonoBehaviour:
   bossController: {fileID: 2036877063}
   playerSpriteRenderer: {fileID: 1811368077613159421}
   bossSpriteRenderer: {fileID: 2036877078}
+  mercyEnding: {fileID: 2135286135}
+  killEnding: {fileID: 1356106663}
 --- !u!114 &1256533916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9458,6 +9460,111 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1a3d99a45b7ddb4c8a965c8b0a70c49, type: 3}
+--- !u!1 &1356106662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1356106664}
+  - component: {fileID: 1356106663}
+  - component: {fileID: 1356106665}
+  m_Layer: 0
+  m_Name: C1BossKillEnding
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &1356106663
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356106662}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 22cab799cb398d3468ac8e6b410f12b9, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 5231965874694574828, guid: 22cab799cb398d3468ac8e6b410f12b9, type: 2}
+    value: {fileID: 1187783947}
+  - key: {fileID: 127577835987242392, guid: 22cab799cb398d3468ac8e6b410f12b9, type: 2}
+    value: {fileID: 1811368077613159406}
+  - key: {fileID: 1731462156237705737, guid: 22cab799cb398d3468ac8e6b410f12b9, type: 2}
+    value: {fileID: 1356106665}
+  m_ExposedReferences:
+    m_References:
+    - f5a2aa05884094a4ab1eef7a79155035: {fileID: 22285592}
+    - 1626a6a53312a1141b256a669c150bc7: {fileID: 22285592}
+    - 62e713c1b8dadf14d91e1a6b038a61a9: {fileID: 22285592}
+    - 39281ae006cea5449a9b4cb6cea2c0f5: {fileID: 2549460}
+--- !u!4 &1356106664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356106662}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.7, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1356106665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356106662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 3e9a90f01ed30dd42bd21e180bd8b3c9, type: 2}
+    - {fileID: 11400000, guid: 3fc7dc335950bb2419079b6de900cef5, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1256533915}
+          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+          m_MethodName: SetPlayerSpriteLeft
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2011123105}
+          m_TargetAssemblyTypeName: FadeEffect, Assembly-CSharp
+          m_MethodName: FadeOut
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1379391071
 GameObject:
   m_ObjectHideFlags: 0
@@ -10199,7 +10306,7 @@ Transform:
   m_GameObject: {fileID: 1454554044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.4, y: -1.2, z: -10}
+  m_LocalPosition: {x: -0.5999999, y: -1.2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22208,6 +22315,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2135286134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2135286136}
+  - component: {fileID: 2135286135}
+  m_Layer: 0
+  m_Name: C1BossMercyEnding
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &2135286135
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135286134}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 66ceb065d83f3014d99755ef5eb4dcfb, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &2135286136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135286134}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.7, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2137145004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23332,6 +23488,8 @@ SceneRoots:
   - {fileID: 940263319}
   - {fileID: 1256533914}
   - {fileID: 1628609954}
+  - {fileID: 2135286136}
+  - {fileID: 1356106664}
   - {fileID: 1748615174}
   - {fileID: 1280316192}
   - {fileID: 991476007}

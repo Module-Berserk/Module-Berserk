@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Playables;
 
 // 챕터1 보스전 컷신에서 보스 및 플레이어의 대사 출력과
 // 플레이어 입력 비활성화/활성화를 담당하는 클래스.
@@ -14,6 +15,10 @@ public class C1BossCutsceneController : MonoBehaviour
     [SerializeField] private C1BossController bossController;
     [SerializeField] private SpriteRenderer playerSpriteRenderer;
     [SerializeField] private SpriteRenderer bossSpriteRenderer;
+
+    [Header("Ending Cutscenes")]
+    [SerializeField] private PlayableDirector mercyEnding;
+    [SerializeField] private PlayableDirector killEnding;
 
     private enum Speaker
     {
@@ -142,13 +147,11 @@ public class C1BossCutsceneController : MonoBehaviour
 
         if (selectedEndingIndex == 0)
         {
-            Debug.Log("죽인다 엔딩");
-            // TODO: 죽인다 엔딩 재생
+            killEnding.Play();
         }
         else
         {
-            Debug.Log("살린다 엔딩");
-            // TODO: 살린다 엔딩 재생
+            mercyEnding.Play();
         }
     }
 }
