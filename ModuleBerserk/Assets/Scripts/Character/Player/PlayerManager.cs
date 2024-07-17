@@ -881,7 +881,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수)
     public async UniTask ApplyWallReboundAsync(float distance, float duration)
     {
-        ActionState = PlayerActionState.Stun;
         platformerMovement.ApplyZeroFriction();
         IsFacingLeft = distance > 0f;
 
@@ -889,9 +888,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             .SetEase(Ease.OutCubic)
             .SetUpdate(UpdateType.Fixed);
 
-        await UniTask.WaitForSeconds(duration);
-
-        ActionState = PlayerActionState.IdleOrRun;
+        await ApplyStunForDurationAsync(duration);
     }
 
 
