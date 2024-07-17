@@ -628,8 +628,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         List<float> explodePositions = new();
         for (int i = 0; i < 8; ++i)
         {
-            const float offsetFromBoss = 1f; // 보스 앞으로 얼마나 멀리서 떨어지기 시작할 것인지
-            const float distanceBetweenExplosions = 1.5f; // 포탄 사이의 간격
+            const float offsetFromBoss = 1.3f; // 보스 앞으로 얼마나 멀리서 떨어지기 시작할 것인지
+            const float distanceBetweenExplosions = 1.6f; // 포탄 사이의 간격
             float relativePosition = (IsFacingLeft ? -1f : 1f) * (distanceBetweenExplosions * i + offsetFromBoss);
             explodePositions.Add(rb.position.x + relativePosition);
         }

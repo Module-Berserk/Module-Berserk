@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: c1_boss_counter_atk
+  m_Name: c1_boss_counter_atk_ref
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -17,36 +17,6 @@ AnimationClip:
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves:
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 40
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
-        value: 15
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: knockbackForce
-    path: Hitboxes
-    classID: 114
-    script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
-    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -86,21 +56,51 @@ AnimationClip:
     classID: 61
     script: {fileID: 0}
     flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 40
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 15
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: knockbackForce
+    path: Hitboxes
+    classID: 114
+    script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
+    flags: 0
   m_PPtrCurves:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -420467735, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: 243469639, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     - time: 0.083333336
-      value: {fileID: -1380900991, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: -1511349983, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     - time: 0.16666667
-      value: {fileID: -761265495, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: -592084578, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     - time: 0.25
-      value: {fileID: -1093405420, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: 380432121, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     - time: 0.33333334
-      value: {fileID: 161829604, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: -1169701419, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     - time: 0.41666666
-      value: {fileID: -1255252867, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+      value: {fileID: -1591291488, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -114,19 +114,19 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 437519652
-      attribute: 2056133885
-      script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
-      typeID: 114
+      path: 3377489449
+      attribute: 3305885265
+      script: {fileID: 0}
+      typeID: 61
       customType: 0
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3377489449
-      attribute: 3305885265
-      script: {fileID: 0}
-      typeID: 61
+      path: 437519652
+      attribute: 2056133885
+      script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
+      typeID: 114
       customType: 0
       isPPtrCurve: 0
       isIntCurve: 0
@@ -141,12 +141,12 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -420467735, guid: e801f5de141a600408849111c6bbbd72, type: 3}
-    - {fileID: -1380900991, guid: e801f5de141a600408849111c6bbbd72, type: 3}
-    - {fileID: -761265495, guid: e801f5de141a600408849111c6bbbd72, type: 3}
-    - {fileID: -1093405420, guid: e801f5de141a600408849111c6bbbd72, type: 3}
-    - {fileID: 161829604, guid: e801f5de141a600408849111c6bbbd72, type: 3}
-    - {fileID: -1255252867, guid: e801f5de141a600408849111c6bbbd72, type: 3}
+    - {fileID: 243469639, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
+    - {fileID: -1511349983, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
+    - {fileID: -592084578, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
+    - {fileID: 380432121, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
+    - {fileID: -1169701419, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
+    - {fileID: -1591291488, guid: 512c8fbb5d2dd1b4a96cdbecb4997fdc, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -174,36 +174,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 40
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
-        value: 15
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: knockbackForce
-    path: Hitboxes
-    classID: 114
-    script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -236,6 +206,36 @@ AnimationClip:
     path: Hitboxes/CounterAttackHitbox
     classID: 61
     script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 40
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 15
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: knockbackForce
+    path: Hitboxes
+    classID: 114
+    script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
     flags: 0
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
