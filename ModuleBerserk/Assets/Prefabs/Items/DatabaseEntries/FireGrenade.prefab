@@ -51,3 +51,5 @@ MonoBehaviour:
   cooltime: 1
   itemSlotImage: {fileID: -601551695, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
   droppedItemImage: {fileID: 1783468888, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
+  mainProjectilePrefab: {fileID: 9141213974503896485, guid: 98788814983fe6e4fa1336b81d14e7d1, type: 3}
+  projectileSpeed: 10
