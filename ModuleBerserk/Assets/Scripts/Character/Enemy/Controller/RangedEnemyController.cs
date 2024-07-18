@@ -1,5 +1,6 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
 // 원거리 공격을 하는 잡몹의 행동 패턴을 정의하는 클래스.
 [RequireComponent(typeof(IRangedEnemyBehavior))]
@@ -20,13 +21,23 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
     [SerializeField] private PlayerDetectionRange runAwayRange;
     [SerializeField] private PlayerDetectionRange repelAttackRange;
 
+
+    [Header("Stats")]
+    [SerializeField] private float maxHP = 40f;
+
+
+    [Header("HP Bar")]
+    [SerializeField] private GameObject hpBarUI; // 체력바 루트 오브젝트
+    [SerializeField] private Slider hpBarSlider;
+    
+
     // 컴포넌트 레퍼런스
     private IRangedEnemyBehavior rangedEnemyBehavior;
     private FlashEffectOnHit flashEffectOnHit;
     private SpriteRenderer spriteRenderer;
 
     // IDestructible이 요구하는 스탯
-    private CharacterStat hp = new(50f, 0f, 100f);
+    private CharacterStat hp;
     private CharacterStat defense = new(10f, 0f);
 
     private enum State
@@ -44,6 +55,20 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         rangedEnemyBehavior = GetComponent<IRangedEnemyBehavior>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        hp = new CharacterStat(maxHP, 0f, maxHP);
+        hp.OnValueChange.AddListener(UpdateHPBarUI);
+    }
+
+    private void UpdateHPBarUI(float diff)
+    {
+        // Note: 최초 피격 전까지는 체력바가 숨어있음!
+        if (!hpBarUI.activeInHierarchy)
+        {
+            hpBarUI.SetActive(true);
+        }
+
+        hpBarSlider.value = hp.CurrentValue / hp.MaxValue;
     }
 
     private void Start()
@@ -235,6 +260,9 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         // 이동중이었을 수도 있으니 멈추고 사망 처리
         rangedEnemyBehavior.Idle();
         rangedEnemyBehavior.HandleDeath();
+
+        // 체력바 숨기기
+        hpBarUI.SetActive(false);
 
         enabled = false;
     }
