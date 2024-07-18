@@ -60,7 +60,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     {
         // case 1) 상자가 머리 위로 떨어지는 경우 즉시 파괴
         bool isGroundCollision = other.rigidbody.bodyType == RigidbodyType2D.Static;
-        bool isFalling = rb.velocity.y < -0.1f;
+        bool isFalling = rb.velocity.y < -0.3f;
         if (!isGroundCollision && isFalling)
         {
             int[] boxIndices = {33};
