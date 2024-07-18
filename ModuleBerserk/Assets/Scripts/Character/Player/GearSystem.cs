@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -13,6 +14,12 @@ using UnityEngine.UI;
 // 4. 기어 단계 변동 => UpdateGearLevelBuff
 public class GearSystem : MonoBehaviour
 {
+    [Header("UI")]
+    [SerializeField] private RectTransform gaugeNeedle;
+    [SerializeField] private Image gearLevelImage;
+    [SerializeField] private List<Sprite> gearLevelNumbers;
+
+
     // CurrentGearLevel의 최대치.
     // 첫 번째 단계가 0에서 시작하기 때문에 마지막 단계는 5임.
     private const int MAX_GEAR_LEVEL = 5;
@@ -85,11 +92,18 @@ public class GearSystem : MonoBehaviour
     // 이전 버프를 제거하고 현재 값으로 갱신하기 위해 기록한다.
     private GearLevelBuff lastAppliedGearLevelBuff;
 
+    private void Awake()
+    {
+        OnGearLevelChange.AddListener(UpdateGearLevelImage);
+    }
 
-    // 임시 UI
-    // TODO: 테스트 끝나면 삭제할 것
-    public Text descriptionText;
-    public RectTransform gaugeArrow;
+    private void UpdateGearLevelImage()
+    {
+        if (gearLevelImage != null)
+        {
+            gearLevelImage.sprite = gearLevelNumbers[CurrentState.GearLevel];
+        }
+    }
 
     // scene 로딩이 끝난 뒤 PlayerManager에 의해 호출되는 함수.
     // 직전 scene에서의 상태를 복원한다.
@@ -281,21 +295,17 @@ public class GearSystem : MonoBehaviour
 
     private void UpdateUI()
     {
-        // 아직 정식 UI가 없어서 수치 확인용으로 구현함
-        // TODO: 테스트 끝나면 삭제할 것
-        descriptionText.text = $"gauge: {CurrentState.GearGauge}\nlevel: {CurrentState.GearLevel}";
-
         // 기어 단계 상승이 가능한 상황이라면 빨간 영역에서 랜덤하게 바늘이 흔들리고
         // 그게 아니라면 정직하게 게이지에 비례해서 회전.
         float gearGuagePercent = CurrentState.GearGauge / MAX_GEAR_GAUGE;
         if (IsNextGearLevelReady())
         {
-            gearGuagePercent = Random.Range(1f, 1.1f);
+            gearGuagePercent = Random.Range(1f, 1.15f);
         }
 
-        float targetZAngle = Mathf.LerpUnclamped(359f, 142f, gearGuagePercent);
-        float newZAngle = Mathf.Lerp(gaugeArrow.eulerAngles.z, targetZAngle, 0.1f);
-        gaugeArrow.rotation = Quaternion.Euler(0f, 0f, newZAngle);
+        float targetZAngle = Mathf.LerpUnclamped(359f, 170f, gearGuagePercent);
+        float newZAngle = Mathf.Lerp(gaugeNeedle.eulerAngles.z, targetZAngle, 0.1f);
+        gaugeNeedle.rotation = Quaternion.Euler(0f, 0f, newZAngle);
     }
 
     // 비전투 상태에서의 기어 게이지 하락 로직

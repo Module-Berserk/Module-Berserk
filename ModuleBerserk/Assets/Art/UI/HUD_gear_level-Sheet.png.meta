@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1f251391b7a316d429f8fda98f745dcc
+guid: cb0c7840806bae54cbcbfb73ccb5d084
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,148 +97,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 5._clock_pin_0
+      name: HUD_gear_level-Sheet_0
       rect:
         serializedVersion: 2
-        x: 35
-        y: 39
-        width: 23
-        height: 16
+        x: 0
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f818cabfe73de9144bb3dac2fd148aff
-      internalID: 382322838
+      spriteID: cb4b921a3d78e1544ae880a8ac4e46c3
+      internalID: 23715009
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 5._clock_pin_1
+      name: HUD_gear_level-Sheet_1
       rect:
         serializedVersion: 2
-        x: 135
-        y: 46
-        width: 24
-        height: 8
+        x: 15
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0dd7a3a84b030842aa403a3b7c53db8
-      internalID: -1447037681
+      spriteID: 88a707671069e1f47899e4f1b3db3469
+      internalID: 1869527697
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 5._clock_pin_valid
+      name: HUD_gear_level-Sheet_2
       rect:
         serializedVersion: 2
-        x: 238
-        y: 38
-        width: 24
-        height: 24
+        x: 30
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ab0447c94855ad743a63ca63140bbd01
-      internalID: -627982600
+      spriteID: 32b79294bace56a42b284c8274ed4dd2
+      internalID: -1507871055
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 5._clock_pin_3
+      name: HUD_gear_level-Sheet_3
       rect:
         serializedVersion: 2
-        x: 346
-        y: 41
-        width: 8
-        height: 24
+        x: 45
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 73c7ff99970e451449c1cf7ecae414b8
-      internalID: -1955319254
+      spriteID: 361dabeff1b8caf4e9d673a3b942c94f
+      internalID: 1202432885
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 5._clock_pin_4
+      name: HUD_gear_level-Sheet_4
       rect:
         serializedVersion: 2
-        x: 442
-        y: 42
-        width: 20
-        height: 20
+        x: 60
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2b51957170dd07142804764e6d15c8b4
-      internalID: -1340615431
+      spriteID: f1da3959d0b4e2c419ea7f7ac7523a70
+      internalID: 2007786711
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 5._clock_pin_5
+      name: HUD_gear_level-Sheet_5
       rect:
         serializedVersion: 2
-        x: 542
-        y: 46
-        width: 24
-        height: 8
+        x: 75
+        y: 0
+        width: 15
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bed4ac2c97c6f3d4589d9fdd3cb92664
-      internalID: -788746852
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 5._clock_pin_6
-      rect:
-        serializedVersion: 2
-        x: 642
-        y: 39
-        width: 23
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 09c0bc0110ed8a7448d3d25b68331a19
-      internalID: -643981757
+      spriteID: a8378810f0275264294811213e9c39bb
+      internalID: -1577393892
       vertices: []
       indices: 
       edges: []
@@ -254,13 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      5._clock_pin_0: 382322838
-      5._clock_pin_1: -1447037681
-      5._clock_pin_3: -1955319254
-      5._clock_pin_4: -1340615431
-      5._clock_pin_5: -788746852
-      5._clock_pin_6: -643981757
-      5._clock_pin_valid: -627982600
+      HUD_gear_level-Sheet_0: 23715009
+      HUD_gear_level-Sheet_1: 1869527697
+      HUD_gear_level-Sheet_2: -1507871055
+      HUD_gear_level-Sheet_3: 1202432885
+      HUD_gear_level-Sheet_4: 2007786711
+      HUD_gear_level-Sheet_5: -1577393892
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

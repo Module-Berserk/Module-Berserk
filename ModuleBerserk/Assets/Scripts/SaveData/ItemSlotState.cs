@@ -11,8 +11,8 @@ public class ItemSlotState
     {
         return new ItemSlotState
         {
-            ItemType = ItemType.FireGrenade,
-            Cooltime = 3f,
+            ItemType = ItemType.None,
+            Cooltime = 0f,
             UsageStack = 0,
         };
     }

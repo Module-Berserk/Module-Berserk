@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public struct ItemCooltimeUI
 {
     public Slider slider;
-    public Image backgroundImage;
+    public Image iconImage;
     public Image fillImage;
 }
 
@@ -111,7 +111,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
                 if (slotState.Cooltime <= 0f)
                 {
                     slotState.UsageStack++;
-                    Debug.Log(slotState.UsageStack);
                 }
             }
             // case 2) 새로 쿨타임을 시작하는 경우
@@ -218,8 +217,18 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
 
     private static void SetCooltimeUISprite(IActiveItem item, ItemCooltimeUI cooltimeUI)
     {
-        cooltimeUI.backgroundImage.sprite = item.GetItemSlotImage();
-        cooltimeUI.fillImage.sprite = item.GetItemSlotImage();
+        // case 1) 아이템 슬롯이 비어있는 경우
+        if (item == null)
+        {
+            cooltimeUI.iconImage.enabled = false;
+        }
+        // case 2) 슬롯에 뭔가 들어있는 경우
+        else
+        {
+            cooltimeUI.iconImage.enabled = true;
+            cooltimeUI.iconImage.sprite = item.GetItemSlotImage();
+            cooltimeUI.fillImage.sprite = item.GetItemSlotImage();
+        }
     }
 
     private void ShowItemReplacementUI(IActiveItem newItem)

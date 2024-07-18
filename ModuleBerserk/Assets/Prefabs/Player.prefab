@@ -93,6 +93,7 @@ MonoBehaviour:
   DamageSource: 0
   staggerStrength: 2
   knockbackForce: 15
+  staggerDuration: 0.5
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
@@ -406,11 +407,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc0e26658d425f143aeef1e9e6e3b370, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slot1: 
-  slot2: 
+  itemDatabase: {fileID: 0}
   itemReplacementUI: {fileID: 0}
   itemReplacementSlot1Outline: {fileID: 0}
   itemReplacementSlot2Outline: {fileID: 0}
+  slot1CooltimeUI:
+    slider: {fileID: 0}
+    backgroundImage: {fileID: 0}
+    fillImage: {fileID: 0}
+  slot2CooltimeUI:
+    slider: {fileID: 0}
+    backgroundImage: {fileID: 0}
+    fillImage: {fileID: 0}
 --- !u!114 &3333081970870094985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,11 +491,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18edc8e68713b14d8dca998c62d245b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gaugeNeedle: {fileID: 0}
+  gearLevel: {fileID: 0}
+  gearLevelNumbers:
+  - {fileID: 23715009, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
+  - {fileID: 1869527697, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
+  - {fileID: -1507871055, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
+  - {fileID: 1202432885, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
+  - {fileID: 2007786711, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
+  - {fileID: -1577393892, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
   OnGearLevelChange:
     m_PersistentCalls:
       m_Calls: []
   descriptionText: {fileID: 0}
-  gaugeArrow: {fileID: 0}
 --- !u!114 &4169763342040205081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,6 +678,7 @@ MonoBehaviour:
   DamageSource: 0
   staggerStrength: 1
   knockbackForce: 15
+  staggerDuration: 0.5
   delayBetweenDamageTick: 0.1
   RawDamage:
     OnValueChange:
