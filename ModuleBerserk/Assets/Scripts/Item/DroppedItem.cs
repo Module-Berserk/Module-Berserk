@@ -68,6 +68,8 @@ public class DroppedItem : MonoBehaviour, IInteractable
 
         itemManager.HandleItemCollect(ItemPrefab.GetComponent<IActiveItem>());
 
+        transform.DOKill();
+
         Destroy(gameObject);
     }
 }

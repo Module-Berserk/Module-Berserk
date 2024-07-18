@@ -44,5 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a51696ef3a6502b49b510ceb1f7551d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: 3
+  rarity: 1
+  type: 5
+  itemName: "\uC5F0\uB8CC\uCCA8\uAC00\uC81C"
+  cooltime: 90
   itemSlotImage: {fileID: -1654346157, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
   droppedItemImage: {fileID: -1532436382, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
