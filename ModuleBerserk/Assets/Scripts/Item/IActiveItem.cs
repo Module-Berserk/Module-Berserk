@@ -48,6 +48,9 @@ public interface IActiveItem
     // 아이템 슬롯에 표시할 이미지.
     Sprite GetItemSlotImage();
 
+    // 바닥에 떨어진 아이템 상태일 때 보여줄 이미지 (테두리 o).
+    Sprite GetDroppedItemImage();
+
     // 실제로 이 아이템을 사용하고 싶을 때 호출되는 함수.
     void Use();
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class FireGrenade : MonoBehaviour, IActiveItem
 {
     [SerializeField] private Sprite itemSlotImage;
+    [SerializeField] private Sprite droppedItemImage;
 
     ItemCategory IActiveItem.GetCategory()
     {
@@ -32,6 +33,11 @@ public class FireGrenade : MonoBehaviour, IActiveItem
     Sprite IActiveItem.GetItemSlotImage()
     {
         return itemSlotImage;
+    }
+
+    Sprite IActiveItem.GetDroppedItemImage()
+    {
+        return droppedItemImage;
     }
 
     void IActiveItem.Use()

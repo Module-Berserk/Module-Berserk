@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemSlotImage: {fileID: -601551695, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
+  droppedItemImage: {fileID: 1783468888, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}

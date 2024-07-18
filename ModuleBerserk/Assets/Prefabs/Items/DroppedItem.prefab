@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 89eccc95155d3f24cb7fb9a9e2b524b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 25ced17e5b4292c44b3f53320ccf09ef, type: 3}
+  m_Sprite: {fileID: 1783468888, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -99,8 +99,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2004132be4e2f9f49a95ec53b1ecce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemDescriptionUI: {fileID: 2885239227339555964}
   itemName: {fileID: 2690604988241048416}
+  commonItemGlowColor: {r: 2, g: 2, b: 2, a: 0}
+  rareItemGlowColor: {r: 0, g: 0.39143676, b: 2.670157, a: 0}
+  legendaryItemGlowColor: {r: 2.670157, g: 0.55919516, b: 0, a: 0}
   ItemPrefab: {fileID: 8487056063606099084, guid: bee16f91e1321ee4c8b128fb22ffd616, type: 3}
 --- !u!61 &5185514546921669799
 BoxCollider2D:
@@ -138,7 +140,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.9375, y: 0.9375}
+    oldSize: {x: 0.5625, y: 0.5625}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
