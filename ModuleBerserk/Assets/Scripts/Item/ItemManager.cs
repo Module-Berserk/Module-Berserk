@@ -76,7 +76,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
             item.Use();
 
             slotState.UsageStack--;
-            slotState.RemainingEffectDuration = item.GetEffectDuration();
 
             return true;
         }
@@ -101,12 +100,7 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
             return;
         }
 
-        // 아직 아이템 지속시간이 끝나지 않은 경우 쿨타임이 돌지 않음
-        if (slotState.RemainingEffectDuration > 0)
-        {
-            slotState.RemainingEffectDuration -= Time.deltaTime;
-        }
-        else if (slotState.UsageStack < item.GetMaxStack())
+        if (slotState.UsageStack < item.GetMaxStack())
         {
             // case 1) 이미 쿨타임이 돌고 있는 경우
             if (slotState.Cooltime > 0)
@@ -117,6 +111,7 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
                 if (slotState.Cooltime <= 0f)
                 {
                     slotState.UsageStack++;
+                    Debug.Log(slotState.UsageStack);
                 }
             }
             // case 2) 새로 쿨타임을 시작하는 경우

@@ -185,7 +185,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(5f, 0f, 500f);
+        hp = new CharacterStat(500f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(1f);
 
@@ -248,7 +248,6 @@ public class C1BossController : MonoBehaviour, IDestructible
         // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵
         if (actionState == ActionState.DashAttack)
         {
-            Debug.Log("grab!");
             sliderJoint.connectedBody = playerManager.GetComponent<Rigidbody2D>();
             sliderJoint.enabled = true;
         }

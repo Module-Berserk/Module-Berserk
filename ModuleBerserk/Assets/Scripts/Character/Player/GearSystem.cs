@@ -131,7 +131,8 @@ public class GearSystem : MonoBehaviour
         ResetCombatTimer();
 
         // 공격에 성공할 때마다 현재 단계의 최대치를 넘지 않는 선에서 게이지를 증가시킴
-        CurrentState.GearGauge = Mathf.Min(CurrentState.GearGauge + GEAR_GAUGE_GAIN_PER_ATTACK_SUCCESS, MAX_GEAR_GAUGE);
+        float gaugeGain = GEAR_GAUGE_GAIN_PER_ATTACK_SUCCESS * CurrentState.GearGaugeGainCoefficient.CurrentValue;
+        CurrentState.GearGauge = Mathf.Min(CurrentState.GearGauge + gaugeGain, MAX_GEAR_GAUGE);
     }
 
     // 적의 공격에 맞은 경우 호출되는 함수

@@ -23,7 +23,7 @@ public class HealthBarAnimation : MonoBehaviour
     // value는 0에서 1의 값 (1 = full)
     public void UpdateCurrentValue(float value)
     {
-        Debug.Log($"slider updated: {value}");
+        // Debug.Log($"slider updated: {value}");
         currentValueSlider.value = value;
     }
 }

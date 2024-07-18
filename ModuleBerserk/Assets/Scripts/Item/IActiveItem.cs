@@ -11,7 +11,7 @@ public enum ItemCategory
 public enum ItemRarity
 {
     Common,
-    Uncommon,
+    Rare,
     Legendary,
 }
 
@@ -36,7 +36,6 @@ public interface IActiveItem
     string GetName();
 
     // 아이템의 효과가 끝난 이후 재사용까지 기다려야 하는 시간.
-    // 설치형 아이템 등은 지속시간이 끝난 뒤에야 쿨타임이 돌기 시작한다!
     float GetCooltime();
 
     // 사용 횟수 스택이 존재해서 쿨타임이 돌면 스택이 1 추가되는 형식인 경우 override.
@@ -45,11 +44,6 @@ public interface IActiveItem
     {
         return 1;
     }
-
-    // 지속형 또는 설치형 아이템의 유지 시간.
-    // 이 시간이 지나야 쿨타임이 다시 돌기 시작한다.
-    // 수류탄처럼 그냥 던지고 끝나는 아이템들은 0을 반환하면 된다.
-    float GetEffectDuration();
 
     // 아이템 슬롯에 표시할 이미지.
     Sprite GetItemSlotImage();

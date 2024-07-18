@@ -171,7 +171,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
-        playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
+        // Note: 은신처처럼 체력 UI가 없는 곳도 있음
+        if (healthBarAnimation != null)
+        {
+            playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
+        }
 
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }

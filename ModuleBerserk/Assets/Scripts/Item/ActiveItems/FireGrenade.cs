@@ -26,12 +26,7 @@ public class FireGrenade : MonoBehaviour, IActiveItem
 
     float IActiveItem.GetCooltime()
     {
-        return 5f;
-    }
-
-    float IActiveItem.GetEffectDuration()
-    {
-        return 0f;
+        return 1f;
     }
 
     Sprite IActiveItem.GetItemSlotImage()
@@ -42,5 +37,6 @@ public class FireGrenade : MonoBehaviour, IActiveItem
     void IActiveItem.Use()
     {
         Debug.Log("화염 수류탄 사용");
+        // TODO: 수류탄 투척
     }
 }

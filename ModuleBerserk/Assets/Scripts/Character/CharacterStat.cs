@@ -1,5 +1,7 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 // 버프 또는 디버프가 가능한 유동적인 스탯을 관리하는 클래스.
@@ -46,6 +48,16 @@ public class CharacterStat
         OnValueChange.Invoke(difference);
     }
 
+    
+    public async UniTask ApplyAdditiveModifierForDurationAsync(float modifier, float duration)
+    {
+        ApplyAdditiveModifier(modifier);
+
+        await UniTask.WaitForSeconds(duration);
+
+        ApplyAdditiveModifier(-modifier);
+    }
+
     public void ApplyMultiplicativeModifier(float modifier)
     {
         float prevValue = CurrentValue;
@@ -53,5 +65,18 @@ public class CharacterStat
         float difference = CurrentValue - prevValue;
 
         OnValueChange.Invoke(difference);
+    }
+
+    
+    public async UniTask ApplyMultiplicativeModifierForDurationAsync(float modifier, float duration)
+    {
+        // division by zero 방지
+        Assert.IsFalse(Mathf.Approximately(modifier, 0f));
+
+        ApplyMultiplicativeModifier(modifier);
+
+        await UniTask.WaitForSeconds(duration);
+
+        ApplyMultiplicativeModifier(1f / modifier);
     }
 }
