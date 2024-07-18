@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -17,6 +18,12 @@ public class DroppedItem : MonoBehaviour, IInteractable
 
         // 가까이 가면 뜨는 아이템 이름 설정
         itemName.text = item.GetName();
+
+        // 부드럽게 위아래로 움직이는 모션
+        const float motionHeight = 0.3f;
+        transform.DOMoveY(transform.position.y + motionHeight, duration: 1f)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
     }
 
     public void OnPlayerEnter()
