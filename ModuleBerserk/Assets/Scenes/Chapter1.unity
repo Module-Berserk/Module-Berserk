@@ -4706,7 +4706,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4.21875
+  orthographic size: 3.8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -8848,6 +8848,8 @@ PlayableDirector:
     value: {fileID: 2140924106}
   - key: {fileID: 6409643659389825468, guid: d793a899c45167a44befc624aa5c653a, type: 2}
     value: {fileID: 2040246868}
+  - key: {fileID: 2494267602566944090, guid: d793a899c45167a44befc624aa5c653a, type: 2}
+    value: {fileID: 2036877084}
   m_ExposedReferences:
     m_References:
     - 3526e2082360ba64fbfcd65d5a734864: {fileID: 1748615174}
@@ -10354,7 +10356,7 @@ Transform:
   m_GameObject: {fileID: 1454554044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5999999, y: -1.2, z: -10}
+  m_LocalPosition: {x: -2.5319998, y: -1.2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21805,6 +21807,11 @@ SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 6844388411748321469, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
   m_PrefabInstance: {fileID: 7028648427441081638}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &2036877084 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8016393372756206220, guid: be132816ddccacf4e8c6457342ae6a2c, type: 3}
+  m_PrefabInstance: {fileID: 7028648427441081638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2040246867 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
@@ -22832,11 +22839,11 @@ PrefabInstance:
       objectReference: {fileID: -1421665010, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.1000004
+      value: -11.8
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.1
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.z
