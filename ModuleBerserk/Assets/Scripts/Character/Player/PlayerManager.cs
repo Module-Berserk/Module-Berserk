@@ -84,6 +84,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private FlashEffectOnHit flashEffectOnHit;
     private ScreenShake screenShake;
     private GearSystem gearSystem;
+    private ItemManager itemManager;
     private HealthBarAnimation healthBarAnimation;
 
     // GameState에서 가져온 저장 가능한 플레이어 상태들
@@ -140,6 +141,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
+        itemManager = GetComponent<ItemManager>();
         healthBarAnimation = GetComponent<HealthBarAnimation>();
     }
 
@@ -165,10 +167,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
             rb.MovePosition(spawnPoint.transform.position);
         }
         
+        itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
-        
-        // TODO: 인벤토리 상태 초기화하기 (아이템 종류, 쿨타임 등)
-
         InitializeHitbox(playerState.AttackDamage);
 
         playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
@@ -211,6 +211,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed += OnFallDown;
         playerActions.PerformAction.performed += OnPerformAction;
         playerActions.Evade.performed += OnEvade;
+        playerActions.UseItem1.performed += OnUseItem1;
+        playerActions.UseItem2.performed += OnUseItem2;
     }
 
     private void OnDisable()
@@ -220,6 +222,32 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.FallDown.performed -= OnFallDown;
         playerActions.PerformAction.performed -= OnPerformAction;
         playerActions.Evade.performed -= OnEvade;
+        playerActions.UseItem1.performed -= OnUseItem1;
+        playerActions.UseItem2.performed -= OnUseItem2;
+    }
+
+    private void OnUseItem1(InputAction.CallbackContext context)
+    {
+        if (itemManager.TryUseSlot1Item())
+        {
+            Debug.Log("슬롯1 아이템 사용 성공");
+        }
+        else
+        {
+            Debug.Log("슬롯1 아이템 사용 실패");
+        }
+    }
+
+    private void OnUseItem2(InputAction.CallbackContext context)
+    {
+        if (itemManager.TryUseSlot2Item())
+        {
+            Debug.Log("슬롯2 아이템 사용 성공");
+        }
+        else
+        {
+            Debug.Log("슬롯2 아이템 사용 실패");
+        }
     }
 
     private void OnJump(InputAction.CallbackContext context)

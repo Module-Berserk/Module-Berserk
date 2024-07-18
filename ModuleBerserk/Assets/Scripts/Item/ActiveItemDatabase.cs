@@ -21,6 +21,13 @@ public class ActiveItemDatabase : MonoBehaviour
 
     public IActiveItem GetItemInstance(ItemType type)
     {
+        // case 1) 아이템이 없는 경우
+        if (type == ItemType.None)
+        {
+            return null;
+        }
+
+        // case 2) 뭔가 아이템이 있는 경우
         int itemIndex = (int)type;
         Assert.IsTrue(itemIndex < itemPrefabs.Count);
 

@@ -26,7 +26,7 @@ public class FireGrenade : MonoBehaviour, IActiveItem
 
     float IActiveItem.GetCooltime()
     {
-        throw new System.NotImplementedException();
+        return 5f;
     }
 
     float IActiveItem.GetEffectDuration()

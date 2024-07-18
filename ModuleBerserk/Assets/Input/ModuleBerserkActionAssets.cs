@@ -89,6 +89,24 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""UseItem1"",
+                    ""type"": ""Button"",
+                    ""id"": ""75db6664-821e-454c-9156-8852752e1987"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UseItem2"",
+                    ""type"": ""Button"",
+                    ""id"": ""49661a94-3988-49db-92e1-232d319a2fdc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -188,6 +206,28 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""DownArrow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f6cfc3f9-0f8a-4149-a3c1-2115c2ded0d9"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseItem1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dacf6a16-f2db-476e-a6fb-43176a4156c4"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseItem2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -341,6 +381,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         m_Player_Evade = m_Player.FindAction("Evade", throwIfNotFound: true);
         m_Player_UpArrow = m_Player.FindAction("UpArrow", throwIfNotFound: true);
         m_Player_DownArrow = m_Player.FindAction("DownArrow", throwIfNotFound: true);
+        m_Player_UseItem1 = m_Player.FindAction("UseItem1", throwIfNotFound: true);
+        m_Player_UseItem2 = m_Player.FindAction("UseItem2", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
@@ -419,6 +461,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     private readonly InputAction m_Player_Evade;
     private readonly InputAction m_Player_UpArrow;
     private readonly InputAction m_Player_DownArrow;
+    private readonly InputAction m_Player_UseItem1;
+    private readonly InputAction m_Player_UseItem2;
     public struct PlayerActions
     {
         private @ModuleBerserkActionAssets m_Wrapper;
@@ -430,6 +474,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         public InputAction @Evade => m_Wrapper.m_Player_Evade;
         public InputAction @UpArrow => m_Wrapper.m_Player_UpArrow;
         public InputAction @DownArrow => m_Wrapper.m_Player_DownArrow;
+        public InputAction @UseItem1 => m_Wrapper.m_Player_UseItem1;
+        public InputAction @UseItem2 => m_Wrapper.m_Player_UseItem2;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -460,6 +506,12 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @DownArrow.started += instance.OnDownArrow;
             @DownArrow.performed += instance.OnDownArrow;
             @DownArrow.canceled += instance.OnDownArrow;
+            @UseItem1.started += instance.OnUseItem1;
+            @UseItem1.performed += instance.OnUseItem1;
+            @UseItem1.canceled += instance.OnUseItem1;
+            @UseItem2.started += instance.OnUseItem2;
+            @UseItem2.performed += instance.OnUseItem2;
+            @UseItem2.canceled += instance.OnUseItem2;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -485,6 +537,12 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
             @DownArrow.started -= instance.OnDownArrow;
             @DownArrow.performed -= instance.OnDownArrow;
             @DownArrow.canceled -= instance.OnDownArrow;
+            @UseItem1.started -= instance.OnUseItem1;
+            @UseItem1.performed -= instance.OnUseItem1;
+            @UseItem1.canceled -= instance.OnUseItem1;
+            @UseItem2.started -= instance.OnUseItem2;
+            @UseItem2.performed -= instance.OnUseItem2;
+            @UseItem2.canceled -= instance.OnUseItem2;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -635,6 +693,8 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         void OnEvade(InputAction.CallbackContext context);
         void OnUpArrow(InputAction.CallbackContext context);
         void OnDownArrow(InputAction.CallbackContext context);
+        void OnUseItem1(InputAction.CallbackContext context);
+        void OnUseItem2(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
