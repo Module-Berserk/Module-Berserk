@@ -8905,7 +8905,6 @@ MonoBehaviour:
   bossController: {fileID: 2036877063}
   playerSpriteRenderer: {fileID: 1811368077613159421}
   bossSpriteRenderer: {fileID: 2036877078}
-  bossHPBar: {fileID: 2140924107}
   mercyEnding: {fileID: 2135286135}
   killEnding: {fileID: 1356106663}
 --- !u!114 &1256533916
@@ -22564,11 +22563,6 @@ PrefabInstance:
 --- !u!1 &2140924106 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5619028237986283408, guid: 202cd6d1a47fe3c42bf44570f89d172f, type: 3}
-  m_PrefabInstance: {fileID: 1737301748025236960}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &2140924107 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2702018419380698301, guid: 202cd6d1a47fe3c42bf44570f89d172f, type: 3}
   m_PrefabInstance: {fileID: 1737301748025236960}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2143900445
