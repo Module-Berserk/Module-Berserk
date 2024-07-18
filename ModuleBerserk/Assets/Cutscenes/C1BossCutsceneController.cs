@@ -40,7 +40,7 @@ public class C1BossCutsceneController : MonoBehaviour
     private List<Dialogue> dialogues = new()
     {
         new Dialogue{speaker = Speaker.Boss, message = "하, 이번에는 웬 고철덩이가 찾아왔군", hideBoxOnComplete = true},
-        new Dialogue{speaker = Speaker.Player, message = "허밍버드가 이곳에 있다던데...", hideBoxOnComplete = true},
+        // new Dialogue{speaker = Speaker.Player, message = "허밍버드가 이곳에 있다던데...", hideBoxOnComplete = true},
         new Dialogue{speaker = Speaker.Boss, message = "그래, 너도 이게 목적인 모양이군", hideBoxOnComplete = false},
         new Dialogue{speaker = Speaker.Boss, message = "그럼 어디 실력 좀 볼까?", hideBoxOnComplete = true},
     };
