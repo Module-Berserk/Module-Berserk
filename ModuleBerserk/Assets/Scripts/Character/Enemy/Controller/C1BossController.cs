@@ -80,7 +80,8 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Counter Attack Pattern")]
-    [SerializeField] private float counterPatternDuration = 4f;
+    // 반격 대기 상태로 걸어다니는 시간
+    [SerializeField] private float counterPatternDuration = 2f;
     // 반격이 나간 후 다시 추적을 시작할 때까지의 후딜레이
     [SerializeField] private float delayAfterCounterAttack = 2f;
 
