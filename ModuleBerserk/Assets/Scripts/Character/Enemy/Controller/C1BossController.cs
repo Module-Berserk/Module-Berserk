@@ -207,6 +207,12 @@ public class C1BossController : MonoBehaviour, IDestructible
             {
                 DestroyBoxAsync(boxGimmick).Forget();
             }
+            // 반격 자세로 걸어가다가 상자에 충돌해도 파괴.
+            // 위와 마찬가지로 제자리걸음하는 모션을 막아준다.
+            else if (actionState == ActionState.CounterReady)
+            {
+                boxGimmick.DestroyBox();
+            }
             // 돌진 패턴 도중에 박스와 충돌한 경우 돌진을 멈추고 기절
             else if (actionState == ActionState.DashAttack)
             {
