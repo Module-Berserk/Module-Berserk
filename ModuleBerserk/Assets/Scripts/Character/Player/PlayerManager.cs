@@ -240,6 +240,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (itemManager.TryUseSlot1Item())
         {
+            PlayItemUseMotion();
             Debug.Log("슬롯1 아이템 사용 성공");
         }
         else
@@ -252,11 +253,22 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (itemManager.TryUseSlot2Item())
         {
+            PlayItemUseMotion();
             Debug.Log("슬롯2 아이템 사용 성공");
         }
         else
         {
             Debug.Log("슬롯2 아이템 사용 실패");
+        }
+    }
+
+    // 아이템 사용 모션은 우선순위가 제일 낮아서
+    // 아무것도 안 하고 서있는 상황에서만 재생됨.
+    private void PlayItemUseMotion()
+    {
+        if (ActionState == PlayerActionState.IdleOrRun && platformerMovement.IsGrounded && !animator.GetBool("IsRunning"))
+        {
+            animator.SetTrigger("UseItem");
         }
     }
 
