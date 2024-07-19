@@ -14,5 +14,6 @@ public class FireGrenade : ActiveItemBase
         // 투척 위치 & 속도 설정
         var rb = grenade.GetComponent<Rigidbody2D>();
         player.ThrowGrenade(rb);
+        player.PlayAttack1and2SFX();
     }
 }

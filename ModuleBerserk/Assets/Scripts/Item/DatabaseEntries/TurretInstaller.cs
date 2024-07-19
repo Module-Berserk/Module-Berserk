@@ -10,5 +10,7 @@ public class TurretInstaller : ActiveItemBase
     {
         var player = FindObjectOfType<PlayerManager>();
         player.InstallTurret(turretPrefab);
+        int[] turretIndices = {38};
+        AudioManager.instance.PlaySFX(turretIndices);
     }
 }

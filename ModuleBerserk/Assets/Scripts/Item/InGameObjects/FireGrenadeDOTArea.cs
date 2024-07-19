@@ -11,6 +11,9 @@ public class FireGrenadeDOTArea : MonoBehaviour
     {
         var hitbox = GetComponent<ApplyDamageOnContact>();
         hitbox.RawDamage = new CharacterStat(tickDamage);
+        //SFX
+        int[] flameIndices = {37};
+        AudioManager.instance.PlaySFX(flameIndices);
     }
 
     private void Update()
