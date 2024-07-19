@@ -12,6 +12,7 @@ public class MiniTurret : MonoBehaviour
     [SerializeField] private int numBullets;
     [SerializeField] private float bulletVelocity;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
     public bool IsFacingLeft
     {
@@ -22,6 +23,7 @@ public class MiniTurret : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
 
         // 생성될 때 플레이어가 바라보는 방향을 사용
         var player = FindObjectOfType<PlayerManager>();
@@ -38,17 +40,19 @@ public class MiniTurret : MonoBehaviour
 
         for (int i = 0; i < numBullets; ++i)
         {
-            FireBullet();
+            animator.SetTrigger("Fire");
             await UniTask.WaitForSeconds(delayBetweenFire);
         }
 
         Destroy(gameObject);
     }
 
+    // 발사 애니메이션에서 호출되는 함수.
     private void FireBullet()
     {
-        // TODO: 총구에서 스폰되도록 위치 조정
-        var bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        // 총구에서 스폰되도록 위치 조정
+        Vector2 spawnPosition = transform.position + (IsFacingLeft ? Vector3.left : Vector3.right) * 0.1f;
+        var bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
 
         // 속도 설정 (총알은 중력 0으로 설정되어있음!)
         var rb = bullet.GetComponent<Rigidbody2D>();
@@ -57,6 +61,6 @@ public class MiniTurret : MonoBehaviour
         // 포탑과 충돌하지 않도록 설정
         Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
 
-        transform.DOShakeScale(duration: 0.2f, strength: 0.5f);
+        // transform.DOShakeScale(duration: 0.2f, strength: 0.5f);
     }
 }
