@@ -3,6 +3,7 @@ using UnityEngine;
 public class FireGrenadeMainProjectile : MonoBehaviour
 {
     [SerializeField] private GameObject subprojectilePrefab;
+    [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private int numSubprojectiles;
     [SerializeField] private float subprojectileSpawnHeight;
     [SerializeField] private float subprojectileMinAngle;
@@ -18,6 +19,9 @@ public class FireGrenadeMainProjectile : MonoBehaviour
         if (!isProjectileSpawned)
         {
             isProjectileSpawned = true;
+
+            // 메인 폭발
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
             // 각각의 subprojectile이 전체 angle min~max를 균등하게
             // 나누고 그 안에서 랜덤 각도를 고르는 방식.

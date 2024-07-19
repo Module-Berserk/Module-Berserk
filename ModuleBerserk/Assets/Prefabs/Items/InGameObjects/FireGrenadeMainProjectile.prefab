@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   subprojectilePrefab: {fileID: 568573568832534134, guid: b248cdb426037af41876e4be3b44d59e, type: 3}
+  explosionPrefab: {fileID: 568573568832534134, guid: 4511dcd6ebdabd2439d3abf1540e7fb6, type: 3}
   numSubprojectiles: 3
   subprojectileSpawnHeight: 0.2
   subprojectileMinAngle: 0
