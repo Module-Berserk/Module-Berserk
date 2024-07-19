@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FireGrenadeDOTArea : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float tickDamage = 2f;
+    [SerializeField] private float duration = 1.1f; // 0.2초 틱이 안정적으로 5번 들어갈 시간
+
+    private float lifetime = 0;
+
+    private void Start()
     {
-        
+        var hitbox = GetComponent<ApplyDamageOnContact>();
+        hitbox.RawDamage = new CharacterStat(tickDamage);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        lifetime += Time.deltaTime;
+        if (lifetime > duration)
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7181383860227060224}
   - component: {fileID: 6271587833123678819}
+  - component: {fileID: 4486853195267823613}
+  - component: {fileID: 9000229514544530053}
+  - component: {fileID: 2764875219933915424}
   m_Layer: 6
   m_Name: FireGrenadeDOTArea
   m_TagString: Untagged
@@ -27,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -21.157173, y: 0.68386936, z: -0.062850215}
-  m_LocalScale: {x: 3.31, y: 1.19, z: 1}
+  m_LocalScale: {x: 6.9, y: 1.19, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -84,3 +87,87 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4486853195267823613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DamageSource: 0
+  staggerStrength: 0
+  knockbackForce: 0
+  staggerDuration: 0.5
+  delayBetweenDamageTick: 0.2
+  RawDamage:
+    OnValueChange:
+      m_PersistentCalls:
+        m_Calls: []
+  DamageCoefficient: 1
+  OnApplyDamageSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!61 &9000229514544530053
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.18937819}
+  m_SpriteTilingProperty:
+    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.16, y: 0.16}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.16, y: 0.5387565}
+  m_EdgeRadius: 0
+--- !u!114 &2764875219933915424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9162be93d71234881ba343555d6f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tickDamage: 2
+  duration: 1.1

@@ -68,6 +68,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 이 시간 안에 회피 버튼을 누르면 데미지를 무효화하고 반격할 수 있음.
     [SerializeField] private float emergencyEvasionTimeWindow = 0.3f;
 
+
+    [Header("Grenade")]
+    // 수류탄을 오른쪽으로 던질 때의 초기 속도.
+    [SerializeField] private Vector2 grenadeVelocity;
+
+
     public bool IsFacingLeft
     {
         get => spriteRenderer.flipX;
@@ -925,6 +931,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
         await ApplyStunForDurationAsync(duration);
     }
 
+
+    // 수류탄형 아이템의 초기 속도를 플레이어 방향에 따라 설정해주는 함수.
+    public void ThrowGrenade(Rigidbody2D grenade)
+    {
+        // 초기 속도 부여
+        Vector2 initialVelocity = grenadeVelocity;
+        if (IsFacingLeft)
+        {
+            initialVelocity.x *= -1f;
+        }
+        grenade.velocity = initialVelocity;
+
+        // 주인공과는 충돌하지 않도록 설정
+        Physics2D.IgnoreCollision(grenade.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+    }
 
 
 
