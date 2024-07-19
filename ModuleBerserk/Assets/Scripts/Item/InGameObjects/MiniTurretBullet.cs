@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MiniTurretBullet : MonoBehaviour
 {
+    [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private float damage;
 
     private void Start()
@@ -14,6 +15,7 @@ public class MiniTurretBullet : MonoBehaviour
     {
         if (!other.CompareTag("Player"))
         {
+            Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
     }
