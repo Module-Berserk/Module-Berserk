@@ -952,4 +952,8 @@ public class C1BossController : MonoBehaviour, IDestructible
         int [] flameIndices = {32};
         AudioManager.instance.PlaySFX(flameIndices);
     }
+    private void PlayCallMinionSFX() {
+        int [] callIndices = {40};
+        AudioManager.instance.PlaySFX(callIndices);
+    }
 }
