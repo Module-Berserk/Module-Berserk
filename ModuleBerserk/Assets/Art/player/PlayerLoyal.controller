@@ -713,7 +713,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: UseItem
+  - m_Name: ThrowItem
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -791,7 +791,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: UseItem
+    m_ConditionEvent: ThrowItem
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1509223840134557318}
@@ -1212,7 +1212,7 @@ AnimatorStateMachine:
     m_Position: {x: -120, y: -60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 9087189442480615606}
-    m_Position: {x: 1180, y: -90, z: 0}
+    m_Position: {x: 1150, y: -60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3220902078502135900}
     m_Position: {x: -710, y: -40, z: 0}

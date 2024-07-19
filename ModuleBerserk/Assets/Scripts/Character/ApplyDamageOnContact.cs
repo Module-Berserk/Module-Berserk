@@ -118,7 +118,19 @@ public class ApplyDamageOnContact : MonoBehaviour
         }
     }
 
+    // 충돌이 일어난 프레임에는 Ontriggerstay 이벤트가 없는지
+    // 데미지가 안 들어가서 enter와 stay를 둘 다 활용하는 방법으로 구현함.
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        TryApplyTickDamage(other);
+    }
+
     private void OnTriggerStay2D(Collider2D other)
+    {
+        TryApplyTickDamage(other);
+    }
+
+    private void TryApplyTickDamage(Collider2D other)
     {
         if (other.TryGetComponent(out IDestructible destructible))
         {

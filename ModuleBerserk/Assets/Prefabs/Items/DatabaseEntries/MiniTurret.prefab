@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8487056063606099084
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1292646170040364133}
+  - component: {fileID: -444844616523366620}
+  m_Layer: 8
+  m_Name: MiniTurret
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1292646170040364133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487056063606099084}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -118.13, y: -2.97, z: 0}
+  m_LocalScale: {x: 1, y: 5.62, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-444844616523366620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487056063606099084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f404062965d544f928237708005d02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: 2
+  rarity: 1
+  type: 6
+  itemName: "\uBBF8\uB2C8 \uD3EC\uD0D1"
+  cooltime: 5
+  itemSlotImage: {fileID: 462943269, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
+  droppedItemImage: {fileID: -2074226891, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
+  turretPrefab: {fileID: 568573568832534134, guid: 88ce9b542d7be6445b09edb408278169, type: 3}

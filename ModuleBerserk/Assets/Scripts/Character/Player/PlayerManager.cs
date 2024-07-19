@@ -240,7 +240,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (itemManager.TryUseSlot1Item())
         {
-            PlayItemUseMotion();
             Debug.Log("슬롯1 아이템 사용 성공");
         }
         else
@@ -253,22 +252,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (itemManager.TryUseSlot2Item())
         {
-            PlayItemUseMotion();
             Debug.Log("슬롯2 아이템 사용 성공");
         }
         else
         {
             Debug.Log("슬롯2 아이템 사용 실패");
-        }
-    }
-
-    // 아이템 사용 모션은 우선순위가 제일 낮아서
-    // 아무것도 안 하고 서있는 상황에서만 재생됨.
-    private void PlayItemUseMotion()
-    {
-        if (ActionState == PlayerActionState.IdleOrRun && platformerMovement.IsGrounded && !animator.GetBool("IsRunning"))
-        {
-            animator.SetTrigger("UseItem");
         }
     }
 
@@ -941,7 +929,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
     }
 
 
-    // 수류탄형 아이템의 초기 속도를 플레이어 방향에 따라 설정해주는 함수.
+    // 수류탄형 아이템이 사용될 때 호출되는 함수로
+    // 초기 위치와 속도를 플레이어 방향에 따라 설정해준다.
     public void ThrowGrenade(Rigidbody2D grenade)
     {
         // 초기 위치 설정
@@ -960,6 +949,37 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // 주인공과는 충돌하지 않도록 설정
         Physics2D.IgnoreCollision(grenade.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+
+        PlayItemThrowMotion();
+    }
+
+    // 아이템 사용 모션은 우선순위가 제일 낮아서
+    // 아무것도 안 하고 서있는 상황에서만 재생됨.
+    private void PlayItemThrowMotion()
+    {
+        if (IsDoingNothing())
+        {
+            animator.SetTrigger("ThrowItem");
+        }
+    }
+
+    // 설치형 아이템이 사용될 때 호출되는 함수로 
+    public void InstallTurret(GameObject turretPrefab)
+    {
+        if (IsDoingNothing())
+        {
+            // TODO: 밑에 뭔가 설치하는 모션 재생
+        }
+
+        // 중심 좌표가 머리쪽이라 살짝 아래에 생성해야 함
+        Vector2 spawnPosition = transform.position + Vector3.down * 0.3f;
+
+        Instantiate(turretPrefab, spawnPosition, Quaternion.identity);
+    }
+
+    private bool IsDoingNothing()
+    {
+        return ActionState == PlayerActionState.IdleOrRun && platformerMovement.IsGrounded && !animator.GetBool("IsRunning");
     }
 
 
