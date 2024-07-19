@@ -729,9 +729,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             {
                 // 점프 애니메이션 재생
                 animator.SetTrigger("Jump");
-
-                // 점프하는 방향 바라보기
-                IsFacingLeft = rb.velocity.x < 0f;
             }
         }
 
@@ -947,6 +944,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 수류탄형 아이템의 초기 속도를 플레이어 방향에 따라 설정해주는 함수.
     public void ThrowGrenade(Rigidbody2D grenade)
     {
+        // 초기 위치 설정
+        Vector2 initialPosition = transform.position;
+        initialPosition.y -= 0.4f;
+        initialPosition.x += IsFacingLeft ? -0.2f : 0.2f;
+        grenade.position = initialPosition;
+
         // 초기 속도 부여
         Vector2 initialVelocity = grenadeVelocity;
         if (IsFacingLeft)

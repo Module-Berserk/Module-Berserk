@@ -395,7 +395,7 @@ MonoBehaviour:
   evasionCooltime: 1.3
   emergencyEvasionCooltime: 1
   emergencyEvasionTimeWindow: 0.3
-  grenadeVelocity: {x: 5, y: 5}
+  grenadeVelocity: {x: 10, y: 2}
 --- !u!114 &4491008500044812834
 MonoBehaviour:
   m_ObjectHideFlags: 0
