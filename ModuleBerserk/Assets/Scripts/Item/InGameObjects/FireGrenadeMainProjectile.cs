@@ -27,7 +27,7 @@ public class FireGrenadeMainProjectile : MonoBehaviour
             isProjectileSpawned = true;
 
             // 메인 폭발
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Instantiate(explosionPrefab, other.contacts[0].point, Quaternion.identity);
 
             // 각각의 subprojectile이 전체 angle min~max를 균등하게
             // 나누고 그 안에서 랜덤 각도를 고르는 방식.

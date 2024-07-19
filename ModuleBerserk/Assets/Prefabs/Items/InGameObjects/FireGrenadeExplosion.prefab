@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 7181383860227060224}
   - component: {fileID: 6271587833123678819}
   - component: {fileID: 4486853195267823613}
-  - component: {fileID: 3636831286753652948}
   - component: {fileID: -2072596331965978600}
+  - component: {fileID: 6053770805624139835}
+  - component: {fileID: 8647576943436918876}
+  - component: {fileID: -2310143832960061504}
   m_Layer: 6
   m_Name: FireGrenadeExplosion
   m_TagString: Untagged
@@ -76,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: 4adeaf2d2b1c7417e89f026626d8264f, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.34117648}
+  m_Sprite: {fileID: 1979186356, guid: 1b9dccf026134a14db245ad886711b8d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -103,7 +105,7 @@ MonoBehaviour:
   staggerStrength: 1
   knockbackForce: 0
   staggerDuration: 0.5
-  delayBetweenDamageTick: 1
+  delayBetweenDamageTick: 2
   RawDamage:
     OnValueChange:
       m_PersistentCalls:
@@ -112,8 +114,54 @@ MonoBehaviour:
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
---- !u!58 &3636831286753652948
-CircleCollider2D:
+--- !u!114 &-2072596331965978600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c97165cc2e8f3b4b98566b2413cdbab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+--- !u!95 &6053770805624139835
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd343554ac4f7a140b4fcc6dcf09d628, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8647576943436918876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568573568832534134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d16cdf7673df8f04f9c87693d5238db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!61 &-2310143832960061504
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -144,19 +192,16 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.7761203}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.1}
+    oldSize: {x: 2.5, y: 2.5}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.5
---- !u!114 &-2072596331965978600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 568573568832534134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c97165cc2e8f3b4b98566b2413cdbab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 10
+  m_Size: {x: 2.5, y: 1.5405161}
+  m_EdgeRadius: 0
