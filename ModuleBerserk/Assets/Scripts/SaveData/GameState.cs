@@ -1,6 +1,5 @@
 
 using System;
-using Unity.VisualScripting;
 
 // 게임 세션동안 유지되는 모든 저장 가능한 데이터를 관리한다.
 // 스토리 진행도, 보유한 크레딧, 플레이어의 체력 등을 포함한다.

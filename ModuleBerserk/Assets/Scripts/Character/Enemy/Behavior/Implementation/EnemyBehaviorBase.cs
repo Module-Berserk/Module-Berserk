@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlatformerMovement))]
-public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
+public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMovingObject
 {
     [Header("Chase")]
     // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건.
@@ -59,6 +59,9 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
 
     // 플레이어 추적용 레퍼런스
     protected GameObject player;
+
+    // 연막 수류탄 등의 속도 디버프를 반영하기 위한 이동속도 계수
+    private CharacterStat moveSpeedMultiplier = new(1f, 0f);
 
     // 지금 공격 애니메이션이 재생 중인지 확인하기 위한 플래그
     protected bool isAttackMotionFinished = true;
@@ -257,7 +260,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 해당 방향이 낭떠러지가 아니라면 이동
         if (!platformerMovement.IsOnBrink(patrolSpeed) && !IsMovingOutsideRestrictedArea(patrolSpeed))
         {
-            platformerMovement.UpdateMoveVelocity(patrolSpeed);
+            platformerMovement.UpdateMoveVelocity(patrolSpeed  * moveSpeedMultiplier.CurrentValue);
             platformerMovement.UpdateFriction(patrolSpeed);
         }
         else
@@ -287,7 +290,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
         // 아직 멈춰도 될만큼 가깝지 않다면 계속 이동
         if (Mathf.Abs(displacement) > chaseMinDistance)
         {
-            float desiredSpeed = Mathf.Sign(displacement) * chaseSpeed;
+            float desiredSpeed = Mathf.Sign(displacement) * chaseSpeed * moveSpeedMultiplier.CurrentValue;
             platformerMovement.UpdateMoveVelocity(desiredSpeed);
             platformerMovement.UpdateFriction(desiredSpeed);
         }
@@ -447,5 +450,10 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior
     public void DestroySelf()
     {
         Destroy(gameObject);
+    }
+
+    CharacterStat IMovingObject.GetMoveSpeed()
+    {
+        return moveSpeedMultiplier;
     }
 }
