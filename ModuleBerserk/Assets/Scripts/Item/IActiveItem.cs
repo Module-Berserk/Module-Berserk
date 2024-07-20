@@ -20,7 +20,7 @@ public enum ItemType
     None, // 빈 아이템 슬롯을 표현하기 위한 값
     FireGrenade,
     SmokeGrenade,
-    ShokeGrenade,
+    StunGrenade,
     PopPop, // 콩알탄
     FuelAdditive, // 연료 첨가제
     MiniTurret,

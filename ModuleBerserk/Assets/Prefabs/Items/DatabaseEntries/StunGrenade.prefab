@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1292646170040364133}
   - component: {fileID: 8997978713457310604}
   m_Layer: 8
-  m_Name: FireGrenade
+  m_Name: StunGrenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: 0
-  rarity: 0
-  type: 1
-  itemName: "\uD654\uC5FC\uBCD1"
+  rarity: 1
+  type: 3
+  itemName: "\uCDA9\uACA9\uD30C \uD3ED\uD0C4"
   cooltime: 1
-  itemSlotImage: {fileID: -601551695, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
-  droppedItemImage: {fileID: 1783468888, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
-  projectilePrefab: {fileID: 9141213974503896485, guid: 98788814983fe6e4fa1336b81d14e7d1, type: 3}
+  itemSlotImage: {fileID: -1103976138, guid: 0c8fd775d134c664fb5a364290d7b6ae, type: 3}
+  droppedItemImage: {fileID: -1508791187, guid: 3fb06c58d34a946428b93f4a92a6fdb4, type: 3}
+  projectilePrefab: {fileID: 9141213974503896485, guid: aab4ae2cceb2fb846ad87846037cf4bc, type: 3}
