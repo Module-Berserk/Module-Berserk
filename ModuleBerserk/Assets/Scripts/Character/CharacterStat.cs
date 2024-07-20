@@ -30,6 +30,14 @@ public class CharacterStat
         MaxValue = maxValue;
     }
 
+    public void ResetToMaxValue()
+    {
+        float difference = MaxValue - CurrentValue;
+        baseValue = MaxValue;
+
+        OnValueChange.Invoke(difference);
+    }
+
     public void ModifyBaseValue(float modifier)
     {
         float prevValue = CurrentValue;

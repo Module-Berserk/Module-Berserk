@@ -134,6 +134,12 @@ public class ApplyDamageOnContact : MonoBehaviour
     {
         if (other.TryGetComponent(out IDestructible destructible))
         {
+            // 이미 체력이 다 닳은 상대는 공격 불가
+            if (destructible.GetHPStat().CurrentValue <= 0f)
+            {
+                return;
+            }
+
             // 데미지 틱 간격 안에는 다시 데미지를 입히지 않음.
             if (!recentDamages.ContainsKey(destructible))
             {

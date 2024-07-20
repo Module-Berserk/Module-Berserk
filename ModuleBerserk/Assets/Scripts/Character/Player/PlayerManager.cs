@@ -895,8 +895,36 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
-        // TODO: 잠시 입력 비활성화, 은신처로 복귀 (결과창 표시?)
+        // 사망 모션 재생하고 입력 막기
         animator.SetTrigger("Death");
+        InputManager.InputActions.Player.Disable();
+
+        // case 1) 보스전이라면 부활 가능한지 체크
+        if (GameStateManager.ActiveGameState.IsBossFight && GameStateManager.ActiveGameState.IsBossFightRevivePossible)
+        {
+            ReviveAndContinueBossFightAsync().Forget();
+        }
+        // case 2) 일반 스테이지에서 죽었다면 게임오버
+        else
+        {
+            // TODO: 은신처로 복귀 (결과창 표시?)
+        }
+    }
+
+    private async UniTask ReviveAndContinueBossFightAsync()
+    {
+        GameStateManager.ActiveGameState.BossDeathCount++;
+
+        Debug.Log($"현재 데스카운트: {GameStateManager.ActiveGameState.BossDeathCount}");
+        Debug.Log("데스카운트 차감하고 부활하는 중...");
+
+        await UniTask.WaitForSeconds(5f);
+
+        InputManager.InputActions.Player.Enable();
+
+        // 부활
+        playerState.HP.ResetToMaxValue();
+        animator.SetTrigger("Revive");
     }
 
     // 챕터1 박스 기믹 등 특수한 상황에만 부여되는 기절 효과.

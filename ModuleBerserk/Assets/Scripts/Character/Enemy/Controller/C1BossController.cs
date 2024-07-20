@@ -188,7 +188,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
         hp = new CharacterStat(500f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
-        hitboxes.RawDamage = new CharacterStat(1f);
+        hitboxes.RawDamage = new CharacterStat(10f);
 
         // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);
