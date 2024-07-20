@@ -411,9 +411,6 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
             staggerCancellation = new CancellationTokenSource();
         }
 
-        // 공격받은 방향 바라보기 (오른쪽으로 넉백 <=> 왼쪽에서 공격당함)
-        IsFacingLeft = attackInfo.knockbackForce.x > 0f;
-
         // 넉백 효과
         platformerMovement.ApplyZeroFriction();
         rb.AddForce(attackInfo.knockbackForce, ForceMode2D.Impulse);

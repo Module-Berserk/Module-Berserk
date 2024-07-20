@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 0
   staggerStrength: 1
-  knockbackForce: 0
+  knockbackForce: 1
   staggerDuration: 1
   delayBetweenDamageTick: 2
   RawDamage:
@@ -193,7 +193,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.031015396, y: 1.6387696}
+  m_Offset: {x: 0, y: 0.84}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.3}
