@@ -136,7 +136,13 @@ public class GearSystem : MonoBehaviour
 
         // 다음 기어 단계로 올릴 수 있을 때까지 대기
         await UniTask.WaitForSeconds(MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE * 1.5f);
-        IncreaseGearLevel();
+
+        // 플레이어가 수동으로 기어를 올렸을 수도 있으니
+        // 중복으로 처리하지 않게 여전히 0단계인지 확인
+        if (CurrentState.GearLevel == 0)
+        {
+            IncreaseGearLevel();
+        }
     }
 
     // 공격에 성공한 경우 호출되는 함수

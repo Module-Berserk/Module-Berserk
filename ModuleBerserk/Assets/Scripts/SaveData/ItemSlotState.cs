@@ -3,9 +3,9 @@ using System;
 [Serializable]
 public class ItemSlotState
 {
-    public ItemType ItemType {get; set;}
-    public float Cooltime {get; set;}
-    public int UsageStack {get; set;} // 잔여 사용 횟수
+    public ItemType ItemType;
+    public float Cooltime;
+    public int UsageStack; // 잔여 사용 횟수
 
     public static ItemSlotState CreateDummyState()
     {

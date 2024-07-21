@@ -15,25 +15,25 @@ public enum PlayerType
 [Serializable]
 public class PlayerState
 {
-    public PlayerType PlayerType {get; set;}
+    public PlayerType PlayerType;
 
-    public CharacterStat HP {get; set;}
-    public CharacterStat AttackDamage {get; set;}
-    public CharacterStat AttackSpeed {get; set;}
-    public CharacterStat Defense {get; set;}
-    public CharacterStat MoveSpeed {get; set;}
+    public CharacterStat HP;
+    public CharacterStat AttackDamage;
+    public CharacterStat AttackSpeed;
+    public CharacterStat Defense;
+    public CharacterStat MoveSpeed;
 
     // scene 로딩이 끝난 직후에 이동할 위치.
     // 만약 null이면 현재 위치를 유지한다.
     //
     // 포탈을 타고 이동하면 같은 scene이라고 해도
     // 다른 위치에서 시작할 수 있기 때문에 필요하다.
-    public string SpawnPointTag {get; set;}
+    public string SpawnPointTag;
 
-    public GearSystemState GearSystemState {get; set;}
+    public GearSystemState GearSystemState;
 
-    public ItemSlotState Slot1State {get; set;}
-    public ItemSlotState Slot2State {get; set;}
+    public ItemSlotState Slot1State;
+    public ItemSlotState Slot2State;
 
     public static PlayerState CreateDummyState()
     {

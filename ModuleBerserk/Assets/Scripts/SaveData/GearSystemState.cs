@@ -3,9 +3,9 @@ using System;
 [Serializable]
 public class GearSystemState
 {
-    public float GearGauge {get; set;}
-    public int GearLevel {get; set;}
-    public CharacterStat GearGaugeGainCoefficient {get; set;}
+    public float GearGauge;
+    public int GearLevel;
+    public CharacterStat GearGaugeGainCoefficient;
 
     public static GearSystemState CreateDummyState()
     {

@@ -170,7 +170,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             GameObject spawnPoint = GameObject.FindGameObjectWithTag(playerState.SpawnPointTag);
             Assert.IsNotNull(spawnPoint);
 
-            rb.MovePosition(spawnPoint.transform.position);
+            transform.position = spawnPoint.transform.position;
         }
         
         itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);

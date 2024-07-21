@@ -77,9 +77,6 @@ public class Elevator : MonoBehaviour
         {
             return;
         }
-        //SFX
-        int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightLowerBound, downwardMovementDuration).Forget();
     }
 
@@ -90,9 +87,6 @@ public class Elevator : MonoBehaviour
         {
             return;
         }
-        //SFX
-        int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
         StartOneWayMovementAsync(heightUpperBound, upwardMovementDuration).Forget();
     }
 
@@ -177,6 +171,12 @@ public class Elevator : MonoBehaviour
     {
         // TODO: 이제 곧 엘리베이터 움직인다는 효과 재생 ex) "덜그럭" 하는 효과음, 약간의 진동
         // Debug.Log("엘리베이터가 곧 움직입니다...");
+
+        
+        //SFX
+        int[] elevatorIndices = {14, 15};
+        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
+
         visualElements.DOShakePosition(duration: 0.5f, strength: 0.05f, vibrato: 20);
     }
 }
