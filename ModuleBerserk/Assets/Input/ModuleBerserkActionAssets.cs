@@ -168,7 +168,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                 {
                     ""name"": """",
                     ""id"": ""5722d3b6-7b47-48ac-8187-9afd2065aaba"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -212,7 +212,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                 {
                     ""name"": """",
                     ""id"": ""f6cfc3f9-0f8a-4149-a3c1-2115c2ded0d9"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -223,7 +223,7 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                 {
                     ""name"": """",
                     ""id"": ""dacf6a16-f2db-476e-a6fb-43176a4156c4"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
