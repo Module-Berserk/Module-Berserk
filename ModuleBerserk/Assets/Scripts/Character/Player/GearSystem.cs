@@ -77,7 +77,7 @@ public class GearSystem : MonoBehaviour
 
     // 공격 피격 등으로 기어 단계가 바뀐 경우 호출되는 이벤트.
     // 플레이어는 기어 단계에 따라 버프를 받으므로 수치 변동을 여기서 처리하면 됨.
-    public UnityEvent OnGearLevelChange;
+    public UnityEvent OnGearLevelChange {get; private set;}
 
     // 현재 기어 단계의 최대치에 도달한 상태로 머무른 시간.
     // 이 시간이 MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE보다 높아야 다음 단계로 넘어갈 수 있다.
@@ -96,6 +96,7 @@ public class GearSystem : MonoBehaviour
 
     private void Awake()
     {
+        OnGearLevelChange = new UnityEvent();
         OnGearLevelChange.AddListener(UpdateGearLevelImage);
     }
 
@@ -109,25 +110,30 @@ public class GearSystem : MonoBehaviour
 
     // scene 로딩이 끝난 뒤 PlayerManager에 의해 호출되는 함수.
     // 직전 scene에서의 상태를 복원한다.
+    // 
+    // 주의사항:
+    // OnGearLevelChange에 버프 적용 콜백을 등록한 뒤에
+    // 호출해줘야만 버프 상태가 정상적으로 복원된다!!!
     public void InitializeState(GearSystemState state)
     {
         CurrentState = state;
 
-        // Note:
-        // scene마다 생성되는 플레이어 오브젝트와 다르게 PlayerState는 삭제되지 않으므로
-        // 버프 또한 이전 scene에서의 값을 유지함!
-        lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[state.GearLevel];
+        // 세이브 데이터를 불러올 때 스탯 버프는 모두 초기화되므로
+        // "이전에 적용된 버프"는 아무 변화도 없는 0단계 기준으로 기록해놓아야 함.
+        lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[0];
 
-        // TODO: UI 상태 복원하기
+        // 현재 기어 단계에 맞는 버프를 다시 부여하며
+        // UI 상태도 같이 복원 (Awake에서 등록된 콜백 있음)
+        OnGearLevelChange.Invoke();
+
+        if (CurrentState.GearLevel == 0)
+        {
+            InitialRampUpAnimationAsync().Forget();
+        }
     }
 
-    // 미션을 시작할 때 플레이어 접촉 트리거 등에 의해 실행되는 함수로
+    // 새로운 미션을 시작할 때 게이지가 차오르는 연출.
     // 0단계에서 실질적인 시작 상태인 1단계까지 게이지가 쭉 올라가는 모습을 보여준다.
-    public void StartInitialRampUpAnimation()
-    {
-        InitialRampUpAnimationAsync().Forget();
-    }
-
     private async UniTask InitialRampUpAnimationAsync()
     {
         DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, MAX_GEAR_GAUGE, INITIAL_GUAGE_RAMPUP_TIME);
@@ -263,14 +269,21 @@ public class GearSystem : MonoBehaviour
     // 기어 단계가 바뀔 때마다 호출해두면 됨.
     public void UpdateGearLevelBuff(CharacterStat attackSpeed, CharacterStat moveSpeed)
     {
-        // 기존 버프 제거
-        attackSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
-        moveSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
-        
-        // 신규 버프 부여
+        RemoveOldBuff(attackSpeed, moveSpeed);
+        ApplyNewBuff(attackSpeed, moveSpeed);
+    }
+
+    private void ApplyNewBuff(CharacterStat attackSpeed, CharacterStat moveSpeed)
+    {
         lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[CurrentState.GearLevel];
         attackSpeed.ApplyMultiplicativeModifier(lastAppliedGearLevelBuff.Speed);
         moveSpeed.ApplyMultiplicativeModifier(lastAppliedGearLevelBuff.Speed);
+    }
+
+    public void RemoveOldBuff(CharacterStat attackSpeed, CharacterStat moveSpeed)
+    {
+        attackSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
+        moveSpeed.ApplyMultiplicativeModifier(1f / lastAppliedGearLevelBuff.Speed);
     }
 
     private void Update()

@@ -34,5 +34,20 @@ public class ActiveItemDatabase : MonoBehaviour
         return itemPrefabs[itemIndex].GetComponent<IActiveItem>();
     }
 
+    public GameObject GetItemPrefab(ItemType type)
+    {
+        // case 1) 아이템이 없는 경우
+        if (type == ItemType.None)
+        {
+            return null;
+        }
+
+        // case 2) 뭔가 아이템이 있는 경우
+        int itemIndex = (int)type;
+        Assert.IsTrue(itemIndex < itemPrefabs.Count);
+
+        return itemPrefabs[itemIndex];
+    }
+
     // TODO: 희귀도에 따라 하나 랜덤하게 골라주는 함수 만들기
 }

@@ -27,6 +27,7 @@ public class LoadSceneOnContact : MonoBehaviour
     {
         // 다음 scene의 플레이어 시작 위치 지정
         GameStateManager.ActiveGameState.PlayerState.SpawnPointTag = playerSpawnPointTag;
+        GameStateManager.ActiveGameState.SceneState.InitializeSceneState(sceneName);
 
         fadeEffect.FadeOut();
 

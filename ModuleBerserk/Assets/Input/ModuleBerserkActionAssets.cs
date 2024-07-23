@@ -368,6 +368,54 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""6cb27edb-91cf-472f-a23b-c008a08f8608"",
+            ""actions"": [
+                {
+                    ""name"": ""Save"",
+                    ""type"": ""Button"",
+                    ""id"": ""c03343fa-97fc-4e06-84cc-645bfe43b2c4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Load"",
+                    ""type"": ""Button"",
+                    ""id"": ""0a8a5039-7fe3-4f0f-806d-f2857aa2aa80"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1ce95159-e891-4682-b3d4-c216117fb10a"",
+                    ""path"": ""<Keyboard>/f1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Save"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43902565-474d-431f-8b8c-826b5afca88f"",
+                    ""path"": ""<Keyboard>/f2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Load"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -393,6 +441,10 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         // Common
         m_Common = asset.FindActionMap("Common", throwIfNotFound: true);
         m_Common_Escape = m_Common.FindAction("Escape", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_Save = m_Debug.FindAction("Save", throwIfNotFound: true);
+        m_Debug_Load = m_Debug.FindAction("Load", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -684,6 +736,60 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
         }
     }
     public CommonActions @Common => new CommonActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private List<IDebugActions> m_DebugActionsCallbackInterfaces = new List<IDebugActions>();
+    private readonly InputAction m_Debug_Save;
+    private readonly InputAction m_Debug_Load;
+    public struct DebugActions
+    {
+        private @ModuleBerserkActionAssets m_Wrapper;
+        public DebugActions(@ModuleBerserkActionAssets wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Save => m_Wrapper.m_Debug_Save;
+        public InputAction @Load => m_Wrapper.m_Debug_Load;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void AddCallbacks(IDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Add(instance);
+            @Save.started += instance.OnSave;
+            @Save.performed += instance.OnSave;
+            @Save.canceled += instance.OnSave;
+            @Load.started += instance.OnLoad;
+            @Load.performed += instance.OnLoad;
+            @Load.canceled += instance.OnLoad;
+        }
+
+        private void UnregisterCallbacks(IDebugActions instance)
+        {
+            @Save.started -= instance.OnSave;
+            @Save.performed -= instance.OnSave;
+            @Save.canceled -= instance.OnSave;
+            @Load.started -= instance.OnLoad;
+            @Load.performed -= instance.OnLoad;
+            @Load.canceled -= instance.OnLoad;
+        }
+
+        public void RemoveCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -707,5 +813,10 @@ public partial class @ModuleBerserkActionAssets: IInputActionCollection2, IDispo
     public interface ICommonActions
     {
         void OnEscape(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnSave(InputAction.CallbackContext context);
+        void OnLoad(InputAction.CallbackContext context);
     }
 }

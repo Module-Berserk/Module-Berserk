@@ -1,7 +1,11 @@
 
-using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
 
 public class GameStateManager
 {
@@ -29,13 +33,77 @@ public class GameStateManager
 
     public static void SaveActiveGameState()
     {
-        // TODO: 파일에 게임 상태 저장하기
-        throw new NotImplementedException();
+        RecordAllPersistentData();
+        WriteSaveDataToFile("slot0.savedata");
     }
 
-    public static List<GameState> LoadGameStates()
+    public static List<GameState> LoadSavedGameStates()
     {
-        // TODO: 파일에서 저장된 게임 상태 모두 불러오기
-        throw new NotImplementedException();
+        List<GameState> states = new();
+
+        GameState state = ReadSaveDataFromFile("slot0.savedata");
+        if (state != null)
+        {
+            states.Add(state);
+        }
+
+        return states;
+    }
+
+    private static void WriteSaveDataToFile(string filename)
+    {
+        BinaryFormatter formatter = new();
+        string path = Application.persistentDataPath + "/" + filename;
+
+        FileStream stream = new(path, FileMode.Create);
+        formatter.Serialize(stream, activeGameState);
+        stream.Close();
+    }
+
+    private static GameState ReadSaveDataFromFile(string filename)
+    {
+        string path = Application.persistentDataPath + "/" + filename;
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new();
+            FileStream stream = new(path, FileMode.Open);
+            GameState state = formatter.Deserialize(stream) as GameState;
+            stream.Close();
+
+            return state;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static void RecordAllPersistentData()
+    {
+        // 맵에서 세이브 데이터 저장할 놈들 전부 찾고 SceneState에 기록하기
+        var statefulObjects = GameObject.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IPersistentSceneState>();
+        foreach (var statefulObject in statefulObjects)
+        {
+            statefulObject.Save(activeGameState.SceneState);
+        }
+    }
+
+    private static void RestoreAllPersistentData()
+    {
+        // 맵에서 세이브 데이터 저장했던 놈들 전부 찾고 SceneState에 기록하기
+        var statefulObjects = GameObject.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IPersistentSceneState>();
+        foreach (var statefulObject in statefulObjects)
+        {
+            statefulObject.Load(activeGameState.SceneState);
+        }
+    }
+
+    public static async UniTask RestoreGameStateAsync(GameState gameState)
+    {
+        activeGameState = gameState;
+
+        await SceneManager.LoadSceneAsync(gameState.SceneState.SceneName);
+        
+        RestoreAllPersistentData();
     }
 }

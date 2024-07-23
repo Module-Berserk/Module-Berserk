@@ -160,6 +160,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
         platformerMovement.OnLand.AddListener(PlayLandSFX);
     }
 
+    private void OnDestroy()
+    {
+        // 스탯 버프는 세이브 데이터에 저장되지 않기 때문에
+        // 기어 시스템에 의한 버프 또한 새로운 맵에 진입하면 거기서 다시 부여됨.
+        //
+        // 세이브 데이터를 불러오는게 아니라 미션 시작처럼 단순 맵 이동인 경우에도
+        // 마찬가지로 처리되므로 기어 버프가 중복되는 상황을 막으려면 새로운 맵이 로딩될 때
+        // 기존 버프를 제거해줘야 함!
+        gearSystem.RemoveOldBuff(playerState.AttackSpeed, playerState.MoveSpeed);
+    }
+
     // scene 로딩이 끝난 뒤 호출되는 함수.
     // 직전 scene에서의 상태를 복원한다.
     private void InitializePlayerState()
@@ -178,6 +189,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
+
+        UpdateHealthBarUI(netPendingDamage);
 
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }

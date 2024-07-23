@@ -37,6 +37,7 @@ public class GameState
     }
 
     public PlayerState PlayerState;
+    public SceneState SceneState;
 
     // TODO: 스토리 진행도 추가
 
@@ -47,7 +48,8 @@ public class GameState
             Credits = 1000,
             IsBossFight = false,
             BossDeathCount = 0,
-            PlayerState = PlayerState.CreateDummyState()
+            PlayerState = PlayerState.CreateDummyState(),
+            SceneState = SceneState.CreateDummyState()
         };
     }
 }

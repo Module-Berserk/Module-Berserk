@@ -8,11 +8,20 @@ using UnityEngine;
 //    ex) 아이템을 이미 먹었는지 Dictionary<string, bool>에 저장
 public class ObjectGUID : MonoBehaviour
 {
-    public string ID;
+    public string ID = "";
 
     [ContextMenu("Generate GUID for this object")]
     private void GenerateGUID()
     {
         ID = System.Guid.NewGuid().ToString();
+    }
+
+    // GUID 생성을 까먹을 수도 있으니 리마인더 로그 남기기
+    private void Awake()
+    {
+        if (ID == "")
+        {
+            Debug.LogWarning("GUID is not generated yet!");
+        }
     }
 }
