@@ -6,6 +6,15 @@ public class FadeEffect : MonoBehaviour
 {
     [SerializeField] private Image fadeEffectImage;
     [SerializeField] private float fadeDuration;
+    [SerializeField] private bool fadeInOnAwake = true; // true로 체크하면 시작할 때 자동으로 페이드인
+
+    private void Awake()
+    {
+        if (fadeInOnAwake)
+        {
+            FadeIn();
+        }
+    }
 
     public void FadeIn()
     {

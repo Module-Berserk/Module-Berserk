@@ -65,6 +65,9 @@ public class C1BossController : MonoBehaviour, IDestructible
     // 돌진은 모션을 DOTween으로 처리해서 히트박스를 켜고 끄는 시점을 애니메이션 클립으로 지정할 수 없음.
     // 그러므로 공격 함수에서 직접 콜라이더에 접근해야 함.
     [SerializeField] private BoxCollider2D dashAttackHitbox;
+    // 백스텝과 돌진 사이의 딜레이.
+    // 플레이어에게 상자 기믹을 활용할 여유 시간을 부여한다.
+    [SerializeField] private float delayBeforeDash = 1f;
     // 맵 반대편 끝까지 돌진하는데에 걸리는 시간
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private Ease dashMotionEase = Ease.Flash;
@@ -186,7 +189,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(500f, 0f, 500f);
+        hp = new CharacterStat(5f, 0f, 500f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(10f);
 
@@ -709,6 +712,10 @@ public class C1BossController : MonoBehaviour, IDestructible
     private async UniTask PerformDashAttackPatternAsync()
     {
         actionState = ActionState.DashAttack;
+
+        // 선딜레이
+        await UniTask.WaitForSeconds(delayBeforeDash, cancellationToken: attackCancellation.Token);
+
         animator.SetTrigger("DashAttack");
 
         // 애니메이션 이벤트에 의해 돌진이 시작되기를 기다림

@@ -715,6 +715,7 @@ MonoBehaviour:
   backstepJumpMaxDuration: 1
   noBoxGimmickNearbyTrigger: {fileID: 0}
   dashAttackHitbox: {fileID: 5904141127077743963}
+  delayBeforeDash: 1
   dashDuration: 0.2
   dashMotionEase: 32
   dashImpactCameraShakeForce: 1
