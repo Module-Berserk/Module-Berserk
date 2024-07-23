@@ -35,6 +35,12 @@ public class DroppedItem : MonoBehaviour, IInteractable
             .SetLoops(-1, LoopType.Yoyo);
     }
 
+    private void OnDestroy()
+    {
+        // 드랍 아이템의 위아래 움직임은 무한지속이라 transform이 삭제될 때 같이 취소해줘야함
+        transform.DOKill();
+    }
+
     private Color FindRarityGlowColor(ItemRarity rarity)
     {
         if (rarity == ItemRarity.Common)
