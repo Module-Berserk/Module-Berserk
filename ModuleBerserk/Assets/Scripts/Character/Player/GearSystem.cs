@@ -42,6 +42,8 @@ public class GearSystem : MonoBehaviour
     private const float MAX_GEAR_LEVEL_PROTECTION_TIME = 5f;
     // 비전투 상태에서 게이지 하한선에 도달했을 때 기어 단계 하락을 막는 기간
     private const float NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME = 3f;
+    // 공격 또는 피격 이후로 이 시간 동안은 전투 상태로 판단해 기어 게이지 자연 감소가 일어나지 않음
+    private const float COMBAT_DURATION = 10f;
 
     // 기어 레벨별 버프 수치.
     // 버프가 속도 이외의 스탯도 바꿀 가능성을 염두해서 구조체로 처리함.
@@ -207,8 +209,8 @@ public class GearSystem : MonoBehaviour
 
     private bool IsCombatOngoing()
     {
-        // 공격 및 피격 시점으로부터 아직 3초가 지나지 않은 경우 전투 중으로 취급함
-        return combatTimer < 3f;
+        // 공격 및 피격 시점으로부터 일정 시간이 않은 경우 전투 중으로 취급함
+        return combatTimer < COMBAT_DURATION;
     }
 
     // 게이지 최대치를 일정 시간 이상 유지해서
