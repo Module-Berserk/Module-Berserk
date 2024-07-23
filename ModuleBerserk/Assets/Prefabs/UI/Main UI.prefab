@@ -477,6 +477,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5788833568708752732}
+  - component: {fileID: 512897234628548035}
   m_Layer: 5
   m_Name: Player HP
   m_TagString: Untagged
@@ -507,6 +508,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 7.3}
   m_SizeDelta: {x: 119, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &512897234628548035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2689223377589313685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db1e094b7b1d934ba745d1c8b3aff58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentValueSlider: {fileID: 4860397864637849930}
+  followUpSlider: {fileID: 4299924117591630033}
+  healthRegenEffect: {fileID: 8172389645264594105}
+  followUpLerpRatio: 0.02
+  followUpDelay: 0.5
+  followUpThreshold: 0.01
 --- !u!1 &2808292179060960045
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,6 +648,7 @@ GameObject:
   - component: {fileID: 5935710868941576054}
   - component: {fileID: 8525268992588036567}
   - component: {fileID: 8116226136251372142}
+  - component: {fileID: 8172389645264594105}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -693,6 +713,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8172389645264594105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3048547716431196605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
+  flashDuration: 0.15
 --- !u!1 &3404022464736504288
 GameObject:
   m_ObjectHideFlags: 0

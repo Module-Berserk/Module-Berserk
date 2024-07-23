@@ -74,6 +74,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private Vector2 grenadeVelocity;
 
 
+    [Header("HP Bar")]
+    [SerializeField] private HealthBarAnimation healthBarAnimation;
+
+
     public bool IsFacingLeft
     {
         get => spriteRenderer.flipX;
@@ -91,7 +95,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private ScreenShake screenShake;
     private GearSystem gearSystem;
     private ItemManager itemManager;
-    private HealthBarAnimation healthBarAnimation;
 
     // GameState에서 가져온 저장 가능한 플레이어 상태들
     private PlayerState playerState;
@@ -148,7 +151,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
         itemManager = GetComponent<ItemManager>();
-        healthBarAnimation = GetComponent<HealthBarAnimation>();
     }
 
     private void Start()
@@ -350,9 +352,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // gearSystem.OnEmergencyEvade();
 
             // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
+            // 데미지를 씹고 다른 모션을 재생한다.
             if (!Mathf.Approximately(netPendingDamage, 0f))
             {
                 CancelPendingDamages();
+                animator.SetBool("IsEmergencyEvadeSuccessful", true);
+            }
+            else
+            {
+                animator.SetBool("IsEmergencyEvadeSuccessful", false);
             }
 
             // 공격 도중에 긴급 회피를 사용하는 경우 히트박스를 다시 비활성화해줘야 함

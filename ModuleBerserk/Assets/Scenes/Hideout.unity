@@ -279,6 +279,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 624077812}
     - target: {fileID: 4169763342040205081, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: healthRegenEffect
+      value: 
+      objectReference: {fileID: 1176395919}
+    - target: {fileID: 4169763342040205081, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: currentValueSlider
       value: 
       objectReference: {fileID: 1504479047}
@@ -346,6 +350,10 @@ PrefabInstance:
       propertyPath: cameraFollowTarget
       value: 
       objectReference: {fileID: 1328744587}
+    - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: healthBarAnimation
+      value: 
+      objectReference: {fileID: 1176395920}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1021,6 +1029,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+--- !u!114 &1176395919 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8172389645264594105, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+  m_PrefabInstance: {fileID: 1176395918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1176395920 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 512897234628548035, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+  m_PrefabInstance: {fileID: 1176395918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db1e094b7b1d934ba745d1c8b3aff58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1176395922 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9064496754029307076, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}

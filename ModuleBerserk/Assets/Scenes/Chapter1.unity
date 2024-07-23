@@ -16231,6 +16231,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1929061746 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 512897234628548035, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+  m_PrefabInstance: {fileID: 8602893245577955615}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db1e094b7b1d934ba745d1c8b3aff58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1950097419
 GameObject:
   m_ObjectHideFlags: 0
@@ -17476,6 +17487,10 @@ PrefabInstance:
       propertyPath: cameraFollowTarget
       value: 
       objectReference: {fileID: 335837298}
+    - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: healthBarAnimation
+      value: 
+      objectReference: {fileID: 1929061746}
     - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: groundContactDistanceThreshold
       value: 0.1
