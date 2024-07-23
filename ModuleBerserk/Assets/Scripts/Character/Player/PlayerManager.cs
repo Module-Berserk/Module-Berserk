@@ -121,9 +121,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private CancellationTokenSource stunCancellation = new();
     // 긴급 회피를 시전할 때 직전에 입은 데미지를 무효화
     private CancellationTokenSource damageCancellation = new();
-    // 긴급 회피가 일어나는지 확인하려고 대기 중인 데미지 목록.
+    // 긴급 회피가 일어나는지 확인하려고 대기 중인 데미지 총합.
     // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인하기 위해 사용함.
-    private int numPendingDamages = 0;
+    private float netPendingDamage = 0f;
 
     // 회피를 할 때마다 해당 회피 타입을 여기에 기록해둔다.
     // 챕터 1 박스 기믹에서 일반 대쉬에만 박스가 파괴되도록 구분하기 위해 사용함.
@@ -177,12 +177,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
-        // Note: 은신처처럼 체력 UI가 없는 곳도 있음
-        if (healthBarAnimation != null)
-        {
-            playerState.HP.OnValueChange.AddListener(UpdateHealthBarUI);
-        }
-
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
 
@@ -206,12 +200,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 히트박스는 항상 비활성화 상태로 시작해야 함
         weaponHitbox.IsHitboxEnabled = false;
         emergencyEvadeHitbox.IsHitboxEnabled = false;
-    }
-
-    private void UpdateHealthBarUI(float diff)
-    {
-        Debug.Log($"hp 변동: {playerState.HP.CurrentValue}");
-        healthBarAnimation.UpdateCurrentValue(playerState.HP.CurrentValue / playerState.HP.MaxValue);
     }
 
     private void OnEnable()
@@ -362,7 +350,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // gearSystem.OnEmergencyEvade();
 
             // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
-            if (numPendingDamages > 0)
+            if (!Mathf.Approximately(netPendingDamage, 0f))
             {
                 CancelPendingDamages();
             }
@@ -371,6 +359,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             CancelCurrentAction();
             
             animator.SetTrigger("EmergencyEvade");
+
+            // 바라보는 방향에 따라 히트박스가 부여하는 넉백 방향 조정
+            emergencyEvadeHitbox.SetHitboxDirection(IsFacingLeft);
 
             // 회피 무적 상태로 전환
             ActionState = PlayerActionState.Evade;
@@ -805,12 +796,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 플레이어가 긴급회피로 데미지를 무효화할 수 있으니 잠시 유예 시간을 부여함.
     //
     // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인할 수 있도록
-    // 대기 중인 데미지의 수를 numPendingDamages 변수로 관리한다.
+    // 대기 중인 데미지의 총합을 netPendingDamages 변수로 관리한다.
     private async UniTask ApplyDamageWithDelayAsync(float finalDamage, float delay, CancellationToken cancellationToken)
     {
-        numPendingDamages++;
+        // 맞았는데 즉각적인 피드백이 없으니 이상하길래
+        // 체력바 UI로는 즉시 데미지를 입은 것처럼 표시하고
+        // 나중에 데미지 무효화가 일어나면 UI 변화만 롤백하는 방식으로 구현함.
+        netPendingDamage += finalDamage;
+        UpdateHealthBarUI(netPendingDamage);
+
         await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
-        numPendingDamages--;
+        netPendingDamage -= finalDamage;
 
         // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리
         if (!cancellationToken.IsCancellationRequested)
@@ -820,6 +816,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 공격 당하면 게이지가 깎임
             gearSystem.OnPlayerHit();
         }
+        // 데미지 무효화가 일어났다면 아까 선제적으로 업데이트한
+        // 체력바를 실제 체력에 맞게 다시 조정.
+        else
+        {
+            UpdateHealthBarUI(netPendingDamage);
+        }
+    }
+
+    private void UpdateHealthBarUI(float netPendingDamage)
+    {
+        // 긴급회피로 데미지 무효화를 하지 못할 경우 도달할 최종 체력
+        float expectedHP = playerState.HP.CurrentValue - netPendingDamage;
+        healthBarAnimation.UpdateCurrentValue(expectedHP / playerState.HP.MaxValue);
     }
 
     // 현재 하던 행동을 취소하고 피격 경직 상태에 진입
