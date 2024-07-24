@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1b6f828d3a2cac94e960f86f1c8e9a45
+guid: 7a726f982b970484cb0ae8eb8cf59c8a
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -102,8 +102,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,8 +111,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a24fe43873d3c145a434bfd07307e38
-      internalID: -279682284
+      spriteID: 13735fa7695c69d4d99405c36add2412
+      internalID: 1135385708
       vertices: []
       indices: 
       edges: []
@@ -121,10 +121,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_1
       rect:
         serializedVersion: 2
-        x: 128
+        x: 63
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,8 +132,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60b94600b7c793d4996a214966afbfae
-      internalID: 1189924590
+      spriteID: 498bb348c08f61e4b848b11854cb4f0e
+      internalID: -2037073726
       vertices: []
       indices: 
       edges: []
@@ -142,10 +142,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_2
       rect:
         serializedVersion: 2
-        x: 256
+        x: 126
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +153,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a7820987218d39e44a3b45574ac2724c
-      internalID: -1466931312
+      spriteID: b92c7b1222365f9459570b5eb455f55e
+      internalID: -1026594409
       vertices: []
       indices: 
       edges: []
@@ -163,10 +163,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_3
       rect:
         serializedVersion: 2
-        x: 384
+        x: 189
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,8 +174,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 014ab04598eb6e14cb3811c4fb6c2d3c
-      internalID: -2136854694
+      spriteID: 53fc4b9604ec6874f9886674eba0f925
+      internalID: -1538669692
       vertices: []
       indices: 
       edges: []
@@ -184,10 +184,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_4
       rect:
         serializedVersion: 2
-        x: 512
+        x: 252
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,8 +195,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 21cdbdfd91202e041b54afe2155bfafd
-      internalID: 1520574335
+      spriteID: c51d0e66285b14e47860410cf3b3a30f
+      internalID: 1231104034
       vertices: []
       indices: 
       edges: []
@@ -205,10 +205,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_5
       rect:
         serializedVersion: 2
-        x: 640
+        x: 315
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,8 +216,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd36996132f95484295711a605089504
-      internalID: -1975550960
+      spriteID: 99d2d4ba245d31d4093c184559a7ccf9
+      internalID: 102753498
       vertices: []
       indices: 
       edges: []
@@ -226,10 +226,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_6
       rect:
         serializedVersion: 2
-        x: 768
+        x: 378
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -237,8 +237,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 976b4dd5ebf15fb418a1807c793f739c
-      internalID: -1742042799
+      spriteID: 0033f84a437b95548bdaf13247b50875
+      internalID: -2024882408
       vertices: []
       indices: 
       edges: []
@@ -247,10 +247,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_7
       rect:
         serializedVersion: 2
-        x: 896
+        x: 441
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -258,8 +258,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 666c4b4b41f640544bf1d6cbb356c931
-      internalID: -1243718987
+      spriteID: be5ab8bffb433a74587a37e759d25321
+      internalID: 934694148
       vertices: []
       indices: 
       edges: []
@@ -268,10 +268,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_8
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 504
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,8 +279,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4d1afc9860bcb164fb288c764e25f2fe
-      internalID: -1863221691
+      spriteID: dc7cec70cc51ccd40906910c303ffca4
+      internalID: -888652610
       vertices: []
       indices: 
       edges: []
@@ -289,10 +289,10 @@ TextureImporter:
       name: poppop_explosion-Sheet_9
       rect:
         serializedVersion: 2
-        x: 1152
+        x: 567
         y: 0
-        width: 128
-        height: 48
+        width: 63
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -300,512 +300,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 25ce276858b306e4096107bbe8733db1
-      internalID: 395594329
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_10
-      rect:
-        serializedVersion: 2
-        x: 1280
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fc11aa27e601e524d876a3ea49c9d560
-      internalID: 1895741472
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_11
-      rect:
-        serializedVersion: 2
-        x: 1408
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e955f4e9c4966514b9d306ddfb26d2ed
-      internalID: -1695993670
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_12
-      rect:
-        serializedVersion: 2
-        x: 1536
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 93f4e21e1aed0c047b714dd9f4826154
-      internalID: -1005286744
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_13
-      rect:
-        serializedVersion: 2
-        x: 1664
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 66c6925721379c545a1b08fe37218dec
-      internalID: -1929429146
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_14
-      rect:
-        serializedVersion: 2
-        x: 1792
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 79322d981a0123641a1f0a576e5c3e11
-      internalID: 2074379041
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_15
-      rect:
-        serializedVersion: 2
-        x: 1920
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5c40188b28085cf4b8083117c534a7ac
-      internalID: 1670211168
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_16
-      rect:
-        serializedVersion: 2
-        x: 2048
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1c46aaeabf71c2942bff2e14266cd68e
-      internalID: 1649103998
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_17
-      rect:
-        serializedVersion: 2
-        x: 2176
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 76391eb9ed9026348bde500be2071ba6
-      internalID: 1460498667
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_18
-      rect:
-        serializedVersion: 2
-        x: 2304
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 25ad8943c429e05468ad98a0002b574e
-      internalID: 898770312
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_19
-      rect:
-        serializedVersion: 2
-        x: 2432
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: deb25e102b94cd9448ddd2495279d483
-      internalID: -1913425126
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_20
-      rect:
-        serializedVersion: 2
-        x: 2560
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f26955a22fc9a414f8682b6d2c77b758
-      internalID: -1286344600
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_21
-      rect:
-        serializedVersion: 2
-        x: 2688
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 190df034724beea48a56a895d4ebcba4
-      internalID: -1336955873
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_22
-      rect:
-        serializedVersion: 2
-        x: 2816
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5b09220080255d54d9dd52776189c5a6
-      internalID: -719242482
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_23
-      rect:
-        serializedVersion: 2
-        x: 2944
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5de45bdc11c40904fa37b486c1b6e2a7
-      internalID: -364714561
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_24
-      rect:
-        serializedVersion: 2
-        x: 3072
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 11b87fa7275851f45bbedf67ea6fcdc6
-      internalID: -412459280
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_25
-      rect:
-        serializedVersion: 2
-        x: 3200
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4e5d2086c152888498403df28c30ccd9
-      internalID: 359577765
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_26
-      rect:
-        serializedVersion: 2
-        x: 3328
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ea42bee3e1e6d88448f5e4cb126e6869
-      internalID: -679567715
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_27
-      rect:
-        serializedVersion: 2
-        x: 3456
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9453bf9af032fc84686c2718e585a22a
-      internalID: 49187770
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_28
-      rect:
-        serializedVersion: 2
-        x: 3584
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4ea051ed9d0feb74d8d7addfd2e06364
-      internalID: -839821639
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_29
-      rect:
-        serializedVersion: 2
-        x: 3712
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: decb641077ee5004f84b3f715174ffd8
-      internalID: -1939128384
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_30
-      rect:
-        serializedVersion: 2
-        x: 3840
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b96f5151dfd070a49a58962a89a6e75e
-      internalID: 277140591
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_31
-      rect:
-        serializedVersion: 2
-        x: 3968
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 600e1587cb10b574e914713d70b30f96
-      internalID: 268506563
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_32
-      rect:
-        serializedVersion: 2
-        x: 4096
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3e00ad23ec17fe149b0d76fab49bbb14
-      internalID: -1756217385
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: poppop_explosion-Sheet_33
-      rect:
-        serializedVersion: 2
-        x: 4224
-        y: 0
-        width: 128
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3a25eff4905e75c4d8d9cce3d3efac8b
-      internalID: -1753744894
+      spriteID: 7d83a1eab28194545a2a8123c4e17e33
+      internalID: -125094035
       vertices: []
       indices: 
       edges: []
@@ -821,40 +317,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      poppop_explosion-Sheet_0: -279682284
-      poppop_explosion-Sheet_1: 1189924590
-      poppop_explosion-Sheet_10: 1895741472
-      poppop_explosion-Sheet_11: -1695993670
-      poppop_explosion-Sheet_12: -1005286744
-      poppop_explosion-Sheet_13: -1929429146
-      poppop_explosion-Sheet_14: 2074379041
-      poppop_explosion-Sheet_15: 1670211168
-      poppop_explosion-Sheet_16: 1649103998
-      poppop_explosion-Sheet_17: 1460498667
-      poppop_explosion-Sheet_18: 898770312
-      poppop_explosion-Sheet_19: -1913425126
-      poppop_explosion-Sheet_2: -1466931312
-      poppop_explosion-Sheet_20: -1286344600
-      poppop_explosion-Sheet_21: -1336955873
-      poppop_explosion-Sheet_22: -719242482
-      poppop_explosion-Sheet_23: -364714561
-      poppop_explosion-Sheet_24: -412459280
-      poppop_explosion-Sheet_25: 359577765
-      poppop_explosion-Sheet_26: -679567715
-      poppop_explosion-Sheet_27: 49187770
-      poppop_explosion-Sheet_28: -839821639
-      poppop_explosion-Sheet_29: -1939128384
-      poppop_explosion-Sheet_3: -2136854694
-      poppop_explosion-Sheet_30: 277140591
-      poppop_explosion-Sheet_31: 268506563
-      poppop_explosion-Sheet_32: -1756217385
-      poppop_explosion-Sheet_33: -1753744894
-      poppop_explosion-Sheet_4: 1520574335
-      poppop_explosion-Sheet_5: -1975550960
-      poppop_explosion-Sheet_6: -1742042799
-      poppop_explosion-Sheet_7: -1243718987
-      poppop_explosion-Sheet_8: -1863221691
-      poppop_explosion-Sheet_9: 395594329
+      poppop_explosion-Sheet_0: 1135385708
+      poppop_explosion-Sheet_1: -2037073726
+      poppop_explosion-Sheet_2: -1026594409
+      poppop_explosion-Sheet_3: -1538669692
+      poppop_explosion-Sheet_4: 1231104034
+      poppop_explosion-Sheet_5: 102753498
+      poppop_explosion-Sheet_6: -2024882408
+      poppop_explosion-Sheet_7: 934694148
+      poppop_explosion-Sheet_8: -888652610
+      poppop_explosion-Sheet_9: -125094035
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

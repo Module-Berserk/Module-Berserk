@@ -161,6 +161,8 @@ public class ApplyDamageOnContact : MonoBehaviour
                 if (destructible.TryApplyDamage(attackInfo))
                 {
                     OnApplyDamageSuccess.Invoke();
+
+                    Debug.Log("공격 성공");
                 }
             }
         }

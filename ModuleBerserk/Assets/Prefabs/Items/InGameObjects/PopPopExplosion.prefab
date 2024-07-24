@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -279682284, guid: 1b6f828d3a2cac94e960f86f1c8e9a45, type: 3}
+  m_Sprite: {fileID: 1135385708, guid: 7a726f982b970484cb0ae8eb8cf59c8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -102,14 +102,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DamageSource: 0
-  staggerStrength: 2
+  staggerStrength: 1
   knockbackForce: 0
   staggerDuration: 0.5
-  delayBetweenDamageTick: 3
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
+  delayBetweenDamageTick: 0.1
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
@@ -126,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c97165cc2e8f3b4b98566b2413cdbab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
+  damage: 5
 --- !u!95 &6053770805624139835
 Animator:
   serializedVersion: 5
@@ -139,7 +135,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 9238f34832e585145b84b8ddf5fe08be, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -196,12 +192,12 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4, y: 1.5}
+    oldSize: {x: 1.96875, y: 1.65625}
     newSize: {x: 4, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 1.5}
+  m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
