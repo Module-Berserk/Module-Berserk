@@ -57,12 +57,19 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private ApplyDamageOnContact weaponHitbox; // 평타 범위
     [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
+    [Header("Stagger Invincibility")]
+    // 경직 판정이 있는 공격에 맞을 경우 (경직 시간 + 해당 수치)만큼 지속되는 무적 판정을 부여함.
+    // 잡몹들에게 둘러싸여서 인디언밥 당하는 상황 방지...
+    [SerializeField] private float invincibleDurationAfterStagger = 0.2f;
 
     [Header("Evasion")]
     [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
     [SerializeField] private float evasionDistance = 4f;
     [SerializeField] private Ease evasionEase = Ease.OutCubic;
     [SerializeField] private float evasionCooltime = 1.3f;
+    // 일반 회피 및 긴급 회피에 부여되는 무적 시간
+    [SerializeField] private float evasionInvincibleDuration = 0.5f;
+    [SerializeField] private float emergencyEvasionInvincibleDuration = 0.5f;
     [SerializeField] private float emergencyEvasionCooltime = 1.3f;
     // 피격 시점 이후로 긴급 회피가 허용되는 시간.
     // 이 시간 안에 회피 버튼을 누르면 데미지를 무효화하고 반격할 수 있음.
@@ -109,7 +116,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private int maxAttackCount = 4; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
     // 무적 판정
-    private bool isInvincible = false;
+    private float invincibleDuration = 0f;
     // 마지막 회피로부터 지난 시간.
     // 이 값이 회피 쿨타임보다 크면 회피 가능.
     // 캐릭터가 생성된 직후에도 회피가 가능하도록 쿨타임보다 확실히 큰 초기값을 부여함.
@@ -386,7 +393,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
             // 회피 무적 상태로 전환
             ActionState = PlayerActionState.Evade;
-            isInvincible = true;
+            invincibleDuration = emergencyEvasionInvincibleDuration;
 
             // 회피 도중에는 추락 및 넉백 x
             rb.gravityScale = 0f;
@@ -438,7 +445,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // 회피 무적 상태로 전환
         ActionState = PlayerActionState.Evade;
-        isInvincible = true;
+        invincibleDuration = evasionInvincibleDuration;
 
         // 회피 도중에는 추락 및 넉백 x
         rb.gravityScale = 0f;
@@ -470,7 +477,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     public void OnEvadeEnd()
     {
         ActionState = PlayerActionState.IdleOrRun;
-        isInvincible = false;
 
         // 회피 끝났으면 다시 추락 가능
         platformerMovement.UseDefaultGravityScale();
@@ -608,6 +614,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private void FixedUpdate()
     {
+        UpdateInvincibleDuration();
+
         if (ActionState == PlayerActionState.Evade)
         {
             // 회피 도중에는 아무것도 처리하지 않음
@@ -646,15 +654,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
                     platformerMovement.StopStickingToWall();
                 }
             }
-            // TODO: PlatformerMovement 스크립트 테스트 끝나면 삭제할 것
-            // else
-            // {
-            //     if (ActionState == PlayerActionState.IdleOrRun || IsAttacking())
-            //     {
-            //         HandleCoyoteTime();
-            //         HandleFallingVelocity();
-            //     }
-            // }
         }
 
         HandleEvasionCooltime();
@@ -675,6 +674,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
+    }
+
+    private void UpdateInvincibleDuration()
+    {
+        if (invincibleDuration > 0f)
+        {
+            invincibleDuration -= Time.fixedDeltaTime;
+        }
     }
 
     private void HandleEvasionCooltime()
@@ -800,14 +807,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     bool IDestructible.IsInvincible()
     {
-        return isInvincible;
+        return invincibleDuration > 0f;
     }
 
     bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
 
-        ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
+        if (attackInfo.staggerStrength != StaggerStrength.None)
+        {
+            ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
+        }
 
         ApplyDamageWithDelayAsync(attackInfo.damage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
 
@@ -864,6 +874,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 그러니 일단 넉백 당한다 하면 무조건 마찰력를 없애줘야 함.
         platformerMovement.ApplyZeroFriction();
         SetStaggerStateForDurationAsync(staggerDuration).Forget();
+
+        invincibleDuration = staggerDuration + invincibleDurationAfterStagger;
 
         // TO:
         // 경직 애니메이션 재생 (약한 경직 -> 제자리 경직 모션, 강한 경직 -> 뒤로 넘어지는 모션)
