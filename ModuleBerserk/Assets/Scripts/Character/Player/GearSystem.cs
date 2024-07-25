@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // 플레이어의 기어 게이지를 관리하는 클래스.
@@ -138,8 +139,13 @@ public class GearSystem : MonoBehaviour
         // UI 상태도 같이 복원 (Awake에서 등록된 콜백 있음)
         OnGearLevelChange.Invoke();
 
-        if (CurrentState.GearLevel == 0)
+        if (state.NeedInitialRampUp)
         {
+            // 은신처에서는 기어 상태가 바뀔 일이 없으니
+            // 여기서 assertion이 실패한다면 미션이 끝나고 은신처로 돌아갈 때
+            // 기어 상태 초기화가 제대로 일어나지 않았다는 뜻임.
+            Assert.IsTrue(CurrentState.GearLevel == 0);
+
             InitialRampUpAnimationAsync(cancellationTokenSource.Token).Forget();
         }
     }
@@ -148,7 +154,7 @@ public class GearSystem : MonoBehaviour
     // 0단계에서 실질적인 시작 상태인 1단계까지 게이지가 쭉 올라가는 모습을 보여준다.
     private async UniTask InitialRampUpAnimationAsync(CancellationToken cancellationToken)
     {
-        DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, MAX_GEAR_GAUGE, INITIAL_GUAGE_RAMPUP_TIME);
+        DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, MAX_GEAR_GAUGE, INITIAL_GUAGE_RAMPUP_TIME).From(0f);
         await UniTask.WaitForSeconds(INITIAL_GUAGE_RAMPUP_TIME, cancellationToken: cancellationToken);
 
         // 혹시 모르니 확실하게 최대치로 설정
@@ -258,6 +264,13 @@ public class GearSystem : MonoBehaviour
 
     public void IncreaseGearLevel()
     {
+        // 미션 시작할 때 보여주는 ramp up 연출 중이었다면
+        // 수동/자동 가릴 것 없이 기어 변동이 일어나면 ramp up이 끝난 것으로 기록함.
+        if (CurrentState.NeedInitialRampUp)
+        {
+            CurrentState.NeedInitialRampUp = false;
+        }
+
         // 기어 단계 변동은 아직 최대 단계에 도달하지 못했고
         // 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함
         Assert.IsTrue(CurrentState.GearLevel < MAX_GEAR_LEVEL);

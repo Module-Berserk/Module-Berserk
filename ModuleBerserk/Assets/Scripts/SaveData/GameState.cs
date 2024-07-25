@@ -15,6 +15,10 @@ public class GameState
     public string SaveFileName;
     public int Credits;
 
+    // 선택한 의뢰에 해당하는 scene 이름.
+    // 은신처 오른쪽 끝으로 가서 미션을 시작할 때 사용된다.
+    public string NextMissionSceneName;
+
     public PlayerState PlayerState;
     public SceneState SceneState;
 
@@ -24,8 +28,9 @@ public class GameState
     {
         return new GameState()
         {
-            SaveFileName = "save0.savedata",
+            SaveFileName = "slot0.savedata",
             Credits = 1000,
+            NextMissionSceneName = "Chapter1",
             PlayerState = PlayerState.CreateDummyState(),
             SceneState = SceneState.CreateDummyState()
         };

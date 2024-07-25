@@ -192,7 +192,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         playerState = GameStateManager.ActiveGameState.PlayerState;
 
-        // 포탈을 타고 다른 scene으로 넘어온 경우 해당 포탈에 대응되는 도착 위치에서 시작함
+        // 세이브 데이터를 복원한 경우 마지막 세이브 포인트에서 시작해야 함
         if (playerState.SpawnPointTag != null)
         {
             GameObject spawnPoint = GameObject.FindGameObjectWithTag(playerState.SpawnPointTag);
@@ -975,7 +975,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         fadeEffect.FadeOut();
 
         await UniTask.WaitForSeconds(1f);
-        
+
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
