@@ -3,6 +3,7 @@ using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(FlashEffectOnHit))]
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class DestructibleObjects : MonoBehaviour, IDestructible
 {
     [SerializeField] private float maxHP;
@@ -46,6 +47,8 @@ public class DestructibleObjects : MonoBehaviour, IDestructible
 
     void IDestructible.OnDestruction()
     {
+        GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
+
         Destroy(gameObject);
     }
 }

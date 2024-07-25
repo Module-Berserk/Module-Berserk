@@ -48,7 +48,7 @@ MonoBehaviour:
   DamageSource: 1
   staggerStrength: 1
   knockbackForce: 10
-  staggerDuration: 0.5
+  staggerDuration: 0.3
   delayBetweenDamageTick: 0.1
   DamageCoefficient: 1
   OnApplyDamageSuccess:

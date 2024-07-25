@@ -216,6 +216,7 @@ GameObject:
   - component: {fileID: 7891498920023006573}
   - component: {fileID: -3377798624792864121}
   - component: {fileID: 7642742389301358313}
+  - component: {fileID: 6168492267068813232}
   m_Layer: 7
   m_Name: C1GunnerMobPrefab
   m_TagString: Enemy
@@ -444,6 +445,7 @@ MonoBehaviour:
   rangedAttackRange: {fileID: 7673278922297699979}
   runAwayRange: {fileID: 4146443792908265846}
   repelAttackRange: {fileID: 4253292232917693304}
+  maxHP: 40
   hpBarUI: {fileID: 3104229841293423801}
   hpBarSlider: {fileID: 1925375824747741799}
 --- !u!234 &-3377798624792864121
@@ -507,6 +509,19 @@ MonoBehaviour:
   OnLand:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6168492267068813232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2230194136603300056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807e8db225c55474da9aec2e199278d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 
 --- !u!1 &2594391396815688968
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,12 +698,8 @@ MonoBehaviour:
   DamageSource: 1
   staggerStrength: 1
   knockbackForce: 10
-  staggerDuration: 0.5
+  staggerDuration: 0.3
   delayBetweenDamageTick: 0.1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:

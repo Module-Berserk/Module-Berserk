@@ -98,8 +98,6 @@ public class C1BossCutsceneController : MonoBehaviour
     public void EnableBossController()
     {
         bossController.enabled = true;
-
-        GameStateManager.ActiveGameState.StartBossFight();
     }
 
     // 다음 대사가 출력되어야 할 타이밍에 호출됨

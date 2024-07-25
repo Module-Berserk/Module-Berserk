@@ -7,7 +7,7 @@ public class SavePoint : MonoBehaviour
 {
     // 세이브 데이터를 불러온 직후나 범위 경계면에서 왔다갔다 할 때
     // 저장이 계속 되는 상황을 막기 위해 일정 시간 쿨타임을 부여함.
-    private float saveCooltime = 1f; // 세이브 포인트 위에서 스폰되자마자 다시 저장되는 것 방지
+    private float saveCooltime = 0.1f; // 세이브 포인트 위에서 스폰되자마자 다시 저장되는 것 방지
     private const float DELAY_BETWEEN_AUTO_SAVE = 10f;
 
     private void Awake()

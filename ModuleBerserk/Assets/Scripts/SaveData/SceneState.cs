@@ -8,6 +8,10 @@ public class SceneState
     public string SceneName;
     public string ActiveVirtualCameraTag;
 
+    // 죽었을 때 체크포인트에서 부활해 재도전할 수 있는 횟수
+    public int RemainingRevives;
+    private const int NUM_REVIVES_PER_MISSION = 5;
+
     // 이미 파괴된 오브젝트의 식별자를 기록하는 곳.
     // 여기에 엔트리가 존재한다면 세이브 데이터를 로딩한 직후에 해당 오브젝트를 파괴해야 한다.
     public HashSet<string> DestroyedObjects;
@@ -25,6 +29,7 @@ public class SceneState
     public void InitializeSceneState(string sceneName)
     {
         SceneName = sceneName;
+        RemainingRevives = NUM_REVIVES_PER_MISSION;
         DestroyedObjects.Clear();
         ObjectActivation.Clear();
         ItemSpawner.Clear();

@@ -815,10 +815,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7191777931255439222, guid: b7e89d91f19f5df498bfee6668f85d6b, type: 3}
-      propertyPath: m_Color.a
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7982888406826917140, guid: b7e89d91f19f5df498bfee6668f85d6b, type: 3}
       propertyPath: m_Name
       value: FadeEffect UI

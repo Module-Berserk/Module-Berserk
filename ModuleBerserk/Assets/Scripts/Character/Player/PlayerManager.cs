@@ -57,10 +57,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private ApplyDamageOnContact weaponHitbox; // 평타 범위
     [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
+
     [Header("Stagger Invincibility")]
     // 경직 판정이 있는 공격에 맞을 경우 (경직 시간 + 해당 수치)만큼 지속되는 무적 판정을 부여함.
     // 잡몹들에게 둘러싸여서 인디언밥 당하는 상황 방지...
     [SerializeField] private float invincibleDurationAfterStagger = 0.2f;
+
 
     [Header("Evasion")]
     [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
@@ -83,6 +85,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     [Header("HP Bar")]
     [SerializeField] private HealthBarAnimation healthBarAnimation;
+
+
+    [Header("Fade Effect")]
+    // 죽어서 마지막 세이브 포인트로 돌아갈 때 사용할 페이드 아웃 효과
+    [SerializeField] private FadeEffect fadeEffect;
+    [SerializeField] private GameObject youDiedUI; // TODO: 테스트 끝나면 삭제할 것
 
 
     public bool IsFacingLeft
@@ -941,10 +949,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetTrigger("Death");
         InputManager.InputActions.Player.Disable();
 
-        // case 1) 보스전이라면 부활 가능한지 체크
-        if (GameStateManager.ActiveGameState.IsBossFight && GameStateManager.ActiveGameState.IsBossFightRevivePossible)
+        // TODO: 테스트 끝나면 삭제할 것
+        youDiedUI.SetActive(true);
+
+        // case 1) 아직 부활 횟수가 남아있다면 마지막 세이브 포인트에서 부활
+        if (GameStateManager.ActiveGameState.SceneState.RemainingRevives > 0)
         {
-            ReviveAndContinueBossFightAsync().Forget();
+            ReviveFromLastSavePointAsync().Forget();
         }
         // case 2) 일반 스테이지에서 죽었다면 게임오버
         else
@@ -953,20 +964,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    private async UniTask ReviveAndContinueBossFightAsync()
+    private async UniTask ReviveFromLastSavePointAsync()
     {
-        GameStateManager.ActiveGameState.BossDeathCount++;
+        GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
 
-        Debug.Log($"현재 데스카운트: {GameStateManager.ActiveGameState.BossDeathCount}");
-        Debug.Log("데스카운트 차감하고 부활하는 중...");
+        Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
 
-        await UniTask.WaitForSeconds(5f);
+        await UniTask.WaitForSeconds(3f);
 
+        fadeEffect.FadeOut();
+
+        await UniTask.WaitForSeconds(1f);
+        
         InputManager.InputActions.Player.Enable();
 
-        // 부활
-        playerState.HP.ResetToMaxValue();
-        animator.SetTrigger("Revive");
+        await GameStateManager.RestoreLastSavePointAsync();
     }
 
     // 챕터1 박스 기믹 등 특수한 상황에만 부여되는 기절 효과.

@@ -34,14 +34,14 @@ public class GameStateManager
     public static void SaveActiveGameState()
     {
         RecordAllPersistentData();
-        WriteSaveDataToFile("slot0.savedata");
+        WriteSaveDataToFile(ActiveGameState.SaveFileName);
     }
 
     public static List<GameState> LoadSavedGameStates()
     {
         List<GameState> states = new();
 
-        GameState state = ReadSaveDataFromFile("slot0.savedata");
+        GameState state = ReadSaveDataFromFile("slot0.savedata");  // TODO: 세이브 파일 여러개인 상황 고려하기
         if (state != null)
         {
             states.Add(state);
@@ -105,5 +105,13 @@ public class GameStateManager
         await SceneManager.LoadSceneAsync(gameState.SceneState.SceneName);
         
         RestoreAllPersistentData();
+    }
+
+    // 플레이어가 미션에서 부활할 때 사용하는 함수.
+    // 마지막으로 저장된 세이브 포인트로 돌아간다.
+    public static async UniTask RestoreLastSavePointAsync()
+    {
+        GameState lastSavePointState = ReadSaveDataFromFile(ActiveGameState.SaveFileName);
+        await GameStateManager.RestoreGameStateAsync(lastSavePointState);
     }
 }
