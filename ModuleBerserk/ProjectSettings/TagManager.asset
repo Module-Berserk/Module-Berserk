@@ -9,6 +9,12 @@ TagManager:
   - Enemy
   - TestSpawnPoint
   - C1BoxGimmick
+  - SavePoint1
+  - SavePoint2
+  - SavePoint3
+  - FollowCamera1
+  - FollowCamera2
+  - FollowCamera3
   layers:
   - Default
   - TransparentFX

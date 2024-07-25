@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 // 챕터1 엘리베이터 레버의 사용 조건으로 등장하는 트리거.
@@ -8,14 +9,33 @@ public class NoObjectNearbyTrigger : Trigger
     [SerializeField] private string objectTag;
     // 트리거가 OnTriggerEnter와 OnTriggerExit 이벤트에 의해 조절되기 때문에
     // 최초에 범위 안에 아무도 없으면 Activate()가 발생하지 않음.
-    // 이 경우 수동으로 플래그를 설정해서 생성되자마자 활성화 상태로 시작하도록 만들어야 함.
-    [SerializeField] private bool isInitiallyActive;
+    //
+    // 이 플래그를 체크하면 생성 직후 일정 시간이 지나도 numObjectsWithinRange가
+    // 0으로 유지된 경우 최초 1회에 한해 Activate()를 그냥 호출해줌.
+    [SerializeField] private bool allowInitialActivation = true;
 
     private int numObjectsWithinRange = 0;
 
     private void Start()
     {
-        if (isInitiallyActive)
+        if (allowInitialActivation)
+        {
+            HandleInitialActivationAsync().Forget();
+        }
+    }
+
+    private async UniTask HandleInitialActivationAsync()
+    {
+        // 콜라이더 충돌 처리가 확실히 끝날 때까지 잠깐 기다림.
+        //
+        // Note:
+        // 진짜 생성 직후에는 트리거 이벤트가 일어나지 않아서
+        // 주위에 뭔가 있는지 없는지 구분할 수가 없다...
+        await UniTask.WaitForSeconds(0.1f);
+
+        // 아직도 트리거 접촉이 일어나지 않았으면
+        // 초기에 주위에 아무도 없었다는 뜻
+        if (numObjectsWithinRange == 0)
         {
             Activate();
         }

@@ -1,3 +1,4 @@
+using System.Threading;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,13 @@ public class FadeEffect : MonoBehaviour
         {
             FadeIn();
         }
+    }
+
+    private void OnDestroy()
+    {
+        // 일어날 확률은 낮지만 페이드 도중에 맵을 전환하게 되면
+        // tween warning이 뜨는 문제가 생길 수 있으니 안전하게 정리.
+        fadeEffectImage.DOKill();
     }
 
     public void FadeIn()

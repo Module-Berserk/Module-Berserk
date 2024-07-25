@@ -25,6 +25,7 @@ using UnityEngine.UI;
 //
 [RequireComponent(typeof(IMeleeEnemyBehavior))]
 [RequireComponent(typeof(FlashEffectOnHit))]
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class MeleeEnemyController : MonoBehaviour, IDestructible
 {
     [Header("Player Detectors")]
@@ -236,5 +237,8 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         hpBarUI.SetActive(false);
 
         enabled = false;
+
+        // 세이브 데이터에 죽었다고 기록하기
+        GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
     }
 }

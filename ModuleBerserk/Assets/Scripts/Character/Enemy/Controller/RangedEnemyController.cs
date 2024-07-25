@@ -5,6 +5,7 @@ using UnityEngine.UI;
 // 원거리 공격을 하는 잡몹의 행동 패턴을 정의하는 클래스.
 [RequireComponent(typeof(IRangedEnemyBehavior))]
 [RequireComponent(typeof(FlashEffectOnHit))]
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class RangedEnemyController : MonoBehaviour, IDestructible
 {
     // 적의 본체인 $를 기준으로 detector들이 아래와 같이 배치되어야 함:
@@ -265,6 +266,9 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         hpBarUI.SetActive(false);
 
         enabled = false;
+
+        // 세이브 데이터에 죽었다고 기록하기
+        GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
     }
 
     // 얘가 이 모자샷건맨의 고유한 스크립트인지 아닌지 몰라서 일단 여따가 씀

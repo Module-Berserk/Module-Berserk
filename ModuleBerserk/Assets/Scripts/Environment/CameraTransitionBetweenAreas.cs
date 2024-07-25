@@ -9,17 +9,14 @@ using UnityEngine;
 // PlayerContactTrigger의 OnActivate에 콜백으로 등록되는 형식으로 사용될 것임.
 public class CameraTransitionBetweenAreas : MonoBehaviour
 {
-    private const int ACTIVE_CAMERA_PRIORITY = 10;
-    private const int INACTIVE_CAMERA_PRIORITY = 5;
-
     public void BeginAreaTransition(CinemachineVirtualCamera newAreaCamera)
     {
         // 기존 카메라의 priority를 낮추고
         CinemachineBrain cinemachineBrain = CinemachineCore.Instance.GetActiveBrain(0);
         var activeCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineVirtualCamera;
-        activeCamera.Priority = INACTIVE_CAMERA_PRIORITY;
+        activeCamera.Priority = FollowCameraState.INACTIVE_CAMERA_PRIORITY;
 
         // 새로운 카메라의 priority를 올려주면 자연스럽게 blending이 일어남
-        newAreaCamera.Priority = ACTIVE_CAMERA_PRIORITY;
+        newAreaCamera.Priority = FollowCameraState.ACTIVE_CAMERA_PRIORITY;
     }
 }

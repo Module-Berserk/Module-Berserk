@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -94,10 +95,21 @@ public class GearSystem : MonoBehaviour
     // 이전 버프를 제거하고 현재 값으로 갱신하기 위해 기록한다.
     private GearLevelBuff lastAppliedGearLevelBuff;
 
+
+    private CancellationTokenSource cancellationTokenSource = new();
+
+
     private void Awake()
     {
         OnGearLevelChange = new UnityEvent();
         OnGearLevelChange.AddListener(UpdateGearLevelImage);
+    }
+
+    private void OnDestroy()
+    {
+        // ramp up 애니메이션 재생되는 도중에 맵을
+        // 이동하는 경우 UniTask를 안전하게 종료해줌
+        cancellationTokenSource.Cancel();
     }
 
     private void UpdateGearLevelImage()
@@ -128,22 +140,22 @@ public class GearSystem : MonoBehaviour
 
         if (CurrentState.GearLevel == 0)
         {
-            InitialRampUpAnimationAsync().Forget();
+            InitialRampUpAnimationAsync(cancellationTokenSource.Token).Forget();
         }
     }
 
     // 새로운 미션을 시작할 때 게이지가 차오르는 연출.
     // 0단계에서 실질적인 시작 상태인 1단계까지 게이지가 쭉 올라가는 모습을 보여준다.
-    private async UniTask InitialRampUpAnimationAsync()
+    private async UniTask InitialRampUpAnimationAsync(CancellationToken cancellationToken)
     {
         DOTween.To(() => CurrentState.GearGauge, (value) => CurrentState.GearGauge = value, MAX_GEAR_GAUGE, INITIAL_GUAGE_RAMPUP_TIME);
-        await UniTask.WaitForSeconds(INITIAL_GUAGE_RAMPUP_TIME);
+        await UniTask.WaitForSeconds(INITIAL_GUAGE_RAMPUP_TIME, cancellationToken: cancellationToken);
 
         // 혹시 모르니 확실하게 최대치로 설정
         CurrentState.GearGauge = MAX_GEAR_GAUGE;
 
         // 다음 기어 단계로 올릴 수 있을 때까지 대기
-        await UniTask.WaitForSeconds(MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE * 1.5f);
+        await UniTask.WaitForSeconds(MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE * 1.5f, cancellationToken: cancellationToken);
 
         // 플레이어가 수동으로 기어를 올렸을 수도 있으니
         // 중복으로 처리하지 않게 여전히 0단계인지 확인

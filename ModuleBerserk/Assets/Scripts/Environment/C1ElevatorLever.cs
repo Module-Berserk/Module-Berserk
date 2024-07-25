@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -21,6 +22,9 @@ public class C1ElevatorLever : Trigger, IInteractable
 
     private SpriteRenderer spriteRenderer;
 
+    // 레버가 작동 중일 때 맵을 이동하는 경우 비동기 작업 취소
+    private CancellationTokenSource cancelOnDestruction = new();
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -29,10 +33,10 @@ public class C1ElevatorLever : Trigger, IInteractable
     void IInteractable.StartInteraction()
     {
         // 당기면 잠깐 기다렸다가 원상태로 돌아옴
-        ActivateForDurationAsync(timeToReactivate).Forget();
+        ActivateForDurationAsync(timeToReactivate, cancelOnDestruction.Token).Forget();
     }
 
-    private async UniTask ActivateForDurationAsync(float duration)
+    private async UniTask ActivateForDurationAsync(float duration, CancellationToken cancellationToken)
     {
         Activate();
         //SFX 시전! Lever On
@@ -40,7 +44,7 @@ public class C1ElevatorLever : Trigger, IInteractable
         AudioManager.instance.PlaySFX(leveronIndices);
 
         spriteRenderer.sprite = activeSprite;
-        await UniTask.WaitForSeconds(duration);
+        await UniTask.WaitForSeconds(duration, cancellationToken: cancellationToken);
         spriteRenderer.sprite = inactiveSprite;
         Deactivate();
 

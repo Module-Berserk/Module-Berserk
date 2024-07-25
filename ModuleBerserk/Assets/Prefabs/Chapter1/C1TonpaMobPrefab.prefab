@@ -50,10 +50,6 @@ MonoBehaviour:
   knockbackForce: 10
   staggerDuration: 0.5
   delayBetweenDamageTick: 0.1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
@@ -220,6 +216,7 @@ GameObject:
   - component: {fileID: 7054442615863630989}
   - component: {fileID: 2231267205746315127}
   - component: {fileID: 6860080865006008720}
+  - component: {fileID: 779419864531559493}
   m_Layer: 7
   m_Name: C1TonpaMobPrefab
   m_TagString: Enemy
@@ -442,6 +439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDetectionRange: {fileID: 6916859358446872805}
   attackRange: {fileID: 4123128810883870133}
+  maxHP: 50
   hpBarUI: {fileID: 1086092378978331772}
   hpBarSlider: {fileID: 4521241054544124578}
 --- !u!234 &2231267205746315127
@@ -505,6 +503,19 @@ MonoBehaviour:
   OnLand:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &779419864531559493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807e8db225c55474da9aec2e199278d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 
 --- !u!1 &8408449600811310982
 GameObject:
   m_ObjectHideFlags: 0

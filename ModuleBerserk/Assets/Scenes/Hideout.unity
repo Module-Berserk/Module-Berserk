@@ -380,6 +380,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Follow Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 7784177456425600651, guid: 945910fa21b6fec4ea336e20c9dd50e4, type: 3}
+      propertyPath: m_TagString
+      value: FollowCamera1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1447,6 +1451,10 @@ PrefabInstance:
     - target: {fileID: 5830104359281141272, guid: 7d31ad1034db0a94a986631ae9b62fe2, type: 3}
       propertyPath: m_Name
       value: RandomItemSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 6973204367370546699, guid: 7d31ad1034db0a94a986631ae9b62fe2, type: 3}
+      propertyPath: ID
+      value: 374747e2-d0b1-419b-a0c2-a530de60acd7
       objectReference: {fileID: 0}
     - target: {fileID: 6973204367370546699, guid: 7d31ad1034db0a94a986631ae9b62fe2, type: 3}
       propertyPath: activeItemDatabase

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneState
 {
     public string SceneName;
+    public string ActiveVirtualCameraTag;
 
     // 이미 파괴된 오브젝트의 식별자를 기록하는 곳.
     // 여기에 엔트리가 존재한다면 세이브 데이터를 로딩한 직후에 해당 오브젝트를 파괴해야 한다.
@@ -34,6 +35,7 @@ public class SceneState
         return new SceneState
         {
             SceneName = SceneManager.GetActiveScene().name,
+            ActiveVirtualCameraTag = "",
             DestroyedObjects = new HashSet<string>(),
             ObjectActivation = new Dictionary<string, bool>(),
             ItemSpawner = new Dictionary<string, ItemType>(),
