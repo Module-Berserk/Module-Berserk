@@ -36,9 +36,7 @@ public class MissionStartNPC : MonoBehaviour, IInteractable
     {
         // 미션 상태 초기화 (ex. 부활 가능 횟수, 오브젝트 파괴 현황 등 세이브 데이터에 들어갈 내용들)
         // SpawnPointTag는 null로 설정해줘야 scene에 배치된 플레이어 오브젝트의 기본 위치를 그대로 사용한다.
-        GameStateManager.ActiveGameState.PlayerState.SpawnPointTag = null;
-        GameStateManager.ActiveGameState.PlayerState.GearSystemState.NeedInitialRampUp = true;
-        GameStateManager.ActiveGameState.SceneState.InitializeSceneState(GameStateManager.ActiveGameState.NextMissionSceneName);
+        GameStateManager.ActiveGameState.InitializeStateOnMissionStart();
 
         // TODO: 마차 타고 떠나는 연출 보여주기
 

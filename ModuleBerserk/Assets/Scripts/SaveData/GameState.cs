@@ -44,4 +44,34 @@ public class GameState
             SceneState = SceneState.CreateDummyState()
         };
     }
+
+    // 은신처에서 미션 scene으로 이동하기 직전에 실행되는 함수.
+    // 부활 가능 횟수, 오브젝트 파괴 현황 등 세이브 데이터에 들어갈 내용들의 상태를 초기화해준다.
+    public void InitializeStateOnMissionStart()
+    {
+        PlayerState.SpawnPointTag = null; // scene에 배치된 플레이어 오브젝트의 기본 위치를 그대로 사용
+        PlayerState.GearSystemState.NeedInitialRampUp = true; // 기어 0단계에서 1단계로 쭉 올리는 연출 보여줌
+        SceneState.InitializeSceneState(NextMissionSceneName);
+    }
+
+    // 미션 성공/실패 공통으로 은신처로 돌아간 직후 실행되는 함수.
+    // 미션 도중에만 유효한 상태들을 모두 정리해준다.
+    public void CleanupStateOnMissionEnd()
+    {
+        // 세이브 포인트 기록 제거
+        PlayerState.SpawnPointTag = null;
+
+        // 체력 리필
+        PlayerState.HP.ResetToMaxValue();
+
+        // 각종 버프/디버프 제거
+        PlayerState.AttackDamage.ResetModifiers();
+        PlayerState.MoveSpeed.ResetModifiers();
+        PlayerState.Defense.ResetModifiers();
+
+        // 기어 시스템과 아이템 초기화
+        PlayerState.GearSystemState.Reset();
+        PlayerState.Slot1State.Reset();
+        PlayerState.Slot2State.Reset();
+    }
 }

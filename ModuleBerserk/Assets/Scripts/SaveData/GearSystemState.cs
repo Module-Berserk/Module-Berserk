@@ -24,4 +24,12 @@ public class GearSystemState
     {
         return new GearSystemState();
     }
+
+    public void Reset()
+    {
+        NeedInitialRampUp = false;
+        GearGauge = 0;
+        GearLevel = 0;
+        GearGaugeGainCoefficient.ResetModifiers();
+    }
 }

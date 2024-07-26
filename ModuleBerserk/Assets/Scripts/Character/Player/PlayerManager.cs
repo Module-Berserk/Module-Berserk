@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum PlayerActionState
 {
@@ -960,7 +961,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // case 2) 일반 스테이지에서 죽었다면 게임오버
         else
         {
-            // TODO: 은신처로 복귀 (결과창 표시?)
+            ReturnToHideoutAsync().Forget();
         }
     }
 
@@ -979,6 +980,25 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
+    }
+
+    private async UniTask ReturnToHideoutAsync()
+    {
+        // TODO: 미션 실패 결과창 표시...?
+
+        await UniTask.WaitForSeconds(3f);
+
+        fadeEffect.FadeOut();
+
+        await UniTask.WaitForSeconds(1f);
+
+        InputManager.InputActions.Player.Enable();
+
+        await SceneManager.LoadSceneAsync("Hideout");
+
+        GameStateManager.ActiveGameState.CleanupStateOnMissionEnd();
+
+        GameStateManager.SaveActiveGameState();
     }
 
     // 챕터1 박스 기믹 등 특수한 상황에만 부여되는 기절 효과.
