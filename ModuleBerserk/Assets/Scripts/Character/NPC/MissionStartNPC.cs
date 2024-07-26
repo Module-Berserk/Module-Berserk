@@ -21,7 +21,15 @@ public class MissionStartNPC : MonoBehaviour, IInteractable
 
     void IInteractable.StartInteraction()
     {
-        StartMissionAsync().Forget();
+        if (GameStateManager.ActiveGameState.NextMissionSceneName == null)
+        {
+            // TODO: 의뢰 선택하고 오라고 알려주기
+            Debug.LogWarning("의뢰를 아직 선택하지 않았는데 미션을 시작하려 함");
+        }
+        else
+        {
+            StartMissionAsync().Forget();
+        }
     }
 
     private async UniTask StartMissionAsync()

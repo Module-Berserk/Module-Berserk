@@ -10,14 +10,18 @@ public class GearSystemState
     public int GearLevel;
     public CharacterStat GearGaugeGainCoefficient;
 
+    
+    // 새 게임을 시작할 때 사용할 초기 기어 시스템 상태를 준비함
+    public GearSystemState()
+    {
+        NeedInitialRampUp = false;
+        GearGauge = 0;
+        GearLevel = 0;
+        GearGaugeGainCoefficient = new CharacterStat(1f);
+    }
+
     public static GearSystemState CreateDummyState()
     {
-        return new GearSystemState
-        {
-            NeedInitialRampUp = false,
-            GearGauge = 0,
-            GearLevel = 0,
-            GearGaugeGainCoefficient = new CharacterStat(1f),
-        };
+        return new GearSystemState();
     }
 }

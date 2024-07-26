@@ -24,11 +24,20 @@ public class GameState
 
     // TODO: 스토리 진행도 추가
 
+    // 새 게임을 시작할 때 사용할 초기 게임 상태를 준비함
+    public GameState(int slotIndex)
+    {
+        SaveFileName = GameStateManager.GetSaveFileName(slotIndex);
+        Credits = 0;
+        NextMissionSceneName = "Chapter1"; // TODO: 의뢰처 생기면 null로 설정하기. 지금은 일단 챕터1로 직행하도록 해놨음
+        PlayerState = new PlayerState();
+        SceneState = new SceneState();
+    }
+
     public static GameState CreateDummyState()
     {
-        return new GameState()
+        return new GameState(0)
         {
-            SaveFileName = "slot0.savedata",
             Credits = 1000,
             NextMissionSceneName = "Chapter1",
             PlayerState = PlayerState.CreateDummyState(),

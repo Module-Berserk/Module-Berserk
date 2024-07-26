@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 // 여러 UI가 동시에 존재할 때 제일 위에 있는 (i.e. 가장 나중에 나온)
