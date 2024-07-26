@@ -90,6 +90,7 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
     private async UniTask LoadGameStateAsync(GameState gameState)
     {
         // UI 스택에서 순서대로 pop되도록 오브젝트 비활성화
+        dataOverrideWarningUI.gameObject.SetActive(false);
         selectSaveDataUI.gameObject.SetActive(false);
         gameObject.SetActive(false);
 
