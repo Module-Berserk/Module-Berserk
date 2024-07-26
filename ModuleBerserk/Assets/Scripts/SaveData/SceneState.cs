@@ -10,7 +10,10 @@ public class SceneState
 
     // 죽었을 때 체크포인트에서 부활해 재도전할 수 있는 횟수
     public int RemainingRevives;
-    private const int NUM_REVIVES_PER_MISSION = 0;
+    private const int NUM_REVIVES_PER_MISSION = 5;
+
+    // 부활해서 다시 보스방 들어갈 때는 컷신 스킵하도록 만들어주는 플래그
+    public bool IsBossIntroCutscenePlayed;
 
     // 이미 파괴된 오브젝트의 식별자를 기록하는 곳.
     // 여기에 엔트리가 존재한다면 세이브 데이터를 로딩한 직후에 해당 오브젝트를 파괴해야 한다.
@@ -30,6 +33,7 @@ public class SceneState
     {
         SceneName = sceneName;
         RemainingRevives = NUM_REVIVES_PER_MISSION;
+        IsBossIntroCutscenePlayed = false;
         DestroyedObjects.Clear();
         ObjectActivation.Clear();
         ItemSpawner.Clear();
@@ -41,6 +45,7 @@ public class SceneState
     {
         SceneName = "Hideout"; // TODO: 튜토리얼 스테이지 생기면 해당 scene으로 변경할 것
         RemainingRevives = NUM_REVIVES_PER_MISSION;
+        IsBossIntroCutscenePlayed = false;
         ActiveVirtualCameraTag = "FollowCamera1";
         DestroyedObjects = new HashSet<string>();
         ObjectActivation = new Dictionary<string, bool>();
@@ -53,7 +58,7 @@ public class SceneState
         {
             SceneName = SceneManager.GetActiveScene().name,
             RemainingRevives = NUM_REVIVES_PER_MISSION,
-            ActiveVirtualCameraTag = "FollowCamera1",
+            ActiveVirtualCameraTag = "FollowCamera3",
             DestroyedObjects = new HashSet<string>(),
             ObjectActivation = new Dictionary<string, bool>(),
             ItemSpawner = new Dictionary<string, ItemType>(),

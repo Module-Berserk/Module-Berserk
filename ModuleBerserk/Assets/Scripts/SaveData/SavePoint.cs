@@ -3,6 +3,9 @@ using UnityEngine;
 // 주인공이 범위 안에 들어오면 자동으로 상태를 저장해주는 오브젝트.
 // 세이브 데이터를 불러올 때 세이브 포인트의 위치로 돌아와야 하므로
 // 해당 세이브 포인트를 찾을 수 있는 고유한 태그가 달려있어야 한다!
+//
+// 같이 딸려오는 PlayerContactTrigger의 OnActivate에 TryAutoSave 함수를 추가해주면 된다.
+[RequireComponent(typeof(PlayerContactTrigger))]
 public class SavePoint : MonoBehaviour
 {
     // 세이브 데이터를 불러온 직후나 범위 경계면에서 왔다갔다 할 때

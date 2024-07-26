@@ -15,6 +15,7 @@ TagManager:
   - FollowCamera1
   - FollowCamera2
   - FollowCamera3
+  - BossRoomEntrance
   layers:
   - Default
   - TransparentFX

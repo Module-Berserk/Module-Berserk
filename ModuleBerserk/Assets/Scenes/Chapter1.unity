@@ -2225,13 +2225,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 488110618}
+  - component: {fileID: 488110621}
   - component: {fileID: 488110617}
   - component: {fileID: 488110619}
+  - component: {fileID: 488110622}
   - component: {fileID: 488110620}
-  - component: {fileID: 488110621}
   m_Layer: 8
   m_Name: C1BossEntranceDoor
-  m_TagString: Untagged
+  m_TagString: BossRoomEntrance
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2318,6 +2319,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossIntroCutscene: {fileID: 1256533913}
   text: {fileID: 1000997794}
+  playerStart: {fileID: 1280316192}
+  bossController: {fileID: 2036877063}
+  bossHPBarUI: {fileID: 2140924106}
+  bossRoomFixedCamera: {fileID: 1262821960}
+  fadeEffect: {fileID: 2011123105}
 --- !u!61 &488110620
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2373,7 +2379,7 @@ Animator:
   m_GameObject: {fileID: 488110616}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a5d6b87eacf07e049aa0291d0252b5de, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2384,6 +2390,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &488110622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488110616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c31bda5f6912ef4ab7b0bdc128b437e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 488110619}
+        m_TargetAssemblyTypeName: SavePoint, Assembly-CSharp
+        m_MethodName: TryAutoSave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
+  isOneTimeTrigger: 0
 --- !u!1001 &488689022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5883,8 +5920,6 @@ PlayableDirector:
     value: {fileID: 2040246868}
   - key: {fileID: 2494267602566944090, guid: d793a899c45167a44befc624aa5c653a, type: 2}
     value: {fileID: 2036877084}
-  - key: {fileID: -1969258584665649584, guid: d793a899c45167a44befc624aa5c653a, type: 2}
-    value: {fileID: 488110621}
   m_ExposedReferences:
     m_References:
     - 3526e2082360ba64fbfcd65d5a734864: {fileID: 1748615174}
@@ -17507,11 +17542,11 @@ PrefabInstance:
       objectReference: {fileID: -1421665010, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -151.6
+      value: -13.400001
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -14.3
+      value: -1.0999999
       objectReference: {fileID: 0}
     - target: {fileID: 3685428461128284698, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: m_LocalPosition.z
