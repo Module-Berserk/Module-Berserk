@@ -44,7 +44,7 @@ public class SpriteRootMotion : MonoBehaviour
         if (numFramesDisableRootMotion > 0)
         {
             numFramesDisableRootMotion--;
-            rb.velocity =  new Vector2(0f, verticalVelocity);
+            rb.velocity = new Vector2(0f, verticalVelocity);
         }
         else
         {
@@ -56,7 +56,16 @@ public class SpriteRootMotion : MonoBehaviour
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
             float horizontalVelocity = (isFacingLeft ? -1f : 1f) * rootMotion * motionScale;
-            rb.velocity =  new Vector2(horizontalVelocity, verticalVelocity);
+            rb.velocity = new Vector2(horizontalVelocity, verticalVelocity);
+
+            // 엘리베이터 위에 있을 때는 이동하는 플랫폼과의 속도를 동기화하기 위해
+            // dynamic에서 kinematic으로 변경하고 엘리베이터를 parent로 설정함!
+            //
+            // 자세한 설명은 PlatformerMovement의 StartStickingToElevator() 함수 주석 참고 바람...
+            if (rb.bodyType == RigidbodyType2D.Kinematic)
+            {
+                transform.localPosition += Vector3.right * horizontalVelocity * Time.fixedDeltaTime;
+            }
         }
 
         prevSpritePivotX = currSpritePivotX;

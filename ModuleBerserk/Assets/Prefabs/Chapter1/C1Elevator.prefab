@@ -606,6 +606,7 @@ GameObject:
   - component: {fileID: 1020320382246731381}
   - component: {fileID: 3279819961366647411}
   - component: {fileID: 6288605645589415036}
+  - component: {fileID: 7081003819492362853}
   m_Layer: 3
   m_Name: C1Elevator
   m_TagString: OneWayPlatform
@@ -744,15 +745,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acc053e1a4bc5814d9aa91f13dabaf90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInitialPositionDown: 1
-  movementRange: 3
-  upwardMovementDuration: 2
-  downwardMovementDuration: 2
-  movementEase: 1
+  destinationOffset: {x: 0, y: -5}
+  forwardMovementDuration: 0.5
+  backwardMovementDuration: 1
+  forwardMovementEase: 33
+  backwardMovementEase: 33
   initialMovementDelay: 1
   delayBeforeReturning: 3
   visualElements: {fileID: 1848668157320927295}
-  screenShakeOnLand: 0
+  screenShakeOnStartPosition: 0
+  screenShakeOnEndPosition: 1
   screenShakeForce: 0.3
   screenShakeDuration: 0.2
 --- !u!114 &3279819961366647411
@@ -820,6 +822,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a22f2e4eaea184d4d9e7989edbf25130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7081003819492362853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3041770795891108921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a8a1de363ce2244aab3bb2109cb2c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 
 --- !u!1 &3739195843010955895
 GameObject:
   m_ObjectHideFlags: 0

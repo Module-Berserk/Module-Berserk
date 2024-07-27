@@ -200,6 +200,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             Assert.IsNotNull(spawnPoint);
 
             transform.position = spawnPoint.transform.position;
+            cameraFollowTarget.transform.position = transform.position;
         }
         
         itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);

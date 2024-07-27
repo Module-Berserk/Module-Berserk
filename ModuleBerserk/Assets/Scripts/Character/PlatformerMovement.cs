@@ -43,7 +43,6 @@ public class PlatformerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
-    private SliderJoint2D sliderJoint;
     // 지면 접촉 테스트 관리자
     private GroundContact groundContact;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
@@ -67,7 +66,7 @@ public class PlatformerMovement : MonoBehaviour
 
     public bool IsGrounded { get => groundContact.IsGrounded; }
     public bool IsSteppingOnOneWayPlatform { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<PlatformEffector2D>() != null; }
-    public bool IsStickingToElevator { get => sliderJoint.enabled; }
+    public bool IsStickingToElevator { get => transform.parent != null; }
     public bool IsOnElevator { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<Elevator>(); }
 
     public UnityEvent OnLand;
@@ -76,7 +75,6 @@ public class PlatformerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        sliderJoint = GetComponent<SliderJoint2D>();
 
         groundContact = new(rb, boxCollider, groundLayerMask, groundContactDistanceThreshold, wallContactDistanceThreshold);
         airControl = defaultAirControl;
@@ -95,7 +93,7 @@ public class PlatformerMovement : MonoBehaviour
                 ResetJumpStates();
             }
 
-            // 엘리베이터 위에 서있는 동안은 slider joint로 수직 움직임 동기화
+            // 엘리베이터 위에 서있는 동안은 움직임 동기화
             if (ShouldStickToElevator())
             {
                 StartStickingToElevator();
@@ -111,7 +109,7 @@ public class PlatformerMovement : MonoBehaviour
             ApplyDynamicGravity();
             ClampFallingVelocity();
 
-            // 추락하면 slider joint 비활성화
+            // 추락하면 엘리베이터와의 이동 동기화 중지
             if (IsStickingToElevator)
             {
                 StopStickingToElevator();
@@ -138,27 +136,33 @@ public class PlatformerMovement : MonoBehaviour
 
     private bool ShouldStickToElevator()
     {
-        return !sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>();
+        return !IsStickingToElevator && groundContact.CurrentPlatform.GetComponent<Elevator>();
     }
 
-    // IsGrounded가 true인 경우 매 프레임 호출되는 함수로,
-    // 밟고 있는 플랫폼이 엘리베이터인 경우 slider joint를 사용해
-    // 엘리베이터와 나 사이에 수평 움직임만 가능하도록 제한한다.
+    // 엘리베이터 위로 올라가는 순간 한 번 호출되는 함수로
+    // 엘리베이터의 이동과 캐릭터의 이동을 동기화하도록 설정함.
     //
-    // 아래로 움직이는 엘리베이터의 이동 속도를 중력이
-    // 바로 따라잡지 못해 낙하와 착지를 반복하는 현상을 막아줌.
+    // dynamic rigidbody는 완전히 독립적인 존재라서
+    // 오브젝트의 부모-자식 관계가 이동에 영향을 주지 않음.
+    //
+    // 이는 캐릭터가 엘리베이터 위에서 서있거나 이동하는 것을 이상하게 만듦.
+    // ex) 아래로 움직이는 엘리베이터의 이동 속도를 중력이 바로 따라잡지 못해 낙하와 착지를 반복
+    //
+    // 이를 해결하기 위해 엘리베이터처럼 이동하는 플랫폼 위에 있는 기간에 한해
+    // 아예 rigidbody를 kinematic으로 만들어버리고
+    // velocity에 의한 이동을 localPosition의 이동으로 치환함.
     private void StartStickingToElevator()
     {
-        sliderJoint.enabled = true;
-        sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.transform.SetParent(groundContact.CurrentPlatform.transform);
     }
 
-    // 엘리베이터 위에서 벗어났을 때 slider joint 설정을 원래대로 돌려놓음.
-    // joint 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
+    // 엘리베이터 위에서 벗어났을 때 움직임 동기화 설정을 원래대로 돌려놓음.
+    // 이런 작업이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
     private void StopStickingToElevator()
     {
-        sliderJoint.enabled = false;
-        sliderJoint.connectedBody = null;
+        rb.transform.SetParent(null);
+        rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
     private void HandleCoyoteTime()
@@ -238,6 +242,15 @@ public class PlatformerMovement : MonoBehaviour
         }
 
         rb.velocity = updatedVelocity;
+
+        // 이동하는 플랫폼 위에 있어서 kinematic 타입으로 바뀐 경우
+        // velocity를 통한 이동이 먹히지 않으니 직접 위치를 옮겨줘야 함
+        if (rb.bodyType == RigidbodyType2D.Kinematic)
+        {
+            // offsetFromElevator += (Vector3)updatedVelocity * Time.fixedDeltaTime;
+            // Debug.Log($"엘베 위 상대 위치: {offsetFromElevator}");
+            transform.localPosition += (Vector3)updatedVelocity * Time.fixedDeltaTime;
+        }
     }
 
     // 가만히 서있는 상황에서는 아주 높은 마찰력을 적용해
@@ -371,8 +384,8 @@ public class PlatformerMovement : MonoBehaviour
 
     private void PerformJump()
     {
-        // 혹시 엘리베이터 위에 있었다면 수직 움직임을 동기화하기
-        // 위해 설정된 slider joint가 점프를 방해할 것이므로 이를 먼저 해제해야 함
+        // 혹시 엘리베이터 위에 있었다면 움직임을 동기화하는 기능이
+        // 점프를 방해하게 되니 이를 먼저 취소해줘야 함
         StopStickingToElevator();
 
         // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환

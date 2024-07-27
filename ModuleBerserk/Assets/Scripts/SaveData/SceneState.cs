@@ -58,7 +58,7 @@ public class SceneState
         {
             SceneName = SceneManager.GetActiveScene().name,
             RemainingRevives = NUM_REVIVES_PER_MISSION,
-            ActiveVirtualCameraTag = "FollowCamera3",
+            ActiveVirtualCameraTag = "FollowCamera1",
             DestroyedObjects = new HashSet<string>(),
             ObjectActivation = new Dictionary<string, bool>(),
             ItemSpawner = new Dictionary<string, ItemType>(),
