@@ -186,7 +186,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         cameraShake = GetComponent<CinemachineImpulseSource>();
         playerManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>();
 
-        groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
+        groundContact = new GroundContact(rb, boxCollider, groundLayer);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
         hp = new CharacterStat(400f, 0f, 400f);
