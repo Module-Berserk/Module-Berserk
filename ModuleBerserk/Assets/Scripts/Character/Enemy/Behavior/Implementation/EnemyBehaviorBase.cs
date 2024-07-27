@@ -413,7 +413,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
 
         // 넉백 효과
         platformerMovement.ApplyZeroFriction();
-        rb.AddForce(attackInfo.knockbackForce, ForceMode2D.Impulse);
+        rb.velocity = attackInfo.knockbackForce;
 
         // 잠시 경직 상태에 돌입
         isPatrolling = false;

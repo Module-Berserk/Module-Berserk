@@ -2,6 +2,28 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
+// 경사로 이동, 엘리베이터 위에서 속도 동기화 등
+// 각종 골치아픈 이동 로직을 담당하는 컴포넌트.
+// 주인공과 적 모두 이 컴포넌트를 통해 이동한다.
+//
+// 크게 보면 두 가지 방식으로 작동한다.
+//
+// 1. 정적인 플랫폼 위에 있는 상황
+//    - dynamic rigidbody + velocity 기반 이동
+//    - 자동으로 제공되는 지형 충돌을 최대한 이용함
+//    - 평소에는 공중에서나 평지에서나 일정한 속도로 이동할 수 있도록
+//      마찰력을 0으로 만들지만, 정지한 상황에서는 경사로에서도
+//      멈춰있도록 아아아아주 높은 마찰력을 사용하도록 한다,
+//
+// 2. 동적인 플랫폼 위에 있는 상황
+//    - kinematic rigidbody + localPosition 기반 이동
+//    - 일시적으로 캐릭터가 플랫폼의 자식 오브젝트로 들어가게 된다
+//    - kinematic rigidbody는 hierarchy상의 부모 오브젝트가
+//      움직이면 자신도 같이 움직이기 때문에 플랫폼의 이동 속도와
+//      캐릭터의 이동 속도가 자동으로 동기화됨.
+//      dynamic rigidbody는 이런 특성이 없어서 자식으로 넣어줘도 차이 x
+//    - 대신 velocity나 force 기반의 움직임이 전혀 먹히지 않으므로
+//      velocity 값을 보고 localPosition을 직접 변경해줘야 함
 public class PlatformerMovement : MonoBehaviour
 {
     [Header("Walk / Run")]
