@@ -1,11 +1,9 @@
 # Module-Berserk
 
 ## TODO (노션에 다음 목표로 포함되지는 않았지만 언젠가 처리해야 할 작업)
-- 한 번의 공격에 여러 번 데미지를 입는 상황 방지하기
 - 아주 높은 곳에서 추락하는 상황에서 카메라 추적 좌표의 y값 조정하기
   - 지금은 땅에 닿을 때마다 y축 추적이 들어가서 플레이어가 시야 밖으로 나가는 상황도 가능함
   - 만약 맵의 수직 높이가 제한적이라면 지금 상태를 유지해도 상관 없음
-- 엘리베이터의 slider joint 설정 플레이어/잡몹 모두 필요하니 공통 코드로 분리해보기
 
 
 ## Known Issues
@@ -109,11 +107,14 @@ rigidbody의 이동으로 변환하기 위해 꼼수를 조금 썼음
 ### 캐릭터 콜라이더를 발보다 조금 위로 설정해야 지면과 접촉하는 것으로 표시됨
 - 정확히 발 밑까지 포함시키면 어째서인지 공중에 떠있는 것처럼 보임
 
-### 엘리베이터 위에 있을 때 slider joint로 엘리베이터와 연결하는 이유
-- parent 설정이 없으면 엘리베이터 하강 속도가 조금만 빨라져도 플레이어가 낙하와 착지를 반복함
-- 엘리베이터에 서있는 동안만 joint로 묶어주면 수직 속도가 동기화되어서 안정적으로 서있을 수 있다!
-
 ### UI 요소들의 입력 처리 방식
 - 최상단 UI만 입력을 처리하도록 스택 구조를 채용함
 - UI가 생길 때 UserInterfaceStack.PushUserInterface(this),  
 UI가 사라질 때 UserInterfaceStack.PopUserInterface(this)를 호출해줘야 함.
+- 자신이 최상단 UI가 되는 순간에 BindInputActions()라는 함수가 실행됨
+  1. InputAction에 직접 콜백 등록
+  2. 버튼, 슬라이더 등 조작 가능한 UI 요소의 interactable 플래그 true로 설정
+  3. UI navigation을 위해 EventSystem의 SetSelectedGameObject()로 기본 선택 요소 정해주기
+- Push, Pop 순서를 지켜줘야 오류가 발생하지 않으니 사용이 끝난 UI는 Pop을 즉각 호출해주는 것이 좋음
+  - OnDestroy() 이벤트는 push 순서와 무관하게 일어나므로 reliable하지 않다...
+  - 뭔가 이상하면 콘솔에 에러 출력이 없는지 확인해볼 것!
