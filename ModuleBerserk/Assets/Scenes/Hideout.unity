@@ -289,6 +289,10 @@ PrefabInstance:
       propertyPath: descriptionText
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6389424330828841407, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: DamageCoefficient
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: cameraFollowTarget
       value: 
@@ -297,6 +301,14 @@ PrefabInstance:
       propertyPath: healthBarAnimation
       value: 
       objectReference: {fileID: 1176395920}
+    - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: critHitLagEffectEase
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 6823456031613974186, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
+      propertyPath: critHitLagEffectDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1297,7 +1309,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: destinationOffset.x
-      value: -4.6
+      value: -7.22
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: destinationOffset.y
@@ -1333,7 +1345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.01695
+      value: -10.016951
       objectReference: {fileID: 0}
     - target: {fileID: 8465201904382959933, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: m_LocalPosition.y

@@ -59,6 +59,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
 
+    [Header("Hit Effect")]
+    [SerializeField] private GameObject normalHitEffectPrefab; // 타격 이펙트
+    [SerializeField] private GameObject critHitEffectPrefab; // 타격 이펙트
+    [SerializeField] private float critHitLagInitialTimescale;
+    [SerializeField] private float critHitLagEffectDuration;
+    [SerializeField] private Ease critHitLagEffectEase;
+
+
     [Header("Stagger Invincibility")]
     // 경직 판정이 있는 공격에 맞을 경우 (경직 시간 + 해당 수치)만큼 지속되는 무적 판정을 부여함.
     // 잡몹들에게 둘러싸여서 인디언밥 당하는 상황 방지...
@@ -223,7 +231,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void InitializeHitbox(CharacterStat attackDamage)
     {
         // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
-        weaponHitbox.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
+        weaponHitbox.OnApplyDamageSuccess.AddListener((other) => {
+            gearSystem.OnAttackSuccess();
+
+            // TODO: 치명타 판정이면 두 번째 인자 true로 바꿔야 함
+            CreateHitEffect(other, isCriticalHit: true);
+        });
 
         // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
         weaponHitbox.RawDamage = attackDamage;
@@ -232,6 +245,38 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 히트박스는 항상 비활성화 상태로 시작해야 함
         weaponHitbox.IsHitboxEnabled = false;
         emergencyEvadeHitbox.IsHitboxEnabled = false;
+    }
+
+    // 내가 맞을 때, 적을 때릴 때 모두 사용하는 이펙트 생성 함수.
+    // 치명타인 경우 화면 흔들림 + 히트랙 효과까지 추가됨!
+    private void CreateHitEffect(Collider2D other, bool isCriticalHit)
+    {
+        var prefab = isCriticalHit ? critHitEffectPrefab : normalHitEffectPrefab;
+
+        // 콜라이더 범위 안에서 랜덤한 위치에 생성.
+        // 이펙트가 발 근처에 생기면 이상해서 y축은 콜라이더 중심 이상으로 제한함.
+        var effect = Instantiate(prefab, other.transform);
+        Vector2 localMinBounds = other.bounds.min - other.bounds.center;
+        Vector2 localMaxBounds = other.bounds.max - other.bounds.center;
+        effect.transform.position += (Vector3)other.offset + new Vector3()
+        {
+            x = UnityEngine.Random.Range(localMinBounds.x, localMaxBounds.x),
+            y = UnityEngine.Random.Range(0f, localMaxBounds.y)
+        } * 0.5f;
+
+        // 치명타 연출 (화면 흔들림 + 시간 느려지는 효과)
+        if (isCriticalHit)
+        {
+            screenShake.ApplyScreenShake(0.05f, critHitLagEffectDuration);
+
+            // 플레이어 애니메이션 제외한 다른 모든 것들을 느리게 만들기
+            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            DOTween.To(() => Time.timeScale, (value) => Time.timeScale = value, 1f, critHitLagEffectDuration)
+                .From(critHitLagInitialTimescale)
+                .SetEase(critHitLagEffectEase)
+                .SetUpdate(true)
+                .OnComplete(() => animator.updateMode = AnimatorUpdateMode.AnimatePhysics);
+        }
     }
 
     private void OnEnable()
@@ -827,6 +872,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         if (attackInfo.staggerStrength != StaggerStrength.None)
         {
             ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
+            CreateHitEffect(GetComponent<Collider2D>(), isCriticalHit: false);
         }
 
         ApplyDamageWithDelayAsync(attackInfo.damage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();

@@ -253,12 +253,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
-    public void OnAttackSuccess()
+    public void OnAttackSuccess(Collider2D player)
     {
         // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵
         if (actionState == ActionState.DashAttack)
         {
-            sliderJoint.connectedBody = playerManager.GetComponent<Rigidbody2D>();
+            sliderJoint.connectedBody = player.attachedRigidbody;
             sliderJoint.enabled = true;
         }
     }
