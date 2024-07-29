@@ -161,9 +161,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Awake()
     {
         FindComponentReferences();
-        InitializePlayerState();
+
+        // OnEnable()에서 playerState.HP에 체력바 UI 업데이트 콜백을
+        // 등록하려면 여기서 먼저 playerState를 준비해줘야 함
+        //
+        // Note: 초기 이벤트 순서는 Awake -> OnEnable -> Start
+        playerState = GameStateManager.ActiveGameState.PlayerState;
 
         platformerMovement.OnLand.AddListener(PlayLandSFX);
+    }
+
+    private void Start()
+    {
+        // 다른 컴포넌트들이 Awake()에서 초기화된 뒤에야
+        // 가능한 작업이 있어서 Start()에서 한 발 늦게 처리함.
+        InitializePlayerState();
     }
 
     private void FindComponentReferences()
@@ -195,7 +207,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 직전 scene에서의 상태를 복원한다.
     private void InitializePlayerState()
     {
-        playerState = GameStateManager.ActiveGameState.PlayerState;
 
         // 세이브 데이터를 복원한 경우 마지막 세이브 포인트에서 시작해야 함
         if (playerState.SpawnPointTag != null)
