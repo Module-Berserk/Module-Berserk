@@ -7,6 +7,7 @@ public class AudioManager : MonoBehaviour {
 
     [SerializeField] private AudioClip[] sfxList;
     [SerializeField] private int initialAudioSourceCount = 10; // Number of initial AudioSources in the pool
+    [SerializeField] private PlayerManager player;
 
     [Range(0, 100)]
     public int volume = 100;
@@ -48,6 +49,17 @@ public class AudioManager : MonoBehaviour {
         int randomIndex = indices[Random.Range(0, indices.Length)];
         AudioSource audioSource = GetAvailableAudioSource();
         audioSource.volume = volume / 200f;
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.clip = sfxList[randomIndex];
+        audioSource.Play();
+        return audioSource;
+    }
+
+    public AudioSource PlaySFXBasedOnPlayer(int[] indices, Transform target) {
+        int randomIndex = indices[Random.Range(0, indices.Length)];
+        float distance = Vector2.Distance(target.position, player.transform.position);
+        AudioSource audioSource = GetAvailableAudioSource();
+        audioSource.volume = volume / 200f / distance;
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
