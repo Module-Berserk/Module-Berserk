@@ -161,6 +161,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Awake()
     {
         FindComponentReferences();
+        InitializePlayerState();
+
+        platformerMovement.OnLand.AddListener(PlayLandSFX);
     }
 
     private void FindComponentReferences()
@@ -175,13 +178,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
         itemManager = GetComponent<ItemManager>();
-    }
-
-    private void Start()
-    {
-        InitializePlayerState();
-
-        platformerMovement.OnLand.AddListener(PlayLandSFX);
     }
 
     private void OnDestroy()
@@ -215,7 +211,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
-        UpdateHealthBarUI(netPendingDamage);
+        UpdateHealthBarUI(); // UI 상태 복원
 
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
@@ -288,6 +284,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed += OnEvade;
         playerActions.UseItem1.performed += OnUseItem1;
         playerActions.UseItem2.performed += OnUseItem2;
+
+        playerState.HP.OnValueChange.AddListener(OnHPChange);
     }
 
     private void OnDisable()
@@ -299,6 +297,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed -= OnEvade;
         playerActions.UseItem1.performed -= OnUseItem1;
         playerActions.UseItem2.performed -= OnUseItem2;
+        
+        playerState.HP.OnValueChange.RemoveListener(OnHPChange);
+    }
+
+    private void OnHPChange(float diff)
+    {
+        Debug.Log("UI 변경중");
+        UpdateHealthBarUI();
     }
 
     private void OnUseItem1(InputAction.CallbackContext context)
@@ -890,7 +896,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 체력바 UI로는 즉시 데미지를 입은 것처럼 표시하고
         // 나중에 데미지 무효화가 일어나면 UI 변화만 롤백하는 방식으로 구현함.
         netPendingDamage += finalDamage;
-        UpdateHealthBarUI(netPendingDamage);
+        UpdateHealthBarUI();
 
         await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
         netPendingDamage -= finalDamage;
@@ -907,11 +913,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 체력바를 실제 체력에 맞게 다시 조정.
         else
         {
-            UpdateHealthBarUI(netPendingDamage);
+            UpdateHealthBarUI();
         }
     }
 
-    private void UpdateHealthBarUI(float netPendingDamage)
+    private void UpdateHealthBarUI()
     {
         // 긴급회피로 데미지 무효화를 하지 못할 경우 도달할 최종 체력
         float expectedHP = playerState.HP.CurrentValue - netPendingDamage;
