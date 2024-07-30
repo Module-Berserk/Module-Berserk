@@ -229,12 +229,6 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         return defense;
     }
 
-    bool IDestructible.IsInvincible()
-    {
-        // 이미 죽은 경우는 공격에 반응하면 안됨
-        return hp.CurrentValue <= 0f;
-    }
-
     Team IDestructible.GetTeam()
     {
         return Team.Enemy;

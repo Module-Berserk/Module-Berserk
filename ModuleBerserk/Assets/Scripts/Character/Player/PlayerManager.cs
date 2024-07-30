@@ -897,8 +897,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
         await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
         netPendingDamage -= finalDamage;
 
-        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리
-        if (!cancellationToken.IsCancellationRequested)
+        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
+        // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
+        // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
+        if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
         {
             (this as IDestructible).HandleHPDecrease(finalDamage);
 

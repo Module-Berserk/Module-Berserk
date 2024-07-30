@@ -196,11 +196,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         return defense;
     }
 
-    bool IDestructible.IsInvincible()
-    {
-        return hp.CurrentValue <= 0f;
-    }
-
     Team IDestructible.GetTeam()
     {
         return Team.Enemy;

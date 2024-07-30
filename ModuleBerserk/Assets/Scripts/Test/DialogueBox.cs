@@ -11,6 +11,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
     [Header("Background Sprite Variant")]
     [SerializeField] private Sprite leftBumpBackground;
     [SerializeField] private Sprite rightBumpBackground;
+    [SerializeField] private Sprite noBumpBackground;
 
 
     [Header("Component References")]
@@ -35,6 +36,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
     {
         Left,
         Right,
+        None,
     }
     [SerializeField] private BumpLocation bumpLocation = BumpLocation.Left;
 
@@ -73,9 +75,13 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         {
             backgroundRenderer.sprite = leftBumpBackground;
         }
-        else
+        else if (bumpLocation == BumpLocation.Right)
         {
             backgroundRenderer.sprite = rightBumpBackground;
+        }
+        else
+        {
+            backgroundRenderer.sprite = noBumpBackground;
         }
     }
 
@@ -160,7 +166,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         {
             position.x += backgroundRenderer.size.x / 2f;
         }
-        else
+        else if (bumpLocation == BumpLocation.Right)
         {
             position.x -= backgroundRenderer.size.x / 2f;
         }

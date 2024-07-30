@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FireGrenadeExplosion : MonoBehaviour
+public class InitializeHitboxBaseDamage : MonoBehaviour
 {
     [SerializeField] private float damage;
 
