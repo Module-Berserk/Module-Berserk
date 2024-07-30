@@ -168,7 +168,7 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
             state = State.Chase;
 
             // TODO: 로그 출력 삭제하고 인식 모션 시작
-            Debug.Log("플레이어 인식!");
+            // Debug.Log("플레이어 인식!");
         }
 
         // 주변에서 인식 정보를 공유받아 이 함수가 호출된 경우

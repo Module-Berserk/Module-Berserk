@@ -21,7 +21,7 @@ public class ObjectGUID : MonoBehaviour
     {
         if (ID == "")
         {
-            Debug.LogWarning("GUID is not generated yet!");
+            Debug.LogWarning("GUID is not generated yet!", this);
         }
     }
 }

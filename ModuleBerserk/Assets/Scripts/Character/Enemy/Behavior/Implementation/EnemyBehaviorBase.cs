@@ -306,7 +306,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         // 플레이어어가 존재하지 않는 경우
         if (!player)
         {
-            Debug.Log("플레이어가 없어서 추적 실패");
+            // Debug.Log("플레이어가 없어서 추적 실패");
             return false;
         }
 
@@ -314,21 +314,21 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         Vector2 chaseDirection = player.transform.position - transform.position;
         if (platformerMovement.IsOnBrink(chaseDirection.x))
         {
-            Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
+            // Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
             return false;
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
         if (chaseDirection.magnitude > chaseMaxDistance)
         {
-            Debug.Log("플레이어가 너무 멀어서 추적 실패");
+            // Debug.Log("플레이어가 너무 멀어서 추적 실패");
             return false;
         }
 
         // 활동 범위 제약이 존재하는데 플레이어가 그 범위 안에 아직 안 들어온 경우
         if (moveRestrictionArea != null && !moveRestrictionArea.IsPlayerInRange)
         {
-            Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
+            // Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
             return false;
         }
 
