@@ -1380,7 +1380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377962823866250331, guid: c5501eef690defd4db114dc56178e76b, type: 3}
       propertyPath: m_text
-      value: "<color=#0050ff>[Left Shift]</color> : \uACF5\uACA9\n<size=70%><color=#222222>*
+      value: "<color=#0050ff>[D]</color> : \uACF5\uACA9\n<size=70%><color=#222222>*
         \uACF5\uACA9\uC5D0 \uC131\uACF5\uD558\uBA74 <color=#ff0000><u>\uAE30\uC5B4
         \uAC8C\uC774\uC9C0</u></color>\uB97C \uD68C\uBCF5\uD558\uBA70\\v\uD654\uBA74
         \uC911\uC559 \uACC4\uAE30\uD310\uC758 \uBC14\uB298\uB85C \uC218\uCE58\uB97C
