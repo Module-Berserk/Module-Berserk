@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -53,6 +54,12 @@ public class PlatformerMovement : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float airControlWhileWallJumping = 0.2f;
     // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
+
+    
+    [Header("Evasion")]
+    [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
+    [SerializeField] private float evasionDistance = 4f;
+    [SerializeField] private Ease evasionEase = Ease.OutCubic;
 
 
     [Header("Ground Contact")]
@@ -455,5 +462,28 @@ public class PlatformerMovement : MonoBehaviour
         return 
             (direction > 0f && !groundContact.IsRightFootGrounded) ||
             (direction < 0f && !groundContact.IsLeftFootGrounded);
+    }
+
+    public void PerformDash(bool isFacingLeft)
+    {
+        // 엘리베이터 위에 있으면 kinematic rigidbody로 변하므로
+        // 이대로 두면 벽을 뚫고 지나가버릴 위험이 있음!
+        if (IsStickingToElevator)
+        {
+            StopStickingToElevator();
+        }
+
+        // 회피 도중에는 추락 및 넉백 x
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
+
+        // 지면에 멈춰있는 상태에서는 엄청 큰 마찰력이 사용되므로
+        // 확실히 마찰력을 없애주지 않으면 땅 위에 가만히 멈춰있을 위험이 있음.
+        ApplyZeroFriction();
+
+        float targetX = transform.position.x + evasionDistance * (isFacingLeft ? -1f : 1f);
+        rb.DOMoveX(targetX, evasionDuration)
+            .SetEase(evasionEase)
+            .SetUpdate(UpdateType.Fixed);
     }
 }

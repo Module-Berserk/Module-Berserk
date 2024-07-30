@@ -74,9 +74,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
 
     [Header("Evasion")]
-    [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
-    [SerializeField] private float evasionDistance = 4f;
-    [SerializeField] private Ease evasionEase = Ease.OutCubic;
     [SerializeField] private float evasionCooltime = 1.3f;
     // 일반 회피 및 긴급 회피에 부여되는 무적 시간
     [SerializeField] private float evasionInvincibleDuration = 0.5f;
@@ -518,14 +515,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 회피 무적 상태로 전환
         ActionState = PlayerActionState.Evade;
         invincibleDuration = evasionInvincibleDuration;
-
-        // 회피 도중에는 추락 및 넉백 x
-        rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
-
-        // 지면에 멈춰있는 상태에서는 엄청 큰 마찰력이 사용되므로
-        // 확실히 마찰력을 없애주지 않으면 땅 위에 가만히 멈춰있을 위험이 있음.
-        platformerMovement.ApplyZeroFriction();
         
         // 쿨타임 계산 시작
         timeSinceLastEvasion = 0f;
@@ -536,11 +525,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 챕터1 박스 기믹에서 일반 회피에만 반응할 수 있게 회피 타입 기록
         IsNormalEvasion = true;
 
-        float targetX = transform.position.x + evasionDistance * (IsFacingLeft ? -1f : 1f);
-        rb.DOMoveX(targetX, evasionDuration)
-            .SetEase(evasionEase)
-            .SetUpdate(UpdateType.Fixed);
-
+        platformerMovement.PerformDash(IsFacingLeft);
         screenShake.ApplyScreenShake(strength: 0.05f, duration: 0.2f, frequencyGain: 2f);
     }
 
