@@ -4,6 +4,7 @@ public class PlayerContactTrigger : Trigger
 {
     // 컷신처럼 한번만 활성화되어야 하는 트리거인 경우 true로 설정
     [SerializeField] private bool isOneTimeTrigger = false;
+    [SerializeField] private Color gizmoColor;
 
     private bool isAlreadyTriggered = false;
 
@@ -28,5 +29,11 @@ public class PlayerContactTrigger : Trigger
         {
             Deactivate();
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gizmoColor;
+        Gizmos.DrawCube(transform.position, GetComponent<BoxCollider2D>().size);
     }
 }

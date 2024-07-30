@@ -453,4 +453,15 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
     {
         return moveSpeedMultiplier;
     }
+
+    // 행동 반경 제한이 걸린 경우 해당 범위를 붉은색 테두리로 보여줌
+    private void OnDrawGizmos()
+    {
+        if (moveRestrictionArea != null)
+        {
+            var bounds = moveRestrictionArea.GetComponent<Collider2D>().bounds;
+            Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+            Gizmos.DrawWireCube(bounds.center, bounds.size);
+        }
+    }
 }

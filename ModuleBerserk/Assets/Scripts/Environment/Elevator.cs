@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -7,6 +9,7 @@ using UnityEngine.Assertions;
 // 활성화되는 순간 목표 지점까지 갔다가 잠시 후에 다시 돌아오는 엘리베이터.
 // 이미 시작된 이동은 취소할 수 없다.
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(ObjectGUID))]
 public class Elevator : MonoBehaviour, IPersistentSceneState
 {
@@ -69,8 +72,8 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
     // 엘리베이터의 종점을 기록
     private void CalculateMovementBoundary()
     {
-        startPosition = rb.position;
-        endPosition = rb.position + destinationOffset;
+        startPosition = transform.position;
+        endPosition = (Vector2)transform.position + destinationOffset;
 
         // 일단 시작 지점이 목적지인 것으로 취급
         destination = startPosition;
@@ -249,7 +252,29 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
     // 엘리베이터 이동 범위를 에디터에서 시각적으로 확인할 수 있게 기즈모로 표시
     private void OnDrawGizmosSelected()
     {
+        // 플레이 하기 전까지는 destinationOffset을 실시간으로 반영해서 보여줌.
+        // 반대로 게임을 시작하면 Start() 시점의 설정을 보여줌.
+        // 여기서 보여주는 기즈모는 "예상 이동 범위"이므로
+        // 플레이 도중에 엘리베이터가 이동하는 것에 영향을 받으면 안 되기 때문!
+        if (!Application.isPlaying)
+        {
+            CalculateMovementBoundary();
+        }
+
         Gizmos.color = Color.red;
         Gizmos.DrawLine(startPosition, endPosition);
+
+        var collider = GetComponent<BoxCollider2D>();
+
+        var bounds = collider.bounds;
+        bounds.center = endPosition + collider.offset;
+        var boundPoints = new Vector3[]
+        {
+            new(bounds.min.x, bounds.min.y),
+            new(bounds.min.x, bounds.max.y),
+            new(bounds.max.x, bounds.max.y),
+            new(bounds.max.x, bounds.min.y),
+        };
+        Gizmos.DrawLineStrip(boundPoints, looped: true);
     }
 }

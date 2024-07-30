@@ -13,6 +13,7 @@ public class NoObjectNearbyTrigger : Trigger
     // 이 플래그를 체크하면 생성 직후 일정 시간이 지나도 numObjectsWithinRange가
     // 0으로 유지된 경우 최초 1회에 한해 Activate()를 그냥 호출해줌.
     [SerializeField] private bool allowInitialActivation = true;
+    [SerializeField] private Color gizmoColor = new Color(0.3f, 0.7f, 1f, 0.2f);
 
     private int numObjectsWithinRange = 0;
 
@@ -67,5 +68,11 @@ public class NoObjectNearbyTrigger : Trigger
                 Activate();
             }
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gizmoColor;
+        Gizmos.DrawCube(transform.position, GetComponent<BoxCollider2D>().size);
     }
 }
