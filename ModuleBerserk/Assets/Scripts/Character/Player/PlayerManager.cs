@@ -96,7 +96,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [Header("Fade Effect")]
     // 죽어서 마지막 세이브 포인트로 돌아갈 때 사용할 페이드 아웃 효과
     [SerializeField] private FadeEffect fadeEffect;
-    [SerializeField] private GameObject youDiedUI; // TODO: 테스트 끝나면 삭제할 것
+    [SerializeField] private YouDied youDiedUI;
 
 
     public bool IsFacingLeft
@@ -204,7 +204,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 직전 scene에서의 상태를 복원한다.
     private void InitializePlayerState()
     {
-
         // 세이브 데이터를 복원한 경우 마지막 세이브 포인트에서 시작해야 함
         if (playerState.SpawnPointTag != null)
         {
@@ -216,7 +215,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
         
         itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);
-        InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
+        InitializeGearSystem(playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
         UpdateHealthBarUI(); // UI 상태 복원
@@ -224,11 +223,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
 
-    private void InitializeGearSystem(GearSystemState gearSystemState, CharacterStat attackSpeed, CharacterStat moveSpeed)
+    private void InitializeGearSystem(CharacterStat attackSpeed, CharacterStat moveSpeed)
     {
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
         gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(attackSpeed, moveSpeed));
-        gearSystem.InitializeState(gearSystemState);
+        gearSystem.InitializeState();
     }
 
     // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함
@@ -284,7 +283,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     }
 
     private void OnEnable()
-    {    
+    {
         var playerActions = InputManager.InputActions.Player;
         playerActions.Jump.performed += OnJump;
         playerActions.FallDown.performed += OnFallDown;
@@ -870,11 +869,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
+        CreateHitEffect(GetComponent<Collider2D>(), isCriticalHit: false);
 
         if (attackInfo.staggerStrength != StaggerStrength.None)
         {
             ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
-            CreateHitEffect(GetComponent<Collider2D>(), isCriticalHit: false);
         }
 
         ApplyDamageWithDelayAsync(attackInfo.damage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
@@ -1001,9 +1000,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetTrigger("Death");
         InputManager.InputActions.Player.Disable();
 
-        // TODO: 테스트 끝나면 삭제할 것
-        youDiedUI.SetActive(true);
-
         // case 1) 아직 부활 횟수가 남아있다면 마지막 세이브 포인트에서 부활
         if (GameStateManager.ActiveGameState.SceneState.RemainingRevives > 0)
         {
@@ -1022,11 +1018,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
 
-        await UniTask.WaitForSeconds(3f);
+        await youDiedUI.FadeInoutAsync();
 
         fadeEffect.FadeOut();
 
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(3f);
 
         InputManager.InputActions.Player.Enable();
 
@@ -1037,11 +1033,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // TODO: 미션 실패 결과창 표시...?
 
-        await UniTask.WaitForSeconds(3f);
+        await youDiedUI.FadeInoutAsync();
 
         fadeEffect.FadeOut();
 
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(3f);
 
         InputManager.InputActions.Player.Enable();
 

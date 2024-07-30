@@ -14,7 +14,7 @@ public class GearSystemState
     // 새 게임을 시작할 때 사용할 초기 기어 시스템 상태를 준비함
     public GearSystemState()
     {
-        NeedInitialRampUp = false;
+        NeedInitialRampUp = true; // Note: 은신처가 아니라 튜토리얼 미션에서 시작함!
         GearGauge = 0;
         GearLevel = 0;
         GearGaugeGainCoefficient = new CharacterStat(1f);

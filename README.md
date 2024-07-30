@@ -37,6 +37,10 @@
 GameStateManager.ActiveGameState에 해당 세이브 데이터가 할당됨.  
 하지만 테스트 도중에는 미션 한가운데에서 시작하게 될 수도 있으므로 (ex. 보스전만 테스트)  
 이 경우에는 더미 GameState를 생성해 사용함.
+- 유일하게 scene 시작 직후에 처리되지 않을 가능성이 있는 초기화 작업은 GearSystem의 초기 ramp up 연출
+  - 바로 ramp up을 시작해버리면 미션 시작 컷신에 가려서 하나도 안 보일 수 있음
+  - 이런 경우를 상정해 GearSystem은 Start()가 아니라 OnEnable()에서 ramp up이 필요한지 체크한다.
+  - 즉, 미션 시작 컷신이 있으면 GearSystem을 비활성화 상태로 만들어두고 컷신이 끝난 뒤에 enabled = true를 해주는 방식
 
 ### Scene 내부의 카메라 transition
 - 미션은 여러개의 stage로 구성되는데, stage 사이에는 카메라를 공유하지 않음

@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.8509804}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 255
+  m_fontColor: {r: 1, g: 0, b: 0, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -270,7 +270,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1000
+  m_SortingOrder: 1001
   m_TargetDisplay: 0
 --- !u!114 &864940733388575246
 MonoBehaviour:
@@ -309,4 +309,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 3261513668570633621}
   text: {fileID: 6366469086744322225}
-  fadeDuration: 3
+  fadeDuration: 2
+  stayDuration: 1

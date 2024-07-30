@@ -43,10 +43,10 @@ public class SceneState
     // 새 게임을 시작할 때 사용할 초기 맵 상태를 준비함
     public SceneState()
     {
-        SceneName = "Hideout"; // TODO: 튜토리얼 스테이지 생기면 해당 scene으로 변경할 것
+        SceneName = "Chapter1"; // TODO: 튜토리얼 스테이지 생기면 해당 scene으로 변경할 것
+        ActiveVirtualCameraTag = "TutorialFollowCamera";
         RemainingRevives = NUM_REVIVES_PER_MISSION;
         IsBossIntroCutscenePlayed = false;
-        ActiveVirtualCameraTag = "FollowCamera1";
         DestroyedObjects = new HashSet<string>();
         ObjectActivation = new Dictionary<string, bool>();
         ItemSpawner = new Dictionary<string, ItemType>();
@@ -57,8 +57,8 @@ public class SceneState
         return new SceneState
         {
             SceneName = SceneManager.GetActiveScene().name,
-            RemainingRevives = NUM_REVIVES_PER_MISSION,
             ActiveVirtualCameraTag = "FollowCamera1",
+            RemainingRevives = NUM_REVIVES_PER_MISSION,
             DestroyedObjects = new HashSet<string>(),
             ObjectActivation = new Dictionary<string, bool>(),
             ItemSpawner = new Dictionary<string, ItemType>(),

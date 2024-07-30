@@ -58,6 +58,7 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
     {
         Debug.Log($"슬롯 {slotIndex}에서 새로운 게임을 시작");
         GameState emptyGameState = new(slotIndex);
+
         LoadGameStateAsync(emptyGameState).Forget();
     }
 

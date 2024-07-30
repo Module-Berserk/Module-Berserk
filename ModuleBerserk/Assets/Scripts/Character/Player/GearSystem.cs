@@ -65,18 +65,6 @@ public class GearSystem : MonoBehaviour
 
     public GearSystemState CurrentState {get; private set;}
 
-
-    // 각 기어 단계마다 0 ~ MAX_GEAR_GAUGE의 값을 갖는 게이지.
-    // 적을 공격하면 게이지가 차고 반대로 공격당하면 줄어든다.
-    // public float CurrentGearGauge {get; private set;}
-    // 게이지의 범위에 따라 총 6단계로 구분해 버프를 부여함.
-    // 기어 단계는 0부터 시작해 최대 5까지 있으며,
-    // 0단계는 맵 입장할 때 0에서 1단계로 슉 올라가는 모습을 보여주기 위한
-    // 용도이므로 실질적으로는 1단계가 최소 기어 단계임!
-    // public int CurrentGearLevel {get; private set;}
-
-
-
     // 공격 피격 등으로 기어 단계가 바뀐 경우 호출되는 이벤트.
     // 플레이어는 기어 단계에 따라 버프를 받으므로 수치 변동을 여기서 처리하면 됨.
     public UnityEvent OnGearLevelChange {get; private set;}
@@ -104,6 +92,8 @@ public class GearSystem : MonoBehaviour
     {
         OnGearLevelChange = new UnityEvent();
         OnGearLevelChange.AddListener(UpdateGearLevelImage);
+
+        CurrentState = GameStateManager.ActiveGameState.PlayerState.GearSystemState;
     }
 
     private void OnDestroy()
@@ -127,10 +117,8 @@ public class GearSystem : MonoBehaviour
     // 주의사항:
     // OnGearLevelChange에 버프 적용 콜백을 등록한 뒤에
     // 호출해줘야만 버프 상태가 정상적으로 복원된다!!!
-    public void InitializeState(GearSystemState state)
+    public void InitializeState()
     {
-        CurrentState = state;
-
         // 세이브 데이터를 불러올 때 스탯 버프는 모두 초기화되므로
         // "이전에 적용된 버프"는 아무 변화도 없는 0단계 기준으로 기록해놓아야 함.
         lastAppliedGearLevelBuff = GEAR_LEVEL_BUFF[0];
@@ -138,8 +126,22 @@ public class GearSystem : MonoBehaviour
         // 현재 기어 단계에 맞는 버프를 다시 부여하며
         // UI 상태도 같이 복원 (Awake에서 등록된 콜백 있음)
         OnGearLevelChange.Invoke();
+    }
 
-        if (state.NeedInitialRampUp)
+    // 미션 시작용 ramp up 애니메이션 처리.
+    // Start()나 InitializeState()가 아니라 OnEnable()에서 하는 이유는
+    // 미션 시작 컷신이 있으면 컷신이 끝난 뒤에야 페이드 인이 들어가서
+    // 게이지 ramp up이 전부 완료된 상태만 볼 수 있기 때문!
+    // 
+    // Q) 그래서 시작할 때 컴포넌트를 활성화해둬야 하나요?
+    // A) 상황에 따라 다름
+    //    1. 시작 컷신이 있는 경우 (ex. 튜토리얼 미션)
+    //       => 컴포넌트 비활성화 상태로 시작 & 컷신 끝나면 직접 활성화
+    //    2. 시작 컷신이 없는 경우 (ex. 은신처)
+    //       => 컴포넌트 활성화 상태로 시작
+    public void OnEnable()
+    {
+        if (CurrentState.NeedInitialRampUp)
         {
             // 은신처에서는 기어 상태가 바뀔 일이 없으니
             // 여기서 assertion이 실패한다면 미션이 끝나고 은신처로 돌아갈 때
@@ -272,7 +274,10 @@ public class GearSystem : MonoBehaviour
         }
 
         // 기어 단계 변동은 아직 최대 단계에 도달하지 못했고
-        // 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함
+        // 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함.
+        //
+        // 유일하게 여기서 assertion에 실패해도 되는 상황은
+        // 튜토리얼 시작하자마자 낙사해서 ramp up 도중에 게이지가 깎여버리는 것...
         Assert.IsTrue(CurrentState.GearLevel < MAX_GEAR_LEVEL);
         Assert.AreEqual(CurrentState.GearGauge, MAX_GEAR_GAUGE);
 

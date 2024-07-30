@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7821329894778403182
+--- !u!1 &6556950893585805274
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2458015767694199184}
-  - component: {fileID: 8546108078127105072}
-  - component: {fileID: 6306693497554093947}
-  - component: {fileID: 3158050095032945190}
-  m_Layer: 8
-  m_Name: SavePoint
+  - component: {fileID: 1088591986283978006}
+  - component: {fileID: 8815798260941378337}
+  - component: {fileID: 1675036801375990335}
+  - component: {fileID: 4467628609232485879}
+  - component: {fileID: 2383034328458235580}
+  m_Layer: 6
+  m_Name: FallDamageArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2458015767694199184
+--- !u!4 &1088591986283978006
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7821329894778403182}
+  m_GameObject: {fileID: 6556950893585805274}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -133.1, y: -8.97, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -190.8, y: -22.6, z: -9.931658}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &8546108078127105072
+--- !u!61 &8815798260941378337
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7821329894778403182}
+  m_GameObject: {fileID: 6556950893585805274}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -69,23 +70,57 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 0.9375, y: 0.9375}
-    adaptiveTilingThreshold: 0.5
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3, y: 3}
+  m_Size: {x: 48.93, y: 6.78}
   m_EdgeRadius: 0
---- !u!114 &6306693497554093947
+--- !u!114 &1675036801375990335
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7821329894778403182}
+  m_GameObject: {fileID: 6556950893585805274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c67859a73de3e848a8e3b49eb3b5928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 999999
+--- !u!114 &4467628609232485879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6556950893585805274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DamageSource: 2
+  staggerStrength: 0
+  knockbackForce: 0
+  staggerDuration: 5
+  delayBetweenDamageTick: 5
+  DamageCoefficient: 1
+  OnApplyDamageSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &2383034328458235580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6556950893585805274}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c31bda5f6912ef4ab7b0bdc128b437e, type: 3}
@@ -93,33 +128,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnActivate:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3158050095032945190}
-        m_TargetAssemblyTypeName: SavePoint, Assembly-CSharp
-        m_MethodName: TryAutoSave
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
   isOneTimeTrigger: 0
-  gizmoColor: {r: 1, g: 0, b: 0.7529412, a: 0.078431375}
---- !u!114 &3158050095032945190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7821329894778403182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54737f244a1314a47a94e4d6d96daccb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  gizmoColor: {r: 1, g: 0, b: 0, a: 0.31764707}

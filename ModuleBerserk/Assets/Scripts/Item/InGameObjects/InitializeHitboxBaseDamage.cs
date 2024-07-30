@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(ApplyDamageOnContact))]
 public class InitializeHitboxBaseDamage : MonoBehaviour
 {
     [SerializeField] private float damage;
