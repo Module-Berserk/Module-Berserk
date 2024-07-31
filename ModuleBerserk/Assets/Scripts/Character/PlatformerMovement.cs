@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -240,13 +241,84 @@ public class PlatformerMovement : MonoBehaviour
         rb.gravityScale = defaultGravityScale;
     }
 
-    // 지면에 서있는 경우는 지면과 평행하게, 공중인 경우는 그냥 좌우로 이동.
+    // 원하는 가로축 목표 속도를 넣어주면 부드럽게 가속/감속하도록 만듦.
+    // Case 1) 지면에 서있는 경우 => 지면과 평행한 방향으로 이동
+    // Case 2) 공중에 있는 경우 => 수직 속도는 유지하고 수평 속도만 조정
     //
     // Note:
     // 경사로에 있는 경우 GroundTangent가 수평이 아니다!
     // 이 상황에서 수평으로 움직이면 낙하-착지를 반복하게 될 수 있으므로
     // 지면과 평행하게 움직여주는게 중요함.
-    public void UpdateMoveVelocity(float desiredSpeed)
+    public void UpdateMoveVelocity(float desiredSpeed, bool skipAcceleration = false)
+    {
+        // 목표 속도에 부드럽게 도달하도록 가속/감속한 속도를 계산.
+        rb.velocity = CalculateUpdatedVelocity(desiredSpeed, skipAcceleration);
+
+        if (rb.bodyType == RigidbodyType2D.Kinematic)
+        {
+            MoveAsKinematicBody();
+        }
+    }
+
+    // 엘리베이터처럼 동적인 플랫폼 위에 서있는 경우 플랫폼과
+    // 속도를 동기화하기 위해 kinematic rigidbody로 동작하게 되는데,
+    // 이러면 평소에 기본으로 처리되던 벽과의 충돌이나 velocity를 통한 이동이 먹히지 않음!
+    // ex) kinematic 상태에서는 벽을 다 뚫고 지나감
+    //
+    // 그래서 수동으로 내가 탑승중인 플랫폼 이외의 벽과 충돌했는지 확인하고
+    // 만약 그렇다면 뚫고 가지 못하도록 충돌이 일어난 지점으로 옮겨줘야 함.
+    // velocity에 따른 이동은 충돌이 없는 경우에만 처리됨.
+    private void MoveAsKinematicBody()
+    {
+        Vector3 movement = rb.velocity * Time.fixedDeltaTime;
+
+        // 충돌 검사 도중에 아무 문제도 없는 경우에만 계획대로 움직임
+        bool collisionExists = ResolveKinematicCollision(movement);
+        if (!collisionExists)
+        {
+            transform.localPosition += movement;
+        }
+    }
+
+    // ResolveKinematicCollision() 함수에서 BoxCollider2D.Cast()의
+    // 결과를 저장하는 배열로, documentation에 따르면 매번 새로운 배열을 할당하지
+    // 않고 미리 만들어둔 버퍼를 재사용하는 방식이라서 가비지 콜렉션 부담을 줄여준다고 함...
+    private RaycastHit2D[] hits = new RaycastHit2D[5];
+
+    // kinematic rigidbody 상태에서도 마치 dynamic rigidbody인 것처럼
+    // 벽 등의 물체와 충돌하는 상황을 해소해주는 함수.
+    // 위치 조정이 필요한 충돌이 있었다면 true를, 아무 문제도 없었다면 false를 반환한다.
+    private bool ResolveKinematicCollision(Vector3 movement)
+    {
+        bool collisionExists = false;
+        int numHits = boxCollider.Cast(movement, hits, distance: movement.magnitude);
+        for (int i = 0; i < numHits; ++i)
+        {
+            // 충돌을 해소할 필요가 없는 경우 세 가지:
+            // 1. 지금 내가 타고있는 이동 플랫폼과의 충돌
+            // 2. 무기 히트박스 등 나의 자식 오브젝트
+            //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
+            //      자신만의 kinematic rigidbody를 가지고 있음
+            // 3. 충돌을 해소하는 방향으로 이동하는 경우
+            //    * 이 조건이 없으면 벽과 반대 방향으로 걸으려 해도
+            //      충돌이 검출되어서 움직일 수가 없음
+            bool isCurrentPlatform = hits[i].transform.gameObject == groundContact.CurrentPlatform;
+            bool isChildObject = hits[i].transform.parent == gameObject.transform;
+            bool isMovingTowardsCollision = Vector3.Dot(hits[i].normal, movement) > 0.001f;
+
+            if (!isCurrentPlatform && !isMovingTowardsCollision && !isChildObject)
+            {
+                // 충돌을 해소할 수 있는 위치로 이동
+                rb.MovePosition(hits[i].centroid);
+                collisionExists = true;
+            }
+        }
+
+        return collisionExists;
+    }
+
+
+    private Vector2 CalculateUpdatedVelocity(float desiredSpeed, bool skipAcceleration)
     {
         // 가속해야 할 방향으로의 속도 성분 (공중인 경우 중력 고려 x)
         Vector2 moveDirection = IsGrounded ? groundContact.GroundTangent : Vector2.right;
@@ -263,24 +335,17 @@ public class PlatformerMovement : MonoBehaviour
 
         // 원하는 속도에 부드럽게 도달하도록 보간.
         // 공중에 있는 경우는 수직 속도 변경 x
-        float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
+        float updatedSpeed = skipAcceleration ? desiredSpeed : Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
+
         Vector2 updatedVelocity = moveDirection * updatedSpeed;
         if (!IsGrounded)
         {
             updatedVelocity.y = rb.velocity.y;
         }
 
-        rb.velocity = updatedVelocity;
-
-        // 이동하는 플랫폼 위에 있어서 kinematic 타입으로 바뀐 경우
-        // velocity를 통한 이동이 먹히지 않으니 직접 위치를 옮겨줘야 함
-        if (rb.bodyType == RigidbodyType2D.Kinematic)
-        {
-            // offsetFromElevator += (Vector3)updatedVelocity * Time.fixedDeltaTime;
-            // Debug.Log($"엘베 위 상대 위치: {offsetFromElevator}");
-            transform.localPosition += (Vector3)updatedVelocity * Time.fixedDeltaTime;
-        }
+        return updatedVelocity;
     }
+
 
     // 가만히 서있는 상황에서는 아주 높은 마찰력을 적용해
     // 경사로나 이동 플랫폼 등에서 미끄러지지 않도록 함

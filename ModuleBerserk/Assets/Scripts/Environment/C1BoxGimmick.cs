@@ -78,7 +78,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.contacts[0].normal, Vector2.up), 0f);
+        bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.GetContact(0).normal, Vector2.up), 0f);
         if (other.gameObject.CompareTag("Player") && isCollisionHorizontal)
         {
             var playerManager = other.gameObject.GetComponent<PlayerManager>();

@@ -565,8 +565,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirectionByInput();
 
-        // 가로로 움직이는 플랫폼 위에서도 가만히 서있도록 큰 마찰력 사용
-        platformerMovement.ApplyHighFriction();
+        // 가만히 서있다가 공격하면 높은 마찰력 때문에 root motion이
+        // 제대로 적용되지 못하니까 반드시 마찰력을 없애고 공격 모션을 시작해야 함
+        platformerMovement.ApplyZeroFriction();
 
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
@@ -686,7 +687,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
             if (IsAttacking())
             {
-                spriteRootMotion.ApplyVelocity(IsFacingLeft);
+                float desiredSpeed = spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
+                platformerMovement.UpdateMoveVelocity(desiredSpeed, skipAcceleration: true);
             }
 
             platformerMovement.HandleGroundContact();

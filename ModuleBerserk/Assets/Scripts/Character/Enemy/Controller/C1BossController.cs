@@ -296,7 +296,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         else if (actionState == ActionState.MeleeAttack || actionState == ActionState.CounterAttack)
         {
             // 근접 공격들은 움직임이 복잡해서 루트 모션으로 처리함
-            spriteRootMotion.ApplyVelocity(IsFacingLeft);
+            rb.velocity = Vector2.right * spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
         }
         else if (actionState == ActionState.FlameThrower || actionState == ActionState.CounterBegin)
         {
