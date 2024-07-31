@@ -11,7 +11,6 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
 {
     [SerializeField] private Button yesButton;
     [SerializeField] private Button noButton;
-    [SerializeField] private EventSystem eventSystem;
 
     // yes를 누르면 true, no를 누르면 false를 전달함.
     // 선택이 끝나면 자동으로 모든 등록된 콜백을 정리해준다.
@@ -50,7 +49,7 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
         yesButton.interactable = true;
         noButton.interactable = true;
 
-        eventSystem.SetSelectedGameObject(yesButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(yesButton.gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()

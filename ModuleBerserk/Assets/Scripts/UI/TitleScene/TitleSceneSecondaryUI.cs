@@ -10,7 +10,6 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
     [SerializeField] private List<Button> buttons;
     [SerializeField] private TitleSceneSelectSaveDataUI selectSaveDataUI; // 새로하기 또는 이어하기를 누르면 뜨는 세이브 슬롯 선택 창
     [SerializeField] private YesNoSelectionUI dataOverrideWarningUI; // 새 게임을 데이터가 존재하는 슬롯에서 시작하려는 경우 뜨는 경고창
-    [SerializeField] private EventSystem eventSystem;
     [SerializeField] private FadeEffect fadeEffect;
 
     private void OnEnable()
@@ -33,6 +32,7 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
         // 타이틀 화면에서 "아무 키나 누르세요"로 뜨는 UI인데
         // 어째서인지 얘만 UI가 뜨자마자 버튼이 바로 선택되는 버그가 있음...
         // 버튼 활성화할 때 잠시 입력 비활성화하는 방식으로 막음.
+        var eventSystem = EventSystem.current;
         eventSystem.enabled = false;
         eventSystem.SetSelectedGameObject(buttons[0].gameObject);
         eventSystem.enabled = true;

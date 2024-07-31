@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 // 일시정지 메뉴를 띄우는 클래스
 public class PauseMenu : MonoBehaviour, IUserInterfaceController
 {
     [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private List<Button> buttons;
 
     private bool isPaused = false;
 
@@ -57,10 +61,20 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
     void IUserInterfaceController.BindInputActions()
     {
         // TODO: 일시정지 메뉴 만들 때 여기서 입력 binding 처리할 것
+        foreach (var button in buttons)
+        {
+            button.interactable = true;
+        }
+
+        EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()
     {
         // TODO: 일시정지 메뉴 만들 때 여기서 입력 unbinding 처리할 것
+        foreach (var button in buttons)
+        {
+            button.interactable = false;
+        }
     }
 }

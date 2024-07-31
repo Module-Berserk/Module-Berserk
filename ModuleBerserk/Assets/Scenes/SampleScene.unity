@@ -326,16 +326,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &104649932 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9064496754029307076, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
-  m_PrefabInstance: {fileID: 8602893245577955615}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &121048893 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5552961365242420789, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
-  m_PrefabInstance: {fileID: 8602893245577955615}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &141915421
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,71 +754,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!1001 &574931817
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6135803668193362807, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8292874154869129205, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: sceneName
-      value: Hideout
-      objectReference: {fileID: 0}
-    - target: {fileID: 8292874154869129205, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: playerSpawnPointTag
-      value: TestSpawnPoint
-      objectReference: {fileID: 0}
-    - target: {fileID: 8502005721648200190, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
-      propertyPath: m_Name
-      value: Portal
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 47f29b00c031eee44ba9a408f9a687be, type: 3}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,6 +2070,7 @@ MonoBehaviour:
         m_CallState: 2
   objectTag: 
   allowInitialActivation: 1
+  gizmoColor: {r: 0.3, g: 0.7, b: 1, a: 0.2}
 --- !u!1001 &1811368077613159405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2212,11 +2138,11 @@ PrefabInstance:
     - target: {fileID: 4491008500044812834, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: itemReplacementSlot1Outline
       value: 
-      objectReference: {fileID: 121048893}
+      objectReference: {fileID: 0}
     - target: {fileID: 4491008500044812834, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: itemReplacementSlot2Outline
       value: 
-      objectReference: {fileID: 104649932}
+      objectReference: {fileID: 0}
     - target: {fileID: 5967063454063742748, guid: e5211340ced9cf44d9de64b7cbcceea4, type: 3}
       propertyPath: gaugeArrow
       value: 
@@ -2638,7 +2564,6 @@ SceneRoots:
   - {fileID: 141915422}
   - {fileID: 729435128}
   - {fileID: 619394802}
-  - {fileID: 574931817}
   - {fileID: 7079234686488428694}
   - {fileID: 931631431}
   - {fileID: 1522019621}

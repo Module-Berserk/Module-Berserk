@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -12,7 +11,6 @@ using UnityEngine.UI;
 public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceController
 {
     [SerializeField] private List<Button> buttons;
-    [SerializeField] private EventSystem eventSystem;
 
     public UnityEvent<int> OnSelectExistingSlot = new();
     public UnityEvent<int> OnSelectEmptySlot = new();
@@ -75,7 +73,7 @@ public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceControlle
             button.interactable = true;
         }
         
-        eventSystem.SetSelectedGameObject(buttons[0].gameObject);
+        EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()
