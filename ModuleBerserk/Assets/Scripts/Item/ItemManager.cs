@@ -39,6 +39,12 @@ public class ItemManager : MonoBehaviour
     private ItemSlotState slot1State = null;
     private ItemSlotState slot2State = null;
 
+    // 플레이어가 아이템을 사용한 직후 어떤 모션을 출력해야할지 결정하기 위해 참고하는 값
+    // Case 1) 설치형 => 아래로 몸을 숙이는 모션
+    // Case 2) 나머지 => 뭔가 앞으로 던지는 모션
+    public ItemCategory Slot1ItemCategory { get => slot1Item.GetCategory(); }
+    public ItemCategory Slot2ItemCategory { get => slot2Item.GetCategory(); }
+
     // scene 로딩이 끝난 뒤 PlayerManager에 의해 호출되는 함수.
     // 직전 scene에서의 상태를 복원한다.
     public void InitializeState(ItemSlotState slot1State, ItemSlotState slot2State)
@@ -63,6 +69,7 @@ public class ItemManager : MonoBehaviour
         return TryUseItem(slot2Item, slot2State);
     }
 
+    // 아이템 사용을 시도하고 성공 여부를 반환
     private bool TryUseItem(IActiveItem item, ItemSlotState slotState)
     {
         if (item != null && slotState.UsageStack > 0)
