@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2821081980036195211
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2919,6 +2919,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pause Menu Button (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7649560392048681970, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4279522716
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3031,6 +3035,10 @@ PrefabInstance:
     - target: {fileID: 4012841249207790380, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
       propertyPath: m_Name
       value: Pause Menu Button (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7649560392048681970, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4279522716
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3145,6 +3153,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pause Menu Button (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7649560392048681970, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4279522716
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3258,6 +3270,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pause Menu Button
       objectReference: {fileID: 0}
+    - target: {fileID: 5109656808183647125, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7421654654363395357, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
       propertyPath: m_Colors.m_NormalColor.b
       value: 1
@@ -3273,6 +3289,10 @@ PrefabInstance:
     - target: {fileID: 7649560392048681970, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
       propertyPath: m_fontStyle
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7649560392048681970, guid: 0f1c8ea66144d0c4a8807d622589e1bd, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4279522716
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
