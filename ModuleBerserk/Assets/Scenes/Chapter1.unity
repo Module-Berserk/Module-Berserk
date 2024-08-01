@@ -1796,11 +1796,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6dfded6a8a69dc34ca3030924f276932, type: 3}
---- !u!1 &301256506 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 806263080925575317, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
-  m_PrefabInstance: {fileID: 8602893245577955615}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &301256507 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9075371731322260689, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
@@ -3059,7 +3054,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -161.40207, y: -13.98125, z: -10}
+  m_LocalPosition: {x: -161.40817, y: -13.98125, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8140,7 +8135,7 @@ PlayableDirector:
   m_InitialTime: 0
   m_SceneBindings:
   - key: {fileID: 7707923880943866448, guid: d793a899c45167a44befc624aa5c653a, type: 2}
-    value: {fileID: 301256506}
+    value: {fileID: 1512143532}
   - key: {fileID: 2920759096898546995, guid: d793a899c45167a44befc624aa5c653a, type: 2}
     value: {fileID: 519420033}
   - key: {fileID: 7801864406708925090, guid: d793a899c45167a44befc624aa5c653a, type: 2}
@@ -9661,6 +9656,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8cb81d8610c6745908992c3e6ec172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1512143532 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7144194537819100856, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+  m_PrefabInstance: {fileID: 8602893245577955615}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1518701298
 GameObject:
   m_ObjectHideFlags: 0
@@ -19587,7 +19587,7 @@ PlayableDirector:
   m_InitialTime: 0
   m_SceneBindings:
   - key: {fileID: 1806884963332887592, guid: b4a5de86665270d4183c4a38e93273c4, type: 2}
-    value: {fileID: 301256506}
+    value: {fileID: 1512143532}
   - key: {fileID: 7292221428619444714, guid: b4a5de86665270d4183c4a38e93273c4, type: 2}
     value: {fileID: 2140924106}
   - key: {fileID: -5236705361791664928, guid: b4a5de86665270d4183c4a38e93273c4, type: 2}
