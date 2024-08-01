@@ -53,7 +53,7 @@ public class PlayerState
     {
         return new PlayerState
         {
-            SpawnPointTag = null,
+            SpawnPointTag = "BossRoomEntrance",
             GearSystemState = GearSystemState.CreateDummyState(),
             Slot1State = ItemSlotState.CreateDummyState(),
             Slot2State = ItemSlotState.CreateDummyState(),

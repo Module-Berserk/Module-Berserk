@@ -32,6 +32,8 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
 
     private void OnDisable()
     {
+        InputManager.InputActions.Common.Escape.performed -= TogglePauseMenu;
+
         continueButton.onClick.RemoveListener(DisablePauseMenu);
         mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClick);
         quitGameButton.onClick.RemoveListener(OnQuitGameButtonClick);
