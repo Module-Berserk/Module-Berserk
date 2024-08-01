@@ -167,4 +167,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeEffectDuration: 0.5
   slowEffectDuration: 3
-  slowRatio: 0.1
+  slowRatio: 0.5
