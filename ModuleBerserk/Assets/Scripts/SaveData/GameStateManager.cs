@@ -24,6 +24,9 @@ public class GameStateManager
             {
                 Debug.Log("Using a dummy GameState for test purpose!");
                 activeGameState = GameState.CreateDummyState();
+
+                // 마치 dummy state를 세이브 데이터에서 불러온 것처럼 활성화된 카메라 등 상태 복원
+                RestoreAllPersistentData();
             }
 
             return activeGameState;
@@ -119,6 +122,6 @@ public class GameStateManager
     public static async UniTask RestoreLastSavePointAsync()
     {
         GameState lastSavePointState = ReadSaveDataFromFile(ActiveGameState.SaveFileName);
-        await GameStateManager.RestoreGameStateAsync(lastSavePointState);
+        await RestoreGameStateAsync(lastSavePointState);
     }
 }
