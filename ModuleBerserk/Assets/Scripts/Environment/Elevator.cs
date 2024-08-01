@@ -245,7 +245,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
     private void ChangeInitialPosition()
     {
-        rb.MovePosition(endPosition);
+        transform.position = endPosition;
         destination = endPosition;
     }
 
