@@ -290,33 +290,65 @@ public class PlatformerMovement : MonoBehaviour
     // 위치 조정이 필요한 충돌이 있었다면 true를, 아무 문제도 없었다면 false를 반환한다.
     private bool ResolveKinematicCollision(Vector3 movement)
     {
-        bool collisionExists = false;
         int numHits = boxCollider.Cast(movement, hits, distance: movement.magnitude);
         for (int i = 0; i < numHits; ++i)
         {
-            // 충돌을 해소할 필요가 없는 경우:
-            // 1. 지금 내가 타고있는 이동 플랫폼과의 충돌
-            // 2. 무기 히트박스 등 나의 자식 오브젝트
-            //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
-            //      자신만의 kinematic rigidbody를 가지고 있음
-            // 3. 충돌을 해소하는 방향으로 이동하는 경우
-            //    * 이 조건이 없으면 벽과 반대 방향으로 걸으려 해도
-            //      충돌이 검출되어서 움직일 수가 없음
-            // 4. 상대가 트리거로 설정된 콜라이더
-            bool isCurrentPlatform = hits[i].transform.gameObject == groundContact.CurrentPlatform;
-            bool isChildObject = hits[i].transform.parent == gameObject.transform;
-            bool isMovingTowardsCollision = Vector3.Dot(hits[i].normal, movement) > 0.001f;
-            bool isTrigger = hits[i].collider.isTrigger;
-
-            if (!isCurrentPlatform && !isMovingTowardsCollision && !isChildObject && !isTrigger)
+            if (NeedCollisionResolution(hits[i], movement))
             {
-                // 충돌을 해소할 수 있는 위치로 이동
-                rb.MovePosition(hits[i].centroid);
-                collisionExists = true;
+                MoveToContactPoint(hits[i].normal, hits[i].collider);
+
+                return true;
             }
         }
 
-        return collisionExists;
+        return false;
+    }
+
+    // kinematic rigidbody 상태에서 충돌을 해소할 필요가 없는 경우:
+    // 1. 지금 내가 타고있는 이동 플랫폼과의 충돌
+    // 2. 무기 히트박스 등 나의 자식 오브젝트
+    //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
+    //      자신만의 kinematic rigidbody를 가지고 있음
+    // 3. 충돌을 해소하는 방향으로 이동하는 경우
+    //    * 이 조건이 없으면 벽과 반대 방향으로 걸으려 해도
+    //      충돌이 검출되어서 움직일 수가 없음
+    // 4. 상대가 트리거로 설정된 콜라이더
+    private bool NeedCollisionResolution(RaycastHit2D hit, Vector2 movement)
+    {
+        bool isCurrentPlatform = hit.transform.gameObject == groundContact.CurrentPlatform;
+        bool isChildObject = hit.transform.parent == gameObject.transform;
+        // bool isMovingTowardsCollision = Vector3.Dot(hit.normal, movement) > 0.001f;
+        bool isTrigger = hit.collider.isTrigger;
+
+        return !isCurrentPlatform /*&& !isMovingTowardsCollision*/ && !isChildObject && !isTrigger;
+    }
+
+    // kinematic rigidbody 상태에서 다른 물체와 충돌했을 때 penetration을 없애주는 함수.
+    //
+    // 작동 원리:
+    // - 내 콜라이더가 normal 방향으로 살짝 이동했다고 치고
+    //   해당 위치에서 normal과 반대 방향으로 raycast
+    //   * 살짝 떨어진 곳에서 내가 상대와 충돌하러 날아오는 상황을 재현
+    // - raycast 자체에는 내가 밟고있는 플랫폼 등 잡다한 결과가 다 들어있으므로
+    //   결과 리스트를 순회하며 내가 찾는 상대 콜라이더와의 RaycastHit2D를 탐색
+    // - 여기에 들어있는 centroid 값이 바로 내가 멈췄어야 할 지점
+    private void MoveToContactPoint(Vector2 collisionNormal, Collider2D other)
+    {
+        const float maxPenetrationDepth = 0.5f;
+        Vector2 origin = rb.position + boxCollider.offset + collisionNormal * maxPenetrationDepth;
+        Vector2 direction = -collisionNormal;
+        RaycastHit2D[] results = Physics2D.BoxCastAll(origin, boxCollider.size, 0f, direction, maxPenetrationDepth);
+
+        foreach (var hit in results)
+        {
+            if (hit.collider == other)
+            {
+                // Debug.Log($"kinematic 충돌: {hit.centroid - (Vector2)transform.position}, normal: {hit.normal}, distance: {hit.distance}", hit.rigidbody.gameObject);
+                Debug.DrawLine(transform.position, hit.centroid - boxCollider.offset);
+                transform.position = hit.centroid - boxCollider.offset;
+                break;
+            }
+        }
     }
 
 
