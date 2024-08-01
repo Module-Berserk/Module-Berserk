@@ -95,7 +95,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     [Header("Fade Effect")]
     // 죽어서 마지막 세이브 포인트로 돌아갈 때 사용할 페이드 아웃 효과
-    [SerializeField] private FadeEffect fadeEffect;
     [SerializeField] private YouDied youDiedUI;
 
 
@@ -1022,10 +1021,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         await youDiedUI.FadeInoutAsync();
 
-        fadeEffect.FadeOut();
-
-        await UniTask.WaitForSeconds(3f);
-
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
@@ -1036,10 +1031,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // TODO: 미션 실패 결과창 표시...?
 
         await youDiedUI.FadeInoutAsync();
-
-        fadeEffect.FadeOut();
-
-        await UniTask.WaitForSeconds(3f);
 
         InputManager.InputActions.Player.Enable();
 

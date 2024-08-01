@@ -30,6 +30,11 @@ public class C1ElevatorLever : Trigger, IInteractable
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void OnDestroy()
+    {
+        cancelOnDestruction.Cancel();
+    }
+
     void IInteractable.StartInteraction()
     {
         // 당기면 잠깐 기다렸다가 원상태로 돌아옴

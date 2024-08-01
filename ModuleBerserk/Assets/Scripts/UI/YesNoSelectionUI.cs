@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // 예/아니오처럼 두 가지 선택지를 제공하는 버튼 UI.
@@ -18,14 +18,26 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
 
     private void Awake()
     {
-        yesButton.onClick.AddListener(() => {
-            OnSelect.Invoke(true); // yes를 눌렀다고 알려줌
-            DisableSelf(); // 선택 끝났으니 자동 비활성화
-        });
-        noButton.onClick.AddListener(() => {
-            OnSelect.Invoke(false); // no를 눌렀다고 알려줌
-            DisableSelf(); // 선택 끝났으니 자동 비활성화
-        });
+        yesButton.onClick.AddListener(OnSelectYes);
+        noButton.onClick.AddListener(OnSelectNo);
+    }
+
+    private void OnSelectYes()
+    {
+        OnSelect.Invoke(true); // yes를 눌렀다고 알려줌
+        DisableSelf(); // 선택 끝났으니 자동 비활성화
+    }
+
+    private void OnSelectNo()
+    {
+        OnSelect.Invoke(false); // no를 눌렀다고 알려줌
+        DisableSelf(); // 선택 끝났으니 자동 비활성화
+    }
+
+    // 뒤로가기 키를 눌러도 no 버튼을 선택한 것과 동일하게 취급
+    private void OnEscapeKeyPress(InputAction.CallbackContext context)
+    {
+        OnSelectNo();
     }
 
     private void DisableSelf()
@@ -46,12 +58,16 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
 
     void IUserInterfaceController.BindInputActions()
     {
+        InputManager.InputActions.Common.Escape.performed += OnEscapeKeyPress;
+
         yesButton.interactable = true;
         noButton.interactable = true;
     }
 
     void IUserInterfaceController.UnbindInputActions()
     {
+        InputManager.InputActions.Common.Escape.performed -= OnEscapeKeyPress;
+
         yesButton.interactable = false;
         noButton.interactable = false;
     }

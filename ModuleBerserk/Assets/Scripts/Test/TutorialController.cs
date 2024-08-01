@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
@@ -8,13 +9,15 @@ using UnityEngine.UI;
 // 행사 끝나면 폐기할 예정.
 public class TutorialController : MonoBehaviour
 {
-    [SerializeField] private FadeEffect fadeEffect;
     [SerializeField] private Image textBackgroundImage;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private GearSystem gearSystem;
     [SerializeField] private GameObject stage1EntranceWall;
 
     static bool isIntroCutscenePlayed = false;
+    
+    // 일시정지 메뉴로 튜토리얼을 중단하고 메인 메뉴로 나갈 때 진행중인 task를 모두 취소함
+    private CancellationTokenSource cancellationTokenSource = new();
 
     private void Start()
     {
@@ -27,9 +30,18 @@ public class TutorialController : MonoBehaviour
         // 죽었다가 부활한 경우
         else
         {
-            fadeEffect.FadeIn();
             gearSystem.enabled = true; // 기어 게이지 ramp up 시작
+            textBackgroundImage.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine); // 페이드인
         }
+    }
+
+    // 미션에서 아예 나가버릴 때 호출됨.
+    // 다른 scene이 로딩되기 전에 tweening이나 비동기 task를 모두 취소함.
+    private void OnDestroy()
+    {
+        text.DOKill();
+        textBackgroundImage.DOKill();
+        cancellationTokenSource.Cancel();
     }
 
     private async UniTask ShowTutorialStartCutsceneAsync()
@@ -37,17 +49,19 @@ public class TutorialController : MonoBehaviour
         InputManager.InputActions.Player.Disable();
 
         // 1. "튜토리얼 메모리를 재생합니다" 화면에 띄우기
+        await UniTask.WaitForSeconds(1f, cancellationToken: cancellationTokenSource.Token);
         text.DOFade(1f, 1f).From(0f).SetEase(Ease.OutSine);
-        textBackgroundImage.DOFade(1f, 1f).From(0f).SetEase(Ease.OutSine);
 
         // 2. 잠깐 기다렸다가 글자 슘기기
-        await UniTask.WaitForSeconds(2f);
+        await UniTask.WaitForSeconds(2f, cancellationToken: cancellationTokenSource.Token);
         text.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
-        textBackgroundImage.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
         
         // 3. 페이드 인
-        await UniTask.WaitForSeconds(2f);
-        fadeEffect.FadeIn();
+        await UniTask.WaitForSeconds(2f, cancellationToken: cancellationTokenSource.Token);
+        textBackgroundImage.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
+
+        // 4. 조작 활성화
+        await UniTask.WaitForSeconds(1f, cancellationToken: cancellationTokenSource.Token);
         gearSystem.enabled = true; // 기어 게이지 ramp up 시작
 
         InputManager.InputActions.Player.Enable();
@@ -65,26 +79,24 @@ public class TutorialController : MonoBehaviour
         InputManager.InputActions.Player.Disable();
 
         // 1. 엘리베이터 움직이는거 잠깐 보여주고 페이드 아웃
-        await UniTask.WaitForSeconds(3f);
-        fadeEffect.FadeOut();
-
-        // 2. 튜토리얼 끝났다고 화면에 띄우기
-        await UniTask.WaitForSeconds(1f);
-        text.text = "메모리 재생이 종료되었습니다\n전투를 개시합니다";
-        text.DOFade(1f, 1f).From(0f).SetEase(Ease.OutSine);
+        await UniTask.WaitForSeconds(3f, cancellationToken: cancellationTokenSource.Token);
         textBackgroundImage.DOFade(1f, 1f).From(0f).SetEase(Ease.OutSine);
 
+        // 2. 튜토리얼 끝났다고 화면에 띄우기
+        await UniTask.WaitForSeconds(1f, cancellationToken: cancellationTokenSource.Token);
+        text.text = "메모리 재생이 종료되었습니다\n전투를 개시합니다";
+        text.DOFade(1f, 1f).From(0f).SetEase(Ease.OutSine);
+
         // 3. 잠깐 기다렸다가 글자 슘기기
-        await UniTask.WaitForSeconds(2f);
+        await UniTask.WaitForSeconds(2f, cancellationToken: cancellationTokenSource.Token);
         text.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
-        textBackgroundImage.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
         
         // 4. 페이드 인
-        await UniTask.WaitForSeconds(2f);
-        fadeEffect.FadeIn();
+        await UniTask.WaitForSeconds(2f, cancellationToken: cancellationTokenSource.Token);
+        textBackgroundImage.DOFade(0f, 1f).From(1f).SetEase(Ease.InSine);
         
         // 5. 엘리베이터 완전히 정차할 때까지 기다렸다가 입구 막기
-        await UniTask.WaitForSeconds(2f);
+        await UniTask.WaitForSeconds(2f, cancellationToken: cancellationTokenSource.Token);
         stage1EntranceWall.SetActive(true);
 
         InputManager.InputActions.Player.Enable();
