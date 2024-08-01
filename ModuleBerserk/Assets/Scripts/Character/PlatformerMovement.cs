@@ -288,6 +288,9 @@ public class PlatformerMovement : MonoBehaviour
     // kinematic rigidbody 상태에서도 마치 dynamic rigidbody인 것처럼
     // 벽 등의 물체와 충돌하는 상황을 해소해주는 함수.
     // 위치 조정이 필요한 충돌이 있었다면 true를, 아무 문제도 없었다면 false를 반환한다.
+    //
+    // Rigidbody2D.Cast()는 잡몹에 달린 주인공 감지 범위로 쓰는 콜라이더까지
+    // 다 포함해서 충돌을 검출해버리므로 반드시 본체의 box collider로만 cast해야 함!
     private bool ResolveKinematicCollision(Vector3 movement)
     {
         int numHits = boxCollider.Cast(movement, hits, distance: movement.magnitude);
@@ -309,18 +312,14 @@ public class PlatformerMovement : MonoBehaviour
     // 2. 무기 히트박스 등 나의 자식 오브젝트
     //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
     //      자신만의 kinematic rigidbody를 가지고 있음
-    // 3. 충돌을 해소하는 방향으로 이동하는 경우
-    //    * 이 조건이 없으면 벽과 반대 방향으로 걸으려 해도
-    //      충돌이 검출되어서 움직일 수가 없음
-    // 4. 상대가 트리거로 설정된 콜라이더
+    // 3. 상대가 트리거로 설정된 콜라이더
     private bool NeedCollisionResolution(RaycastHit2D hit, Vector2 movement)
     {
         bool isCurrentPlatform = hit.transform.gameObject == groundContact.CurrentPlatform;
         bool isChildObject = hit.transform.parent == gameObject.transform;
-        // bool isMovingTowardsCollision = Vector3.Dot(hit.normal, movement) > 0.001f;
         bool isTrigger = hit.collider.isTrigger;
 
-        return !isCurrentPlatform /*&& !isMovingTowardsCollision*/ && !isChildObject && !isTrigger;
+        return !isCurrentPlatform && !isChildObject && !isTrigger;
     }
 
     // kinematic rigidbody 상태에서 다른 물체와 충돌했을 때 penetration을 없애주는 함수.
@@ -343,8 +342,8 @@ public class PlatformerMovement : MonoBehaviour
         {
             if (hit.collider == other)
             {
-                // Debug.Log($"kinematic 충돌: {hit.centroid - (Vector2)transform.position}, normal: {hit.normal}, distance: {hit.distance}", hit.rigidbody.gameObject);
-                Debug.DrawLine(transform.position, hit.centroid - boxCollider.offset);
+                // centroid는 콜라이더의 위치라서 본체 transform의 위치는
+                // 역으로 콜라이더의 offset을 빼줘야 구할 수 있음
                 transform.position = hit.centroid - boxCollider.offset;
                 break;
             }
