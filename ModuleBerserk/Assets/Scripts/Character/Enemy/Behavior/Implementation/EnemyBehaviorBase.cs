@@ -122,6 +122,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         platformerMovement.HandleGroundContact();
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
+        animator.SetFloat("MoveSpeedMultiplier", moveSpeedMultiplier.CurrentValue);
 
         // 순찰 상태
         if (isPatrolling)
