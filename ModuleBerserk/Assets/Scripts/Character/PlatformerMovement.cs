@@ -294,7 +294,7 @@ public class PlatformerMovement : MonoBehaviour
         int numHits = boxCollider.Cast(movement, hits, distance: movement.magnitude);
         for (int i = 0; i < numHits; ++i)
         {
-            // 충돌을 해소할 필요가 없는 경우 세 가지:
+            // 충돌을 해소할 필요가 없는 경우:
             // 1. 지금 내가 타고있는 이동 플랫폼과의 충돌
             // 2. 무기 히트박스 등 나의 자식 오브젝트
             //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
@@ -302,11 +302,13 @@ public class PlatformerMovement : MonoBehaviour
             // 3. 충돌을 해소하는 방향으로 이동하는 경우
             //    * 이 조건이 없으면 벽과 반대 방향으로 걸으려 해도
             //      충돌이 검출되어서 움직일 수가 없음
+            // 4. 상대가 트리거로 설정된 콜라이더
             bool isCurrentPlatform = hits[i].transform.gameObject == groundContact.CurrentPlatform;
             bool isChildObject = hits[i].transform.parent == gameObject.transform;
             bool isMovingTowardsCollision = Vector3.Dot(hits[i].normal, movement) > 0.001f;
+            bool isTrigger = hits[i].collider.isTrigger;
 
-            if (!isCurrentPlatform && !isMovingTowardsCollision && !isChildObject)
+            if (!isCurrentPlatform && !isMovingTowardsCollision && !isChildObject && !isTrigger)
             {
                 // 충돌을 해소할 수 있는 위치로 이동
                 rb.MovePosition(hits[i].centroid);

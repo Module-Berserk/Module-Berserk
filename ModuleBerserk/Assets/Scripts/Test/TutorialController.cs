@@ -12,6 +12,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private Image textBackgroundImage;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private GearSystem gearSystem;
+    [SerializeField] private GameObject stage1EntranceWall;
 
     static bool isIntroCutscenePlayed = false;
 
@@ -81,6 +82,10 @@ public class TutorialController : MonoBehaviour
         // 4. 페이드 인
         await UniTask.WaitForSeconds(2f);
         fadeEffect.FadeIn();
+        
+        // 5. 엘리베이터 완전히 정차할 때까지 기다렸다가 입구 막기
+        await UniTask.WaitForSeconds(2f);
+        stage1EntranceWall.SetActive(true);
 
         InputManager.InputActions.Player.Enable();
     }
