@@ -20,7 +20,7 @@ public class ItemReplacementUI : MonoBehaviour, IUserInterfaceController
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this);
+        UserInterfaceStack.PushUserInterface(this, slot1Button.gameObject);
     }
 
     private void OnDisable()
@@ -32,11 +32,6 @@ public class ItemReplacementUI : MonoBehaviour, IUserInterfaceController
     {
         slot1Button.interactable = true;
         slot2Button.interactable = true;
-
-        var eventSystem = EventSystem.current;
-        eventSystem.enabled = false;
-        eventSystem.SetSelectedGameObject(slot1Button.gameObject);
-        eventSystem.enabled = true;
     }
 
     void IUserInterfaceController.UnbindInputActions()

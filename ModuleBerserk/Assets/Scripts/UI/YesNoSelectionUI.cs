@@ -36,7 +36,7 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this);
+        UserInterfaceStack.PushUserInterface(this, yesButton.gameObject);
     }
 
     private void OnDisable()
@@ -48,8 +48,6 @@ public class YesNoSelectionUI : MonoBehaviour, IUserInterfaceController
     {
         yesButton.interactable = true;
         noButton.interactable = true;
-
-        EventSystem.current.SetSelectedGameObject(yesButton.gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()

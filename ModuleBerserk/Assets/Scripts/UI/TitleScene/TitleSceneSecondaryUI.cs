@@ -14,7 +14,7 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this);
+        UserInterfaceStack.PushUserInterface(this, buttons[0].gameObject);
     }
 
     private void OnDisable()
@@ -28,14 +28,6 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
         {
             button.interactable = true;
         }
-
-        // 타이틀 화면에서 "아무 키나 누르세요"로 뜨는 UI인데
-        // 어째서인지 얘만 UI가 뜨자마자 버튼이 바로 선택되는 버그가 있음...
-        // 버튼 활성화할 때 잠시 입력 비활성화하는 방식으로 막음.
-        var eventSystem = EventSystem.current;
-        eventSystem.enabled = false;
-        eventSystem.SetSelectedGameObject(buttons[0].gameObject);
-        eventSystem.enabled = true;
     }
 
     void IUserInterfaceController.UnbindInputActions()

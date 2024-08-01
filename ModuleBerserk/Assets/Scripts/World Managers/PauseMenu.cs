@@ -35,7 +35,7 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
 
         if (isPaused)
         {
-            UserInterfaceStack.PushUserInterface(this);
+            UserInterfaceStack.PushUserInterface(this, buttons[0].gameObject);
             TimeManager.PauseGame();
 
             // 일시정지를 누를 때 플레이어 입력이 활성화 상태라면 기록해두고 잠깐 비활성화
@@ -65,8 +65,6 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
         {
             button.interactable = true;
         }
-
-        EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()

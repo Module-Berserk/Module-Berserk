@@ -182,8 +182,13 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         UpdateDialogueOptionText();
         AdjustBoxSize();
 
-        // 입력 활성화하고 선택이 끝날 때까지 대기
-        UserInterfaceStack.PushUserInterface(this);
+        // 입력 활성화하고 선택이 끝날 때까지 대기.
+        //
+        // Note:
+        // firstSelectedUIElement라는 파라미터는 유니티의 UI navigation 시스템에
+        // 기본 선택 요소로 넣어줄 UI 요소를 지정해주는 용도인데
+        // 대사창은 버튼같은 유니티 UI를 사용하는게 아니다보니 그냥 null로 설정함
+        UserInterfaceStack.PushUserInterface(this, firstSelectedUIElement: null);
         await UniTask.WaitUntil(() => !isSelectingDialogueOption);
         UserInterfaceStack.PopUserInterface(this);
 

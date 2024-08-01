@@ -48,7 +48,7 @@ public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceControlle
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this);
+        UserInterfaceStack.PushUserInterface(this, buttons[0].gameObject);
     }
 
     private void OnDisable()
@@ -72,8 +72,6 @@ public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceControlle
         {
             button.interactable = true;
         }
-        
-        EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
     }
 
     void IUserInterfaceController.UnbindInputActions()

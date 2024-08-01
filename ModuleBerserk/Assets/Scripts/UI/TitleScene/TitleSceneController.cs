@@ -24,7 +24,9 @@ public class TitleSceneController : MonoBehaviour, IUserInterfaceController
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this);
+        // 타이틀 씬에는 "아무 키나 누르세요" 글씨를 제외하면 실질적인 UI 요소가 없음!
+        // 따라서 UI navigation에 필요한 값인 두 번째 파라미터는 null이어도 된다.
+        UserInterfaceStack.PushUserInterface(this, firstSelectedUIElement: null);
     }
 
     private void OnDisable()
