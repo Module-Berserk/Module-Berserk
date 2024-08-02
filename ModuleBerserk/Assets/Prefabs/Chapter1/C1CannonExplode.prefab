@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7698587392961481623}
   - component: {fileID: 638865432634223623}
   - component: {fileID: 1220849631050328488}
+  - component: {fileID: 4639703241650273}
   - component: {fileID: 4700105827501775286}
   m_Layer: 6
   m_Name: C1CannonExplode
@@ -186,14 +187,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
+  knockbackForce: 0
+  staggerDuration: 0.5
+  delayBetweenDamageTick: 0.1
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4639703241650273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140365216682225963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22f2e4eaea184d4d9e7989edbf25130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4700105827501775286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,7 +229,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_ImpulseDuration: 0.2
     m_ImpulseType: 0
-    m_DissipationRate: 0.25
+    m_DissipationRate: 0.7
     m_RawSignal: {fileID: 0}
     m_AmplitudeGain: 1
     m_FrequencyGain: 1
@@ -244,6 +256,6 @@ MonoBehaviour:
     m_ImpactRadius: 100
     m_DirectionMode: 0
     m_DissipationMode: 2
-    m_DissipationDistance: 100
+    m_DissipationDistance: 10
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 1, y: -1, z: 0}

@@ -10,14 +10,26 @@ using UnityEngine.UI;
 // 화면 해상도, 볼륨, 화면 흔들림 토글 등의 옵션이 있다.
 public class SettingsUI : MonoBehaviour, IUserInterfaceController
 {
+    [SerializeField] private Toggle screenShakeEffectToggle;
     [SerializeField] private Toggle fullScreenToggle;
     [SerializeField] private TMP_Dropdown screenResolutionDropdown;
 
     private List<Resolution> availableResolutions = new();
     private List<string> dropdownOptions = new();
 
+    // 화면 흔들림 효과 적용 여부를 PlayerPrefs에 저장할 때 사용할 키 값.
+    // 값이 0이면 비활성화, 1이면 활성화.
+    const string SCREEN_SHAKE_EFFECT_PLAYER_PREF_KEY = "ScreenShakeEffect";
+
+    public static bool IsScreenShakeEffectEnabled
+    {
+        get => PlayerPrefs.GetInt(SCREEN_SHAKE_EFFECT_PLAYER_PREF_KEY, 1) == 1;
+        set => PlayerPrefs.SetInt(SCREEN_SHAKE_EFFECT_PLAYER_PREF_KEY, value ? 1 : 0);
+    }
+
     private void Awake()
     {
+        screenShakeEffectToggle.isOn = IsScreenShakeEffectEnabled;
         fullScreenToggle.isOn = Screen.fullScreen;
 
         InitializeScreenResolutionDropdown();
@@ -106,7 +118,7 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
 
     private void OnEnable()
     {
-        UserInterfaceStack.PushUserInterface(this, fullScreenToggle.gameObject);
+        UserInterfaceStack.PushUserInterface(this, screenShakeEffectToggle.gameObject);
     }
 
     private void OnDisable()

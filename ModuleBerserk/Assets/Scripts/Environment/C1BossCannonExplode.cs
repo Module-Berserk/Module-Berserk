@@ -2,17 +2,18 @@ using Cinemachine;
 using UnityEngine;
 
 // 챕터1 보스의 박격포 패턴 중 포탄 하나의 폭발 애니메이션 및 히트박스 처리 담당
+[RequireComponent(typeof(ScreenShake))]
 public class C1BossCannonExplode : MonoBehaviour
 {
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float damage;
     [SerializeField] private float cameraShakeForce;
 
-    private CinemachineImpulseSource cameraShake;
+    private ScreenShake screenShake;
 
     private void Awake()
     {
-        cameraShake = GetComponent<CinemachineImpulseSource>();
+        screenShake = GetComponent<ScreenShake>();
         GetComponent<ApplyDamageOnContact>().RawDamage = new CharacterStat(damage);
     }
 
@@ -27,7 +28,7 @@ public class C1BossCannonExplode : MonoBehaviour
 
     public void ApplyCameraShake()
     {
-        cameraShake.GenerateImpulse(cameraShakeForce);
+        screenShake.ApplyScreenShake(cameraShakeForce, duration: 0.2f);
     }
 
     // 폭발 애니메이션이 끝나면 호출되는 함수

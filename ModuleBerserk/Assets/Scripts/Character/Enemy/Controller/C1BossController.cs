@@ -14,6 +14,7 @@ using UnityEngine.UI;
 //
 // 잡몹들과 다르게 보스는 공유하는 특징이
 // 거의 없어서 EnemyBehavior 등을 사용하지 않는다.
+[RequireComponent(typeof(ScreenShake))]
 public class C1BossController : MonoBehaviour, IDestructible
 {
     [Header("Player Detectors")]
@@ -115,7 +116,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private SpriteRenderer spriteRenderer;
     private SpriteRootMotion spriteRootMotion;
     private FlashEffectOnHit flashEffectOnHit;
-    private CinemachineImpulseSource cameraShake;
+    private ScreenShake screenShake;
     private PlayerManager playerManager;
 
     private GroundContact groundContact;
@@ -183,7 +184,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
-        cameraShake = GetComponent<CinemachineImpulseSource>();
+        screenShake = GetComponent<ScreenShake>();
         playerManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>();
 
         groundContact = new GroundContact(rb, boxCollider, groundLayer);
@@ -228,7 +229,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
                 // 상자 파괴 & 화면 진동
                 boxGimmick.DestroyBox();
-                cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
+                screenShake.ApplyScreenShake(dashImpactCameraShakeForce, duration: 0.2f);
 
                 // 기절 상태 부여
                 ApplyBoxGimmickKnockdownAsync().Forget();
@@ -741,7 +742,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         // task cancellation 없이 이 라인에 도달했다는건
         // 박스에 부딛히지 않고 벽에 충돌했다는 뜻이므로
         // 약간의 화면 흔들림과 함께 박스를 리필해줌
-        cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
+        screenShake.ApplyScreenShake(dashImpactCameraShakeForce, duration: 0.2f);
         foreach (var boxGenerator in boxGenerators)
         {
             boxGenerator.TryGenerateNewBox();
@@ -956,5 +957,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     private void PlayCallMinionSFX() {
         int [] callIndices = {40};
         AudioManager.instance.PlaySFX(callIndices);
+
+        // 벽 치는 순간에 호출되는 함수라서 여기서 화면 흔들림도 함께 처리함
+        screenShake.ApplyScreenShake(0.4f, duration: 0.2f);
     }
 }
