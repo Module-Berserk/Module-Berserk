@@ -38,6 +38,11 @@ public class TitleSceneSecondaryUI : MonoBehaviour, IUserInterfaceController
         }
     }
 
+    public void OnQuitGameButtonClick()
+    {
+        Application.Quit();
+    }
+
     public void OnNewGameButtonClick()
     {
         selectSaveDataUI.gameObject.SetActive(true);

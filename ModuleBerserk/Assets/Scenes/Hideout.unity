@@ -1293,6 +1293,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 407068557820791612, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+      propertyPath: m_Name
+      value: Full Screen Toggle
+      objectReference: {fileID: 0}
     - target: {fileID: 509702117968498559, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1312,6 +1316,10 @@ PrefabInstance:
     - target: {fileID: 2444048170128226156, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3658191014965300815, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
+      propertyPath: m_Name
+      value: Continue Button
       objectReference: {fileID: 0}
     - target: {fileID: 5935710868941576054, guid: cebaf47821e85c446b5ee5a1e0d81dad, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1594,7 +1602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: forwardMovementEase
-      value: 33
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: backwardMovementEase
@@ -1602,7 +1610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: forwardMovementDuration
-      value: 0.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: backwardMovementDuration

@@ -14,6 +14,7 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button quitGameButton;
     [SerializeField] private YesNoSelectionUI warningUI;
+    [SerializeField] private SettingsUI settingsUI;
     [SerializeField] private FadeEffect fadeEffect;
 
     // 일시정지가 끝날 때 플레이어 조작 입력을 활성화해야할지 결정하는 플래그.
@@ -24,22 +25,19 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
     private void OnEnable()
     {
         InputManager.InputActions.Common.Escape.performed += TogglePauseMenu;
-
-        continueButton.onClick.AddListener(DisablePauseMenu);
-        mainMenuButton.onClick.AddListener(OnMainMenuButtonClick);
-        quitGameButton.onClick.AddListener(OnQuitGameButtonClick);
     }
 
     private void OnDisable()
     {
         InputManager.InputActions.Common.Escape.performed -= TogglePauseMenu;
-
-        continueButton.onClick.RemoveListener(DisablePauseMenu);
-        mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClick);
-        quitGameButton.onClick.RemoveListener(OnQuitGameButtonClick);
     }
 
-    private void OnMainMenuButtonClick()
+    public void ShowSettingsUI()
+    {
+        settingsUI.gameObject.SetActive(true);
+    }
+
+    public void OnMainMenuButtonClick()
     {
         warningUI.gameObject.SetActive(true);
         warningUI.OnSelect.AddListener((bool isYesClicked) => {
@@ -50,7 +48,7 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
         });
     }
 
-    private void OnQuitGameButtonClick()
+    public void OnQuitGameButtonClick()
     {
         warningUI.gameObject.SetActive(true);
         warningUI.OnSelect.AddListener((bool isYesClicked) => {
@@ -89,7 +87,7 @@ public class PauseMenu : MonoBehaviour, IUserInterfaceController
         }
     }
 
-    private void DisablePauseMenu()
+    public void DisablePauseMenu()
     {
         pauseMenuUI.SetActive(false);
 
