@@ -1581,6 +1581,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: autoLoop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: destinationOffset.x
       value: -5
       objectReference: {fileID: 0}

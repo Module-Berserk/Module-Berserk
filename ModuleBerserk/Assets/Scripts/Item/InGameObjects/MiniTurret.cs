@@ -51,7 +51,7 @@ public class MiniTurret : MonoBehaviour
     private void FireBullet()
     {
         // 총구에서 스폰되도록 위치 조정
-        Vector2 spawnPosition = transform.position + (IsFacingLeft ? Vector3.left : Vector3.right) * 0.1f;
+        Vector2 spawnPosition = transform.position + (IsFacingLeft ? Vector3.left : Vector3.right) * 0.11f;
         var bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
 
         // 속도 설정 (총알은 중력 0으로 설정되어있음!)

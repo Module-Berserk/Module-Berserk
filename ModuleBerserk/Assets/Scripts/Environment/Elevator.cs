@@ -28,6 +28,11 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
     [SerializeField] private float delayBeforeReturning = 3f;
 
 
+    [Header("Automatic Loops")]
+    // 활성화하면 자동으로 무한 왕복을 시작함
+    [SerializeField] private bool autoLoop = false;
+
+
     [Header("Shake Effect")]
     // rigidbody 자체를 흔들면 물리가 불안정하니까 tilemap 등 시각적인 요소만
     // 다 하나의 child object에 넣어두고 얘를 흔드는 방식으로 처리함
@@ -60,6 +65,11 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         screenShake = GetComponent<ScreenShake>();
 
         CalculateMovementBoundary();
+
+        if (autoLoop)
+        {
+            StartBackAndForthMovementAsync(cancelOnDestruction.Token).Forget();
+        }
     }
 
     private void OnDestroy()
@@ -118,7 +128,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         this.destination = destination;
 
         // 1. 이펙트 출력하고 잠시 기다린다
-        PlayerElevatorMoveStartEffect();
+        PlayElevatorMoveStartEffect();
         await UniTask.WaitForSeconds(initialMovementDelay, cancellationToken: cancellationToken);
 
         // 2. 목표 위치로 이동한다
@@ -158,7 +168,12 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         Vector2 destination = IsOnPosition(startPosition) ? endPosition : startPosition;
 
         // 1. 이펙트 출력하고 잠시 기다린다
-        PlayerElevatorMoveStartEffect();
+        // 자동으로 반복해서 움직이는 경우에는 효과 생략.
+        // 왕복할 때마다 이펙트가 생기니까 너무 난잡했음.
+        if (!autoLoop)
+        {
+            PlayElevatorMoveStartEffect();
+        }
         await UniTask.WaitForSeconds(initialMovementDelay, cancellationToken: cancellationToken);
 
         // 2. 목적지로 이동한다
@@ -171,6 +186,12 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         await MoveToAsync(current, cancellationToken);
 
         isActive = false;
+
+        // 자동으로 동작하게 설정되어있으면 무한 루프
+        if (autoLoop)
+        {
+            StartBackAndForthMovementAsync(cancellationToken).Forget();
+        }
     }
 
     private async UniTask MoveToAsync(Vector2 destination, CancellationToken cancellationToken)
@@ -179,11 +200,18 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         float movementDuration = destination == startPosition ? backwardMovementDuration : forwardMovementDuration;
         Ease movementEase = destination == startPosition ? backwardMovementEase : forwardMovementEase;
 
+        // 엘리베이터 작동음 시작
+        int[] elevatorIndices = {14, 15};
+        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
+
+        // 이동 끝날 때까지 대기
         rb.DOMove(destination, movementDuration)
             .SetEase(movementEase)
             .SetUpdate(UpdateType.Fixed);
-
+        
         await UniTask.WaitForSeconds(movementDuration, cancellationToken: cancellationToken);
+        
+        // 앨리베이터 작동음 중지
         AudioManager.instance.StopSFX(elevatorAudioSource);
 
         // 엘리베이터가 "쾅"하고 떨어지는 경우 추가적인 화면 흔들림 효과를 주기 위해 사용됨
@@ -207,12 +235,9 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
     // 이제 곧 엘리베이터 움직인다는 효과 재생
     // ex) "덜그럭" 하는 효과음, 약간의 진동
-    private void PlayerElevatorMoveStartEffect()
+    private void PlayElevatorMoveStartEffect()
     {
-        //SFX
-        int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
-
+        // TODO: 출발 SFX랑 먼지같은 효과 추가하기
         visualElements.DOShakePosition(duration: 0.5f, strength: 0.05f, vibrato: 20);
     }
 
