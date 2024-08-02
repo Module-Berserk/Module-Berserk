@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -9,23 +10,93 @@ using UnityEngine.UI;
 public class SettingsUI : MonoBehaviour, IUserInterfaceController
 {
     [SerializeField] private Toggle fullScreenToggle;
+    [SerializeField] private TMP_Dropdown screenResolutionDropdown;
 
-    private void OnEnable()
+    private List<Resolution> availableResolutions = new();
+    private List<string> dropdownOptions = new();
+
+    private void Start()
     {
-        UserInterfaceStack.PushUserInterface(this, fullScreenToggle.gameObject);
-
         fullScreenToggle.isOn = Screen.fullScreen;
+
+        int currentResolutionIndex = FindAllValidResolutions();
+
+        screenResolutionDropdown.ClearOptions();
+        screenResolutionDropdown.AddOptions(dropdownOptions);
+        screenResolutionDropdown.value = currentResolutionIndex;
+        screenResolutionDropdown.RefreshShownValue();
     }
 
-    private void OnDisable()
+    // IsValidResolution()에서 정의하는 조건에 부합하는 해상도를 모두 찾고
+    // availableResolutions와 dropdownOptions 리스트에 각각 해상도와 해상도 설명 문구를 채워넣는다.
+    // 반환하는 값은 리스트에서 현재 해상도의 인덱스.
+    private int FindAllValidResolutions()
     {
-        UserInterfaceStack.PopUserInterface(this);
+        int currentResolutionIndex = 0;
+        Resolution[] allResolutions = Screen.resolutions;
+        for (int i = 0; i < allResolutions.Length; ++i)
+        {
+            if (IsValidResolution(allResolutions[i]))
+            {
+                AddResolutionOption(allResolutions[i]);
+
+                if (IsCurrentResolution(allResolutions[i]))
+                {
+                    currentResolutionIndex = i;
+                }
+            }
+        }
+
+        return currentResolutionIndex;
+    }
+
+    private bool IsValidResolution(Resolution resolution)
+    {
+        // 주사율이 다른 해상도는 거부
+        if (!resolution.refreshRateRatio.Equals(Screen.currentResolution.refreshRateRatio))
+        {
+            return false;
+        }
+
+        // 16:9 비율이 아니면 거부
+        if (resolution.width / 16 != resolution.height / 9)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void AddResolutionOption(Resolution resolution)
+    {
+        availableResolutions.Add(resolution);
+        dropdownOptions.Add($"{resolution.width} x {resolution.height} ({resolution.refreshRateRatio}hz)");
+    }
+
+    private bool IsCurrentResolution(Resolution resolution)
+    {
+        return resolution.width == Screen.currentResolution.width && resolution.height == Screen.currentResolution.height;
+    }
+
+    public void SetScreenResolution(int resolutionIndex)
+    {
+        var resolution = availableResolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
     public void SetFullScreen(bool isFullScreen)
     {
         Screen.fullScreen = isFullScreen;
-        Debug.Log($"전체화면 변경 결과: {Screen.fullScreen}");
+    }
+
+    private void OnEnable()
+    {
+        UserInterfaceStack.PushUserInterface(this, fullScreenToggle.gameObject);
+    }
+
+    private void OnDisable()
+    {
+        UserInterfaceStack.PopUserInterface(this);
     }
 
     public void HideSettingsUI()
@@ -43,6 +114,7 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
         InputManager.InputActions.Common.Escape.performed += OnEscapeKey;
 
         fullScreenToggle.interactable = true;
+        screenResolutionDropdown.interactable = true;
     }
 
     void IUserInterfaceController.UnbindInputActions()
@@ -50,5 +122,6 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
         InputManager.InputActions.Common.Escape.performed -= OnEscapeKey;
 
         fullScreenToggle.interactable = false;
+        screenResolutionDropdown.interactable = false;
     }
 }
