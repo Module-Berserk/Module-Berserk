@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,15 +16,20 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
     private List<Resolution> availableResolutions = new();
     private List<string> dropdownOptions = new();
 
-    private void Start()
+    private void Awake()
     {
         fullScreenToggle.isOn = Screen.fullScreen;
 
+        InitializeScreenResolutionDropdown();
+    }
+
+    private void InitializeScreenResolutionDropdown()
+    {
         int currentResolutionIndex = FindAllValidResolutions();
 
         screenResolutionDropdown.ClearOptions();
         screenResolutionDropdown.AddOptions(dropdownOptions);
-        screenResolutionDropdown.value = currentResolutionIndex;
+        screenResolutionDropdown.SetValueWithoutNotify(currentResolutionIndex);
         screenResolutionDropdown.RefreshShownValue();
     }
 
@@ -32,6 +38,11 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
     // 반환하는 값은 리스트에서 현재 해상도의 인덱스.
     private int FindAllValidResolutions()
     {
+        availableResolutions.Clear();
+        dropdownOptions.Clear();
+
+        // Debug.Log($"해상도 탐색중... 현재 해상도: {Screen.currentResolution.width} x {Screen.currentResolution.height}");
+
         int currentResolutionIndex = 0;
         Resolution[] allResolutions = Screen.resolutions;
         for (int i = 0; i < allResolutions.Length; ++i)
@@ -42,7 +53,8 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
 
                 if (IsCurrentResolution(allResolutions[i]))
                 {
-                    currentResolutionIndex = i;
+                    currentResolutionIndex = availableResolutions.Count - 1;
+                    Debug.Log($"현재 해상도 인덱스: {currentResolutionIndex}");
                 }
             }
         }
@@ -75,15 +87,18 @@ public class SettingsUI : MonoBehaviour, IUserInterfaceController
 
     private bool IsCurrentResolution(Resolution resolution)
     {
-        return resolution.width == Screen.currentResolution.width && resolution.height == Screen.currentResolution.height;
+        return resolution.width == Screen.width && resolution.height == Screen.height;
     }
 
+    // 해상도 설정 드롭다운에 콜백으로 등록되는 함수.
+    // 현재 해상도를 선택한 옵션에 맞게 바꿔준다.
     public void SetScreenResolution(int resolutionIndex)
     {
         var resolution = availableResolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
+    // 전체화면 토글 버튼에 콜백으로 등록되는 함수
     public void SetFullScreen(bool isFullScreen)
     {
         Screen.fullScreen = isFullScreen;

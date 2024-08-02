@@ -46,6 +46,10 @@ public class TitleSceneController : MonoBehaviour, IUserInterfaceController
 
     private void ShowSecondaryUI(InputAction.CallbackContext context)
     {
+        // 새로하기 또는 이어하기를 눌러서 맵이 로딩되는 도중에
+        // 아무키나 누르면 2차 UI가 다시 나와버리므로 여기서 비활성화
+        enabled = false;
+
         secondaryUI.SetActive(true);
     }
 }
