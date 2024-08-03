@@ -190,7 +190,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact = new GroundContact(rb, boxCollider, groundLayer);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(400f, 0f, 400f);
+        hp = new CharacterStat(4f, 0f, 400f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(10f);
 

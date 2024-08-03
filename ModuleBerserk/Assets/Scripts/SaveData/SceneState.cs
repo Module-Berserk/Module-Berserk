@@ -6,7 +6,13 @@ using UnityEngine.SceneManagement;
 public class SceneState
 {
     public string SceneName;
-    public string ActiveVirtualCameraTag;
+    public string ActiveVirtualCameraGUID;
+
+    // scene 로딩이 끝난 직후에 이동할 위치.
+    // 만약 null이면 맵 상에 존재하는 Player 오브젝트의 위치를 그대로 유지한다.
+    //
+    // 세이브 데이터를 불러올 때 세이브 포인트에서 시작할 수 있도록 해주는 기능임!
+    public string PlayerSpawnPointGUID;
 
     // 죽었을 때 체크포인트에서 부활해 재도전할 수 있는 횟수
     public int RemainingRevives;
@@ -32,6 +38,7 @@ public class SceneState
     public void InitializeSceneState(string sceneName)
     {
         SceneName = sceneName;
+        PlayerSpawnPointGUID = null; // scene에 배치된 플레이어 오브젝트의 기본 위치를 그대로 사용
         RemainingRevives = NUM_REVIVES_PER_MISSION;
         IsBossIntroCutscenePlayed = false;
         DestroyedObjects.Clear();
@@ -44,7 +51,8 @@ public class SceneState
     public SceneState()
     {
         SceneName = "Chapter1"; // TODO: 튜토리얼 스테이지 생기면 해당 scene으로 변경할 것
-        ActiveVirtualCameraTag = "TutorialFollowCamera";
+        ActiveVirtualCameraGUID = null;
+        PlayerSpawnPointGUID = null;
         RemainingRevives = NUM_REVIVES_PER_MISSION;
         IsBossIntroCutscenePlayed = false;
         DestroyedObjects = new HashSet<string>();
@@ -57,11 +65,12 @@ public class SceneState
         return new SceneState
         {
             SceneName = SceneManager.GetActiveScene().name,
-            ActiveVirtualCameraTag = "FollowCamera3",
-            RemainingRevives = NUM_REVIVES_PER_MISSION,
-            DestroyedObjects = new HashSet<string>(),
-            ObjectActivation = new Dictionary<string, bool>(),
-            ItemSpawner = new Dictionary<string, ItemType>(),
+
+            // 카메라와 플레이어 스폰 지점을 초기화하지 않으면 맵의 기본 배치를 그대로 사용함!
+            // 테스트용으로 특정 위치에서 시작하고 싶을 때 사용할 것.
+            ActiveVirtualCameraGUID = "ed63dd83-c2bd-4ad7-9d3a-beeec8d68a07",
+            PlayerSpawnPointGUID = "a06c8741-fdae-458f-8816-6c0bb3595b91",
+            IsBossIntroCutscenePlayed = true,
         };
     }
 }

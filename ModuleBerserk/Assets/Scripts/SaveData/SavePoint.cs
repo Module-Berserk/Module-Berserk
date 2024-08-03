@@ -6,30 +6,22 @@ using UnityEngine;
 //
 // 같이 딸려오는 PlayerContactTrigger의 OnActivate에 TryAutoSave 함수를 추가해주면 된다.
 [RequireComponent(typeof(PlayerContactTrigger))]
-public class SavePoint : MonoBehaviour
+public class SavePoint : ObjectGUID
 {
     // 세이브 데이터를 불러온 직후나 범위 경계면에서 왔다갔다 할 때
     // 저장이 계속 되는 상황을 막기 위해 일정 시간 쿨타임을 부여함.
     private float saveCooltime = 0.1f; // 세이브 포인트 위에서 스폰되자마자 다시 저장되는 것 방지
     private const float DELAY_BETWEEN_AUTO_SAVE = 10f;
 
-    private void Awake()
-    {
-        if (gameObject.CompareTag("Untagged"))
-        {
-            Debug.LogError("세이브 포인트에는 고유한 태그가 할당되어야 함!!!");
-        }
-    }
-
     public void TryAutoSave()
     {
         if (saveCooltime <= 0f)
         {
-            Debug.Log($"세이브 포인트 ({gameObject.tag})에서 저장됨");
+            Debug.Log($"세이브 포인트 ({ID})에서 저장됨");
             saveCooltime = DELAY_BETWEEN_AUTO_SAVE;
 
             // 플레이어가 세이브 포인트에서 스폰되도록 설정
-            GameStateManager.ActiveGameState.PlayerState.SpawnPointTag = gameObject.tag;
+            GameStateManager.ActiveGameState.SceneState.PlayerSpawnPointGUID = ID;
 
             // 나머지 모든 상태 저장
             GameStateManager.SaveActiveGameState();

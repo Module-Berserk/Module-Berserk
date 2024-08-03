@@ -9,6 +9,7 @@ using UnityEngine.Playables;
 [RequireComponent(typeof(Animator))]
 public class C1BossEntranceDoor : SavePoint, IInteractable
 {
+    [Header("Interaction")]
     [SerializeField] private PlayableDirector bossIntroCutscene;
     [SerializeField] private TextMeshPro text;
 
@@ -61,7 +62,7 @@ public class C1BossEntranceDoor : SavePoint, IInteractable
         {
             // 컷신 봤다고 기록
             GameStateManager.ActiveGameState.SceneState.IsBossIntroCutscenePlayed = true;
-            GameStateManager.ActiveGameState.PlayerState.SpawnPointTag = gameObject.tag;
+            GameStateManager.ActiveGameState.SceneState.PlayerSpawnPointGUID = ID;
             GameStateManager.SaveActiveGameState();
 
             bossIntroCutscene.Play();

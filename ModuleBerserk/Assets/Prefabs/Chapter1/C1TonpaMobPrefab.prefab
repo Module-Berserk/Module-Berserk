@@ -232,7 +232,7 @@ Transform:
   m_GameObject: {fileID: 3685673258423367676}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.98, y: -1.39, z: 0.007930527}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -467,11 +467,14 @@ MonoBehaviour:
   defaultAirControl: 0.5
   airControlWhileWallJumping: 0.2
   wallJumpAirControlPenaltyDuration: 0.3
+  evasionDuration: 0.2
+  evasionDistance: 4
+  evasionEase: 9
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  groundContactDistanceThreshold: 0.5
-  wallContactDistanceThreshold: 0.02
+  contactDistanceThreshold: 0.05
+  expectedSlopeAngleInDegrees: 45
   OnLand:
     m_PersistentCalls:
       m_Calls: []

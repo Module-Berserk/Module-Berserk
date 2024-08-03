@@ -23,12 +23,6 @@ public class PlayerState
     public CharacterStat Defense;
     public CharacterStat MoveSpeed;
 
-    // scene 로딩이 끝난 직후에 이동할 위치.
-    // 만약 null이면 맵 상에 존재하는 Player 오브젝트의 위치를 그대로 유지한다.
-    //
-    // 세이브 데이터를 불러올 때 세이브 포인트에서 시작할 수 있도록 해주는 기능임!
-    public string SpawnPointTag;
-
     public GearSystemState GearSystemState;
 
     public ItemSlotState Slot1State;
@@ -43,7 +37,6 @@ public class PlayerState
         AttackSpeed = new CharacterStat(1f, 0f);
         Defense = new CharacterStat(10f, 0f);
         MoveSpeed = new CharacterStat(3.5f, 0f);
-        SpawnPointTag = null;
         GearSystemState = new GearSystemState();
         Slot1State = new ItemSlotState();
         Slot2State = new ItemSlotState();
@@ -53,7 +46,6 @@ public class PlayerState
     {
         return new PlayerState
         {
-            SpawnPointTag = "BossRoomEntrance",
             GearSystemState = GearSystemState.CreateDummyState(),
             Slot1State = ItemSlotState.CreateDummyState(),
             Slot2State = ItemSlotState.CreateDummyState(),

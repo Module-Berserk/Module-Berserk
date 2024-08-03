@@ -46,11 +46,6 @@ public class GroundContact
         slopeContactDistanceThreshold = contactDistanceThreshold + collider.size.x * Mathf.Tan(expectedSlopeAngleInDegrees * Mathf.Deg2Rad);
     }
 
-    public bool IsSteppingOnOneWayPlatform()
-    {
-        return IsGrounded && CurrentPlatform.CompareTag("OneWayPlatform");
-    }
-
     public async UniTask IgnoreCurrentPlatformForDurationAsync(float duration)
     {
         var platformCollider = CurrentPlatform.GetComponent<Collider2D>();

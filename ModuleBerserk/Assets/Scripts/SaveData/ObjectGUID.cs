@@ -8,6 +8,7 @@ using UnityEngine;
 //    ex) 아이템을 이미 먹었는지 Dictionary<string, bool>에 저장
 public class ObjectGUID : MonoBehaviour
 {
+    [Header("Object GUID")]
     public string ID = "";
 
     [ContextMenu("Generate GUID for this object")]

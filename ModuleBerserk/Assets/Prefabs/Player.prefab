@@ -396,7 +396,6 @@ MonoBehaviour:
   emergencyEvasionTimeWindow: 0.3
   grenadeVelocity: {x: 10, y: 2}
   healthBarAnimation: {fileID: 0}
-  fadeEffect: {fileID: 0}
   youDiedUI: {fileID: 0}
 --- !u!114 &4491008500044812834
 MonoBehaviour:
@@ -452,7 +451,7 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  contactDistanceThreshold: 0.02
+  contactDistanceThreshold: 0.05
   expectedSlopeAngleInDegrees: 45
   OnLand:
     m_PersistentCalls:

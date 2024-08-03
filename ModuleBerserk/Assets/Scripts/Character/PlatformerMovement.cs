@@ -67,7 +67,7 @@ public class PlatformerMovement : MonoBehaviour
     // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
     // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급.
-    [SerializeField] private float contactDistanceThreshold = 0.02f;
+    [SerializeField] private float contactDistanceThreshold = 0.05f;
     [SerializeField] private float expectedSlopeAngleInDegrees = 45f;
 
 

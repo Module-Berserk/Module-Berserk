@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 1114015933}
   m_Layer: 3
   m_Name: Platform
-  m_TagString: OneWayPlatform
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1304,7 +1304,7 @@ GameObject:
   - component: {fileID: 1263552030}
   m_Layer: 3
   m_Name: Platform (1)
-  m_TagString: OneWayPlatform
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

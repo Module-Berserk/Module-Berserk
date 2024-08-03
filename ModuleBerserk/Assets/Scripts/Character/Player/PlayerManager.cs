@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -204,9 +205,13 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void InitializePlayerState()
     {
         // 세이브 데이터를 복원한 경우 마지막 세이브 포인트에서 시작해야 함
-        if (playerState.SpawnPointTag != null)
+        string spawnPointGUID = GameStateManager.ActiveGameState.SceneState.PlayerSpawnPointGUID;
+        if (spawnPointGUID != null)
         {
-            GameObject spawnPoint = GameObject.FindGameObjectWithTag(playerState.SpawnPointTag);
+            ObjectGUID spawnPoint = FindObjectsOfType<ObjectGUID>()
+                .Where((obj) => obj.ID == spawnPointGUID)
+                .First();
+            
             Assert.IsNotNull(spawnPoint);
 
             transform.position = spawnPoint.transform.position;

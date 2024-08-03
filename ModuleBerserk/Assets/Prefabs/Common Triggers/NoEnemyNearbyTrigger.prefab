@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6556950893585805274
+--- !u!1 &562406384957258362
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1088591986283978006}
-  - component: {fileID: 8815798260941378337}
-  - component: {fileID: 1675036801375990335}
-  - component: {fileID: 4467628609232485879}
-  - component: {fileID: 2383034328458235580}
-  m_Layer: 6
-  m_Name: FallDamageArea
+  - component: {fileID: 1416247382376730266}
+  - component: {fileID: 7750712272764215965}
+  - component: {fileID: 1260097801473398893}
+  m_Layer: 8
+  m_Name: NoEnemyNearbyTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1088591986283978006
+--- !u!4 &1416247382376730266
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6556950893585805274}
+  m_GameObject: {fileID: 562406384957258362}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -190.8, y: -22.6, z: -9.931658}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &8815798260941378337
+--- !u!61 &7750712272764215965
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6556950893585805274}
+  m_GameObject: {fileID: 562406384957258362}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -78,52 +76,18 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 48.93, y: 6.78}
+  m_Size: {x: 8, y: 2}
   m_EdgeRadius: 0
---- !u!114 &1675036801375990335
+--- !u!114 &1260097801473398893
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6556950893585805274}
+  m_GameObject: {fileID: 562406384957258362}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c67859a73de3e848a8e3b49eb3b5928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 999999
---- !u!114 &4467628609232485879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6556950893585805274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52d55ea53f9255345a0e6d766488414d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DamageSource: 2
-  staggerStrength: 0
-  knockbackForce: 0
-  staggerDuration: 5
-  delayBetweenDamageTick: 5
-  DamageCoefficient: 1
-  OnApplyDamageSuccess:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &2383034328458235580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6556950893585805274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c31bda5f6912ef4ab7b0bdc128b437e, type: 3}
+  m_Script: {fileID: 11500000, guid: d90539c82d5fad24d82e4a5074829780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   OnActivate:
@@ -132,5 +96,6 @@ MonoBehaviour:
   OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
-  isOneTimeTrigger: 0
-  gizmoColor: {r: 1, g: 0, b: 0, a: 0.31764707}
+  objectTag: Enemy
+  allowInitialActivation: 1
+  gizmoColor: {r: 0.3, g: 0.7, b: 1, a: 0.2}

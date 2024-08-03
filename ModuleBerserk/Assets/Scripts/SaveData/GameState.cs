@@ -49,7 +49,6 @@ public class GameState
     // 부활 가능 횟수, 오브젝트 파괴 현황 등 세이브 데이터에 들어갈 내용들의 상태를 초기화해준다.
     public void InitializeStateOnMissionStart()
     {
-        PlayerState.SpawnPointTag = null; // scene에 배치된 플레이어 오브젝트의 기본 위치를 그대로 사용
         PlayerState.GearSystemState.NeedInitialRampUp = true; // 기어 0단계에서 1단계로 쭉 올리는 연출 보여줌
         SceneState.InitializeSceneState(NextMissionSceneName);
     }
@@ -59,7 +58,7 @@ public class GameState
     public void CleanupStateOnMissionEnd()
     {
         // 세이브 포인트 기록 제거
-        PlayerState.SpawnPointTag = null;
+        SceneState.PlayerSpawnPointGUID = null;
 
         // 체력 리필
         PlayerState.HP.ResetToMaxValue();

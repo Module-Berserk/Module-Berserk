@@ -8,6 +8,7 @@ public class C1BoxGimmickGenerator : MonoBehaviour
     [SerializeField] private Transform boxSpawnPosition;
     // 플레이어가 선반을 공격했을 때 얼마나 크게 진동할 것인지
     [SerializeField] private float shakeStrength = 0.05f;
+    [SerializeField] private bool generateBoxOnAwake = false;
 
     private Rigidbody2D rb;
 
@@ -15,8 +16,10 @@ public class C1BoxGimmickGenerator : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        // 선반에는 박스가 이미 준비된 상태로 시작해야 함
-        TryGenerateNewBox();
+        if (generateBoxOnAwake)
+        {
+            TryGenerateNewBox();
+        }
     }
 
     // 박스가 이미 사용되었다면 새로 생성함.

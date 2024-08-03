@@ -198,7 +198,7 @@ MonoBehaviour:
   shouldDropCreditOnDestroy: 0
   playerStunDurationOnDashImpact: 1
   cameraShakeForce: 0.1
-  pushVelocity: 2
+  pushVelocity: 3
 --- !u!114 &937925219785605685
 MonoBehaviour:
   m_ObjectHideFlags: 0

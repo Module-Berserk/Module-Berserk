@@ -473,11 +473,14 @@ MonoBehaviour:
   defaultAirControl: 0.5
   airControlWhileWallJumping: 0.2
   wallJumpAirControlPenaltyDuration: 0.3
+  evasionDuration: 0.2
+  evasionDistance: 4
+  evasionEase: 9
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  groundContactDistanceThreshold: 0.3
-  wallContactDistanceThreshold: 0.02
+  contactDistanceThreshold: 0.05
+  expectedSlopeAngleInDegrees: 45
   OnLand:
     m_PersistentCalls:
       m_Calls: []
