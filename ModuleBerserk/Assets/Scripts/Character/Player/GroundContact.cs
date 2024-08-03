@@ -120,17 +120,16 @@ public class GroundContact
         // 왼쪽과 오른쪽 모두 충돌했다면 둘 중 지면과 거리가 가까운 쪽을 참고함.
         GroundNormal = (rightFootDistance < leftFootDistance) ? result.Hit1.normal : result.Hit2.normal;
 
-        // 땅에 가만히 서있거나 (상대 속도 = 0) 움직이는 엘리베이터에 서있는 경우를
-        // 점프해서 one way platform을 뚫고 올라는 경우(수직 방향 상대 속도 != 0)를 구분.
+        // 땅에 가만히 서있는 경우를 (상대 속도 = 0) 점프해서
+        // one way platform을 뚫고 올라는 경우(수직 방향 상대 속도 != 0)와 구분.
         // 각도가 다른 경사로 사이를 넘어갈 때는 relativeNormalVelocity가 크게 나올 수도 있으니
         // 이전 프레임에 IsGrounded인 경우에는 고려하지 않는다.
         //
         // Note:
         // 경사로를 따라 움직일 수도 있으니 속도의 y축 성분이 아니라
         // 지면과의 normal 벡터 방향 성분을 기준으로 삼아야 함!!!
-        var isElevator = platform.GetComponent<Elevator>() != null;
         var relativeNormalVelocity = Vector2.Dot(GroundNormal, rb.velocity);
-        if (!isElevator && !IsGrounded && relativeNormalVelocity > 0.1f)
+        if (!IsGrounded && relativeNormalVelocity > 0.1f)
         {
             return null;
         }

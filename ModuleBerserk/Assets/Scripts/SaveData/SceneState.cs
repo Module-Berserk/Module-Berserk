@@ -68,8 +68,8 @@ public class SceneState
 
             // 카메라와 플레이어 스폰 지점을 초기화하지 않으면 맵의 기본 배치를 그대로 사용함!
             // 테스트용으로 특정 위치에서 시작하고 싶을 때 사용할 것.
-            ActiveVirtualCameraGUID = "ed63dd83-c2bd-4ad7-9d3a-beeec8d68a07",
-            PlayerSpawnPointGUID = "a06c8741-fdae-458f-8816-6c0bb3595b91",
+            ActiveVirtualCameraGUID = "85906752-5a9b-48b3-8776-7e655f353ca9",
+            PlayerSpawnPointGUID = "1734ae2d-0b97-45ba-9d7b-fe259c641276",
             IsBossIntroCutscenePlayed = true,
         };
     }
