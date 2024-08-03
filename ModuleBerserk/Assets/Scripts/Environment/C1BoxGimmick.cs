@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(ScreenShake))]
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class C1BoxGimmick : MonoBehaviour, IDestructible
 {
     // 일반 맵에서는 부수면 크레딧을 드랍해야 하지만
@@ -107,6 +108,14 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     {
         // 자신이 확실히 파괴될 만큼 데미지를 입힘
         (this as IDestructible).HandleHPDecrease(BOX_GIMMICK_HP);
+
+        // 보스전 선반에서 무한 생성되는 상자가 아니라
+        // 맵에 원래부터 존재하는 상자인 경우는 세이브 데이터에 파괴되었다고 기록
+        var saveState = GetComponent<ObjectExistenceSceneState>();
+        if (saveState.ID != "")
+        {
+            GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
+        }
     }
 
     CharacterStat IDestructible.GetHPStat()
