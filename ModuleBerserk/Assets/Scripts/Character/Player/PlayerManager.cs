@@ -747,7 +747,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             platformerMovement.UpdateMoveVelocity(0f);
         }
 
-        // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
     }
@@ -1075,18 +1074,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
     }
 
     // 챕터1 보스의 돌진 패턴에 맞아 끌려간 뒤 벽에 튕겨나오는 모션.
-    // 그냥 힘만 주면 플레이어 조작에 의해 바로 정지해버리니까 잠시 경직 상태를 부여한다.
-    // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수)
-    public async UniTask ApplyWallReboundAsync(float distance, float duration)
+    // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수).
+    // 그냥 쓰면 조작으로 탈출할 수 있으니까 직전에 ApplyStunForDurationAsync()를 먼저 호출해줘야 함.
+    public void ApplyWallRebound(float distance, float duration)
     {
         platformerMovement.ApplyZeroFriction();
         IsFacingLeft = distance > 0f;
 
+        // 튕겨나오는 모션 시작
         rb.DOMoveX(rb.position.x + distance, duration)
             .SetEase(Ease.OutCubic)
             .SetUpdate(UpdateType.Fixed);
-
-        await ApplyStunForDurationAsync(duration);
     }
 
 

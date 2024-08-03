@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Cinemachine;
 
 
 [RequireComponent(typeof(Animator))]
@@ -90,7 +89,15 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
                 int[] boxIndices = {33};
                 AudioManager.instance.PlaySFX(boxIndices);  
                 DestroyBox();
+
+                // 1. 경직 상태로 전환
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();
+
+                // 2. 살짝 튕겨나오는 효과
+                float reboundDirection = playerManager.IsFacingLeft ? 0.2f : -0.2f;
+                playerManager.ApplyWallRebound(reboundDirection, 0.1f);
+
+                // 3. 화면 흔들림
                 screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
             }
         }

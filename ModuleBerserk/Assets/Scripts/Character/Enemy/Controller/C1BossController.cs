@@ -760,9 +760,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             sliderJoint.enabled = false;
 
-            // 경직과 함께 벽에서 튕겨나오는 효과
+            // 경직
+            playerManager.ApplyStunForDurationAsync(playerWallReboundDuration).Forget();
+
+            // 벽에서 튕겨나오는 효과
             var reboundDistance = playerWallReboundDistance * (IsFacingLeft ? 1f : -1f);
-            playerManager.ApplyWallReboundAsync(reboundDistance, playerWallReboundDuration).Forget();
+            playerManager.ApplyWallRebound(reboundDistance, playerWallReboundDuration);
         }
     }
 
