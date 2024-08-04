@@ -127,7 +127,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPerformed = false; // 공중 공격을 이미 했는지 (점프마다 한 번 가능)
     private int attackCount = 0;
-    private int maxAttackCount = 4; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
+    private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
     // 무적 판정
     private float invincibleDuration = 0f;
@@ -603,8 +603,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAirAttackPerformed = true;
         }
 
-        // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐
-        animator.SetTrigger($"Attack{attackCount}");
+        // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐.
+        // 예외적으로 콤보를 모두 마치고 1타로 돌아오는 경우에는
+        // 시작 모션이 더 자연스럽게 이어지는 Attack1-1로 넘어감.
+        if (IsAttacking() && attackCount == 1)
+        {
+            animator.SetTrigger("Attack1-1");
+        }
+        else
+        {
+            animator.SetTrigger($"Attack{attackCount}");
+        }
 
         spriteRootMotion.HandleAnimationChange();
 
