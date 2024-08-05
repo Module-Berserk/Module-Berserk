@@ -3540,7 +3540,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -162.09344, y: -14.699989, z: -10}
+  m_LocalPosition: {x: -163.3763, y: -14.699989, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31363,7 +31363,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
       propertyPath: audioClips.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
       propertyPath: audioClips.Array.data[0]
@@ -31371,6 +31371,10 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 0d0c79bbb02e03d43b146b35d5c872c9, type: 3}
     - target: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
       propertyPath: audioClips.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 0acc37732b9e69d418bd95a3088a801d, type: 3}
+    - target: {fileID: 3334478216009066876, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
+      propertyPath: audioClips.Array.data[2]
       value: 
       objectReference: {fileID: 8300000, guid: 27a565438d9ba9345bd39efc1edd5a97, type: 3}
     - target: {fileID: 3956904767298739382, guid: 1b17a97fa3ff05a4c962db7a8885a749, type: 3}
