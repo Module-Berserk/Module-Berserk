@@ -12,6 +12,10 @@ public class GroundContact
     public bool IsRightFootGrounded {get; private set;}
     public bool IsInContactWithLeftWall {get; private set;}
     public bool IsInContactWithRightWall {get; private set;}
+    public bool IsSteppingOnMovingPlatform
+    {
+        get => CurrentPlatform != null && CurrentPlatform.CompareTag("MovingPlatform");
+    }
     // IsGrounded가 true인 경우에만 유효한 세부 정보.
     // Normal은 지면과 수직인 윗 방향을, Tangent는 지면과 평행한 오른쪽 방향을 나타냄.
     public Vector2 GroundNormal {get; private set;}

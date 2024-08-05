@@ -96,8 +96,7 @@ public class PlatformerMovement : MonoBehaviour
 
     public bool IsGrounded { get => groundContact.IsGrounded; }
     public bool IsSteppingOnOneWayPlatform { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<PlatformEffector2D>() != null; }
-    public bool IsStickingToElevator { get => transform.parent != null; }
-    public bool IsOnElevator { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<Elevator>(); }
+    public bool IsStickingToMovingPlatform { get => transform.parent != null; }
 
     public UnityEvent OnLand;
 
@@ -124,13 +123,13 @@ public class PlatformerMovement : MonoBehaviour
             }
 
             // 엘리베이터 위에 서있는 동안은 움직임 동기화
-            if (ShouldStickToElevator())
+            if (ShouldStickToMovingPlatform())
             {
-                StartStickingToElevator();
+                StartStickingToMovingPlatform();
             }
-            else if (IsStickingToElevator && !IsOnElevator)
+            else if (IsStickingToMovingPlatform && !groundContact.IsSteppingOnMovingPlatform)
             {
-                StopStickingToElevator();
+                StopStickingToMovingPlatform();
             }
         }
         else
@@ -140,9 +139,9 @@ public class PlatformerMovement : MonoBehaviour
             ClampFallingVelocity();
 
             // 추락하면 엘리베이터와의 이동 동기화 중지
-            if (IsStickingToElevator)
+            if (IsStickingToMovingPlatform)
             {
-                StopStickingToElevator();
+                StopStickingToMovingPlatform();
             }
         }
 
@@ -159,14 +158,14 @@ public class PlatformerMovement : MonoBehaviour
 
     public void FallThroughPlatform()
     {
-        StopStickingToElevator();
+        StopStickingToMovingPlatform();
         groundContact.PreventTestForDuration(0.2f);
         groundContact.IgnoreCurrentPlatformForDurationAsync(0.5f).Forget();
     }
 
-    private bool ShouldStickToElevator()
+    private bool ShouldStickToMovingPlatform()
     {
-        return !IsStickingToElevator && groundContact.CurrentPlatform.GetComponent<Elevator>();
+        return !IsStickingToMovingPlatform && groundContact.IsSteppingOnMovingPlatform;
     }
 
     // 엘리베이터 위로 올라가는 순간 한 번 호출되는 함수로
@@ -181,15 +180,15 @@ public class PlatformerMovement : MonoBehaviour
     // 이를 해결하기 위해 엘리베이터처럼 이동하는 플랫폼 위에 있는 기간에 한해
     // 아예 rigidbody를 kinematic으로 만들어버리고
     // velocity에 의한 이동을 localPosition의 이동으로 치환함.
-    private void StartStickingToElevator()
+    private void StartStickingToMovingPlatform()
     {
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.transform.SetParent(groundContact.CurrentPlatform.transform);
     }
 
     // 엘리베이터 위에서 벗어났을 때 움직임 동기화 설정을 원래대로 돌려놓음.
-    // 이런 작업이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
-    private void StopStickingToElevator()
+    // 이런 작업이 필요한 이유는 StartStickingToMovingPlatform()의 주석 참고.
+    private void StopStickingToMovingPlatform()
     {
         rb.transform.SetParent(null);
         rb.bodyType = RigidbodyType2D.Dynamic;
@@ -513,7 +512,7 @@ public class PlatformerMovement : MonoBehaviour
     {
         // 혹시 엘리베이터 위에 있었다면 움직임을 동기화하는 기능이
         // 점프를 방해하게 되니 이를 먼저 취소해줘야 함
-        StopStickingToElevator();
+        StopStickingToMovingPlatform();
 
         // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
         if (shouldWallJump)
@@ -566,9 +565,9 @@ public class PlatformerMovement : MonoBehaviour
     {
         // 엘리베이터 위에 있으면 kinematic rigidbody로 변하므로
         // 이대로 두면 벽을 뚫고 지나가버릴 위험이 있음!
-        if (IsStickingToElevator)
+        if (IsStickingToMovingPlatform)
         {
-            StopStickingToElevator();
+            StopStickingToMovingPlatform();
         }
 
         // 회피 도중에는 추락 및 넉백 x

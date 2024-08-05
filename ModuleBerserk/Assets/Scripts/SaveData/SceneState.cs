@@ -67,9 +67,10 @@ public class SceneState
             SceneName = SceneManager.GetActiveScene().name,
 
             // 카메라와 플레이어 스폰 지점을 초기화하지 않으면 맵의 기본 배치를 그대로 사용함!
-            // 테스트용으로 특정 위치에서 시작하고 싶을 때 사용할 것.
-            // ActiveVirtualCameraGUID = "28c72c0e-d6c1-4264-86ea-be653e3367b7",
-            // PlayerSpawnPointGUID = "3b7b9ad5-7024-4440-b168-c4a533eb1cc6",
+            // 테스트용으로 특정 위치에서 시작하고 싶을 때 주석 풀고
+            // 원하는 세이브 포인트와 Follow Camera의 GUID를 여기에 복붙해서 사용할 것.
+            ActiveVirtualCameraGUID = "85906752-5a9b-48b3-8776-7e655f353ca9",
+            PlayerSpawnPointGUID = "a3f472cb-689e-439e-926a-efc978da4b25",
             IsBossIntroCutscenePlayed = true,
         };
     }
