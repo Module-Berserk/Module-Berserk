@@ -477,10 +477,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
-        if (gearSystem.IsNextGearLevelReady())
+        // if (gearSystem.IsNextGearLevelReady())
         {
-            gearSystem.IncreaseGearLevel();
-            
+            // gearSystem.IncreaseGearLevel();
+
             PerformGearIncreaseAttack();
         }
     }

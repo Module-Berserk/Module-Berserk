@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 65d366c3871a4c141bdc0515e7c432b2
+guid: 41eeca5b57891e74abcc9cb70f1fbc94
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 79251f2544b082c4395aea2b4da2e583
-      internalID: -1173207004
+      spriteID: fc65685556f5ba34587c4bc4058ce031
+      internalID: 294487679
       vertices: []
       indices: 
       edges: []
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77e22e6e0f448424493d12161a268577
-      internalID: -1130587378
+      spriteID: e32407714d4e7e1498f54cd21f38f03e
+      internalID: -300766314
       vertices: []
       indices: 
       edges: []
@@ -166,8 +166,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 902ef33d2308c9c45bda2018131ea1c7
-      internalID: -35889049
+      spriteID: 03b5e92fcc024c649b9d629f6877f1bc
+      internalID: -610785097
       vertices: []
       indices: 
       edges: []
@@ -187,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 062e98d11de430c4bb3c07c82fde866c
-      internalID: -796984964
+      spriteID: 93e16d36efcd5e341a1c239c63b60967
+      internalID: 565916624
       vertices: []
       indices: 
       edges: []
@@ -208,8 +208,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f1e132af0b4afe74581223e53d8468ab
-      internalID: 602360201
+      spriteID: 49bfb7ab71251ec429237f354385be21
+      internalID: 1425574805
       vertices: []
       indices: 
       edges: []
@@ -229,8 +229,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 84be23a340e5ba24baa55488a432cfb1
-      internalID: -1463840543
+      spriteID: 8aec928568c5ba6499956e6c715ecf3c
+      internalID: 1381646324
       vertices: []
       indices: 
       edges: []
@@ -250,8 +250,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 292ad78fc4677c341b7249c2dde08f58
-      internalID: -1752392562
+      spriteID: c1494cb27fab1ab479b2ff431b90dff3
+      internalID: -1981034087
       vertices: []
       indices: 
       edges: []
@@ -271,8 +271,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 168261fdaf875c24bba8f22c449ffd74
-      internalID: -897437676
+      spriteID: e7b005aadbda2214b92d94d77e3b1db1
+      internalID: -2107098669
       vertices: []
       indices: 
       edges: []
@@ -292,8 +292,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bdf03a254c5ea0445816c2247edbb077
-      internalID: 1404670517
+      spriteID: aa04159553b3675438dd0edc1d3cec4d
+      internalID: 1525133401
       vertices: []
       indices: 
       edges: []
@@ -313,8 +313,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 83ba6e2d3be84bb4786197ef582ef8ab
-      internalID: 1086798285
+      spriteID: 8c63ce54450efa643a714c96e4ef8689
+      internalID: 600725485
       vertices: []
       indices: 
       edges: []
@@ -328,14 +328,14 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 9
-      pivot: {x: 0.484375, y: 0.5}
+      pivot: {x: 0.4765625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c1eda055971fbfc4189e7e63a1be438c
-      internalID: 692168394
+      spriteID: 473c5b4fd52ae7a46b10154ccfd925b0
+      internalID: -59206069
       vertices: []
       indices: 
       edges: []
@@ -349,14 +349,14 @@ TextureImporter:
         width: 128
         height: 84
       alignment: 9
-      pivot: {x: 0.484375, y: 0.5}
+      pivot: {x: 0.4765625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 154a97fdaf4341a40a2552e6c2315b41
-      internalID: 1430552819
+      spriteID: 3798b7d2052d1dc42bf9e6a6fe4f4cdc
+      internalID: 1396785722
       vertices: []
       indices: 
       edges: []
@@ -376,8 +376,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: faeb5d88218ff7f49963db02bc199671
-      internalID: -348666465
+      spriteID: bebcd2465277bfb4ea187bda4613d481
+      internalID: 1627233048
       vertices: []
       indices: 
       edges: []
@@ -397,8 +397,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b1b03f8c67c04814fb88760e99a75ff0
-      internalID: -467485893
+      spriteID: f0bc195e5a383e34fb99731c7a966138
+      internalID: 104165370
       vertices: []
       indices: 
       edges: []
@@ -418,8 +418,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20276d160eab3c94a93cd78bf0617566
-      internalID: 89338119
+      spriteID: 5849f24f570b07b49af5c51b6f07ce48
+      internalID: -1491708449
       vertices: []
       indices: 
       edges: []
@@ -439,8 +439,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e18fea02a4117e149a2c62622992610b
-      internalID: 53556579
+      spriteID: 08b7529792f4f3543bc998f53fe99809
+      internalID: 1303665565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_gear_increase_atk-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 128
+        height: 84
+      alignment: 9
+      pivot: {x: 0.484375, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28e0a8fe26296a3458506e02ad5e18c5
+      internalID: 994979107
       vertices: []
       indices: 
       edges: []
@@ -456,22 +477,23 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player_gear_increase_atk-Sheet_0: -1173207004
-      player_gear_increase_atk-Sheet_1: -1130587378
-      player_gear_increase_atk-Sheet_10: 692168394
-      player_gear_increase_atk-Sheet_11: 1430552819
-      player_gear_increase_atk-Sheet_12: -348666465
-      player_gear_increase_atk-Sheet_13: -467485893
-      player_gear_increase_atk-Sheet_14: 89338119
-      player_gear_increase_atk-Sheet_15: 53556579
-      player_gear_increase_atk-Sheet_2: -35889049
-      player_gear_increase_atk-Sheet_3: -796984964
-      player_gear_increase_atk-Sheet_4: 602360201
-      player_gear_increase_atk-Sheet_5: -1463840543
-      player_gear_increase_atk-Sheet_6: -1752392562
-      player_gear_increase_atk-Sheet_7: -897437676
-      player_gear_increase_atk-Sheet_8: 1404670517
-      player_gear_increase_atk-Sheet_9: 1086798285
+      player_gear_increase_atk-Sheet_0: 294487679
+      player_gear_increase_atk-Sheet_1: -300766314
+      player_gear_increase_atk-Sheet_10: -59206069
+      player_gear_increase_atk-Sheet_11: 1396785722
+      player_gear_increase_atk-Sheet_12: 1627233048
+      player_gear_increase_atk-Sheet_13: 104165370
+      player_gear_increase_atk-Sheet_14: -1491708449
+      player_gear_increase_atk-Sheet_15: 1303665565
+      player_gear_increase_atk-Sheet_16: 994979107
+      player_gear_increase_atk-Sheet_2: -610785097
+      player_gear_increase_atk-Sheet_3: 565916624
+      player_gear_increase_atk-Sheet_4: 1425574805
+      player_gear_increase_atk-Sheet_5: 1381646324
+      player_gear_increase_atk-Sheet_6: -1981034087
+      player_gear_increase_atk-Sheet_7: -2107098669
+      player_gear_increase_atk-Sheet_8: 1525133401
+      player_gear_increase_atk-Sheet_9: 600725485
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
