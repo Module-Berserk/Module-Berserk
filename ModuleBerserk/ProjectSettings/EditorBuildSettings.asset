@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 737f81cbdbc920740b37a95ed85edd87
+  - enabled: 1
     path: Assets/Scenes/Hideout.unity
     guid: 6c2ac60d63ab861449203f52d2e8333f
   - enabled: 1

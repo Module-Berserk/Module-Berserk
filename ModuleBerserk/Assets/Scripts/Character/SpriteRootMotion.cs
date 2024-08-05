@@ -33,10 +33,9 @@ public class SpriteRootMotion : MonoBehaviour
     //    => 이제 애니메이션 재생해도 플레이어는 제자리에 있는 것처럼 보임
     // 2. 스프라이트 상의 이동을 실제 플레이어 오브젝트의 이동으로 변환하기 위해 pivot 변화량을 계산
     //    => pivot 변화량에 비례해 velocity를 부여해서 원본 에셋의 이동하는 느낌을 물리적으로 재현
-    public void ApplyVelocity(bool isFacingLeft)
+    public float CalculateHorizontalVelocity(bool isFacingLeft)
     {
         float currSpritePivotX = spriteRenderer.sprite.pivot.x;
-        float verticalVelocity = rb.velocity.y;
 
         // 모션이 방금 바뀐 경우에는 기준으로 삼아야 할 pivot 값을 아직 모르니까
         // 루트 모션 적용은 스킵하고 prevSpritePivotX 값만 갱신함.
@@ -44,22 +43,23 @@ public class SpriteRootMotion : MonoBehaviour
         if (numFramesDisableRootMotion > 0)
         {
             numFramesDisableRootMotion--;
-            rb.velocity =  new Vector2(0f, verticalVelocity);
+            prevSpritePivotX = currSpritePivotX;
+
+            return 0f;
         }
         else
         {
             // 스프라이트의 pivot이 커졌다는 것은 플레이어의 중심 위치가
             // 오른쪽으로 이동했다는 뜻이므로 오른쪽 방향으로 속도를 주면 됨.
-            float rootMotion = currSpritePivotX - prevSpritePivotX;
+            float numPixelsMoved = currSpritePivotX - prevSpritePivotX;
+            
+            prevSpritePivotX = currSpritePivotX;
 
             // 스프라이트는 항상 오른쪽만 바라보니까 루트 모션도 항상 오른쪽으로만 나옴.
             // 실제 바라보는 방향으로 이동할 수 있도록 왼쪽 또는 오른쪽 벡터를 선택함.
             // 마지막에 곱하는 상수는 원본 애니메이션과 비슷한 이동 거리가 나오도록 실험적으로 구한 수치.
-            float horizontalVelocity = (isFacingLeft ? -1f : 1f) * rootMotion * motionScale;
-            rb.velocity =  new Vector2(horizontalVelocity, verticalVelocity);
+            return (isFacingLeft ? -1f : 1f) * numPixelsMoved * motionScale;
         }
-
-        prevSpritePivotX = currSpritePivotX;
     }
 
     // 애니메이션의 pivot 변화로 루트모션을

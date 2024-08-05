@@ -6,6 +6,6 @@ public class StunGrenadeMainProjectile : ExplodingProjectileBase
 
     protected override void OnExplosion(Collision2D other)
     {
-        Instantiate(explosionPrefab, other.contacts[0].point, Quaternion.identity);
+        Instantiate(explosionPrefab, other.GetContact(0).point, Quaternion.identity);
     }
 }

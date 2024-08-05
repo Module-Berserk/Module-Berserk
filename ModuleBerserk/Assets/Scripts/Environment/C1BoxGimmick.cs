@@ -1,12 +1,12 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Cinemachine;
 
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(ScreenShake))]
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class C1BoxGimmick : MonoBehaviour, IDestructible
 {
     // 일반 맵에서는 부수면 크레딧을 드랍해야 하지만
@@ -78,7 +78,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.contacts[0].normal, Vector2.up), 0f);
+        bool isCollisionHorizontal = Mathf.Approximately(Vector2.Dot(other.GetContact(0).normal, Vector2.up), 0f);
         if (other.gameObject.CompareTag("Player") && isCollisionHorizontal)
         {
             var playerManager = other.gameObject.GetComponent<PlayerManager>();
@@ -90,7 +90,15 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
                 int[] boxIndices = {33};
                 AudioManager.instance.PlaySFX(boxIndices);  
                 DestroyBox();
+
+                // 1. 경직 상태로 전환
                 playerManager.ApplyStunForDurationAsync(playerStunDurationOnDashImpact).Forget();
+
+                // 2. 살짝 튕겨나오는 효과
+                float reboundDirection = playerManager.IsFacingLeft ? 0.2f : -0.2f;
+                playerManager.ApplyWallRebound(reboundDirection, 0.1f);
+
+                // 3. 화면 흔들림
                 screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
             }
         }
@@ -100,6 +108,14 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
     {
         // 자신이 확실히 파괴될 만큼 데미지를 입힘
         (this as IDestructible).HandleHPDecrease(BOX_GIMMICK_HP);
+
+        // 보스전 선반에서 무한 생성되는 상자가 아니라
+        // 맵에 원래부터 존재하는 상자인 경우는 세이브 데이터에 파괴되었다고 기록
+        var saveState = GetComponent<ObjectExistenceSceneState>();
+        if (saveState.ID != "")
+        {
+            GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
+        }
     }
 
     CharacterStat IDestructible.GetHPStat()

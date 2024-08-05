@@ -1,7 +1,31 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
+// 경사로 이동, 엘리베이터 위에서 속도 동기화 등
+// 각종 골치아픈 이동 로직을 담당하는 컴포넌트.
+// 주인공과 적 모두 이 컴포넌트를 통해 이동한다.
+//
+// 크게 보면 두 가지 방식으로 작동한다.
+//
+// 1. 정적인 플랫폼 위에 있는 상황
+//    - dynamic rigidbody + velocity 기반 이동
+//    - 자동으로 제공되는 지형 충돌을 최대한 이용함
+//    - 평소에는 공중에서나 평지에서나 일정한 속도로 이동할 수 있도록
+//      마찰력을 0으로 만들지만, 정지한 상황에서는 경사로에서도
+//      멈춰있도록 아아아아주 높은 마찰력을 사용하도록 한다,
+//
+// 2. 동적인 플랫폼 위에 있는 상황
+//    - kinematic rigidbody + localPosition 기반 이동
+//    - 일시적으로 캐릭터가 플랫폼의 자식 오브젝트로 들어가게 된다
+//    - kinematic rigidbody는 hierarchy상의 부모 오브젝트가
+//      움직이면 자신도 같이 움직이기 때문에 플랫폼의 이동 속도와
+//      캐릭터의 이동 속도가 자동으로 동기화됨.
+//      dynamic rigidbody는 이런 특성이 없어서 자식으로 넣어줘도 차이 x
+//    - 대신 velocity나 force 기반의 움직임이 전혀 먹히지 않으므로
+//      velocity 값을 보고 localPosition을 직접 변경해줘야 함
 public class PlatformerMovement : MonoBehaviour
 {
     [Header("Walk / Run")]
@@ -32,18 +56,23 @@ public class PlatformerMovement : MonoBehaviour
     // wall jump 이후 defaultAirControl 대신 airControlWhileWallJumping을 적용할 기간
     [SerializeField, Range(0f, 1f)] private float wallJumpAirControlPenaltyDuration = 0.3f;
 
+    
+    [Header("Evasion")]
+    [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
+    [SerializeField] private float evasionDistance = 4f;
+    [SerializeField] private Ease evasionEase = Ease.OutCubic;
+
 
     [Header("Ground Contact")]
     // 땅으로 취급할 layer를 모두 에디터에서 지정해줘야 함!
     [SerializeField] private LayerMask groundLayerMask;
     // 콜라이더로부터 이 거리보다 가까우면 접촉 중이라고 취급.
-    [SerializeField] private float groundContactDistanceThreshold = 0.02f;
-    [SerializeField] private float wallContactDistanceThreshold = 0.02f;
+    [SerializeField] private float contactDistanceThreshold = 0.05f;
+    [SerializeField] private float expectedSlopeAngleInDegrees = 45f;
 
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
-    private SliderJoint2D sliderJoint;
     // 지면 접촉 테스트 관리자
     private GroundContact groundContact;
     // 땅에서 떨어진 시점부터 Time.deltaTime을 누적하는 카운터로,
@@ -67,7 +96,7 @@ public class PlatformerMovement : MonoBehaviour
 
     public bool IsGrounded { get => groundContact.IsGrounded; }
     public bool IsSteppingOnOneWayPlatform { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<PlatformEffector2D>() != null; }
-    public bool IsStickingToElevator { get => sliderJoint.enabled; }
+    public bool IsStickingToElevator { get => transform.parent != null; }
     public bool IsOnElevator { get => groundContact.IsGrounded && groundContact.CurrentPlatform.GetComponent<Elevator>(); }
 
     public UnityEvent OnLand;
@@ -76,9 +105,8 @@ public class PlatformerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        sliderJoint = GetComponent<SliderJoint2D>();
 
-        groundContact = new(rb, boxCollider, groundLayerMask, groundContactDistanceThreshold, wallContactDistanceThreshold);
+        groundContact = new(rb, boxCollider, groundLayerMask, contactDistanceThreshold, expectedSlopeAngleInDegrees);
         airControl = defaultAirControl;
     }
 
@@ -95,7 +123,7 @@ public class PlatformerMovement : MonoBehaviour
                 ResetJumpStates();
             }
 
-            // 엘리베이터 위에 서있는 동안은 slider joint로 수직 움직임 동기화
+            // 엘리베이터 위에 서있는 동안은 움직임 동기화
             if (ShouldStickToElevator())
             {
                 StartStickingToElevator();
@@ -111,7 +139,7 @@ public class PlatformerMovement : MonoBehaviour
             ApplyDynamicGravity();
             ClampFallingVelocity();
 
-            // 추락하면 slider joint 비활성화
+            // 추락하면 엘리베이터와의 이동 동기화 중지
             if (IsStickingToElevator)
             {
                 StopStickingToElevator();
@@ -138,27 +166,33 @@ public class PlatformerMovement : MonoBehaviour
 
     private bool ShouldStickToElevator()
     {
-        return !sliderJoint.enabled && groundContact.CurrentPlatform.GetComponent<Elevator>();
+        return !IsStickingToElevator && groundContact.CurrentPlatform.GetComponent<Elevator>();
     }
 
-    // IsGrounded가 true인 경우 매 프레임 호출되는 함수로,
-    // 밟고 있는 플랫폼이 엘리베이터인 경우 slider joint를 사용해
-    // 엘리베이터와 나 사이에 수평 움직임만 가능하도록 제한한다.
+    // 엘리베이터 위로 올라가는 순간 한 번 호출되는 함수로
+    // 엘리베이터의 이동과 캐릭터의 이동을 동기화하도록 설정함.
     //
-    // 아래로 움직이는 엘리베이터의 이동 속도를 중력이
-    // 바로 따라잡지 못해 낙하와 착지를 반복하는 현상을 막아줌.
+    // dynamic rigidbody는 완전히 독립적인 존재라서
+    // 오브젝트의 부모-자식 관계가 이동에 영향을 주지 않음.
+    //
+    // 이는 캐릭터가 엘리베이터 위에서 서있거나 이동하는 것을 이상하게 만듦.
+    // ex) 아래로 움직이는 엘리베이터의 이동 속도를 중력이 바로 따라잡지 못해 낙하와 착지를 반복
+    //
+    // 이를 해결하기 위해 엘리베이터처럼 이동하는 플랫폼 위에 있는 기간에 한해
+    // 아예 rigidbody를 kinematic으로 만들어버리고
+    // velocity에 의한 이동을 localPosition의 이동으로 치환함.
     private void StartStickingToElevator()
     {
-        sliderJoint.enabled = true;
-        sliderJoint.connectedBody = groundContact.CurrentPlatform.GetComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.transform.SetParent(groundContact.CurrentPlatform.transform);
     }
 
-    // 엘리베이터 위에서 벗어났을 때 slider joint 설정을 원래대로 돌려놓음.
-    // joint 설정이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
+    // 엘리베이터 위에서 벗어났을 때 움직임 동기화 설정을 원래대로 돌려놓음.
+    // 이런 작업이 필요한 이유는 HandleStickingToElevator()의 주석 참고.
     private void StopStickingToElevator()
     {
-        sliderJoint.enabled = false;
-        sliderJoint.connectedBody = null;
+        rb.transform.SetParent(null);
+        rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
     private void HandleCoyoteTime()
@@ -207,13 +241,117 @@ public class PlatformerMovement : MonoBehaviour
         rb.gravityScale = defaultGravityScale;
     }
 
-    // 지면에 서있는 경우는 지면과 평행하게, 공중인 경우는 그냥 좌우로 이동.
+    // 원하는 가로축 목표 속도를 넣어주면 부드럽게 가속/감속하도록 만듦.
+    // Case 1) 지면에 서있는 경우 => 지면과 평행한 방향으로 이동
+    // Case 2) 공중에 있는 경우 => 수직 속도는 유지하고 수평 속도만 조정
     //
     // Note:
     // 경사로에 있는 경우 GroundTangent가 수평이 아니다!
     // 이 상황에서 수평으로 움직이면 낙하-착지를 반복하게 될 수 있으므로
     // 지면과 평행하게 움직여주는게 중요함.
-    public void UpdateMoveVelocity(float desiredSpeed)
+    public void UpdateMoveVelocity(float desiredSpeed, bool skipAcceleration = false)
+    {
+        // 목표 속도에 부드럽게 도달하도록 가속/감속한 속도를 계산.
+        rb.velocity = CalculateUpdatedVelocity(desiredSpeed, skipAcceleration);
+
+        if (rb.bodyType == RigidbodyType2D.Kinematic)
+        {
+            MoveAsKinematicBody();
+        }
+    }
+
+    // 엘리베이터처럼 동적인 플랫폼 위에 서있는 경우 플랫폼과
+    // 속도를 동기화하기 위해 kinematic rigidbody로 동작하게 되는데,
+    // 이러면 평소에 기본으로 처리되던 벽과의 충돌이나 velocity를 통한 이동이 먹히지 않음!
+    // ex) kinematic 상태에서는 벽을 다 뚫고 지나감
+    //
+    // 그래서 수동으로 내가 탑승중인 플랫폼 이외의 벽과 충돌했는지 확인하고
+    // 만약 그렇다면 뚫고 가지 못하도록 충돌이 일어난 지점으로 옮겨줘야 함.
+    // velocity에 따른 이동은 충돌이 없는 경우에만 처리됨.
+    private void MoveAsKinematicBody()
+    {
+        Vector3 movement = rb.velocity * Time.fixedDeltaTime;
+
+        // 충돌 검사 도중에 아무 문제도 없는 경우에만 계획대로 움직임
+        bool collisionExists = ResolveKinematicCollision(movement);
+        if (!collisionExists)
+        {
+            transform.localPosition += movement;
+        }
+    }
+
+    // ResolveKinematicCollision() 함수에서 BoxCollider2D.Cast()의
+    // 결과를 저장하는 배열로, documentation에 따르면 매번 새로운 배열을 할당하지
+    // 않고 미리 만들어둔 버퍼를 재사용하는 방식이라서 가비지 콜렉션 부담을 줄여준다고 함...
+    private RaycastHit2D[] hits = new RaycastHit2D[5];
+
+    // kinematic rigidbody 상태에서도 마치 dynamic rigidbody인 것처럼
+    // 벽 등의 물체와 충돌하는 상황을 해소해주는 함수.
+    // 위치 조정이 필요한 충돌이 있었다면 true를, 아무 문제도 없었다면 false를 반환한다.
+    //
+    // Rigidbody2D.Cast()는 잡몹에 달린 주인공 감지 범위로 쓰는 콜라이더까지
+    // 다 포함해서 충돌을 검출해버리므로 반드시 본체의 box collider로만 cast해야 함!
+    private bool ResolveKinematicCollision(Vector3 movement)
+    {
+        int numHits = boxCollider.Cast(movement, hits, distance: movement.magnitude);
+        for (int i = 0; i < numHits; ++i)
+        {
+            if (NeedCollisionResolution(hits[i], movement))
+            {
+                MoveToContactPoint(hits[i].normal, hits[i].collider);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // kinematic rigidbody 상태에서 충돌을 해소할 필요가 없는 경우:
+    // 1. 지금 내가 타고있는 이동 플랫폼과의 충돌
+    // 2. 무기 히트박스 등 나의 자식 오브젝트
+    //    * 히트박스는 여러개의 콜라이더를 보유하기 위해
+    //      자신만의 kinematic rigidbody를 가지고 있음
+    // 3. 상대가 트리거로 설정된 콜라이더
+    private bool NeedCollisionResolution(RaycastHit2D hit, Vector2 movement)
+    {
+        bool isCurrentPlatform = hit.transform.gameObject == groundContact.CurrentPlatform;
+        bool isChildObject = hit.transform.parent == gameObject.transform;
+        bool isTrigger = hit.collider.isTrigger;
+
+        return !isCurrentPlatform && !isChildObject && !isTrigger;
+    }
+
+    // kinematic rigidbody 상태에서 다른 물체와 충돌했을 때 penetration을 없애주는 함수.
+    //
+    // 작동 원리:
+    // - 내 콜라이더가 normal 방향으로 살짝 이동했다고 치고
+    //   해당 위치에서 normal과 반대 방향으로 raycast
+    //   * 살짝 떨어진 곳에서 내가 상대와 충돌하러 날아오는 상황을 재현
+    // - raycast 자체에는 내가 밟고있는 플랫폼 등 잡다한 결과가 다 들어있으므로
+    //   결과 리스트를 순회하며 내가 찾는 상대 콜라이더와의 RaycastHit2D를 탐색
+    // - 여기에 들어있는 centroid 값이 바로 내가 멈췄어야 할 지점
+    private void MoveToContactPoint(Vector2 collisionNormal, Collider2D other)
+    {
+        const float maxPenetrationDepth = 0.5f;
+        Vector2 origin = rb.position + boxCollider.offset + collisionNormal * maxPenetrationDepth;
+        Vector2 direction = -collisionNormal;
+        RaycastHit2D[] results = Physics2D.BoxCastAll(origin, boxCollider.size, 0f, direction, maxPenetrationDepth);
+
+        foreach (var hit in results)
+        {
+            if (hit.collider == other)
+            {
+                // centroid는 콜라이더의 위치라서 본체 transform의 위치는
+                // 역으로 콜라이더의 offset을 빼줘야 구할 수 있음
+                transform.position = hit.centroid - boxCollider.offset;
+                break;
+            }
+        }
+    }
+
+
+    private Vector2 CalculateUpdatedVelocity(float desiredSpeed, bool skipAcceleration)
     {
         // 가속해야 할 방향으로의 속도 성분 (공중인 경우 중력 고려 x)
         Vector2 moveDirection = IsGrounded ? groundContact.GroundTangent : Vector2.right;
@@ -230,15 +368,17 @@ public class PlatformerMovement : MonoBehaviour
 
         // 원하는 속도에 부드럽게 도달하도록 보간.
         // 공중에 있는 경우는 수직 속도 변경 x
-        float updatedSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
+        float updatedSpeed = skipAcceleration ? desiredSpeed : Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.deltaTime);
+
         Vector2 updatedVelocity = moveDirection * updatedSpeed;
         if (!IsGrounded)
         {
             updatedVelocity.y = rb.velocity.y;
         }
 
-        rb.velocity = updatedVelocity;
+        return updatedVelocity;
     }
+
 
     // 가만히 서있는 상황에서는 아주 높은 마찰력을 적용해
     // 경사로나 이동 플랫폼 등에서 미끄러지지 않도록 함
@@ -371,8 +511,8 @@ public class PlatformerMovement : MonoBehaviour
 
     private void PerformJump()
     {
-        // 혹시 엘리베이터 위에 있었다면 수직 움직임을 동기화하기
-        // 위해 설정된 slider joint가 점프를 방해할 것이므로 이를 먼저 해제해야 함
+        // 혹시 엘리베이터 위에 있었다면 움직임을 동기화하는 기능이
+        // 점프를 방해하게 되니 이를 먼저 취소해줘야 함
         StopStickingToElevator();
 
         // 지금 벽에 매달려있거나 방금까지 벽에 매달려있던 경우 (coyote time) wall jump로 전환
@@ -420,5 +560,28 @@ public class PlatformerMovement : MonoBehaviour
         return 
             (direction > 0f && !groundContact.IsRightFootGrounded) ||
             (direction < 0f && !groundContact.IsLeftFootGrounded);
+    }
+
+    public void PerformDash(bool isFacingLeft)
+    {
+        // 엘리베이터 위에 있으면 kinematic rigidbody로 변하므로
+        // 이대로 두면 벽을 뚫고 지나가버릴 위험이 있음!
+        if (IsStickingToElevator)
+        {
+            StopStickingToElevator();
+        }
+
+        // 회피 도중에는 추락 및 넉백 x
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
+
+        // 지면에 멈춰있는 상태에서는 엄청 큰 마찰력이 사용되므로
+        // 확실히 마찰력을 없애주지 않으면 땅 위에 가만히 멈춰있을 위험이 있음.
+        ApplyZeroFriction();
+
+        float targetX = transform.position.x + evasionDistance * (isFacingLeft ? -1f : 1f);
+        rb.DOMoveX(targetX, evasionDuration)
+            .SetEase(evasionEase)
+            .SetUpdate(UpdateType.Fixed);
     }
 }

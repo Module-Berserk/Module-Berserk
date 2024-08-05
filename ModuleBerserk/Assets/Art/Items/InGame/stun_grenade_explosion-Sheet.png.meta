@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7a243fa7b82f0ed4f87deb3359d88208
+guid: f0098dfc5029be740ace61d965b676ce
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,169 +97,148 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_0
+      name: stun_grenade-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7c25c7cdb2b926d409539bd9e891611c
-      internalID: -2123501202
+      spriteID: b19826a498f791844b7d672ff69af7ec
+      internalID: -1478958451
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_1
+      name: stun_grenade-Sheet_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 65
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 56aa16cacfbc93b48be8109f463e6f9d
-      internalID: 837544041
+      spriteID: dfac52b0b57a25a42a62dcf42d91bb88
+      internalID: -1132321142
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_2
+      name: stun_grenade-Sheet_2
       rect:
         serializedVersion: 2
-        x: 512
+        x: 130
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4beb83ede09e7534196455bbd28261af
-      internalID: 1049908410
+      spriteID: 3fea003ad07bb2449a358fa58725f774
+      internalID: 367306631
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_3
+      name: stun_grenade-Sheet_3
       rect:
         serializedVersion: 2
-        x: 768
+        x: 195
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e2cd9549bf379904d8797c181e9509f1
-      internalID: -1614489835
+      spriteID: d48dff643b3fc634b949e8c59b93a41f
+      internalID: 57233356
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_4
+      name: stun_grenade-Sheet_4
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 260
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16558b1856355ff408364f8dac54bf11
-      internalID: -497100030
+      spriteID: ee9123eddc5dda743b3a838516456ae7
+      internalID: -1091027619
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_5
+      name: stun_grenade-Sheet_5
       rect:
         serializedVersion: 2
-        x: 1280
+        x: 325
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0ec9f855b0b2f5343b146b842194aab9
-      internalID: -1504827458
+      spriteID: 7b888102eddc55c49bde0e991481c3ef
+      internalID: -47258295
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_6
+      name: stun_grenade-Sheet_6
       rect:
         serializedVersion: 2
-        x: 1536
+        x: 390
         y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
+        width: 65
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 891dc8ddd8a16b2428fc5cc8dfd0dc4e
-      internalID: -249634454
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: stun_grenade_explosion-Sheet_7
-      rect:
-        serializedVersion: 2
-        x: 1792
-        y: 0
-        width: 256
-        height: 128
-      alignment: 9
-      pivot: {x: 0.5, y: 0.3}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8c164bdd31e57cd4087978a1dfe7a0b5
-      internalID: 2078583950
+      spriteID: 86112df752e28394d84c9227734be419
+      internalID: -1774612093
       vertices: []
       indices: 
       edges: []
@@ -275,14 +254,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      stun_grenade_explosion-Sheet_0: -2123501202
-      stun_grenade_explosion-Sheet_1: 837544041
-      stun_grenade_explosion-Sheet_2: 1049908410
-      stun_grenade_explosion-Sheet_3: -1614489835
-      stun_grenade_explosion-Sheet_4: -497100030
-      stun_grenade_explosion-Sheet_5: -1504827458
-      stun_grenade_explosion-Sheet_6: -249634454
-      stun_grenade_explosion-Sheet_7: 2078583950
+      stun_grenade-Sheet_0: -1478958451
+      stun_grenade-Sheet_1: -1132321142
+      stun_grenade-Sheet_2: 367306631
+      stun_grenade-Sheet_3: 57233356
+      stun_grenade-Sheet_4: -1091027619
+      stun_grenade-Sheet_5: -47258295
+      stun_grenade-Sheet_6: -1774612093
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

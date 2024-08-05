@@ -1,14 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Assertions;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 // 데미지를 입으면 스프라이트가 잠깐 반짝이는 피격 이펙트를 담당하는 클래스
-// SpriteRenderer와 Image 두 종류 모두 지원한다.
+// SpriteRenderer, TilemapRenderer, Image가 있는 오브젝트에 사용할 수 있따.
 public class FlashEffectOnHit : MonoBehaviour
 {
     // 이펙트가 지속되는 동안 적용할 material
@@ -21,6 +19,7 @@ public class FlashEffectOnHit : MonoBehaviour
     [SerializeField] private float flashDuration = 0.15f;
 
     private SpriteRenderer spriteRenderer;
+    private TilemapRenderer tilemapRenderer;
     private Image image;
     private Material originalMaterial;
 
@@ -34,6 +33,10 @@ public class FlashEffectOnHit : MonoBehaviour
             if (spriteRenderer != null)
             {
                 return spriteRenderer.material;
+            }
+            else if (tilemapRenderer != null)
+            {
+                return tilemapRenderer.material;
             }
             else if (image != null)
             {
@@ -50,6 +53,10 @@ public class FlashEffectOnHit : MonoBehaviour
             {
                 spriteRenderer.material = value;
             }
+            else if (tilemapRenderer != null)
+            {
+                tilemapRenderer.material = value;
+            }
             else if (image != null)
             {
                 image.material = value;
@@ -65,6 +72,7 @@ public class FlashEffectOnHit : MonoBehaviour
     {
         // 둘 중에 뭘 사용해야 할지 모르니 일단 가져와보고 null인지 확인
         spriteRenderer = GetComponent<SpriteRenderer>();
+        tilemapRenderer = GetComponent<TilemapRenderer>();
         image = GetComponent<Image>();
 
         originalMaterial = activeMaterial;

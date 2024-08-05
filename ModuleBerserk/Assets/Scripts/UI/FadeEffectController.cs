@@ -24,9 +24,9 @@ public class FadeEffect : MonoBehaviour
         fadeEffectImage.DOKill();
     }
 
-    public void FadeIn()
+    public void FadeIn(bool ignoreTimeScale = false)
     {
-        fadeEffectImage.DOFade(0f, fadeDuration);
+        fadeEffectImage.DOFade(0f, fadeDuration).SetUpdate(ignoreTimeScale);
     }
 
     public void FadeInImmediate()
@@ -34,9 +34,9 @@ public class FadeEffect : MonoBehaviour
         fadeEffectImage.DOFade(0f, 0.01f);
     }
     
-    public void FadeOut()
+    public void FadeOut(bool ignoreTimeScale = false)
     {
-        fadeEffectImage.DOFade(1f, fadeDuration);
+        fadeEffectImage.DOFade(1f, fadeDuration).SetUpdate(ignoreTimeScale);
     }
 
     public void FadeOutImmediate()

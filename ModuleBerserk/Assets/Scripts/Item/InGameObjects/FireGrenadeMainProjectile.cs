@@ -14,7 +14,7 @@ public class FireGrenadeMainProjectile : ExplodingProjectileBase
     protected override void OnExplosion(Collision2D other)
     {
         // 메인 폭발
-        Instantiate(explosionPrefab, other.contacts[0].point, Quaternion.identity);
+        Instantiate(explosionPrefab, other.GetContact(0).point, Quaternion.identity);
 
         // 각각의 subprojectile이 전체 angle min~max를 균등하게
         // 나누고 그 안에서 랜덤 각도를 고르는 방식.

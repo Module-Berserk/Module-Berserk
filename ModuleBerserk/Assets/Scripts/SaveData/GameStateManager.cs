@@ -6,9 +6,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Assertions;
 
 public class GameStateManager
 {
+    public const int NUM_SAVE_SLOTS = 3;
+
     private static GameState activeGameState = null;
     public static GameState ActiveGameState
     {
@@ -21,6 +24,9 @@ public class GameStateManager
             {
                 Debug.Log("Using a dummy GameState for test purpose!");
                 activeGameState = GameState.CreateDummyState();
+
+                // 마치 dummy state를 세이브 데이터에서 불러온 것처럼 활성화된 카메라 등 상태 복원
+                RestoreAllPersistentData();
             }
 
             return activeGameState;
@@ -39,15 +45,19 @@ public class GameStateManager
 
     public static List<GameState> LoadSavedGameStates()
     {
-        List<GameState> states = new();
-
-        GameState state = ReadSaveDataFromFile("slot0.savedata");  // TODO: 세이브 파일 여러개인 상황 고려하기
-        if (state != null)
+        List<GameState> savedStates = new();
+        for (int i = 0; i < NUM_SAVE_SLOTS; ++i)
         {
-            states.Add(state);
+            savedStates.Add(ReadSaveDataFromFile(GetSaveFileName(i)));
         }
+        return savedStates;
+    }
 
-        return states;
+    public static string GetSaveFileName(int slotIndex)
+    {
+        Assert.IsTrue(slotIndex >= 0 && slotIndex < NUM_SAVE_SLOTS);
+
+        return $"slot{slotIndex}.savedata";
     }
 
     private static void WriteSaveDataToFile(string filename)
@@ -112,6 +122,6 @@ public class GameStateManager
     public static async UniTask RestoreLastSavePointAsync()
     {
         GameState lastSavePointState = ReadSaveDataFromFile(ActiveGameState.SaveFileName);
-        await GameStateManager.RestoreGameStateAsync(lastSavePointState);
+        await RestoreGameStateAsync(lastSavePointState);
     }
 }

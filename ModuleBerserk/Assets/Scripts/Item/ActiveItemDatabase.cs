@@ -50,4 +50,52 @@ public class ActiveItemDatabase : MonoBehaviour
     }
 
     // TODO: 희귀도에 따라 하나 랜덤하게 골라주는 함수 만들기
+    
+
+    public ItemType ChooseRandomItemType()
+    {
+        ItemRarity rarity = ChooseRarity();
+        return ChooseItemTypeByRarity(rarity);
+    }
+
+    private ItemRarity ChooseRarity()
+    {
+        // TODO: 행운 스탯에 비례해 전설 확률 올리고 그만큼 흔함 확률 내리기
+        const float COMMON_ITEM_PROBABILITY = 0.70f;
+        const float RARE_ITEM_PROBABILITY = 0.25f;
+        const float LEGENDARY_ITEM_PROBABILITY = 0.05f;
+        Assert.IsTrue(Mathf.Approximately(COMMON_ITEM_PROBABILITY + RARE_ITEM_PROBABILITY + LEGENDARY_ITEM_PROBABILITY, 1f));
+
+        var value = UnityEngine.Random.Range(0f, 1f);
+        if (value < COMMON_ITEM_PROBABILITY)
+        {
+            return ItemRarity.Common;
+        }
+        else if (value < COMMON_ITEM_PROBABILITY + RARE_ITEM_PROBABILITY)
+        {
+            return ItemRarity.Rare;
+        }
+        else
+        {
+            return ItemRarity.Legendary;
+        }
+    }
+
+    private ItemType ChooseItemTypeByRarity(ItemRarity rarity)
+    {
+        // None에 해당하는 0번을 제외한 나머지 아이템을 순회하며
+        // rarity가 일치하는 ItemType 목록을 구축
+        List<ItemType> itemTypes = new();
+        for (int i = 1; i < itemPrefabs.Count; ++i)
+        {
+            var item = itemPrefabs[i].GetComponent<IActiveItem>();
+            if (item.GetRarity() == rarity)
+            {
+                itemTypes.Add(item.GetType());
+            }
+        }
+
+        // 목록 중에서 하나를 랜덤하게 선택
+        return itemTypes[Random.Range(0, itemTypes.Count)];
+    }
 }

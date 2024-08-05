@@ -42,6 +42,8 @@ public interface IDestructible
     CharacterStat GetDefenseStat();
     Team GetTeam();
 
+    bool IsDestroyed { get => GetHPStat().CurrentValue <= 0f; }
+
     // 기본적으로는 무적 판정이 없음 (대부분의 잡몹)
     // 플레이어나 보스처럼 특별한 경우에만 이 함수를 override.
     bool IsInvincible()
@@ -77,6 +79,13 @@ public interface IDestructible
     // attackInfo: 이 공격이 부여할 경직의 강도와 방향. 경직이 없는 공격은 attackInfo.NoStagger를 넘겨주면 됨.
     bool TryApplyDamage(AttackInfo attackInfo)
     {
+        // 이미 파괴된 물체는 공격에 반응하지 않음.
+        // OnDestruction()이 여러 번 호출되는 것을 막아준다.
+        if (IsDestroyed)
+        {
+            return false;
+        }
+
         // 무적 판정이거나 같은 팀의 공격인 경우 무시함.
         if (IsInvincible() || attackInfo.damageSource == GetTeam())
         {
@@ -108,7 +117,7 @@ public interface IDestructible
         CharacterStat hp = GetHPStat();
         hp.ModifyBaseValue(-finalDamage);
 
-        if (hp.CurrentValue <= 0f)
+        if (IsDestroyed)
         {
             OnDestruction();
         }

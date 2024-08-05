@@ -122,6 +122,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         platformerMovement.HandleGroundContact();
 
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
+        animator.SetFloat("MoveSpeedMultiplier", moveSpeedMultiplier.CurrentValue);
 
         // 순찰 상태
         if (isPatrolling)
@@ -306,7 +307,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         // 플레이어어가 존재하지 않는 경우
         if (!player)
         {
-            Debug.Log("플레이어가 없어서 추적 실패");
+            // Debug.Log("플레이어가 없어서 추적 실패");
             return false;
         }
 
@@ -314,21 +315,21 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
         Vector2 chaseDirection = player.transform.position - transform.position;
         if (platformerMovement.IsOnBrink(chaseDirection.x))
         {
-            Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
+            // Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
             return false;
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
         if (chaseDirection.magnitude > chaseMaxDistance)
         {
-            Debug.Log("플레이어가 너무 멀어서 추적 실패");
+            // Debug.Log("플레이어가 너무 멀어서 추적 실패");
             return false;
         }
 
         // 활동 범위 제약이 존재하는데 플레이어가 그 범위 안에 아직 안 들어온 경우
         if (moveRestrictionArea != null && !moveRestrictionArea.IsPlayerInRange)
         {
-            Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
+            // Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
             return false;
         }
 
@@ -413,7 +414,7 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
 
         // 넉백 효과
         platformerMovement.ApplyZeroFriction();
-        rb.AddForce(attackInfo.knockbackForce, ForceMode2D.Impulse);
+        rb.velocity = attackInfo.knockbackForce;
 
         // 잠시 경직 상태에 돌입
         isPatrolling = false;
@@ -452,5 +453,16 @@ public abstract class EnemyBehaviorBase : MonoBehaviour, IEnemyBehavior, IMoving
     CharacterStat IMovingObject.GetMoveSpeed()
     {
         return moveSpeedMultiplier;
+    }
+
+    // 행동 반경 제한이 걸린 경우 해당 범위를 붉은색 테두리로 보여줌
+    private void OnDrawGizmos()
+    {
+        if (moveRestrictionArea != null)
+        {
+            var bounds = moveRestrictionArea.GetComponent<Collider2D>().bounds;
+            Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+            Gizmos.DrawWireCube(bounds.center, bounds.size);
+        }
     }
 }

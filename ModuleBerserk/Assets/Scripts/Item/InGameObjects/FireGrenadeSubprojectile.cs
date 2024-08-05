@@ -15,8 +15,8 @@ public class FireGrenadeSubprojectile : MonoBehaviour
             isDOTAreaSpawned = true;
 
             // TODO: 지면에 평행하게 도트데미지 영역 생성
-            var rotation = Quaternion.LookRotation(Vector3.forward, other.contacts[0].normal);
-            Instantiate(DOTAreaPrefab, other.contacts[0].point, rotation);
+            var rotation = Quaternion.LookRotation(Vector3.forward, other.GetContact(0).normal);
+            Instantiate(DOTAreaPrefab, other.GetContact(0).point, rotation);
 
             Destroy(gameObject);
         }

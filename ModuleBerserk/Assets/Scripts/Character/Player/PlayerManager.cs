@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum PlayerActionState
 {
@@ -58,6 +60,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
 
+    [Header("Hit Effect")]
+    [SerializeField] private GameObject normalHitEffectPrefab; // 타격 이펙트
+    [SerializeField] private GameObject critHitEffectPrefab; // 타격 이펙트
+    [SerializeField] private float critHitLagInitialTimescale;
+    [SerializeField] private float critHitLagEffectDuration;
+    [SerializeField] private Ease critHitLagEffectEase;
+
+
     [Header("Stagger Invincibility")]
     // 경직 판정이 있는 공격에 맞을 경우 (경직 시간 + 해당 수치)만큼 지속되는 무적 판정을 부여함.
     // 잡몹들에게 둘러싸여서 인디언밥 당하는 상황 방지...
@@ -65,9 +75,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
 
     [Header("Evasion")]
-    [SerializeField] private float evasionDuration = 0.2f; // 회피 모션의 재생 시간과 일치해야 자연스러움!
-    [SerializeField] private float evasionDistance = 4f;
-    [SerializeField] private Ease evasionEase = Ease.OutCubic;
     [SerializeField] private float evasionCooltime = 1.3f;
     // 일반 회피 및 긴급 회피에 부여되는 무적 시간
     [SerializeField] private float evasionInvincibleDuration = 0.5f;
@@ -89,8 +96,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     [Header("Fade Effect")]
     // 죽어서 마지막 세이브 포인트로 돌아갈 때 사용할 페이드 아웃 효과
-    [SerializeField] private FadeEffect fadeEffect;
-    [SerializeField] private GameObject youDiedUI; // TODO: 테스트 끝나면 삭제할 것
+    [SerializeField] private YouDied youDiedUI;
 
 
     public bool IsFacingLeft
@@ -121,7 +127,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPerformed = false; // 공중 공격을 이미 했는지 (점프마다 한 번 가능)
     private int attackCount = 0;
-    private int maxAttackCount = 4; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
+    private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
     // 무적 판정
     private float invincibleDuration = 0f;
@@ -152,6 +158,21 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void Awake()
     {
         FindComponentReferences();
+
+        // OnEnable()에서 playerState.HP에 체력바 UI 업데이트 콜백을
+        // 등록하려면 여기서 먼저 playerState를 준비해줘야 함
+        //
+        // Note: 초기 이벤트 순서는 Awake -> OnEnable -> Start
+        playerState = GameStateManager.ActiveGameState.PlayerState;
+
+        platformerMovement.OnLand.AddListener(PlayLandSFX);
+    }
+
+    private void Start()
+    {
+        // 다른 컴포넌트들이 Awake()에서 초기화된 뒤에야
+        // 가능한 작업이 있어서 Start()에서 한 발 늦게 처리함.
+        InitializePlayerState();
     }
 
     private void FindComponentReferences()
@@ -166,13 +187,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         screenShake = GetComponent<ScreenShake>();
         gearSystem = GetComponent<GearSystem>();
         itemManager = GetComponent<ItemManager>();
-    }
-
-    private void Start()
-    {
-        InitializePlayerState();
-
-        platformerMovement.OnLand.AddListener(PlayLandSFX);
     }
 
     private void OnDestroy()
@@ -190,38 +204,46 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 직전 scene에서의 상태를 복원한다.
     private void InitializePlayerState()
     {
-        playerState = GameStateManager.ActiveGameState.PlayerState;
-
-        // 포탈을 타고 다른 scene으로 넘어온 경우 해당 포탈에 대응되는 도착 위치에서 시작함
-        if (playerState.SpawnPointTag != null)
+        // 세이브 데이터를 복원한 경우 마지막 세이브 포인트에서 시작해야 함
+        string spawnPointGUID = GameStateManager.ActiveGameState.SceneState.PlayerSpawnPointGUID;
+        if (spawnPointGUID != null)
         {
-            GameObject spawnPoint = GameObject.FindGameObjectWithTag(playerState.SpawnPointTag);
+            ObjectGUID spawnPoint = FindObjectsOfType<ObjectGUID>()
+                .Where((obj) => obj.ID == spawnPointGUID)
+                .First();
+            
             Assert.IsNotNull(spawnPoint);
 
             transform.position = spawnPoint.transform.position;
+            cameraFollowTarget.transform.position = transform.position;
         }
         
         itemManager.InitializeState(playerState.Slot1State, playerState.Slot2State);
-        InitializeGearSystem(playerState.GearSystemState, playerState.AttackSpeed, playerState.MoveSpeed);
+        InitializeGearSystem(playerState.AttackSpeed, playerState.MoveSpeed);
         InitializeHitbox(playerState.AttackDamage);
 
-        UpdateHealthBarUI(netPendingDamage);
+        UpdateHealthBarUI(); // UI 상태 복원
 
         // TODO: playerState.PlayerType에 따른 animator 설정 등 처리하기
     }
 
-    private void InitializeGearSystem(GearSystemState gearSystemState, CharacterStat attackSpeed, CharacterStat moveSpeed)
+    private void InitializeGearSystem(CharacterStat attackSpeed, CharacterStat moveSpeed)
     {
         // 기어 단계가 바뀔 때마다 공격력 및 공격 속도 버프 수치 갱신
         gearSystem.OnGearLevelChange.AddListener(() => gearSystem.UpdateGearLevelBuff(attackSpeed, moveSpeed));
-        gearSystem.InitializeState(gearSystemState);
+        gearSystem.InitializeState();
     }
 
     // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함
     private void InitializeHitbox(CharacterStat attackDamage)
     {
         // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
-        weaponHitbox.OnApplyDamageSuccess.AddListener(gearSystem.OnAttackSuccess);
+        weaponHitbox.OnApplyDamageSuccess.AddListener((other) => {
+            gearSystem.OnAttackSuccess();
+
+            // TODO: 치명타 판정이면 두 번째 인자 true로 바꿔야 함
+            CreateHitEffect(other, isCriticalHit: true);
+        });
 
         // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
         weaponHitbox.RawDamage = attackDamage;
@@ -232,8 +254,40 @@ public class PlayerManager : MonoBehaviour, IDestructible
         emergencyEvadeHitbox.IsHitboxEnabled = false;
     }
 
+    // 내가 맞을 때, 적을 때릴 때 모두 사용하는 이펙트 생성 함수.
+    // 치명타인 경우 화면 흔들림 + 히트랙 효과까지 추가됨!
+    private void CreateHitEffect(Collider2D other, bool isCriticalHit)
+    {
+        var prefab = isCriticalHit ? critHitEffectPrefab : normalHitEffectPrefab;
+
+        // 콜라이더 범위 안에서 랜덤한 위치에 생성.
+        // 이펙트가 발 근처에 생기면 이상해서 y축은 콜라이더 중심 이상으로 제한함.
+        var effect = Instantiate(prefab, other.transform);
+        Vector2 localMinBounds = other.bounds.min - other.bounds.center;
+        Vector2 localMaxBounds = other.bounds.max - other.bounds.center;
+        effect.transform.position += (Vector3)other.offset + new Vector3()
+        {
+            x = UnityEngine.Random.Range(localMinBounds.x, localMaxBounds.x),
+            y = UnityEngine.Random.Range(0f, localMaxBounds.y)
+        } * 0.5f;
+
+        // 치명타 연출 (화면 흔들림 + 시간 느려지는 효과)
+        if (isCriticalHit)
+        {
+            screenShake.ApplyScreenShake(0.05f, critHitLagEffectDuration);
+
+            // 플레이어 애니메이션 제외한 다른 모든 것들을 느리게 만들기
+            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            DOTween.To(() => Time.timeScale, (value) => Time.timeScale = value, 1f, critHitLagEffectDuration)
+                .From(critHitLagInitialTimescale)
+                .SetEase(critHitLagEffectEase)
+                .SetUpdate(true)
+                .OnComplete(() => animator.updateMode = AnimatorUpdateMode.AnimatePhysics);
+        }
+    }
+
     private void OnEnable()
-    {    
+    {
         var playerActions = InputManager.InputActions.Player;
         playerActions.Jump.performed += OnJump;
         playerActions.FallDown.performed += OnFallDown;
@@ -241,6 +295,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed += OnEvade;
         playerActions.UseItem1.performed += OnUseItem1;
         playerActions.UseItem2.performed += OnUseItem2;
+
+        playerState.HP.OnValueChange.AddListener(OnHPChange);
     }
 
     private void OnDisable()
@@ -252,17 +308,20 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed -= OnEvade;
         playerActions.UseItem1.performed -= OnUseItem1;
         playerActions.UseItem2.performed -= OnUseItem2;
+        
+        playerState.HP.OnValueChange.RemoveListener(OnHPChange);
+    }
+
+    private void OnHPChange(float diff)
+    {
+        UpdateHealthBarUI();
     }
 
     private void OnUseItem1(InputAction.CallbackContext context)
     {
         if (itemManager.TryUseSlot1Item())
         {
-            Debug.Log("슬롯1 아이템 사용 성공");
-        }
-        else
-        {
-            Debug.Log("슬롯1 아이템 사용 실패");
+            HandleItemUseMotion(itemManager.Slot1ItemCategory);
         }
     }
 
@@ -270,12 +329,31 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         if (itemManager.TryUseSlot2Item())
         {
-            Debug.Log("슬롯2 아이템 사용 성공");
+            HandleItemUseMotion(itemManager.Slot2ItemCategory);
         }
-        else
+    }
+
+    private void HandleItemUseMotion(ItemCategory category)
+    {
+        // 아이템 사용 모션은 우선순위가 제일 낮아서
+        // 아무것도 안 하고 서있는 상황에서만 재생됨.
+        if (IsDoingNothing())
         {
-            Debug.Log("슬롯2 아이템 사용 실패");
+            if (category == ItemCategory.Turret)
+            {
+                // TODO: 아래에 뭔가 설치하는 모션 재생
+            }
+            else
+            {
+                // 뭔가 앞으로 던지는 모션
+                animator.SetTrigger("ThrowItem");
+            }
         }
+    }
+
+    private bool IsDoingNothing()
+    {
+        return ActionState == PlayerActionState.IdleOrRun && platformerMovement.IsGrounded && !animator.GetBool("IsRunning");
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -454,14 +532,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 회피 무적 상태로 전환
         ActionState = PlayerActionState.Evade;
         invincibleDuration = evasionInvincibleDuration;
-
-        // 회피 도중에는 추락 및 넉백 x
-        rb.gravityScale = 0f;
-        rb.velocity = Vector2.zero;
-
-        // 지면에 멈춰있는 상태에서는 엄청 큰 마찰력이 사용되므로
-        // 확실히 마찰력을 없애주지 않으면 땅 위에 가만히 멈춰있을 위험이 있음.
-        platformerMovement.ApplyZeroFriction();
         
         // 쿨타임 계산 시작
         timeSinceLastEvasion = 0f;
@@ -472,11 +542,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 챕터1 박스 기믹에서 일반 회피에만 반응할 수 있게 회피 타입 기록
         IsNormalEvasion = true;
 
-        float targetX = transform.position.x + evasionDistance * (IsFacingLeft ? -1f : 1f);
-        rb.DOMoveX(targetX, evasionDuration)
-            .SetEase(evasionEase)
-            .SetUpdate(UpdateType.Fixed);
-
+        platformerMovement.PerformDash(IsFacingLeft);
         screenShake.ApplyScreenShake(strength: 0.05f, duration: 0.2f, frequencyGain: 2f);
     }
 
@@ -517,8 +583,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 공격을 시작하는 순간에 한해 방향 전환 허용
         UpdateFacingDirectionByInput();
 
-        // 가로로 움직이는 플랫폼 위에서도 가만히 서있도록 큰 마찰력 사용
-        platformerMovement.ApplyHighFriction();
+        // 가만히 서있다가 공격하면 높은 마찰력 때문에 root motion이
+        // 제대로 적용되지 못하니까 반드시 마찰력을 없애고 공격 모션을 시작해야 함
+        platformerMovement.ApplyZeroFriction();
 
         // 다음 공격 모션 선택
         if (attackCount < maxAttackCount)
@@ -536,8 +603,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
             isAirAttackPerformed = true;
         }
 
-        // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐
-        animator.SetTrigger($"Attack{attackCount}");
+        // 연속 공격의 트리거 이름은 Attack1, Attack2, ..., AttackN 형태로 주어짐.
+        // 예외적으로 콤보를 모두 마치고 1타로 돌아오는 경우에는
+        // 시작 모션이 더 자연스럽게 이어지는 Attack1-1로 넘어감.
+        if (IsAttacking() && attackCount == 1)
+        {
+            animator.SetTrigger("Attack1-1");
+        }
+        else
+        {
+            animator.SetTrigger($"Attack{attackCount}");
+        }
 
         spriteRootMotion.HandleAnimationChange();
 
@@ -638,7 +714,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
             if (IsAttacking())
             {
-                spriteRootMotion.ApplyVelocity(IsFacingLeft);
+                float desiredSpeed = spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
+                platformerMovement.UpdateMoveVelocity(desiredSpeed, skipAcceleration: true);
             }
 
             platformerMovement.HandleGroundContact();
@@ -679,7 +756,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
             platformerMovement.UpdateMoveVelocity(0f);
         }
 
-        // AdjustCollider();
         UpdateCameraFollowTarget();
         UpdateAnimatorState();
     }
@@ -821,6 +897,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     bool IDestructible.OnDamage(AttackInfo attackInfo)
     {
         flashEffectOnHit.StartEffectAsync().Forget();
+        CreateHitEffect(GetComponent<Collider2D>(), isCriticalHit: false);
 
         if (attackInfo.staggerStrength != StaggerStrength.None)
         {
@@ -842,13 +919,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 체력바 UI로는 즉시 데미지를 입은 것처럼 표시하고
         // 나중에 데미지 무효화가 일어나면 UI 변화만 롤백하는 방식으로 구현함.
         netPendingDamage += finalDamage;
-        UpdateHealthBarUI(netPendingDamage);
+        UpdateHealthBarUI();
 
         await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
         netPendingDamage -= finalDamage;
 
-        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리
-        if (!cancellationToken.IsCancellationRequested)
+        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
+        // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
+        // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
+        if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
         {
             (this as IDestructible).HandleHPDecrease(finalDamage);
 
@@ -859,11 +938,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // 체력바를 실제 체력에 맞게 다시 조정.
         else
         {
-            UpdateHealthBarUI(netPendingDamage);
+            UpdateHealthBarUI();
         }
     }
 
-    private void UpdateHealthBarUI(float netPendingDamage)
+    private void UpdateHealthBarUI()
     {
         // 긴급회피로 데미지 무효화를 하지 못할 경우 도달할 최종 체력
         float expectedHP = playerState.HP.CurrentValue - netPendingDamage;
@@ -949,9 +1028,6 @@ public class PlayerManager : MonoBehaviour, IDestructible
         animator.SetTrigger("Death");
         InputManager.InputActions.Player.Disable();
 
-        // TODO: 테스트 끝나면 삭제할 것
-        youDiedUI.SetActive(true);
-
         // case 1) 아직 부활 횟수가 남아있다면 마지막 세이브 포인트에서 부활
         if (GameStateManager.ActiveGameState.SceneState.RemainingRevives > 0)
         {
@@ -960,7 +1036,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         // case 2) 일반 스테이지에서 죽었다면 게임오버
         else
         {
-            // TODO: 은신처로 복귀 (결과창 표시?)
+            ReturnToHideoutAsync().Forget();
         }
     }
 
@@ -970,15 +1046,26 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
 
-        await UniTask.WaitForSeconds(3f);
+        await youDiedUI.FadeInoutAsync();
 
-        fadeEffect.FadeOut();
-
-        await UniTask.WaitForSeconds(1f);
-        
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
+    }
+
+    private async UniTask ReturnToHideoutAsync()
+    {
+        // TODO: 미션 실패 결과창 표시...?
+
+        await youDiedUI.FadeInoutAsync();
+
+        InputManager.InputActions.Player.Enable();
+
+        await SceneManager.LoadSceneAsync("Hideout");
+
+        GameStateManager.ActiveGameState.CleanupStateOnMissionEnd();
+
+        GameStateManager.SaveActiveGameState();
     }
 
     // 챕터1 박스 기믹 등 특수한 상황에만 부여되는 기절 효과.
@@ -996,18 +1083,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
     }
 
     // 챕터1 보스의 돌진 패턴에 맞아 끌려간 뒤 벽에 튕겨나오는 모션.
-    // 그냥 힘만 주면 플레이어 조작에 의해 바로 정지해버리니까 잠시 경직 상태를 부여한다.
-    // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수)
-    public async UniTask ApplyWallReboundAsync(float distance, float duration)
+    // distance는 부호를 고려한 튕겨나올 거리임 (왼쪽으로 튕겨나오면 음수).
+    // 그냥 쓰면 조작으로 탈출할 수 있으니까 직전에 ApplyStunForDurationAsync()를 먼저 호출해줘야 함.
+    public void ApplyWallRebound(float distance, float duration)
     {
         platformerMovement.ApplyZeroFriction();
         IsFacingLeft = distance > 0f;
 
+        // 튕겨나오는 모션 시작
         rb.DOMoveX(rb.position.x + distance, duration)
             .SetEase(Ease.OutCubic)
             .SetUpdate(UpdateType.Fixed);
-
-        await ApplyStunForDurationAsync(duration);
     }
 
 
@@ -1031,37 +1117,15 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         // 주인공과는 충돌하지 않도록 설정
         Physics2D.IgnoreCollision(grenade.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-
-        PlayItemThrowMotion();
-    }
-
-    // 아이템 사용 모션은 우선순위가 제일 낮아서
-    // 아무것도 안 하고 서있는 상황에서만 재생됨.
-    private void PlayItemThrowMotion()
-    {
-        if (IsDoingNothing())
-        {
-            animator.SetTrigger("ThrowItem");
-        }
     }
 
     // 설치형 아이템이 사용될 때 호출되는 함수로 
     public void InstallTurret(GameObject turretPrefab)
     {
-        if (IsDoingNothing())
-        {
-            // TODO: 밑에 뭔가 설치하는 모션 재생
-        }
-
         // 중심 좌표가 머리쪽이라 살짝 아래에 생성해야 함
         Vector2 spawnPosition = transform.position + Vector3.down * 0.3f;
 
         Instantiate(turretPrefab, spawnPosition, Quaternion.identity);
-    }
-
-    private bool IsDoingNothing()
-    {
-        return ActionState == PlayerActionState.IdleOrRun && platformerMovement.IsGrounded && !animator.GetBool("IsRunning");
     }
 
 

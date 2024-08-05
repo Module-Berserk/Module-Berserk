@@ -11,6 +11,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
     [Header("Background Sprite Variant")]
     [SerializeField] private Sprite leftBumpBackground;
     [SerializeField] private Sprite rightBumpBackground;
+    [SerializeField] private Sprite noBumpBackground;
 
 
     [Header("Component References")]
@@ -35,6 +36,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
     {
         Left,
         Right,
+        None,
     }
     [SerializeField] private BumpLocation bumpLocation = BumpLocation.Left;
 
@@ -73,9 +75,13 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         {
             backgroundRenderer.sprite = leftBumpBackground;
         }
-        else
+        else if (bumpLocation == BumpLocation.Right)
         {
             backgroundRenderer.sprite = rightBumpBackground;
+        }
+        else
+        {
+            backgroundRenderer.sprite = noBumpBackground;
         }
     }
 
@@ -160,7 +166,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         {
             position.x += backgroundRenderer.size.x / 2f;
         }
-        else
+        else if (bumpLocation == BumpLocation.Right)
         {
             position.x -= backgroundRenderer.size.x / 2f;
         }
@@ -176,8 +182,13 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         UpdateDialogueOptionText();
         AdjustBoxSize();
 
-        // 입력 활성화하고 선택이 끝날 때까지 대기
-        UserInterfaceStack.PushUserInterface(this);
+        // 입력 활성화하고 선택이 끝날 때까지 대기.
+        //
+        // Note:
+        // firstSelectedUIElement라는 파라미터는 유니티의 UI navigation 시스템에
+        // 기본 선택 요소로 넣어줄 UI 요소를 지정해주는 용도인데
+        // 대사창은 버튼같은 유니티 UI를 사용하는게 아니다보니 그냥 null로 설정함
+        UserInterfaceStack.PushUserInterface(this, firstSelectedUIElement: null);
         await UniTask.WaitUntil(() => !isSelectingDialogueOption);
         UserInterfaceStack.PopUserInterface(this);
 

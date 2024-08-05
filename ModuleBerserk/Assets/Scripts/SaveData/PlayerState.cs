@@ -23,29 +23,29 @@ public class PlayerState
     public CharacterStat Defense;
     public CharacterStat MoveSpeed;
 
-    // scene 로딩이 끝난 직후에 이동할 위치.
-    // 만약 null이면 현재 위치를 유지한다.
-    //
-    // 포탈을 타고 이동하면 같은 scene이라고 해도
-    // 다른 위치에서 시작할 수 있기 때문에 필요하다.
-    public string SpawnPointTag;
-
     public GearSystemState GearSystemState;
 
     public ItemSlotState Slot1State;
     public ItemSlotState Slot2State;
 
+    // 새 게임을 시작할 때 사용할 초기 플레이어 상태를 준비함
+    public PlayerState()
+    {
+        PlayerType = PlayerType.Loyal;
+        HP = new CharacterStat(100f, 0f, 100f);
+        AttackDamage = new CharacterStat(10f, 0f);
+        AttackSpeed = new CharacterStat(1f, 0f);
+        Defense = new CharacterStat(10f, 0f);
+        MoveSpeed = new CharacterStat(3.5f, 0f);
+        GearSystemState = new GearSystemState();
+        Slot1State = new ItemSlotState();
+        Slot2State = new ItemSlotState();
+    }
+
     public static PlayerState CreateDummyState()
     {
         return new PlayerState
         {
-            PlayerType = PlayerType.Loyal,
-            HP = new CharacterStat(100f, 0f, 100f),
-            AttackDamage = new CharacterStat(10f, 0f),
-            AttackSpeed = new CharacterStat(1f, 0f),
-            Defense = new CharacterStat(10f, 0f),
-            MoveSpeed = new CharacterStat(3.5f, 0f),
-            SpawnPointTag = null,
             GearSystemState = GearSystemState.CreateDummyState(),
             Slot1State = ItemSlotState.CreateDummyState(),
             Slot2State = ItemSlotState.CreateDummyState(),

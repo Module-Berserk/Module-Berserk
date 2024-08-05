@@ -1,7 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [Serializable]
@@ -13,16 +11,14 @@ public struct ItemCooltimeUI
 }
 
 // 필드에서 습득하는 아이템을 슬롯에 저장하고 사용하는 일을 담당하는 클래스
-public class ItemManager : MonoBehaviour, IUserInterfaceController
+public class ItemManager : MonoBehaviour
 {
     [Header("Item DB")]
     [SerializeField] private ActiveItemDatabase itemDatabase;
 
 
     [Header("Item Replacement")]
-    [SerializeField] private GameObject itemReplacementUI;
-    [SerializeField] private GameObject itemReplacementSlot1Outline;
-    [SerializeField] private GameObject itemReplacementSlot2Outline;
+    [SerializeField] private ItemReplacementUI itemReplacementUI;
 
 
     [Header("Cooltime UI")]
@@ -30,8 +26,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
     [SerializeField] private ItemCooltimeUI slot2CooltimeUI;
 
 
-    // 아이템 교체 UI에서 현재 어느 슬롯을 교체 대상으로 지정하고 있는지
-    private bool isSelectingSlot1ForReplacement = true;
     // 새로 습득해서 교체하려는 아이템
     private IActiveItem replacementPendingItem = null;
 
@@ -44,6 +38,12 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
     // 게임 세션동안 유지되는 쿨타임 등의 상태
     private ItemSlotState slot1State = null;
     private ItemSlotState slot2State = null;
+
+    // 플레이어가 아이템을 사용한 직후 어떤 모션을 출력해야할지 결정하기 위해 참고하는 값
+    // Case 1) 설치형 => 아래로 몸을 숙이는 모션
+    // Case 2) 나머지 => 뭔가 앞으로 던지는 모션
+    public ItemCategory Slot1ItemCategory { get => slot1Item.GetCategory(); }
+    public ItemCategory Slot2ItemCategory { get => slot2Item.GetCategory(); }
 
     // scene 로딩이 끝난 뒤 PlayerManager에 의해 호출되는 함수.
     // 직전 scene에서의 상태를 복원한다.
@@ -69,6 +69,7 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
         return TryUseItem(slot2Item, slot2State);
     }
 
+    // 아이템 사용을 시도하고 성공 여부를 반환
     private bool TryUseItem(IActiveItem item, ItemSlotState slotState)
     {
         if (item != null && slotState.UsageStack > 0)
@@ -136,35 +137,17 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
         }
     }
 
-    void IUserInterfaceController.BindInputActions()
+    private void ReplaceItemSlot(int selectedSlotIndex)
     {
-        var uiActions = InputManager.InputActions.UI;
-        uiActions.Select.performed += SelectItemReplacementSlot;
-        uiActions.Left.performed += ChangeItemReplacementSlot;
-        uiActions.Right.performed += ChangeItemReplacementSlot;
-    }
-
-    void IUserInterfaceController.UnbindInputActions()
-    {
-        var uiActions = InputManager.InputActions.UI;
-        uiActions.Select.performed -= SelectItemReplacementSlot;
-        uiActions.Left.performed -= ChangeItemReplacementSlot;
-        uiActions.Right.performed -= ChangeItemReplacementSlot;
-    }
-
-    private void SelectItemReplacementSlot(InputAction.CallbackContext context)
-    {
-        Assert.IsTrue(itemReplacementUI.activeInHierarchy);
-
         // 아이템 교체 UI 숨기기
-        UserInterfaceStack.PopUserInterface(this);
-        itemReplacementUI.SetActive(false);
+        itemReplacementUI.gameObject.SetActive(false);
+        itemReplacementUI.OnSlotSelect.RemoveListener(ReplaceItemSlot);
 
         // 다시 플레이어 조작 활성화
         InputManager.InputActions.Player.Enable();
 
         // UI에서 선택한 슬롯의 내용물 교체
-        if (isSelectingSlot1ForReplacement)
+        if (selectedSlotIndex == 0)
         {
             slot1Item = replacementPendingItem;
             HandleItemSlotChange(slot1Item, slot1State, slot1CooltimeUI);
@@ -174,16 +157,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
             slot2Item = replacementPendingItem;
             HandleItemSlotChange(slot2Item, slot2State, slot2CooltimeUI);
         }
-    }
-
-    private void ChangeItemReplacementSlot(InputAction.CallbackContext context)
-    {
-        // 선택하지 않은 슬롯으로 전환
-        isSelectingSlot1ForReplacement = !isSelectingSlot1ForReplacement;
-
-        // 활성화된 슬롯 쪽의 테두리만 표시
-        itemReplacementSlot1Outline.SetActive(isSelectingSlot1ForReplacement);
-        itemReplacementSlot2Outline.SetActive(!isSelectingSlot1ForReplacement);
     }
 
     public void HandleItemCollect(IActiveItem item)
@@ -233,8 +206,6 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
 
     private void ShowItemReplacementUI(IActiveItem newItem)
     {
-        UserInterfaceStack.PushUserInterface(this);
-
         // 잠시 플레이어 조작 비활성화
         InputManager.InputActions.Player.Disable();
 
@@ -242,9 +213,8 @@ public class ItemManager : MonoBehaviour, IUserInterfaceController
         replacementPendingItem = newItem;
 
         // 아이템 교체 UI 띄우기
-        itemReplacementUI.SetActive(true);
-
-        // 항상 왼쪽 슬롯이 선택된 상태로 시작됨
-        isSelectingSlot1ForReplacement = true;
+        itemReplacementUI.SetItemIcons(slot1Item.GetItemSlotImage(), slot2Item.GetItemSlotImage());
+        itemReplacementUI.OnSlotSelect.AddListener(ReplaceItemSlot);
+        itemReplacementUI.gameObject.SetActive(true);
     }
 }

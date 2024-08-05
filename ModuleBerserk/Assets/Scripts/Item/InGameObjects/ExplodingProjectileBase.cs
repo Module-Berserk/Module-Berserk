@@ -7,7 +7,7 @@ public abstract class ExplodingProjectileBase : MonoBehaviour
     private void OnCollisionStay2D(Collision2D other)
     {
         // 바닥이 아니라 벽/천장에는 반응하지 않음
-        if (Vector2.Dot(other.contacts[0].normal, Vector2.up) < 0.1f)
+        if (Vector2.Dot(other.GetContact(0).normal, Vector2.up) < 0.1f)
         {
             return;
         }

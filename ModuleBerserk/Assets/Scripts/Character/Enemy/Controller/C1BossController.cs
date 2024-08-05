@@ -14,6 +14,7 @@ using UnityEngine.UI;
 //
 // 잡몹들과 다르게 보스는 공유하는 특징이
 // 거의 없어서 EnemyBehavior 등을 사용하지 않는다.
+[RequireComponent(typeof(ScreenShake))]
 public class C1BossController : MonoBehaviour, IDestructible
 {
     [Header("Player Detectors")]
@@ -115,7 +116,7 @@ public class C1BossController : MonoBehaviour, IDestructible
     private SpriteRenderer spriteRenderer;
     private SpriteRootMotion spriteRootMotion;
     private FlashEffectOnHit flashEffectOnHit;
-    private CinemachineImpulseSource cameraShake;
+    private ScreenShake screenShake;
     private PlayerManager playerManager;
 
     private GroundContact groundContact;
@@ -183,13 +184,13 @@ public class C1BossController : MonoBehaviour, IDestructible
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRootMotion = GetComponent<SpriteRootMotion>();
         flashEffectOnHit = GetComponent<FlashEffectOnHit>();
-        cameraShake = GetComponent<CinemachineImpulseSource>();
+        screenShake = GetComponent<ScreenShake>();
         playerManager = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>();
 
-        groundContact = new GroundContact(rb, boxCollider, groundLayer, 0.02f, 0.02f);
+        groundContact = new GroundContact(rb, boxCollider, groundLayer);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(400f, 0f, 400f);
+        hp = new CharacterStat(4f, 0f, 400f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(10f);
 
@@ -228,7 +229,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
                 // 상자 파괴 & 화면 진동
                 boxGimmick.DestroyBox();
-                cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
+                screenShake.ApplyScreenShake(dashImpactCameraShakeForce, duration: 0.2f);
 
                 // 기절 상태 부여
                 ApplyBoxGimmickKnockdownAsync().Forget();
@@ -253,12 +254,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
-    public void OnAttackSuccess()
+    public void OnAttackSuccess(Collider2D player)
     {
         // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵
         if (actionState == ActionState.DashAttack)
         {
-            sliderJoint.connectedBody = playerManager.GetComponent<Rigidbody2D>();
+            sliderJoint.connectedBody = player.attachedRigidbody;
             sliderJoint.enabled = true;
         }
     }
@@ -296,7 +297,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         else if (actionState == ActionState.MeleeAttack || actionState == ActionState.CounterAttack)
         {
             // 근접 공격들은 움직임이 복잡해서 루트 모션으로 처리함
-            spriteRootMotion.ApplyVelocity(IsFacingLeft);
+            rb.velocity = Vector2.right * spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
         }
         else if (actionState == ActionState.FlameThrower || actionState == ActionState.CounterBegin)
         {
@@ -741,7 +742,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         // task cancellation 없이 이 라인에 도달했다는건
         // 박스에 부딛히지 않고 벽에 충돌했다는 뜻이므로
         // 약간의 화면 흔들림과 함께 박스를 리필해줌
-        cameraShake.GenerateImpulse(dashImpactCameraShakeForce);
+        screenShake.ApplyScreenShake(dashImpactCameraShakeForce, duration: 0.2f);
         foreach (var boxGenerator in boxGenerators)
         {
             boxGenerator.TryGenerateNewBox();
@@ -759,9 +760,12 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             sliderJoint.enabled = false;
 
-            // 경직과 함께 벽에서 튕겨나오는 효과
+            // 경직
+            playerManager.ApplyStunForDurationAsync(playerWallReboundDuration).Forget();
+
+            // 벽에서 튕겨나오는 효과
             var reboundDistance = playerWallReboundDistance * (IsFacingLeft ? 1f : -1f);
-            playerManager.ApplyWallReboundAsync(reboundDistance, playerWallReboundDuration).Forget();
+            playerManager.ApplyWallRebound(reboundDistance, playerWallReboundDuration);
         }
     }
 
@@ -885,12 +889,6 @@ public class C1BossController : MonoBehaviour, IDestructible
         actionState = ActionState.Chase;
     }
 
-    bool IDestructible.IsInvincible()
-    {
-        // 엔딩 컷신에서 공격 불가능하도록 무적 설정
-        return Mathf.Approximately(hp.CurrentValue, 0f);
-    }
-
     void IDestructible.OnDestruction()
     {
         // 진행중인 행동 모두 종료
@@ -962,5 +960,8 @@ public class C1BossController : MonoBehaviour, IDestructible
     private void PlayCallMinionSFX() {
         int [] callIndices = {40};
         AudioManager.instance.PlaySFX(callIndices);
+
+        // 벽 치는 순간에 호출되는 함수라서 여기서 화면 흔들림도 함께 처리함
+        screenShake.ApplyScreenShake(0.4f, duration: 0.2f);
     }
 }

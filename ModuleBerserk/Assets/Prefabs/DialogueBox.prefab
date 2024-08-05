@@ -219,7 +219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftBumpBackground: {fileID: 21300000, guid: 398196cc0e8ec3b4a9713dfd0c32ece6, type: 3}
   rightBumpBackground: {fileID: 21300000, guid: f56cf9a5bbff2cb498774abf193018f1, type: 3}
-  centerBumpBackground: {fileID: 21300000, guid: e59ba3305d645314fa901d92fbe059ce, type: 3}
+  noBumpBackground: {fileID: 21300000, guid: fa9c3516d2ba6f148bc54164b54fa8c1, type: 3}
   backgroundRenderer: {fileID: 410414149887800825}
   textMesh: {fileID: 4377962823866250331}
   widthPadding: 1
@@ -279,7 +279,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

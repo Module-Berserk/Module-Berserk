@@ -191,8 +191,10 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
 
     public void HandlePlayerDetection()
     {
-        // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
-        if (state == State.Patrol)
+        // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함.
+        // 다만 행동 반경 제한 등으로 인해 추적이 불가능한 상황에서
+        // 플레이어를 인식한 경우에는 순찰 상태를 유지함.
+        if (state == State.Patrol && rangedEnemyBehavior.CanChasePlayer())
         {
             rangedEnemyBehavior.StopPatrol();
 
@@ -227,12 +229,6 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
     CharacterStat IDestructible.GetDefenseStat()
     {
         return defense;
-    }
-
-    bool IDestructible.IsInvincible()
-    {
-        // 이미 죽은 경우는 공격에 반응하면 안됨
-        return hp.CurrentValue <= 0f;
     }
 
     Team IDestructible.GetTeam()

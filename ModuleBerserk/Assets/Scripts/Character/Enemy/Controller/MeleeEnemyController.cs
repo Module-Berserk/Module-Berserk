@@ -160,15 +160,17 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
 
     public void HandlePlayerDetection()
     {
-        // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함
-        if (state == State.Patrol)
+        // 순찰 중이었다면 순찰을 멈추고 바로 추적을 시작해야 함.
+        // 다만 행동 반경 제한 등으로 인해 추적이 불가능한 상황에서
+        // 플레이어를 인식한 경우에는 순찰 상태를 유지함.
+        if (state == State.Patrol && meleeEnemyBehavior.CanChasePlayer())
         {
             meleeEnemyBehavior.StopPatrol();
 
             state = State.Chase;
 
             // TODO: 로그 출력 삭제하고 인식 모션 시작
-            Debug.Log("플레이어 인식!");
+            // Debug.Log("플레이어 인식!");
         }
 
         // 주변에서 인식 정보를 공유받아 이 함수가 호출된 경우
@@ -194,11 +196,6 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
     CharacterStat IDestructible.GetDefenseStat()
     {
         return defense;
-    }
-
-    bool IDestructible.IsInvincible()
-    {
-        return hp.CurrentValue <= 0f;
     }
 
     Team IDestructible.GetTeam()

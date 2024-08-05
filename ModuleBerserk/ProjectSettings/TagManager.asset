@@ -4,17 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - OneWayPlatform
   - Attack
   - Enemy
-  - TestSpawnPoint
   - C1BoxGimmick
-  - SavePoint1
-  - SavePoint2
-  - SavePoint3
   - FollowCamera1
   - FollowCamera2
   - FollowCamera3
+  - BossRoomEntrance
+  - TutorialFollowCamera
+  - TestSpawnPoint
   layers:
   - Default
   - TransparentFX

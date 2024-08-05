@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,6 +14,8 @@ public class CharacterStat : ISerializable
     private float baseValue; // 버프와 최대치를 적용하지 않은 현재 값
     private float additiveModifier = 0f; // 합연산 버프/디버프
     private float multiplicativeModifier = 1f; // 곱연산 버프/디버프
+
+    private CancellationTokenSource cancellationTokenSource = new(); // 비동기 버프/디버프 제거용
 
     public float CurrentValue {get => Mathf.Clamp((baseValue + additiveModifier) * multiplicativeModifier, MinValue, MaxValue);} // 버프와 최대치를 적용한 최종 값
     public float MinValue {get; private set;} //최솟값
@@ -80,7 +83,7 @@ public class CharacterStat : ISerializable
     {
         ApplyAdditiveModifier(modifier);
 
-        await UniTask.WaitForSeconds(duration);
+        await UniTask.WaitForSeconds(duration, cancellationToken: cancellationTokenSource.Token);
 
         ApplyAdditiveModifier(-modifier);
     }
@@ -102,8 +105,20 @@ public class CharacterStat : ISerializable
 
         ApplyMultiplicativeModifier(modifier);
 
-        await UniTask.WaitForSeconds(duration);
+        await UniTask.WaitForSeconds(duration, cancellationToken: cancellationTokenSource.Token);
 
         ApplyMultiplicativeModifier(1f / modifier);
+    }
+
+    // 각종 버프/디버프 모두 제거
+    public void ResetModifiers()
+    {
+        // 비동기 버프/디버프 영향 제거
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+        cancellationTokenSource = new();
+
+        additiveModifier = 0f;
+        multiplicativeModifier = 1f;
     }
 }

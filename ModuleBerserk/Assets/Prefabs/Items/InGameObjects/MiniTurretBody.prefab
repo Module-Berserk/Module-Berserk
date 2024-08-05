@@ -196,5 +196,5 @@ MonoBehaviour:
   bulletPrefab: {fileID: 568573568832534134, guid: 304abf44a1f33c64a80527a69339d83b, type: 3}
   initialDelay: 2
   delayBetweenFire: 1
-  numBullets: 3
+  numBullets: 10
   bulletVelocity: 5

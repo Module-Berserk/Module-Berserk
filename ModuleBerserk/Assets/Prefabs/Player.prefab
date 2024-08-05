@@ -95,10 +95,6 @@ MonoBehaviour:
   knockbackForce: 15
   staggerDuration: 0.5
   delayBetweenDamageTick: 0.1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
@@ -199,9 +195,7 @@ GameObject:
   - component: {fileID: 4895742193337405064}
   - component: {fileID: 6683100023457001669}
   - component: {fileID: 5967063454063742748}
-  - component: {fileID: 4169763342040205081}
   - component: {fileID: 8017939143549858306}
-  - component: {fileID: 8967889573082849027}
   - component: {fileID: 8348982263639074738}
   - component: {fileID: 7564394879529154332}
   m_Layer: 7
@@ -269,7 +263,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -1421665010, guid: a02bdeb1b43605c4a9a73ec869e031f5, type: 3}
+  m_Sprite: {fileID: 1599511755, guid: 5ce8c080b4ccd03449111aea9258318d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -389,13 +383,20 @@ MonoBehaviour:
   cameraLookAheadDistance: 0
   weaponHitbox: {fileID: 6389424330828841407}
   emergencyEvadeHitbox: {fileID: 6405362062228367109}
-  evasionDuration: 0.2
-  evasionDistance: 4
-  evasionEase: 9
+  normalHitEffectPrefab: {fileID: 568573568832534134, guid: b05349696a5ed224dae3db7e73c1c501, type: 3}
+  critHitEffectPrefab: {fileID: 568573568832534134, guid: b37ca1e40aa129148a865d9f2aef58ed, type: 3}
+  critHitLagInitialTimescale: 0
+  critHitLagEffectDuration: 0.1
+  critHitLagEffectEase: 18
+  invincibleDurationAfterStagger: 0.2
   evasionCooltime: 1.3
+  evasionInvincibleDuration: 0.5
+  emergencyEvasionInvincibleDuration: 0.5
   emergencyEvasionCooltime: 1
   emergencyEvasionTimeWindow: 0.3
   grenadeVelocity: {x: 10, y: 2}
+  healthBarAnimation: {fileID: 0}
+  youDiedUI: {fileID: 0}
 --- !u!114 &4491008500044812834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +411,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 0}
   itemReplacementUI: {fileID: 0}
-  itemReplacementSlot1Outline: {fileID: 0}
-  itemReplacementSlot2Outline: {fileID: 0}
   slot1CooltimeUI:
     slider: {fileID: 0}
     iconImage: {fileID: 0}
@@ -446,11 +445,14 @@ MonoBehaviour:
   defaultAirControl: 0.5
   airControlWhileWallJumping: 0.2
   wallJumpAirControlPenaltyDuration: 0.3
+  evasionDuration: 0.2
+  evasionDistance: 4
+  evasionEase: 9
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  groundContactDistanceThreshold: 0.1
-  wallContactDistanceThreshold: 0.02
+  contactDistanceThreshold: 0.05
+  expectedSlopeAngleInDegrees: 45
   OnLand:
     m_PersistentCalls:
       m_Calls: []
@@ -501,25 +503,6 @@ MonoBehaviour:
   - {fileID: 1202432885, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
   - {fileID: 2007786711, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
   - {fileID: -1577393892, guid: cb0c7840806bae54cbcbfb73ccb5d084, type: 3}
-  OnGearLevelChange:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &4169763342040205081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053644641385332747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7db1e094b7b1d934ba745d1c8b3aff58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentValueSlider: {fileID: 0}
-  followUpSlider: {fileID: 0}
-  followUpLerpRatio: 0.02
-  followUpThreshold: 0.01
 --- !u!114 &8017939143549858306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,33 +516,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motionScale: 1.5
---- !u!234 &8967889573082849027
-SliderJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053644641385332747}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 1
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 3
-  m_AutoConfigureConnectedAnchor: 1
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureAngle: 0
-  m_Angle: 0
-  m_UseMotor: 0
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 0
-  m_TranslationLimits:
-    m_LowerTranslation: 0
-    m_UpperTranslation: 0
 --- !u!114 &8348982263639074738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,10 +636,6 @@ MonoBehaviour:
   knockbackForce: 15
   staggerDuration: 0.5
   delayBetweenDamageTick: 0.1
-  RawDamage:
-    OnValueChange:
-      m_PersistentCalls:
-        m_Calls: []
   DamageCoefficient: 1
   OnApplyDamageSuccess:
     m_PersistentCalls:
@@ -856,7 +808,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.5406647, y: -0.2716818}
+  m_Offset: {x: 0.69, y: -0.53}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -867,7 +819,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.2314453, y: 1.8536453}
+  m_Size: {x: 1.39, y: 1.39}
   m_EdgeRadius: 0
 --- !u!1 &6754995155886909662
 GameObject:
@@ -933,7 +885,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.12534332, y: -0.8203759}
+  m_Offset: {x: 0.51, y: -0.35}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -944,7 +896,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.4584503, y: 1.022788}
+  m_Size: {x: 2.4584503, y: 1.83}
   m_EdgeRadius: 0
 --- !u!1 &6903414295343449092
 GameObject:
@@ -1010,7 +962,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.37030792, y: -0.47855234}
+  m_Offset: {x: 0.78, y: -0.27}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1021,5 +973,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.8317719, y: 1.569705}
+  m_Size: {x: 2.01, y: 1.81}
   m_EdgeRadius: 0

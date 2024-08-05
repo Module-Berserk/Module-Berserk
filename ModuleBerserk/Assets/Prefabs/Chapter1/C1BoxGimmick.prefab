@@ -154,7 +154,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.5, y: 1.5}
+  m_Size: {x: 1.5, y: 1.3}
   m_EdgeRadius: 0
 --- !u!50 &8304629946119169403
 Rigidbody2D:
@@ -198,7 +198,7 @@ MonoBehaviour:
   shouldDropCreditOnDestroy: 0
   playerStunDurationOnDashImpact: 1
   cameraShakeForce: 0.1
-  pushVelocity: 2
+  pushVelocity: 3
 --- !u!114 &937925219785605685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,8 +233,8 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_ImpulseDuration: 0.2
-    m_ImpulseType: 0
-    m_DissipationRate: 0.25
+    m_ImpulseType: 1
+    m_DissipationRate: 0.7
     m_RawSignal: {fileID: 0}
     m_AmplitudeGain: 1
     m_FrequencyGain: 1
@@ -261,6 +261,6 @@ MonoBehaviour:
     m_ImpactRadius: 100
     m_DirectionMode: 0
     m_DissipationMode: 2
-    m_DissipationDistance: 100
+    m_DissipationDistance: 10
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 1, y: -1, z: 0}

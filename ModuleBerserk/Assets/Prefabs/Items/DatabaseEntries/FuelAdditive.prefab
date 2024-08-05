@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: 3
-  rarity: 1
+  rarity: 2
   type: 5
   itemName: "\uC5F0\uB8CC\uCCA8\uAC00\uC81C"
   cooltime: 90

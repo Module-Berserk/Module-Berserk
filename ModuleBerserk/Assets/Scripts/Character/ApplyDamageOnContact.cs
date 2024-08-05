@@ -78,7 +78,7 @@ public class ApplyDamageOnContact : MonoBehaviour
 
     // 공격 성공 여부가 필요한 경우 사용할 수 있는 이벤트.
     // 기어 시스템에서 게이지를 회복하는 조건으로 활용한다.
-    public UnityEvent OnApplyDamageSuccess;
+    public UnityEvent<Collider2D> OnApplyDamageSuccess = new();
 
     private void Awake()
     {
@@ -160,7 +160,7 @@ public class ApplyDamageOnContact : MonoBehaviour
                 // 공격에 성공했다면 이벤트로 알려줌 (ex. 공격 성공 시 기어 게이지 상승)
                 if (destructible.TryApplyDamage(attackInfo))
                 {
-                    OnApplyDamageSuccess.Invoke();
+                    OnApplyDamageSuccess.Invoke(other);
 
                     Debug.Log("공격 성공");
                 }

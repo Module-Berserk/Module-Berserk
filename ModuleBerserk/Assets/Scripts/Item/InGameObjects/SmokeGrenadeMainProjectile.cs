@@ -7,7 +7,7 @@ public class SmokeGrenadeMainProjectile : ExplodingProjectileBase
 
     protected override void OnExplosion(Collision2D other)
     {
-        Instantiate(explosionPrefab, other.contacts[0].point, Quaternion.identity);
-        Instantiate(smokeAreaPrefab, other.contacts[0].point, Quaternion.identity);
+        Instantiate(explosionPrefab, other.GetContact(0).point, Quaternion.identity);
+        Instantiate(smokeAreaPrefab, other.GetContact(0).point, Quaternion.identity);
     }
 }

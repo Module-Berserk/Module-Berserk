@@ -139,7 +139,7 @@ public class PlayerDetectionRange : MonoBehaviour
     // OnPlayerDetect 이벤트가 호출되게 만든다.
     private void ShareDetectionInfo()
     {
-        Debug.Log("주변에 인식 정보 공유");
+        // Debug.Log("주변에 인식 정보 공유");
         var colliders = Physics2D.OverlapCircleAll(transform.position, detectionSharingRadius);
         foreach (var collider in colliders)
         {

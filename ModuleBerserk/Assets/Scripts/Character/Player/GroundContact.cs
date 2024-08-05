@@ -24,28 +24,26 @@ public class GroundContact
         }
     }
 
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rb;
     private BoxCollider2D collider;
     private LayerMask groundLayerMask;
-    private float groundContactDistanceThreshold;
-    private float wallContactDistanceThreshold;
+    private float contactDistanceThreshold;
+    private float slopeContactDistanceThreshold;
 
     // 플레이어가 경사로를 타고 올라가다가 점프하는 상황을 잘 처리하기 위한 타이머.
     // 자세한 설명은 PreventTestForDuration() 함수의 주석에 있음.
     private float forceTestFailureDuration = 0f;
 
-    public GroundContact(Rigidbody2D rigidbody, BoxCollider2D collider, LayerMask groundLayerMask, float groundContactDistanceThreshold, float wallContactDistanceThreshold)
+    public GroundContact(Rigidbody2D rigidbody, BoxCollider2D collider, LayerMask groundLayerMask, float contactDistanceThreshold = 0.02f, float expectedSlopeAngleInDegrees = 45f)
     {
-        this.rigidbody = rigidbody;
+        rb = rigidbody;
         this.collider = collider;
         this.groundLayerMask = groundLayerMask;
-        this.groundContactDistanceThreshold = groundContactDistanceThreshold;
-        this.wallContactDistanceThreshold = wallContactDistanceThreshold;
-    }
+        this.contactDistanceThreshold = contactDistanceThreshold;
 
-    public bool IsSteppingOnOneWayPlatform()
-    {
-        return IsGrounded && CurrentPlatform.CompareTag("OneWayPlatform");
+        // 경사로에 서있는 경우 한쪽 발이 닿아있어도 다른 발은 지면에서 멀리 떨어져있으니
+        // IsLeftFootGrounded 같은 속성을 정확히 체크하려면 살짝 더 먼 거리까지 raycast해야 함
+        slopeContactDistanceThreshold = contactDistanceThreshold + collider.size.x * Mathf.Tan(expectedSlopeAngleInDegrees * Mathf.Deg2Rad);
     }
 
     public async UniTask IgnoreCurrentPlatformForDurationAsync(float duration)
@@ -104,30 +102,34 @@ public class GroundContact
         // 0.99f 곱하는 이유: 정확히 콜라이더의 양 끝에서 시작하면 벽을 바닥으로 착각할 수 있음
         var offsetFromCenter = Vector2.right * collider.size.x / 2f * 0.99f;
         var ray = Vector2.down * collider.size.y / 2f;
-        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, groundContactDistanceThreshold);
+        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, slopeContactDistanceThreshold);
 
-        // 아래에 아무것도 없으면 확실히 바닥과 접촉 중이 아님
-        GameObject platform = result.TryGetCollidingObject();
-        if (platform == null)
+        // 만약 양쪽 발 아래 거리가 판정 임계점 이상으로 나왔다면 공중에 있는 것으로 판단
+        float rightFootDistance = result.Hit1Distance();
+        float leftFootDistance = result.Hit2Distance();
+        if (Mathf.Min(rightFootDistance, leftFootDistance) > contactDistanceThreshold)
         {
             return null;
         }
 
-        // 아래에 뭔가 있으니 일단 지면의 normal 벡터를 기록.
-        // 왼쪽과 오른쪽 모두 충돌했다면 오른쪽을 기준으로 처리함.
-        GroundNormal = result.Hit1 ? result.Hit1.normal : result.Hit2.normal;
+        // 여기까지 왔다면 둘 중 한쪽 발은 확실히 지면 위에 있고,
+        // 다른 하나는 경사로인 경우 살짝 떠있을 가능성이 있음.
+        GameObject platform = result.TryGetCollidingObject();
 
-        // 땅에 가만히 서있거나 (상대 속도 = 0) 움직이는 엘리베이터에 서있는 경우를
-        // 점프해서 one way platform을 뚫고 올라는 경우(수직 방향 상대 속도 != 0)를 구분.
+        // 아래에 뭔가 있으니 일단 지면의 normal 벡터를 기록.
+        // 왼쪽과 오른쪽 모두 충돌했다면 둘 중 지면과 거리가 가까운 쪽을 참고함.
+        GroundNormal = (rightFootDistance < leftFootDistance) ? result.Hit1.normal : result.Hit2.normal;
+
+        // 땅에 가만히 서있는 경우를 (상대 속도 = 0) 점프해서
+        // one way platform을 뚫고 올라는 경우(수직 방향 상대 속도 != 0)와 구분.
         // 각도가 다른 경사로 사이를 넘어갈 때는 relativeNormalVelocity가 크게 나올 수도 있으니
         // 이전 프레임에 IsGrounded인 경우에는 고려하지 않는다.
         //
         // Note:
         // 경사로를 따라 움직일 수도 있으니 속도의 y축 성분이 아니라
         // 지면과의 normal 벡터 방향 성분을 기준으로 삼아야 함!!!
-        var isElevator = platform.GetComponent<Elevator>() != null;
-        var relativeNormalVelocity = Vector2.Dot(GroundNormal, rigidbody.velocity);
-        if (!isElevator && !IsGrounded && relativeNormalVelocity > 0.1f)
+        var relativeNormalVelocity = Vector2.Dot(GroundNormal, rb.velocity);
+        if (!IsGrounded && relativeNormalVelocity > 0.1f)
         {
             return null;
         }
@@ -150,7 +152,7 @@ public class GroundContact
     {
         var offsetFromCenter = Vector2.up * collider.size.y / 2f;
         var ray = direction * collider.size.x / 2f;
-        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, wallContactDistanceThreshold);
+        ParallelRaycastResult result = PerformParallelRaycast(ray, offsetFromCenter, contactDistanceThreshold);
 
         return result.IsBothRayHit();
     }
@@ -162,6 +164,16 @@ public class GroundContact
     {
         public RaycastHit2D Hit1;
         public RaycastHit2D Hit2;
+
+        public float Hit1Distance()
+        {
+            return Hit1 ? Hit1.distance : Mathf.Infinity;
+        }
+
+        public float Hit2Distance()
+        {
+            return Hit2 ? Hit2.distance : Mathf.Infinity;
+        }
 
         // 두 raycast 결과 중에 충돌한 물체가 있다면 반환하고,
         // 둘 다 실패한 경우에는 null을 반환함.
