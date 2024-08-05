@@ -129,6 +129,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private int attackCount = 0;
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
+    // 회피 키와 조합해서 기어 상승 또는 충격파를 발동하는 위 아래 방향키.
+    // 정확한 타이밍에 키를 조합해서 입력하는게 생각보다 어려워서 선입력으로 처리함.
+    private enum CompositeCommand
+    {
+        UpArrow,
+        DownArrow,
+    }
+    private CompositeCommand bufferedCompositeCommand; // 위 아래 방향키 선입력 종류
+    private float bufferedCompositeCommandValidDuration = -1f; // 선입력이 유효한 기간 (0 이상이어야 처리됨)
+
     // 무적 판정
     private float invincibleDuration = 0f;
     // 마지막 회피로부터 지난 시간.
@@ -295,6 +305,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed += OnEvade;
         playerActions.UseItem1.performed += OnUseItem1;
         playerActions.UseItem2.performed += OnUseItem2;
+        playerActions.UpArrow.performed += OnUpArrowPressed;
+        playerActions.DownArrow.performed += OnDownArrowPressed;
 
         playerState.HP.OnValueChange.AddListener(OnHPChange);
     }
@@ -308,8 +320,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed -= OnEvade;
         playerActions.UseItem1.performed -= OnUseItem1;
         playerActions.UseItem2.performed -= OnUseItem2;
+        playerActions.UpArrow.performed -= OnUpArrowPressed;
+        playerActions.DownArrow.performed -= OnDownArrowPressed;
         
         playerState.HP.OnValueChange.RemoveListener(OnHPChange);
+    }
+
+    private const float BUFFERED_COMPOSITE_COMMAND_VALID_DURATION = 0.2f;
+    private void OnUpArrowPressed(InputAction.CallbackContext context)
+    {
+        bufferedCompositeCommand = CompositeCommand.UpArrow;
+        bufferedCompositeCommandValidDuration = BUFFERED_COMPOSITE_COMMAND_VALID_DURATION;
+    }
+
+    private void OnDownArrowPressed(InputAction.CallbackContext context)
+    {
+        bufferedCompositeCommand = CompositeCommand.DownArrow;
+        bufferedCompositeCommandValidDuration = BUFFERED_COMPOSITE_COMMAND_VALID_DURATION;
     }
 
     private void OnHPChange(float diff)
@@ -410,12 +437,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // Case 1) 상단 방향키 + 회피 버튼 = 기어 게이지 상승
-        if (InputManager.InputActions.Player.UpArrow.IsPressed())
+        if (IsGearGaugeAscentCommand())
         {
             HandleGearGaugeAscent();
         }
         // Case 2) 하단 방향키 + 회피 버튼 = 긴급 회피
-        else if (InputManager.InputActions.Player.DownArrow.IsPressed())
+        else if (IsEmergencyEvasionCommand())
         {
             HandleEmergencyEvasion();
         }
@@ -424,6 +451,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
         {
             HandleNormalEvasion();
         }
+    }
+
+    private bool IsGearGaugeAscentCommand()
+    {
+        return InputManager.InputActions.Player.UpArrow.IsPressed() || (bufferedCompositeCommandValidDuration > 0f && bufferedCompositeCommand == CompositeCommand.UpArrow);
+    }
+
+    private bool IsEmergencyEvasionCommand()
+    {
+        return InputManager.InputActions.Player.DownArrow.IsPressed() || (bufferedCompositeCommandValidDuration > 0f && bufferedCompositeCommand == CompositeCommand.DownArrow);
     }
 
     // 기어 게이지가 현재 단계의 최대치를 일정 시간 유지한 상태에서
@@ -699,6 +736,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void FixedUpdate()
     {
         UpdateInvincibleDuration();
+        bufferedCompositeCommandValidDuration -= Time.fixedDeltaTime;
 
         if (ActionState == PlayerActionState.Evade)
         {
