@@ -979,25 +979,43 @@ public class PlayerManager : MonoBehaviour, IDestructible
         netPendingDamage += finalDamage;
         UpdateHealthBarUI();
 
-        await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
-        netPendingDamage -= finalDamage;
-
-        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
-        // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
-        // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
-        if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
+        // 죽음에 이르는 공격을 받으면 기다리지 않고 즉시 사망 처리
+        if (playerState.HP.CurrentValue <= netPendingDamage)
         {
-            (this as IDestructible).HandleHPDecrease(finalDamage);
+            // 애니메이터에서 경직 상태를 우선시해서 사망 모션이
+            // 재생되지 않는 문제를 해결하기 위해 플레이어 FSM 상태를 초기화
+            CancelCurrentAction();
 
-            // 공격 당하면 게이지가 깎임
-            gearSystem.OnPlayerHit();
+            (this as IDestructible).HandleHPDecrease(netPendingDamage);
+
+            // 이미 죽었는데 hp를 또 깎으려 하는 상황을 방지하기 위해
+            // 대기 중이던 데미지 모두 취소
+            CancelPendingDamages();
         }
-        // 데미지 무효화가 일어났다면 아까 선제적으로 업데이트한
-        // 체력바를 실제 체력에 맞게 다시 조정.
+        // 죽지 않을 정도의 데미지라면 충격파를 통한 데미지 무효화 가능성을 고려해서 잠시 기다림
         else
         {
-            UpdateHealthBarUI();
+            await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
+            netPendingDamage -= finalDamage;
+
+            // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
+            // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
+            // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
+            if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
+            {
+                (this as IDestructible).HandleHPDecrease(finalDamage);
+
+                // 공격 당하면 게이지가 깎임
+                gearSystem.OnPlayerHit();
+            }
+            // 데미지 무효화가 일어났다면 아까 선제적으로 업데이트한
+            // 체력바를 실제 체력에 맞게 다시 조정.
+            else
+            {
+                UpdateHealthBarUI();
+            }
         }
+
     }
 
     private void UpdateHealthBarUI()
@@ -1104,7 +1122,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
 
-        await youDiedUI.FadeInoutAsync();
+        await youDiedUI.StartDeathCutsceneAsync();
 
         InputManager.InputActions.Player.Enable();
 
@@ -1115,7 +1133,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // TODO: 미션 실패 결과창 표시...?
 
-        await youDiedUI.FadeInoutAsync();
+        await youDiedUI.StartDeathCutsceneAsync();
 
         InputManager.InputActions.Player.Enable();
 
