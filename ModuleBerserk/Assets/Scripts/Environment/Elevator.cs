@@ -202,7 +202,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
         // 엘리베이터 작동음 시작
         int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
+        elevatorAudioSource = AudioManager.instance.PlaySFXBasedOnPlayer(elevatorIndices, this.transform);
 
         // 이동 끝날 때까지 대기
         rb.DOMove(destination, movementDuration)
