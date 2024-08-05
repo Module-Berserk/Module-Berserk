@@ -469,12 +469,30 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 기어를 한 단계 올리고 특수 공격을 시전한다.
     private void HandleGearGaugeAscent()
     {
+        // 경직/스턴 상태에서는 기어 단계 상승이 불가능함.
+        // 피격 경직은 아마 문제가 안 될텐데 상자 기믹에 대쉬한 경우 등
+        // 데미지 없이 스턴에 걸리는 상황이 가능하므로 반드시 조작이 가능한지 체크해줘야 함.
+        if (ActionState == PlayerActionState.Stagger || ActionState == PlayerActionState.Stun)
+        {
+            return;
+        }
+
         if (gearSystem.IsNextGearLevelReady())
         {
             gearSystem.IncreaseGearLevel();
-
-            // TODO: 특수 공격
+            
+            PerformGearIncreaseAttack();
         }
+    }
+
+    private void PerformGearIncreaseAttack()
+    {
+        CancelCurrentAction();
+        animator.SetTrigger("GearIncreaseAttack");
+        invincibleDuration = 1.2f; // 대충 특수공격 모션 지속시간보다 살짝 높게 잡으면 됨
+        ActionState = PlayerActionState.AttackInProgress;
+        weaponHitbox.SetHitboxDirection(IsFacingLeft);
+        spriteRootMotion.HandleAnimationChange();
     }
 
     void HandleEmergencyEvasion()
