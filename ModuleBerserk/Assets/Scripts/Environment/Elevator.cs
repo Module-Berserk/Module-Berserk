@@ -139,9 +139,9 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
     // 목적지에 도착했는지 판별.
     // Mathf.Approximatly()는 tweening 오차마저 false로 판단할 정도로 민감해서 직접 구현함...
-    private bool IsOnPosition(Vector2 destination)
+    private bool IsOnPosition(Vector2 position)
     {
-        return (rb.position - destination).magnitude < 0.0001f;
+        return (destination - position).magnitude < 0.0001f;
     }
 
     // 현재 위치에서 다른 종점까지 갔다가 돌아오는 움직임
