@@ -768,7 +768,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
             // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
             // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
-            if (IsAttacking())
+            //
+            // 예외적으로 공중 공격은 따로 루트 모션이 없어서 기존 이동 속도를 그대로 유지함!
+            if (IsAttacking() && !isAirAttackPerformed)
             {
                 float desiredSpeed = spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
                 platformerMovement.UpdateMoveVelocity(desiredSpeed, skipAcceleration: true);
