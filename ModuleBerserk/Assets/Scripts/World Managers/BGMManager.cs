@@ -11,27 +11,34 @@ public class BGMManager : MonoBehaviour
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip[] audioClips;
+    private int currentTrackId = 0;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        audioSource.clip = audioClips[0];
-        audioSource.loop = true;
+        audioSource.clip = audioClips[currentTrackId];
+        //audioSource.loop = true;
         audioSource.volume = volume / 100;
-        audioSource.Play();
+        PlayBGM();
     }
     
     private void Update()
     {
         audioSource.volume = volume;
         //TODO: 브금 바꾸기 ㅇㅅㅇ
+        if (!audioSource.isPlaying) {
+            currentTrackId = 1 - currentTrackId;
+            ChangeBGM(currentTrackId);
+        }
     }
 
-    public void ChangeBGM() {
+    public void ChangeBGM(int bgmId) {
         audioSource.Stop();
-        audioSource.clip = audioClips[1];
+        audioSource.clip = audioClips[bgmId];
+        currentTrackId = bgmId;
+        PlayBGM();
     }
-    public void playBGM() {
+    public void PlayBGM() {
         audioSource.Play();
     }
 }
