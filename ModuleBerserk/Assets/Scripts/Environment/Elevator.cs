@@ -202,7 +202,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
         // 엘리베이터 작동음 시작
         int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFX(elevatorIndices);
+        elevatorAudioSource = AudioManager.instance.PlaySFXBasedOnPlayer(elevatorIndices, this.transform);
 
         // 이동 끝날 때까지 대기
         rb.DOMove(destination, movementDuration)
@@ -213,7 +213,8 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         
         // 앨리베이터 작동음 중지
         AudioManager.instance.StopSFX(elevatorAudioSource);
-
+        int[] bellIndices = {46};
+        AudioManager.instance.PlaySFXBasedOnPlayer(bellIndices, this.transform);
         // 엘리베이터가 "쾅"하고 떨어지는 경우 추가적인 화면 흔들림 효과를 주기 위해 사용됨
         if (NeedScreenShakeOnMoveEnd())
         {

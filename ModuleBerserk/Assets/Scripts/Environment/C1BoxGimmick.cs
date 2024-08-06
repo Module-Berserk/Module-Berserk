@@ -64,14 +64,14 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
         if (!isGroundCollision && isFalling)
         {
             int[] boxIndices = {33};
-            AudioManager.instance.PlaySFX(boxIndices);  
+            AudioManager.instance.PlaySFXBasedOnPlayer(boxIndices, this.transform);  
             DestroyBox();
         }
         // case 2) 땅에 떨어지면 화면 흔들림
         else if (isGroundCollision)
         {
             int[] boxIndices = {34};
-            AudioManager.instance.PlaySFX(boxIndices); 
+            AudioManager.instance.PlaySFXBasedOnPlayer(boxIndices, this.transform); 
             screenShake.ApplyScreenShake(cameraShakeForce, 0.2f);
         }
     }
@@ -88,7 +88,7 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
             if (playerManager.ActionState == PlayerActionState.Evade && playerManager.IsNormalEvasion)
             {
                 int[] boxIndices = {33};
-                AudioManager.instance.PlaySFX(boxIndices);  
+                AudioManager.instance.PlaySFXBasedOnPlayer(boxIndices, this.transform);  
                 DestroyBox();
 
                 // 1. 경직 상태로 전환

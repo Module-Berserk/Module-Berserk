@@ -238,4 +238,9 @@ public class MeleeEnemyController : MonoBehaviour, IDestructible
         // 세이브 데이터에 죽었다고 기록하기
         GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
     }
+
+    private void PlayVictimSFX() {
+        int[] victimIndices = {41, 42, 43, 44, 45};
+        AudioManager.instance.PlaySFXBasedOnPlayer(victimIndices, this.transform);
+    }
 }

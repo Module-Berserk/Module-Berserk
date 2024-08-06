@@ -7,7 +7,7 @@ public class BGMManager : MonoBehaviour
 {
     [SerializeField]
     [Range(0, 100)]
-    private int volume = 100;
+    private int volume = 0;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip[] audioClips;

@@ -46,7 +46,7 @@ public class C1ElevatorLever : Trigger, IInteractable
         Activate();
         //SFX 시전! Lever On
         int[] leveronIndices = {12};
-        AudioManager.instance.PlaySFX(leveronIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(leveronIndices, this.transform);
 
         spriteRenderer.sprite = activeSprite;
         await UniTask.WaitForSeconds(duration, cancellationToken: cancellationToken);
@@ -55,7 +55,7 @@ public class C1ElevatorLever : Trigger, IInteractable
 
         //SFX 시전! Lever Off
         int[] leveroffIndices = {13};
-        AudioManager.instance.PlaySFX(leveroffIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(leveroffIndices, this.transform);
     }
 
     bool IInteractable.IsInteractionPossible()

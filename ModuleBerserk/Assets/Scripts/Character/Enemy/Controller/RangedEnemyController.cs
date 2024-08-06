@@ -271,10 +271,14 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
     // 만약 원거리 잡몹 모두가 공유하는 스크립트라면 옮길게영 ㅠㅜ
     private void PlayReloadSFX() {
         int[] reloadIndices = {16};
-        AudioManager.instance.PlaySFX(reloadIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(reloadIndices, this.transform);
     }
     private void PlayShotGunSFX() {
         int[] shotIndices = {17};
-        AudioManager.instance.PlaySFX(shotIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(shotIndices, this.transform);
+    }
+    private void PlayVictimSFX() {
+        int[] victimIndices = {41, 42, 43, 44, 45};
+        AudioManager.instance.PlaySFXBasedOnPlayer(victimIndices, this.transform);
     }
 }

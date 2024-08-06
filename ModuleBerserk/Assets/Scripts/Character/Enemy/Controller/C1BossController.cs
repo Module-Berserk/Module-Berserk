@@ -925,41 +925,41 @@ public class C1BossController : MonoBehaviour, IDestructible
     //SFX
     private void PlayCannonShotSFX() {
         int[] cannonIndices = {21};
-        AudioManager.instance.PlaySFX(cannonIndices);  
+        AudioManager.instance.PlaySFXBasedOnPlayer(cannonIndices, this.transform);  
     }
     private void PlayJumpingSFX() {
         int[] jumpingIndices = {18};
-        AudioManager.instance.PlaySFX(jumpingIndices);        
+        AudioManager.instance.PlaySFXBasedOnPlayer(jumpingIndices, this.transform);        
     }
     private void PlayLandSFX() {
         int[] landingIndices = {9};
-        AudioManager.instance.PlaySFX(landingIndices);        
+        AudioManager.instance.PlaySFXBasedOnPlayer(landingIndices, this.transform);        
     }
     private void PlayChargeSFX() {
         int[] chargingIndices = {22};
-        AudioManager.instance.PlaySFX(chargingIndices);        
+        AudioManager.instance.PlaySFXBasedOnPlayer(chargingIndices, this.transform);        
     }
     private void PlayCrashSFX() {
         int[] crashingIndices = {23, 24};
-        AudioManager.instance.PlaySFX(crashingIndices);        
+        AudioManager.instance.PlaySFXBasedOnPlayer(crashingIndices, this.transform);        
     }
     private void PlayPunchSFX() {
         int[] punchIndices = {25, 26, 27, 28};
-        AudioManager.instance.PlaySFX(punchIndices);        
+        AudioManager.instance.PlaySFXBasedOnPlayer(punchIndices, this.transform);        
     }
     private void Play8CannonShotSFX() {
         int [] cannonIndices = {29, 30};
-        AudioManager.instance.PlaySFX(cannonIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(cannonIndices, this.transform);
         int [] shellIndices = {31};
-        AudioManager.instance.PlaySFX(shellIndices); 
+        AudioManager.instance.PlaySFXBasedOnPlayer(shellIndices, this.transform); 
     }
     private void PlayFlameThrowSFX() {
         int [] flameIndices = {32};
-        AudioManager.instance.PlaySFX(flameIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(flameIndices, this.transform);
     }
     private void PlayCallMinionSFX() {
         int [] callIndices = {40};
-        AudioManager.instance.PlaySFX(callIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(callIndices, this.transform);
 
         // 벽 치는 순간에 호출되는 함수라서 여기서 화면 흔들림도 함께 처리함
         screenShake.ApplyScreenShake(0.4f, duration: 0.2f);
