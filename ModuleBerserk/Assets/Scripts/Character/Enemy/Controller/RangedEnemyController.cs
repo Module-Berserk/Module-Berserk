@@ -277,4 +277,8 @@ public class RangedEnemyController : MonoBehaviour, IDestructible
         int[] shotIndices = {17};
         AudioManager.instance.PlaySFXBasedOnPlayer(shotIndices, this.transform);
     }
+    private void PlayVictimSFX() {
+        int[] victimIndices = {41, 42, 43, 44, 45};
+        AudioManager.instance.PlaySFXBasedOnPlayer(victimIndices, this.transform);
+    }
 }
