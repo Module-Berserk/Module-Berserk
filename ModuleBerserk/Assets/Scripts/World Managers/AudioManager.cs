@@ -19,26 +19,20 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void Update() {
-        // for (int i = 0; i < audioSources.Count; i++) {
-            
-        //     if (audioSources[i].volume <= 0) {
-        //         Destroy(audioSources[i]);
-        //     }
-        // } Audio Source Recycling
+         for (int i = 0; i < audioSources.Count; i++) {
+            if (audioSources[i].audioSource.volume <= 0 || audioSources[i].targetTransform == null || !audioSources[i].audioSource.isPlaying)  {
+                Destroy(audioSources[i].audioSource);
+                audioSources.RemoveAt(i);
+            }
+        } //이거 뭔가 해병식인데
         for (int i = 0; i < audioSources.Count; i++) {
             if (audioSources[i].audioSource.volume > 0) {
-                audioSources[i].audioSource.volume = CalculateVolume(audioSources[i].targetTransform);
+                audioSources[i].audioSource.volume = CalculateVolume(audioSources[i].targetTransform) * volume / 100f / 2f; //Max Volume = 0.5
             }
         }
     }
 
     private AudioSource GetAvailableAudioSource(Transform transform) {
-        foreach (var e in audioSources) {
-            if (!e.audioSource.isPlaying) {
-                return e.audioSource;
-            }
-        }
-        // If no available audio source, create a new one
         AudioSource newAudioSource = gameObject.AddComponent<AudioSource>();
         newAudioSource.playOnAwake = false;
         audioSources.Add(new AudioSourceByDistance(transform, newAudioSource));
@@ -49,6 +43,7 @@ public class AudioManager : MonoBehaviour {
         int randomIndex = indices[Random.Range(0, indices.Length)];
         AudioSource audioSource = GetAvailableAudioSource(player.transform);
         audioSource.volume = volume / 100f / 2f; //Max Volume = 0.5
+        Debug.Log(audioSource.volume);
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
@@ -56,8 +51,10 @@ public class AudioManager : MonoBehaviour {
     }
 
     public AudioSource PlaySFXBasedOnPlayer(int[] indices, Transform target) {
+        if (target == null) {
+            return null;
+        }
         int randomIndex = indices[Random.Range(0, indices.Length)];
-        float distance = Vector2.Distance(target.position, player.transform.position);
         AudioSource audioSource = GetAvailableAudioSource(target);
         audioSource.volume = CalculateVolume(target) * volume / 100f / 2f; //Max Volume = 0.5
         if (volume <= 0) {
@@ -75,6 +72,9 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void StopSFX(AudioSource audioSource) {
+        if (audioSource == null) {
+            return;
+        }
         audioSource.Stop();
     }
 }
