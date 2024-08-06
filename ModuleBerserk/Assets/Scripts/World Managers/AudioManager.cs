@@ -6,7 +6,6 @@ public class AudioManager : MonoBehaviour {
     public static AudioManager instance = null;
 
     [SerializeField] private AudioClip[] sfxList;
-    [SerializeField] private int initialAudioSourceCount = 10; // Number of initial AudioSources in the pool
     private PlayerManager player;
 
     [Range(0, 100)]
@@ -17,7 +16,6 @@ public class AudioManager : MonoBehaviour {
     private void Awake() {
         instance = this;
         player = GameObject.FindWithTag("Player").GetComponent<PlayerManager>();
-        //InitializeAudioSources();
     }
 
     private void Update() {
@@ -33,14 +31,6 @@ public class AudioManager : MonoBehaviour {
             }
         }
     }
-
-    // private void InitializeAudioSources() {
-    //     for (int i = 0; i < initialAudioSourceCount; i++) {
-    //         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-    //         audioSource.playOnAwake = false;
-    //         audioSources.Add(audioSource);
-    //     }
-    // }
 
     private AudioSource GetAvailableAudioSource(Transform transform) {
         foreach (var e in audioSources) {
@@ -58,7 +48,7 @@ public class AudioManager : MonoBehaviour {
     public AudioSource PlaySFX(int[] indices) { 
         int randomIndex = indices[Random.Range(0, indices.Length)];
         AudioSource audioSource = GetAvailableAudioSource(player.transform);
-        audioSource.volume = volume / 100f;
+        audioSource.volume = volume / 100f / 2f; //Max Volume = 0.5
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
@@ -69,7 +59,7 @@ public class AudioManager : MonoBehaviour {
         int randomIndex = indices[Random.Range(0, indices.Length)];
         float distance = Vector2.Distance(target.position, player.transform.position);
         AudioSource audioSource = GetAvailableAudioSource(target);
-        audioSource.volume = CalculateVolume(target) * volume / 100f;
+        audioSource.volume = CalculateVolume(target) * volume / 100f / 2f; //Max Volume = 0.5
         if (volume <= 0) {
             return null;
         }
