@@ -31,6 +31,10 @@ public class C1BoxGimmickGenerator : MonoBehaviour
         {
             GameObject box = Instantiate(c1BoxGimmickPrefab, transform);
             box.transform.position = boxSpawnPosition.position;
+
+            // 이 함수로 생성된 오브젝트의 파괴 여부는 세이브 데이터에 저장되지 않으므로
+            // GUID가 초기화되지 않은 상태로 Awake()가 호출되더라도 경고를 표시하면 안됨
+            box.GetComponent<ObjectGUID>().LogWarningOnNullGUID = false;
         }
     }
 

@@ -129,6 +129,16 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private int attackCount = 0;
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
+    // 회피 키와 조합해서 기어 상승 또는 충격파를 발동하는 위 아래 방향키.
+    // 정확한 타이밍에 키를 조합해서 입력하는게 생각보다 어려워서 선입력으로 처리함.
+    private enum CompositeCommand
+    {
+        UpArrow,
+        DownArrow,
+    }
+    private CompositeCommand bufferedCompositeCommand; // 위 아래 방향키 선입력 종류
+    private float bufferedCompositeCommandValidDuration = -1f; // 선입력이 유효한 기간 (0 이상이어야 처리됨)
+
     // 무적 판정
     private float invincibleDuration = 0f;
     // 마지막 회피로부터 지난 시간.
@@ -295,6 +305,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed += OnEvade;
         playerActions.UseItem1.performed += OnUseItem1;
         playerActions.UseItem2.performed += OnUseItem2;
+        playerActions.UpArrow.performed += OnUpArrowPressed;
+        playerActions.DownArrow.performed += OnDownArrowPressed;
 
         playerState.HP.OnValueChange.AddListener(OnHPChange);
     }
@@ -308,8 +320,23 @@ public class PlayerManager : MonoBehaviour, IDestructible
         playerActions.Evade.performed -= OnEvade;
         playerActions.UseItem1.performed -= OnUseItem1;
         playerActions.UseItem2.performed -= OnUseItem2;
+        playerActions.UpArrow.performed -= OnUpArrowPressed;
+        playerActions.DownArrow.performed -= OnDownArrowPressed;
         
         playerState.HP.OnValueChange.RemoveListener(OnHPChange);
+    }
+
+    private const float BUFFERED_COMPOSITE_COMMAND_VALID_DURATION = 0.2f;
+    private void OnUpArrowPressed(InputAction.CallbackContext context)
+    {
+        bufferedCompositeCommand = CompositeCommand.UpArrow;
+        bufferedCompositeCommandValidDuration = BUFFERED_COMPOSITE_COMMAND_VALID_DURATION;
+    }
+
+    private void OnDownArrowPressed(InputAction.CallbackContext context)
+    {
+        bufferedCompositeCommand = CompositeCommand.DownArrow;
+        bufferedCompositeCommandValidDuration = BUFFERED_COMPOSITE_COMMAND_VALID_DURATION;
     }
 
     private void OnHPChange(float diff)
@@ -410,12 +437,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
 
         // Case 1) 상단 방향키 + 회피 버튼 = 기어 게이지 상승
-        if (InputManager.InputActions.Player.UpArrow.IsPressed())
+        if (IsGearGaugeAscentCommand())
         {
             HandleGearGaugeAscent();
         }
         // Case 2) 하단 방향키 + 회피 버튼 = 긴급 회피
-        else if (InputManager.InputActions.Player.DownArrow.IsPressed())
+        else if (IsEmergencyEvasionCommand())
         {
             HandleEmergencyEvasion();
         }
@@ -426,18 +453,46 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
+    private bool IsGearGaugeAscentCommand()
+    {
+        return InputManager.InputActions.Player.UpArrow.IsPressed() || (bufferedCompositeCommandValidDuration > 0f && bufferedCompositeCommand == CompositeCommand.UpArrow);
+    }
+
+    private bool IsEmergencyEvasionCommand()
+    {
+        return InputManager.InputActions.Player.DownArrow.IsPressed() || (bufferedCompositeCommandValidDuration > 0f && bufferedCompositeCommand == CompositeCommand.DownArrow);
+    }
+
     // 기어 게이지가 현재 단계의 최대치를 일정 시간 유지한 상태에서
     // 유저가 shift + up arrow를 입력한 경우 호출되는 함수.
     //
     // 기어를 한 단계 올리고 특수 공격을 시전한다.
     private void HandleGearGaugeAscent()
     {
+        // 경직/스턴 상태에서는 기어 단계 상승이 불가능함.
+        // 피격 경직은 아마 문제가 안 될텐데 상자 기믹에 대쉬한 경우 등
+        // 데미지 없이 스턴에 걸리는 상황이 가능하므로 반드시 조작이 가능한지 체크해줘야 함.
+        if (ActionState == PlayerActionState.Stagger || ActionState == PlayerActionState.Stun)
+        {
+            return;
+        }
+
         if (gearSystem.IsNextGearLevelReady())
         {
             gearSystem.IncreaseGearLevel();
 
-            // TODO: 특수 공격
+            PerformGearIncreaseAttack();
         }
+    }
+
+    private void PerformGearIncreaseAttack()
+    {
+        CancelCurrentAction();
+        animator.SetTrigger("GearIncreaseAttack");
+        invincibleDuration = 1.2f; // 대충 특수공격 모션 지속시간보다 살짝 높게 잡으면 됨
+        ActionState = PlayerActionState.AttackInProgress;
+        weaponHitbox.SetHitboxDirection(IsFacingLeft);
+        spriteRootMotion.HandleAnimationChange();
     }
 
     void HandleEmergencyEvasion()
@@ -699,6 +754,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     private void FixedUpdate()
     {
         UpdateInvincibleDuration();
+        bufferedCompositeCommandValidDuration -= Time.fixedDeltaTime;
 
         if (ActionState == PlayerActionState.Evade)
         {
@@ -712,7 +768,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 공격 중이라면 애니메이션의 pivot 변화에 따라 움직임을 부여.
             // animator에 Apply Root Motion을 체크하는 것으로는 이러한 움직임이 재현되지 않아
             // 부득이하게 비슷한 기능을 직접 만들어 사용하게 되었음...
-            if (IsAttacking())
+            //
+            // 예외적으로 공중 공격은 따로 루트 모션이 없어서 기존 이동 속도를 그대로 유지함!
+            if (IsAttacking() && !isAirAttackPerformed)
             {
                 float desiredSpeed = spriteRootMotion.CalculateHorizontalVelocity(IsFacingLeft);
                 platformerMovement.UpdateMoveVelocity(desiredSpeed, skipAcceleration: true);
@@ -921,25 +979,43 @@ public class PlayerManager : MonoBehaviour, IDestructible
         netPendingDamage += finalDamage;
         UpdateHealthBarUI();
 
-        await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
-        netPendingDamage -= finalDamage;
-
-        // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
-        // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
-        // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
-        if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
+        // 죽음에 이르는 공격을 받으면 기다리지 않고 즉시 사망 처리
+        if (playerState.HP.CurrentValue <= netPendingDamage)
         {
-            (this as IDestructible).HandleHPDecrease(finalDamage);
+            // 애니메이터에서 경직 상태를 우선시해서 사망 모션이
+            // 재생되지 않는 문제를 해결하기 위해 플레이어 FSM 상태를 초기화
+            CancelCurrentAction();
 
-            // 공격 당하면 게이지가 깎임
-            gearSystem.OnPlayerHit();
+            (this as IDestructible).HandleHPDecrease(netPendingDamage);
+
+            // 이미 죽었는데 hp를 또 깎으려 하는 상황을 방지하기 위해
+            // 대기 중이던 데미지 모두 취소
+            CancelPendingDamages();
         }
-        // 데미지 무효화가 일어났다면 아까 선제적으로 업데이트한
-        // 체력바를 실제 체력에 맞게 다시 조정.
+        // 죽지 않을 정도의 데미지라면 충격파를 통한 데미지 무효화 가능성을 고려해서 잠시 기다림
         else
         {
-            UpdateHealthBarUI();
+            await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
+            netPendingDamage -= finalDamage;
+
+            // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
+            // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
+            // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
+            if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
+            {
+                (this as IDestructible).HandleHPDecrease(finalDamage);
+
+                // 공격 당하면 게이지가 깎임
+                gearSystem.OnPlayerHit();
+            }
+            // 데미지 무효화가 일어났다면 아까 선제적으로 업데이트한
+            // 체력바를 실제 체력에 맞게 다시 조정.
+            else
+            {
+                UpdateHealthBarUI();
+            }
         }
+
     }
 
     private void UpdateHealthBarUI()
@@ -1042,22 +1118,24 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private async UniTask ReviveFromLastSavePointAsync()
     {
-        GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
-
-        Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
-
-        await youDiedUI.FadeInoutAsync();
+        await youDiedUI.StartDeathCutsceneAsync();
 
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
+
+        // 재도전 횟수 차감한 상태로 저장
+        GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
+        GameStateManager.SaveActiveGameState();
+
+        Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
     }
 
     private async UniTask ReturnToHideoutAsync()
     {
         // TODO: 미션 실패 결과창 표시...?
 
-        await youDiedUI.FadeInoutAsync();
+        await youDiedUI.StartDeathCutsceneAsync();
 
         InputManager.InputActions.Player.Enable();
 

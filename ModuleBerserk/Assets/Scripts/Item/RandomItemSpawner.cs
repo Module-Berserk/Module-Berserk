@@ -22,8 +22,10 @@ public class RandomItemSpawner : ObjectGUID, IPersistentSceneState
     // Note: 실제로 이런 일이 일어날 가능성은 매우 낮음.
     private CancellationTokenSource cancellationTokenSource = new();
 
-    private void Start()
+    private new void Start()
     {
+        base.Start();
+        
         SpawnItemIfNotLoadedAsync().Forget();
     }
 

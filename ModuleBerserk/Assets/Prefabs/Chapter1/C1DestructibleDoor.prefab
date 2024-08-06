@@ -204,6 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 
+  LogWarningOnNullGUID: 1
 --- !u!1 &8203868680581931111
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +217,6 @@ GameObject:
   - component: {fileID: 506954165131858558}
   - component: {fileID: 21625652274407998}
   - component: {fileID: 3438071745618023978}
-  - component: {fileID: 3535846709875315338}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -459,20 +459,6 @@ TilemapRenderer:
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
 --- !u!114 &3438071745618023978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8203868680581931111}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 725d5b547b0234845a25330b1ab3f6f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
-  flashDuration: 0.15
---- !u!114 &3535846709875315338
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
