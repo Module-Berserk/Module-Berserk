@@ -1654,6 +1654,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1462060469}
     m_Modifications:
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: initialMovementDelay
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 3041770795891108921, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: m_Name
       value: C1Elevator
@@ -3278,7 +3282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 121.600006
+      value: 122.90001
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13409,6 +13413,10 @@ PrefabInstance:
       value: -6.82
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: initialMovementDelay
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: screenShakeOnEndPosition
       value: 1
       objectReference: {fileID: 0}
@@ -17332,7 +17340,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.800003
+      value: 8.5
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.y
@@ -19474,6 +19482,10 @@ PrefabInstance:
       value: -6.47
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: initialMovementDelay
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: screenShakeOnEndPosition
       value: 1
       objectReference: {fileID: 0}
@@ -21422,7 +21434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18
+      value: -9.699997
       objectReference: {fileID: 0}
     - target: {fileID: 3391658415447798949, guid: b301c40d83c34f949b2af301c27e3c34, type: 3}
       propertyPath: m_LocalPosition.y
@@ -25689,6 +25701,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1462060469}
     m_Modifications:
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: initialMovementDelay
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: screenShakeOnEndPosition
       value: 1
@@ -51897,6 +51913,10 @@ PrefabInstance:
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: destinationOffset.y
       value: -6.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
+      propertyPath: initialMovementDelay
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1020320382246731381, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: screenShakeOnEndPosition
