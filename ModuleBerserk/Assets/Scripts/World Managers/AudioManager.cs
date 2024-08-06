@@ -28,7 +28,9 @@ public class AudioManager : MonoBehaviour {
         //     }
         // } Audio Source Recycling
         for (int i = 0; i < audioSources.Count; i++) {
-            audioSources[i].audioSource.volume = CalculateVolume(audioSources[i].targetTransform);
+            if (audioSources[i].audioSource.volume > 0) {
+                audioSources[i].audioSource.volume = CalculateVolume(audioSources[i].targetTransform);
+            }
         }
     }
 
