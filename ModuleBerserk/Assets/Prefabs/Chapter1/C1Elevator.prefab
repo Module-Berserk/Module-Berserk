@@ -605,6 +605,7 @@ GameObject:
   - component: {fileID: 3279819961366647411}
   - component: {fileID: 6288605645589415036}
   - component: {fileID: 7081003819492362853}
+  - component: {fileID: 5557858415151451935}
   m_Layer: 3
   m_Name: C1Elevator
   m_TagString: MovingPlatform
@@ -834,6 +835,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 
+  LogWarningOnNullGUID: 1
+--- !u!114 &5557858415151451935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3041770795891108921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6309c55a13336146baa1cf584c4f0dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3739195843010955895
 GameObject:
   m_ObjectHideFlags: 0

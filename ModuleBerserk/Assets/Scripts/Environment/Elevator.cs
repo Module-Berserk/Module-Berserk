@@ -33,7 +33,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
     [SerializeField] private bool autoLoop = false;
 
 
-    [Header("Shake Effect")]
+    [Header("Shake Effect on Arrival")]
     // rigidbody 자체를 흔들면 물리가 불안정하니까 tilemap 등 시각적인 요소만
     // 다 하나의 child object에 넣어두고 얘를 흔드는 방식으로 처리함
     [SerializeField] private Transform visualElements;

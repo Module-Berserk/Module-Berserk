@@ -162,7 +162,9 @@ public class ApplyDamageOnContact : MonoBehaviour
                 {
                     OnApplyDamageSuccess.Invoke(other);
 
-                    Debug.Log("공격 성공");
+                    // 나중에 다단 히트 공격이 의도된 횟수만큼 타격하는지
+                    // 확인할 때 로그가 필요할 수 있어서 주석으로 남겨둠!
+                    // Debug.Log("공격 성공");
                 }
             }
         }

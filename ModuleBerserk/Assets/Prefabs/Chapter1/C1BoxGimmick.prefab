@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 110026841799635974}
   - component: {fileID: 937925219785605685}
   - component: {fileID: 3135049815916480169}
+  - component: {fileID: 6143175763704941458}
   m_Layer: 3
   m_Name: C1BoxGimmick
   m_TagString: C1BoxGimmick
@@ -264,3 +265,17 @@ MonoBehaviour:
     m_DissipationDistance: 10
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 1, y: -1, z: 0}
+--- !u!114 &6143175763704941458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5603608241238377055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807e8db225c55474da9aec2e199278d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 
+  logWarningOnNullGUID: 0

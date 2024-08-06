@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(ObjectExistenceSceneState))]
 public class Coal : MonoBehaviour, IInteractable
 {
     // 플레이어가 먹으면 체력 얼마나 채워줄지
@@ -31,6 +32,13 @@ public class Coal : MonoBehaviour, IInteractable
             interactionText.SetActive(false); // 설명 숨기기
 
             GetComponent<Animator>().SetTrigger("Collect");
+
+            // 필드에 배치되어 고유한 GUID를 갖는 석탄은 세이브 데이터에 습득 여부가 저장됨
+            var saveState = GetComponent<ObjectExistenceSceneState>();
+            if (saveState.ID != "")
+            {
+                saveState.RecordAsDestroyed();
+            }
         }
     }
 

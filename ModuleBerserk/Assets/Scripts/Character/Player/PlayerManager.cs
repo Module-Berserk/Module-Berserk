@@ -477,9 +477,9 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
-        // if (gearSystem.IsNextGearLevelReady())
+        if (gearSystem.IsNextGearLevelReady())
         {
-            // gearSystem.IncreaseGearLevel();
+            gearSystem.IncreaseGearLevel();
 
             PerformGearIncreaseAttack();
         }
@@ -1118,15 +1118,17 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private async UniTask ReviveFromLastSavePointAsync()
     {
-        GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
-
-        Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
-
         await youDiedUI.StartDeathCutsceneAsync();
 
         InputManager.InputActions.Player.Enable();
 
         await GameStateManager.RestoreLastSavePointAsync();
+
+        // 재도전 횟수 차감한 상태로 저장
+        GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
+        GameStateManager.SaveActiveGameState();
+
+        Debug.Log($"남은 재도전 횟수: {GameStateManager.ActiveGameState.SceneState.RemainingRevives}");
     }
 
     private async UniTask ReturnToHideoutAsync()

@@ -16,11 +16,11 @@ public class TutorialController : MonoBehaviour
     
     // 일시정지 메뉴로 튜토리얼을 중단하고 메인 메뉴로 나갈 때 진행중인 task를 모두 취소함
     private CancellationTokenSource cancellationTokenSource = new();
+    public const string ID = "IS_UNICON_TUTORIAL_CUTSCENE_PLAYED";
 
     private void Start()
     {
         // 처음으로 미션에 진입하는 경우 (파괴된 오브젝트 목록에 특수한 키를 넣는 식으로 재생 여부를 저장)
-        const string ID = "IS_UNICON_TUTORIAL_CUTSCENE_PLAYED";
         if (!GameStateManager.ActiveGameState.SceneState.DestroyedObjects.Contains(ID))
         {
             GameStateManager.ActiveGameState.SceneState.DestroyedObjects.Add(ID);

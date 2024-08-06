@@ -14,8 +14,14 @@ public class GroundContact
     public bool IsInContactWithRightWall {get; private set;}
     public bool IsSteppingOnMovingPlatform
     {
-        get => CurrentPlatform != null && CurrentPlatform.CompareTag("MovingPlatform");
+        get => CurrentPlatform != null && IsObjectMovingPlatform(CurrentPlatform);
     }
+
+    private bool IsObjectMovingPlatform(GameObject gameObject)
+    {
+        return gameObject.CompareTag("MovingPlatform");
+    }
+
     // IsGrounded가 true인 경우에만 유효한 세부 정보.
     // Normal은 지면과 수직인 윗 방향을, Tangent는 지면과 평행한 오른쪽 방향을 나타냄.
     public Vector2 GroundNormal {get; private set;}
@@ -118,7 +124,7 @@ public class GroundContact
 
         // 여기까지 왔다면 둘 중 한쪽 발은 확실히 지면 위에 있고,
         // 다른 하나는 경사로인 경우 살짝 떠있을 가능성이 있음.
-        GameObject platform = result.TryGetCollidingObject();
+        Rigidbody2D platform = result.TryGetCollidingObject();
 
         // 아래에 뭔가 있으니 일단 지면의 normal 벡터를 기록.
         // 왼쪽과 오른쪽 모두 충돌했다면 둘 중 지면과 거리가 가까운 쪽을 참고함.
@@ -132,9 +138,11 @@ public class GroundContact
         // Note:
         // 경사로를 따라 움직일 수도 있으니 속도의 y축 성분이 아니라
         // 지면과의 normal 벡터 방향 성분을 기준으로 삼아야 함!!!
-        var relativeNormalVelocity = Vector2.Dot(GroundNormal, rb.velocity);
+        var relativeVelocity = rb.velocity - platform.velocity;
+        var relativeNormalVelocity = Vector2.Dot(GroundNormal, relativeVelocity);
         if (!IsGrounded && relativeNormalVelocity > 0.1f)
         {
+            // Debug.Log($"수직 속도가 0.1 이상이어서 착지로 판단하지 않음!\nvelocity: {rb.velocity}, other velocity: {}", platform);
             return null;
         }
 
@@ -142,7 +150,7 @@ public class GroundContact
         IsRightFootGrounded = result.Hit1;
         IsLeftFootGrounded = result.Hit2;
 
-        return platform;
+        return platform.gameObject;
     }
 
     // Vector2.left 또는 Vector2.right가 주어졌을 때 해당 방향으로
@@ -182,15 +190,15 @@ public class GroundContact
         // 두 raycast 결과 중에 충돌한 물체가 있다면 반환하고,
         // 둘 다 실패한 경우에는 null을 반환함.
         // 지면과 접촉 중인지 테스트할 때 사용됨.
-        public GameObject TryGetCollidingObject()
+        public Rigidbody2D TryGetCollidingObject()
         {
             if (Hit1)
             {
-                return Hit1.collider.gameObject;
+                return Hit1.collider.attachedRigidbody;
             }
             else if (Hit2)
             {
-                return Hit2.collider.gameObject;
+                return Hit2.collider.attachedRigidbody;
             }
             else
             {

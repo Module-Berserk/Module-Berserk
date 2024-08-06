@@ -10,6 +10,17 @@ public class ObjectGUID : MonoBehaviour
 {
     [Header("Object GUID")]
     public string ID = "";
+    // 보통은 이 스크립트가 붙어있으면 세이브 데이터에
+    // ID를 사용해 정보를 기록하기 때문에 게임이 실행되었는데
+    // ID가 아직 기본값인 ""이라면 GenerateGUID()를 해주는걸 까먹었을 확률이 높음.
+    //
+    // 위와 같은 이유로 Awake()에서 ID가 ""이라면 경고 로그를 자동으로 띄워주는데,
+    // 챕터1 보스전 선반에서 무한 생성되는 상자처럼 예외적으로 상태를 저장하지 않는 경우가 종종 생김.
+    // 이 경우에는 의도적으로 ID를 사용하지 않으므로 평소처럼 경고 로그가 떠버리면 진짜 오류와 구분하기 어려움.
+    //
+    // 따라서 ID를 사용하지 않을 임시 오브젝트가 생성될 때에는 이 플래그를 false로 바꿔서
+    // GUID 미초기화 경고를 표시하지 않도록 만들 수 있도록 해두었음.
+    public bool LogWarningOnNullGUID = true;
 
     [ContextMenu("Generate GUID for this object")]
     private void GenerateGUID()
@@ -18,9 +29,9 @@ public class ObjectGUID : MonoBehaviour
     }
 
     // GUID 생성을 까먹을 수도 있으니 리마인더 로그 남기기
-    private void Awake()
+    protected void Start()
     {
-        if (ID == "")
+        if (ID == "" && LogWarningOnNullGUID)
         {
             Debug.LogWarning("GUID is not generated yet!", this);
         }
