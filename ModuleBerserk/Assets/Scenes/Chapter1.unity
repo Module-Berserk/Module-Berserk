@@ -7857,6 +7857,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[33]
+      value: 
+      objectReference: {fileID: 8300000, guid: 59af02eee8251964fbb823d8e558966d, type: 3}
     - target: {fileID: 1304789424901213751, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: -91.313446
@@ -12569,7 +12573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3041770795891108921, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081003819492362853, guid: 5ae98052b07271c4a8141579f432869d, type: 3}
       propertyPath: ID

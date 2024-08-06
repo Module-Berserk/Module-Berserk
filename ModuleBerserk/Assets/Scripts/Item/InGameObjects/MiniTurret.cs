@@ -61,7 +61,7 @@ public class MiniTurret : MonoBehaviour
         // 포탑과 충돌하지 않도록 설정
         Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
         int[] turretIndices = {39};
-        AudioManager.instance.PlaySFX(turretIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(turretIndices, this.transform);
         // transform.DOShakeScale(duration: 0.2f, strength: 0.5f);
     }
 }

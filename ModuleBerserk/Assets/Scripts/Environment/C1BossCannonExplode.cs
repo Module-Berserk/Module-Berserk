@@ -38,6 +38,6 @@ public class C1BossCannonExplode : MonoBehaviour
     }
     private void PlayCannonFallSFX() {
         int [] fallIndices = {35};
-        AudioManager.instance.PlaySFX(fallIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(fallIndices, this.transform);
     }
 }

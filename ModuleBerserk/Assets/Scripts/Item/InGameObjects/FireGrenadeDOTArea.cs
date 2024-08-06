@@ -13,7 +13,7 @@ public class FireGrenadeDOTArea : MonoBehaviour
         hitbox.RawDamage = new CharacterStat(tickDamage);
         //SFX
         int[] flameIndices = {37};
-        AudioManager.instance.PlaySFX(flameIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(flameIndices, this.transform);
     }
 
     private void Update()

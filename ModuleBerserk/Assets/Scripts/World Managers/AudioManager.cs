@@ -71,8 +71,6 @@ public class AudioManager : MonoBehaviour {
 
     private float CalculateVolume(Transform target){
         float distance = Vector2.Distance(target.position, player.transform.position);
-        Debug.Log(distance);
-        //Debug.Log(player.transform.position);
         return Mathf.Clamp01((20f - distance * 1.5f) / 20f);
     }
 

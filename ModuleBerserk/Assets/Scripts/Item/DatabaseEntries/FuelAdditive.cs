@@ -12,6 +12,6 @@ public class FuelAdditive : ActiveItemBase
             .ApplyMultiplicativeModifierForDurationAsync(1.5f, 60f).Forget();
         //SFX
         int[] fuelIndices = {36};
-        AudioManager.instance.PlaySFX(fuelIndices);
+        AudioManager.instance.PlaySFXBasedOnPlayer(fuelIndices, this.transform);
     }
 }
