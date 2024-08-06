@@ -20,7 +20,7 @@ public class AudioManager : MonoBehaviour {
 
     private void Update() {
          for (int i = 0; i < audioSources.Count; i++) {
-            if (audioSources[i].audioSource.volume <= 0 || audioSources[i].targetTransform == null || !audioSources[i].audioSource.isPlaying)  {
+            if (audioSources[i].targetTransform == null || !audioSources[i].audioSource.isPlaying)  {
                 Destroy(audioSources[i].audioSource);
                 audioSources.RemoveAt(i);
             }
@@ -43,7 +43,6 @@ public class AudioManager : MonoBehaviour {
         int randomIndex = indices[Random.Range(0, indices.Length)];
         AudioSource audioSource = GetAvailableAudioSource(player.transform);
         audioSource.volume = volume / 100f / 2f; //Max Volume = 0.5
-        Debug.Log(audioSource.volume);
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.clip = sfxList[randomIndex];
         audioSource.Play();
