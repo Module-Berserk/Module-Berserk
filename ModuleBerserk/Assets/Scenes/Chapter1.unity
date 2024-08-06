@@ -7885,6 +7885,10 @@ PrefabInstance:
       propertyPath: sfxList.Array.data[45]
       value: 
       objectReference: {fileID: 8300000, guid: 714adc91a02f8ff44992a74ce77b0cb3, type: 3}
+    - target: {fileID: 1114202833691903363, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
+      propertyPath: sfxList.Array.data[46]
+      value: 
+      objectReference: {fileID: 8300000, guid: dd0f27fb99b78d94d83464ead66cb327, type: 3}
     - target: {fileID: 1304789424901213751, guid: 1a87667e23756784a8fc735b08363f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: -91.313446
