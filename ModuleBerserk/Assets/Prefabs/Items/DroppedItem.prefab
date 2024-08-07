@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3390705662564543418}
   - component: {fileID: 549706229692521106}
   - component: {fileID: 1824633152283431876}
+  - component: {fileID: 3407072371164869037}
   - component: {fileID: 5185514546921669799}
   m_Layer: 8
   m_Name: DroppedItem
@@ -104,6 +105,20 @@ MonoBehaviour:
   rareItemGlowColor: {r: 0, g: 0.39143676, b: 2.670157, a: 0}
   legendaryItemGlowColor: {r: 2.670157, g: 0.55919516, b: 0, a: 0}
   ItemPrefab: {fileID: 8487056063606099084, guid: bee16f91e1321ee4c8b128fb22ffd616, type: 3}
+--- !u!114 &3407072371164869037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2150511229979038973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3403d1c32a688024281e0cd9aa81378f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  motionHeight: 0.3
+  motionDuration: 1
 --- !u!61 &5185514546921669799
 BoxCollider2D:
   m_ObjectHideFlags: 0

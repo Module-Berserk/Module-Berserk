@@ -27,18 +27,6 @@ public class DroppedItem : MonoBehaviour, IInteractable
 
         // 가까이 가면 뜨는 아이템 이름 설정
         itemName.text = item.GetName();
-
-        // 부드럽게 위아래로 움직이는 모션
-        const float motionHeight = 0.3f;
-        transform.DOMoveY(transform.position.y + motionHeight, duration: 1f)
-            .SetEase(Ease.InOutSine)
-            .SetLoops(-1, LoopType.Yoyo);
-    }
-
-    private void OnDestroy()
-    {
-        // 드랍 아이템의 위아래 움직임은 무한지속이라 transform이 삭제될 때 같이 취소해줘야함
-        transform.DOKill();
     }
 
     private Color FindRarityGlowColor(ItemRarity rarity)

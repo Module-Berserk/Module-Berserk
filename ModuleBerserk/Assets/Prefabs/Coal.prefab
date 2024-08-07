@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1268293538398643086}
   - component: {fileID: 6989525774048352824}
   - component: {fileID: 4556022284990288073}
+  - component: {fileID: 1109907002929965712}
   m_Layer: 8
   m_Name: Coal
   m_TagString: Untagged
@@ -183,6 +184,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 
   LogWarningOnNullGUID: 1
+--- !u!114 &1109907002929965712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803598539771943157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3403d1c32a688024281e0cd9aa81378f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  motionHeight: 0.3
+  motionDuration: 1
 --- !u!1 &3453042453547129317
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +284,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3453042453547129317}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
   m_Name: 
