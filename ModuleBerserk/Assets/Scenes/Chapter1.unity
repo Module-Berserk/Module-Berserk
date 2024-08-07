@@ -70071,6 +70071,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: YouDied UI
       objectReference: {fileID: 0}
+    - target: {fileID: 8976134101425214969, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
       propertyPath: HUD
       value: 
@@ -70082,7 +70086,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6253158953407132876, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
 --- !u!1001 &7236282074738394621
 PrefabInstance:

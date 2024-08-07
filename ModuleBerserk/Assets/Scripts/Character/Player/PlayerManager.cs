@@ -1122,7 +1122,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private async UniTask ReviveFromLastSavePointAsync()
     {
-        await youDiedUI.StartDeathCutsceneAsync();
+        await youDiedUI.StartDeathCutsceneAsync(GameStateManager.ActiveGameState.SceneState.RemainingRevives - 1);
 
         InputManager.InputActions.Player.Enable();
 
@@ -1139,7 +1139,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // TODO: 미션 실패 결과창 표시...?
 
-        await youDiedUI.StartDeathCutsceneAsync();
+        await youDiedUI.StartDeathCutsceneAsync(remainingRevives: -1);
 
         InputManager.InputActions.Player.Enable();
 
