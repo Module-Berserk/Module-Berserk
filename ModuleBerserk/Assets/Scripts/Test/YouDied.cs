@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -8,7 +9,7 @@ public class YouDied : MonoBehaviour
 {
     [Header("External References")]
     [SerializeField] private SpriteRenderer playerSpriteRenderer; // 플레이어의 layer order를 잔뜩 올려서 검은 배경에 플레이어만 보이도록 만듦
-    [SerializeField] private GameObject HUD;
+    [SerializeField] private List<GameObject> UIElementsToDisable; // HUD, 보스 체력바 등 UI는 사망 연출에 쓰이는 검은 배경보다 위에 그려지므로 직접 비활성화해줘야 함
 
 
     [Header("Duration")]
@@ -49,7 +50,10 @@ public class YouDied : MonoBehaviour
     public async UniTask StartDeathCutsceneAsync(int remainingRevives)
     {
         // 메인 UI 다 가리기
-        HUD.SetActive(false);
+        foreach (var gameObject in UIElementsToDisable)
+        {
+            gameObject.SetActive(false);
+        }
 
         // 플레이어와 검은 배경만 보이도록 레이어 우선순위를 잔뜩 끌어올리기
         playerSpriteRenderer.sortingOrder = 9999;

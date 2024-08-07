@@ -10393,7 +10393,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -162.11703, y: -14.699989, z: -10}
+  m_LocalPosition: {x: -162.10233, y: -14.699989, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13313,10 +13313,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3453042453547129317, guid: 6fb1c35161bbc434e93e9f3f15080dcb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fb1c35161bbc434e93e9f3f15080dcb, type: 3}
 --- !u!4 &700588071 stripped
 Transform:
@@ -24215,10 +24212,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3453042453547129317, guid: 6fb1c35161bbc434e93e9f3f15080dcb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fb1c35161bbc434e93e9f3f15080dcb, type: 3}
 --- !u!4 &1509237441 stripped
 Transform:
@@ -70627,6 +70621,18 @@ PrefabInstance:
       propertyPath: playerSpriteRenderer
       value: 
       objectReference: {fileID: 1811368077613159421}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.data[0]
+      value: 
+      objectReference: {fileID: 2140924106}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.data[1]
+      value: 
+      objectReference: {fileID: 1512143532}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

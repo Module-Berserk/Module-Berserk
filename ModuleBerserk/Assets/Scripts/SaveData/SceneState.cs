@@ -70,12 +70,12 @@ public class SceneState
             // 테스트용으로 특정 위치에서 시작하고 싶을 때 주석 풀고
             // 원하는 세이브 포인트와 Follow Camera의 GUID를 여기에 복붙해서 사용할 것.
             ActiveVirtualCameraGUID = "ed63dd83-c2bd-4ad7-9d3a-beeec8d68a07",
-            PlayerSpawnPointGUID = "92b9bc2a-c1e7-4f04-a4c6-6f60d6a72ebb",
+            PlayerSpawnPointGUID = "a06c8741-fdae-458f-8816-6c0bb3595b91",
 
             // 유니콘용 튜토리얼 인트로 컷신을 스킵하는 용도
-            // DestroyedObjects = {TutorialController.ID},
+            DestroyedObjects = {TutorialController.ID},
             
-            // IsBossIntroCutscenePlayed = true,
+            IsBossIntroCutscenePlayed = true,
         };
     }
 }

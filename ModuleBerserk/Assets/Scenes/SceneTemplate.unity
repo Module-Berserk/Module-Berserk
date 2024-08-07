@@ -2293,6 +2293,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 202cd6d1a47fe3c42bf44570f89d172f, type: 3}
+--- !u!1 &1737301748025236961 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5619028237986283408, guid: 202cd6d1a47fe3c42bf44570f89d172f, type: 3}
+  m_PrefabInstance: {fileID: 1737301748025236960}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1811368077613159405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2568,10 +2573,25 @@ PrefabInstance:
       propertyPath: playerSpriteRenderer
       value: 
       objectReference: {fileID: 1811368077613159421}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.data[0]
+      value: 
+      objectReference: {fileID: 1737301748025236961}
+    - target: {fileID: 9128741762231492024, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      propertyPath: UIElementsToDisable.Array.data[1]
+      value: 
+      objectReference: {fileID: 1512143532}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6253158953407132876, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b6344ebd01681214c99ddb1b78b1f1b2, type: 3}
 --- !u!1001 &8602893245577955615
 PrefabInstance:

@@ -1,0 +1,598 @@
+fileFormatVersion: 2
+guid: 0774c317b3806774ba4b9775a455fea7
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1764
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37127b286512a1f4ca99f784899fb2a5
+      internalID: -1953079115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1680
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c05d4db13cda883489bb048b9d3d90ef
+      internalID: -150825194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1596
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8b879406505fcb4db50e337f169d395
+      internalID: -253485405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1512
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 321ce42f1adbe8f418a9e65cf2a04a56
+      internalID: 1126109900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1428
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5347222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a90b7d700fda8314b868cb8c6ea9edcb
+      internalID: -1673990629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1344
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5347222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24fca6668e78bfe4d918b79a7abf224d
+      internalID: -993664372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1260
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5347222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae924b06ad93fda4e9859d145da32c41
+      internalID: 1359888987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1176
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5347222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dee4aae84121161488905443062f6c3c
+      internalID: -1729891619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1092
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5729167, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fce6a18917edc314c9b9c44d5a458592
+      internalID: -380370949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1008
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.5729167, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2db3742efb2e174ea6dd51106df3bae
+      internalID: 1188548161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 924
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6597222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ed7b5b9467561848b86b2eaf8c9a2e2
+      internalID: 57370259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 840
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6597222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4be858ef5295e6547ab802d3ccbf8956
+      internalID: -1226339090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 756
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6597222, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14f8894f324ce794d8cedefa8e6ae97a
+      internalID: -1706765641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 672
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6840278, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4b532bc20af5b44ab91f52af021d56a
+      internalID: 816016324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 588
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6840278, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 822d99a2e3c8b6b47afc7d3e50c6674b
+      internalID: -1826504000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 504
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6840278, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9399df54e9a40b4e8dba2206ef8dfc4
+      internalID: 676001608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 420
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.6875, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9065c6769b7f80428c1a0aac1cd93ca
+      internalID: -1551410345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 336
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.8020833, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2ff554bee11a3a4e87569436e57b7a2
+      internalID: -1558023604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 252
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.8020833, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cdc2bdbf177528445932f1381660a4b5
+      internalID: -238672419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 168
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.8020833, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40ac33f25bf70c542856bd3ae69e03e1
+      internalID: 916468397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 84
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.7986111, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b6b8a011372364881c986cbf95056a
+      internalID: 1050334000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_melee_attack_new-Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 288
+        height: 84
+      alignment: 9
+      pivot: {x: 0.7951389, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49d40257b615b7045a3ac5b10cfaf697
+      internalID: 430004366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      c1_boss_melee_attack_new-Sheet_0: -1953079115
+      c1_boss_melee_attack_new-Sheet_1: -150825194
+      c1_boss_melee_attack_new-Sheet_10: 57370259
+      c1_boss_melee_attack_new-Sheet_11: -1226339090
+      c1_boss_melee_attack_new-Sheet_12: -1706765641
+      c1_boss_melee_attack_new-Sheet_13: 816016324
+      c1_boss_melee_attack_new-Sheet_14: -1826504000
+      c1_boss_melee_attack_new-Sheet_15: 676001608
+      c1_boss_melee_attack_new-Sheet_16: -1551410345
+      c1_boss_melee_attack_new-Sheet_17: -1558023604
+      c1_boss_melee_attack_new-Sheet_18: -238672419
+      c1_boss_melee_attack_new-Sheet_19: 916468397
+      c1_boss_melee_attack_new-Sheet_2: -253485405
+      c1_boss_melee_attack_new-Sheet_20: 1050334000
+      c1_boss_melee_attack_new-Sheet_21: 430004366
+      c1_boss_melee_attack_new-Sheet_3: 1126109900
+      c1_boss_melee_attack_new-Sheet_4: -1673990629
+      c1_boss_melee_attack_new-Sheet_5: -993664372
+      c1_boss_melee_attack_new-Sheet_6: 1359888987
+      c1_boss_melee_attack_new-Sheet_7: -1729891619
+      c1_boss_melee_attack_new-Sheet_8: -380370949
+      c1_boss_melee_attack_new-Sheet_9: 1188548161
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
