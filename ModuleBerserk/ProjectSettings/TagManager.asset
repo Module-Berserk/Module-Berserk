@@ -12,7 +12,6 @@ TagManager:
   - FollowCamera3
   - BossRoomEntrance
   - TutorialFollowCamera
-  - TestSpawnPoint
   - MovingPlatform
   layers:
   - Default
