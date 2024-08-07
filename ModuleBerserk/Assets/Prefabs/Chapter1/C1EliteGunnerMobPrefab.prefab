@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 7642742389301358313}
   - component: {fileID: 6168492267068813232}
   m_Layer: 7
-  m_Name: C1GunnerMobPrefab
+  m_Name: C1EliteGunnerMobPrefab
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -232,14 +232,14 @@ Transform:
   m_GameObject: {fileID: 2230194136603300056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.596, y: -0.504, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5945616394756580117}
   - {fileID: 7933630863993107120}
-  - {fileID: 6586232668711599035}
   - {fileID: 9042028931554794132}
+  - {fileID: 6586232668711599035}
   - {fileID: 301466526936753001}
   - {fileID: 4434096754553078939}
   m_Father: {fileID: 0}
@@ -285,7 +285,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1476724109, guid: 34ac1781d9c08bc478cd66ee93a0e5f7, type: 3}
+  m_Sprite: {fileID: 809628378, guid: 347cb11eee1c45f4daed33c244468aa6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -306,7 +306,7 @@ Animator:
   m_GameObject: {fileID: 2230194136603300056}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b74a1a6d9cc9ee843bd4943d4ac2a4ea, type: 2}
+  m_Controller: {fileID: 9100000, guid: 96fec688a9e8b6942817dc32a897ad88, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -674,7 +674,7 @@ MonoBehaviour:
   DamageSource: 1
   staggerStrength: 1
   knockbackForce: 10
-  staggerDuration: 0.3
+  staggerDuration: 0.2
   delayBetweenDamageTick: 0.1
   DamageCoefficient: 1
   OnApplyDamageSuccess:

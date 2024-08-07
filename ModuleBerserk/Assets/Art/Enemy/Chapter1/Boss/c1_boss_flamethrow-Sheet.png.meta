@@ -1,0 +1,1139 @@
+fileFormatVersion: 2
+guid: 68eac657af031944abdb4e9839b32605
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3780
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01aa369f2cf086c4799d2ba3f5d48fcc
+      internalID: -822272122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3696
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd4e40fa959bc8c4ab4fc64666e22654
+      internalID: -2132469335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3612
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 025b0bc54928d4048be86c1712fb8ccf
+      internalID: -503419315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3528
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e71f44ac30b31324ba6d414315d26552
+      internalID: 899569107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3444
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 657d105f625e60942b2192b7a348d839
+      internalID: -1273853800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3360
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 524dcd2f3169fe34aa0a11ba42081c5c
+      internalID: 329762756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3276
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ab11704bc3589b4b8034bab5502ca6d
+      internalID: 196887081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3192
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1b368d6497007741a61b5cafd6c894f
+      internalID: -731093616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3108
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c18d83632cd611a47bd7823f4db9b270
+      internalID: -138909767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3024
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d22d8615e4b2484a8e09e5153e71dfa
+      internalID: -107599932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2940
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd932263183e8de41a7e2ab1fdba1083
+      internalID: -953091206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2856
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad0e25353d5c3434bb90f09bbc126b4f
+      internalID: 1122800053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2772
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3fb3e1ec614fa6248a2c5052050c5892
+      internalID: 1634202481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2688
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59821725b1077bc49861f4ac139e1357
+      internalID: -1759388610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2604
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d029eef57bb10748bea6ee69e30c182
+      internalID: -1350895444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2520
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a5900673659839498ddc82a3538155c
+      internalID: -372276877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2436
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d80f1908e8429c43bd2e9b00d9941ce
+      internalID: -1978091126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2352
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cf58c984904a2e46abca31abf409a46
+      internalID: -1055635083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2268
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5999a26e08c58c54f934b890ba92524c
+      internalID: -130697999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2184
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ed83f51a02e6c24bb983d1274d37e02
+      internalID: 1621492035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2100
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51e69e0c99609f548af68c1435d691f4
+      internalID: -879080045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2016
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb200efaa68009b4db2edc9e99fcf007
+      internalID: -1329568396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_22
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1932
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf7ddcb61c8dc0b4fa01ea0aefbf2bcc
+      internalID: 153781707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_23
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1848
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d2ddadee026661469fe565db6f6e190
+      internalID: -2023352086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1764
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ab096c07e0a76a4fa9e14851e2641d2
+      internalID: 115331776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1680
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 823eeed6d6d768a4fbdf4dc0753ff1cb
+      internalID: -426487599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1596
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27a0618b8ff25d647ba3c80db76ff8ca
+      internalID: -2052104990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1512
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a5d0fab014dc244791e1289845ac21c
+      internalID: 138423574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1428
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 725fb0e73fdb6fd4c8b918948e0d236e
+      internalID: 801460476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_29
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1344
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c4d129c90f246d4f8650c323a6d4326
+      internalID: -1813310595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1260
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43b1e3b1e5cc2e34ea94f2c42e364cd2
+      internalID: 510062990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_31
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1176
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0f417f16ff634646932b83d4ce0e5ec
+      internalID: -1540776690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1092
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e60a2a5b27169642a160d770742eb43
+      internalID: 1146157004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_33
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1008
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29b3aaaa06b06df4eab56a0f28492d12
+      internalID: 1511125694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 924
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36d4d870eaf6dc7438372d434e82d9ed
+      internalID: 360417786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_35
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 840
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd295197df391124ca1bfcd527c5f671
+      internalID: 2139968271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 756
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 060f66ba526890e4fbc07ae7fd289180
+      internalID: 1607940601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_37
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 672
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 146b848960fac3949a8f509fadcc3d7d
+      internalID: 436548084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_38
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 588
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4979266b2f900bb40804844a9ed4094d
+      internalID: 1574702991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_39
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 504
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54e6f8a084b45f04db7fac39a39fcd82
+      internalID: -441172014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 420
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7eab4abbee18fb40b6d253e03ff4843
+      internalID: -2050370827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_41
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 336
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0530eb5d48095b4db964510eb2c2cf2
+      internalID: 261383192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 252
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29ff90deb81038e4f8fe299715daceb3
+      internalID: -195905621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_43
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 168
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1e1d13fb41f02440924f8fa8ca36415
+      internalID: -1725272576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_44
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 84
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 302fc79883944844685c80b41b8162e4
+      internalID: -799851488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_flamethrow-Sheet_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.105, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a006181b26c057b4696dfb9accde71e8
+      internalID: 1505898067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      c1_boss_flamethrow-Sheet_0: -822272122
+      c1_boss_flamethrow-Sheet_1: -2132469335
+      c1_boss_flamethrow-Sheet_10: -953091206
+      c1_boss_flamethrow-Sheet_11: 1122800053
+      c1_boss_flamethrow-Sheet_12: 1634202481
+      c1_boss_flamethrow-Sheet_13: -1759388610
+      c1_boss_flamethrow-Sheet_14: -1350895444
+      c1_boss_flamethrow-Sheet_15: -372276877
+      c1_boss_flamethrow-Sheet_16: -1978091126
+      c1_boss_flamethrow-Sheet_17: -1055635083
+      c1_boss_flamethrow-Sheet_18: -130697999
+      c1_boss_flamethrow-Sheet_19: 1621492035
+      c1_boss_flamethrow-Sheet_2: -503419315
+      c1_boss_flamethrow-Sheet_20: -879080045
+      c1_boss_flamethrow-Sheet_21: -1329568396
+      c1_boss_flamethrow-Sheet_22: 153781707
+      c1_boss_flamethrow-Sheet_23: -2023352086
+      c1_boss_flamethrow-Sheet_24: 115331776
+      c1_boss_flamethrow-Sheet_25: -426487599
+      c1_boss_flamethrow-Sheet_26: -2052104990
+      c1_boss_flamethrow-Sheet_27: 138423574
+      c1_boss_flamethrow-Sheet_28: 801460476
+      c1_boss_flamethrow-Sheet_29: -1813310595
+      c1_boss_flamethrow-Sheet_3: 899569107
+      c1_boss_flamethrow-Sheet_30: 510062990
+      c1_boss_flamethrow-Sheet_31: -1540776690
+      c1_boss_flamethrow-Sheet_32: 1146157004
+      c1_boss_flamethrow-Sheet_33: 1511125694
+      c1_boss_flamethrow-Sheet_34: 360417786
+      c1_boss_flamethrow-Sheet_35: 2139968271
+      c1_boss_flamethrow-Sheet_36: 1607940601
+      c1_boss_flamethrow-Sheet_37: 436548084
+      c1_boss_flamethrow-Sheet_38: 1574702991
+      c1_boss_flamethrow-Sheet_39: -441172014
+      c1_boss_flamethrow-Sheet_4: -1273853800
+      c1_boss_flamethrow-Sheet_40: -2050370827
+      c1_boss_flamethrow-Sheet_41: 261383192
+      c1_boss_flamethrow-Sheet_42: -195905621
+      c1_boss_flamethrow-Sheet_43: -1725272576
+      c1_boss_flamethrow-Sheet_44: -799851488
+      c1_boss_flamethrow-Sheet_45: 1505898067
+      c1_boss_flamethrow-Sheet_5: 329762756
+      c1_boss_flamethrow-Sheet_6: 196887081
+      c1_boss_flamethrow-Sheet_7: -731093616
+      c1_boss_flamethrow-Sheet_8: -138909767
+      c1_boss_flamethrow-Sheet_9: -107599932
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
