@@ -962,7 +962,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             ApplyStagger(attackInfo.knockbackForce, attackInfo.duration);
         }
 
-        ApplyDamageWithDelayAsync(attackInfo.damage, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
+        ApplyDamageWithDelayAsync(attackInfo, emergencyEvasionTimeWindow, cancellationToken: damageCancellation.Token).Forget();
 
         return true;
     }
@@ -971,12 +971,12 @@ public class PlayerManager : MonoBehaviour, IDestructible
     //
     // 회피 버튼을 눌렀을 때 긴급 회피로 처리해야 하는지 확인할 수 있도록
     // 대기 중인 데미지의 총합을 netPendingDamages 변수로 관리한다.
-    private async UniTask ApplyDamageWithDelayAsync(float finalDamage, float delay, CancellationToken cancellationToken)
+    private async UniTask ApplyDamageWithDelayAsync(AttackInfo attackInfo, float delay, CancellationToken cancellationToken)
     {
         // 맞았는데 즉각적인 피드백이 없으니 이상하길래
         // 체력바 UI로는 즉시 데미지를 입은 것처럼 표시하고
         // 나중에 데미지 무효화가 일어나면 UI 변화만 롤백하는 방식으로 구현함.
-        netPendingDamage += finalDamage;
+        netPendingDamage += attackInfo.damage;
         UpdateHealthBarUI();
 
         // 죽음에 이르는 공격을 받으면 기다리지 않고 즉시 사망 처리
@@ -985,6 +985,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             // 애니메이터에서 경직 상태를 우선시해서 사망 모션이
             // 재생되지 않는 문제를 해결하기 위해 플레이어 FSM 상태를 초기화
             CancelCurrentAction();
+
+            // 죽을 때는 마지막으로 받은 공격에 따라 플레이어 방향을 조정함.
+            // 오른쪽으로 밀려나는 공격 = 왼쪽에서 온 공격 = 왼쪽을 보고 오른쪽으로 날아가야 함.
+            IsFacingLeft = attackInfo.knockbackForce.x > 0f;
 
             (this as IDestructible).HandleHPDecrease(netPendingDamage);
 
@@ -996,14 +1000,14 @@ public class PlayerManager : MonoBehaviour, IDestructible
         else
         {
             await UniTask.WaitForSeconds(delay, cancellationToken: cancellationToken).SuppressCancellationThrow();
-            netPendingDamage -= finalDamage;
+            netPendingDamage -= attackInfo.damage;
 
             // 긴급 회피가 시전되지 않은 경우에만 실제 데미지로 처리.
             // 이미 죽음에 이를 데미지를 입은 경우에도 OnDestruction()이
             // 중복으로 호출되는 것을 막기 위해 hp를 건드리지 않음.
             if (!cancellationToken.IsCancellationRequested && playerState.HP.CurrentValue > 0f)
             {
-                (this as IDestructible).HandleHPDecrease(finalDamage);
+                (this as IDestructible).HandleHPDecrease(attackInfo.damage);
 
                 // 공격 당하면 게이지가 깎임
                 gearSystem.OnPlayerHit();
