@@ -11,6 +11,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(ObjectGUID))]
+[RequireComponent(typeof(KinematicRigidbodyVelocityRecorder))]
 public class Elevator : MonoBehaviour, IPersistentSceneState
 {
     [Header("Movement Setting")]
@@ -45,6 +46,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
     private Rigidbody2D rb;
     private ScreenShake screenShake;
+    private KinematicRigidbodyVelocityRecorder velocityRecorder;
     private Vector2 startPosition;
     private Vector2 endPosition;
     private bool isActive = false;
@@ -63,6 +65,7 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
     {
         rb = GetComponent<Rigidbody2D>();
         screenShake = GetComponent<ScreenShake>();
+        velocityRecorder = GetComponent<KinematicRigidbodyVelocityRecorder>();
 
         CalculateMovementBoundary();
 
@@ -202,19 +205,22 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
 
         // 엘리베이터 작동음 시작
         int[] elevatorIndices = {14, 15};
-        elevatorAudioSource = AudioManager.instance.PlaySFXBasedOnPlayer(elevatorIndices, this.transform);
+        elevatorAudioSource = AudioManager.instance.PlaySFXBasedOnPlayer(elevatorIndices, transform);
 
-        // 이동 끝날 때까지 대기
+        // 이동 끝날 때까지 자신의 속도를 rigidbody에 기록하며 대기
+        // Note: kinematic rigidbody는 DOTween으로 움직여도 velocity값이 따로 변하지 않는다
+        velocityRecorder.enabled = true;
         rb.DOMove(destination, movementDuration)
             .SetEase(movementEase)
             .SetUpdate(UpdateType.Fixed);
+        velocityRecorder.enabled = false;
         
         await UniTask.WaitForSeconds(movementDuration, cancellationToken: cancellationToken);
         
         // 앨리베이터 작동음 중지
         AudioManager.instance.StopSFX(elevatorAudioSource);
         int[] bellIndices = {46};
-        AudioManager.instance.PlaySFXBasedOnPlayer(bellIndices, this.transform);
+        AudioManager.instance.PlaySFXBasedOnPlayer(bellIndices, transform);
         // 엘리베이터가 "쾅"하고 떨어지는 경우 추가적인 화면 흔들림 효과를 주기 위해 사용됨
         if (NeedScreenShakeOnMoveEnd())
         {
