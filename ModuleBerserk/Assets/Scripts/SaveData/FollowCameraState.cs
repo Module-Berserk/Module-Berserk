@@ -19,6 +19,13 @@ public class FollowCameraState : ObjectGUID, IPersistentSceneState
 
     void IPersistentSceneState.Load(SceneState sceneState)
     {
+        // 아주 드물게 테스트 도중에 이 스크립트의 Awake()보다 먼저 Load()가 실행되는 경우가 발생함.
+        // 이 경우 null reference exception이 발생하므로 여기서 확실히 초기화해줘야 함.
+        if (virtualCamera == null)
+        {
+            virtualCamera = GetComponent<CinemachineVirtualCamera>();
+        }
+
         // 기록된 태그가 자신과 일치한다면 스스로를 활성화된 카메라로 변경
         if (ID == sceneState.ActiveVirtualCameraGUID)
         {
