@@ -388,9 +388,9 @@ MonoBehaviour:
   critHitLagInitialTimescale: 0
   critHitLagEffectDuration: 0.1
   critHitLagEffectEase: 18
-  invincibleDurationAfterStagger: 0.2
+  invincibleDurationAfterStagger: 0.1
   evasionCooltime: 1.3
-  evasionInvincibleDuration: 0.5
+  evasionInvincibleDuration: 0.25
   emergencyEvasionInvincibleDuration: 0.5
   emergencyEvasionCooltime: 1
   emergencyEvasionTimeWindow: 0.3

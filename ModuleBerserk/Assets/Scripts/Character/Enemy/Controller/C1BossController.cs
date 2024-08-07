@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading;
-using Cinemachine;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -102,11 +101,14 @@ public class C1BossController : MonoBehaviour, IDestructible
     [Header("Boss Defeat Cutscene")]
     [SerializeField] private PlayableDirector bossDefeatCutscene;
 
+
+    [Header("Pattern Cooltimes")]
     // 쿨타임은 패턴을 두 가지 분류로 나누어서 적용함
     // 1. 근접공격: 3연타/화염방사기
     // 2. 백스텝: 백스텝 후 돌진/포격/연계공격
-    private const float CLOSE_RANGE_PATTERNS_COOLTIME = 2f;
-    private const float BACKSTEP_PATTERNS_COOLTIME = 5f;
+    [SerializeField] private float delayBetweenCloseRangePatterns = 2f;
+    [SerializeField] private float delayBetweenBackstepPatterns = 5f;
+
     private const float BOX_GIMMICK_STUN_DURATION = 3f;
 
     private Rigidbody2D rb;
@@ -190,7 +192,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         groundContact = new GroundContact(rb, boxCollider, groundLayer);
 
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
-        hp = new CharacterStat(4f, 0f, 400f);
+        hp = new CharacterStat(400f, 0f, 400f);
         defense = new CharacterStat(10f, 0f);
         hitboxes.RawDamage = new CharacterStat(10f);
 
@@ -256,8 +258,9 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     public void OnAttackSuccess(Collider2D player)
     {
-        // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵
-        if (actionState == ActionState.DashAttack)
+        // 돌진 패턴 도중에 플레이어를 공격하면 잡아서 끌고간 뒤 벽쿵.
+        // 해당 공격으로 플레이어가 사망한 경우 사망 모션이 우선순위가 높으므로 끌고가지 않음.
+        if (actionState == ActionState.DashAttack && !(playerManager as IDestructible).IsDestroyed)
         {
             sliderJoint.connectedBody = player.attachedRigidbody;
             sliderJoint.enabled = true;
@@ -601,12 +604,12 @@ public class C1BossController : MonoBehaviour, IDestructible
 
     private void RestartCloseRangePatternCooltime()
     {
-        closeRangePatternCooltime = CLOSE_RANGE_PATTERNS_COOLTIME;
+        closeRangePatternCooltime = delayBetweenCloseRangePatterns;
     }
 
     private void RestartBackstepPatternCooltime()
     {
-        backstepPatternCooltime = BACKSTEP_PATTERNS_COOLTIME;
+        backstepPatternCooltime = delayBetweenBackstepPatterns;
     }
 
     private float GetBackstepJumpTargetX()
@@ -750,6 +753,9 @@ public class C1BossController : MonoBehaviour, IDestructible
 
         // 모션 다 끝나면 애니메이션에서 이벤트로 설정해줌
         await UniTask.WaitUntil(() => !isDashMotionOngoing, cancellationToken: attackCancellation.Token);
+
+        // 돌진 끝나고 바로 주인공쪽으로 돌아보니까 어색해서 아주 약간 idle 모션 재생
+        await UniTask.WaitForSeconds(0.1f);
     }
 
     // 돌진 패턴에서 플레이어를 공격하면 끌고가는데,

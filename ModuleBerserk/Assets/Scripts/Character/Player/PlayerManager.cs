@@ -77,7 +77,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     [Header("Evasion")]
     [SerializeField] private float evasionCooltime = 1.3f;
     // 일반 회피 및 긴급 회피에 부여되는 무적 시간
-    [SerializeField] private float evasionInvincibleDuration = 0.5f;
+    [SerializeField] private float evasionInvincibleDuration = 0.3f;
     [SerializeField] private float emergencyEvasionInvincibleDuration = 0.5f;
     [SerializeField] private float emergencyEvasionCooltime = 1.3f;
     // 피격 시점 이후로 긴급 회피가 허용되는 시간.

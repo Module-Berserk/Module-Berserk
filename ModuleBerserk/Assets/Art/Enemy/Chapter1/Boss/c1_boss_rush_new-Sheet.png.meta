@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 94e918224e42a49458083c507c4e029f
+guid: e9173fc36e64b3e4c8abd0720051dfe4
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -93,480 +93,551 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_0
+      name: c1_boss_rush_new-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2100
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab2281e4c9431ab4c842d3aa6e74f9dc
+      internalID: 2035020340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_rush_new-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2016
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3073b9561c6c5a4ea69a96744657ec7
+      internalID: 1139220557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_rush_new-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1932
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9990f8f234b20f044a5bcbb279e1c911
+      internalID: -208246923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_rush_new-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1848
+        width: 480
+        height: 84
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4eba1d52f52e4a543bf6f77152719ac7
+      internalID: -4343703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_boss_rush_new-Sheet_4
       rect:
         serializedVersion: 2
         x: 0
         y: 1764
-        width: 288
+        width: 480
         height: 84
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 79024ffa12f1e2b4788053f429fdd060
-      internalID: -523382701
+      spriteID: d6cf292802f075d48943c41e2614a404
+      internalID: -680766389
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_1
+      name: c1_boss_rush_new-Sheet_5
       rect:
         serializedVersion: 2
         x: 0
         y: 1680
-        width: 288
+        width: 480
         height: 84
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a14aef683b1c46b4ab6069abbc51ba12
-      internalID: -561395680
+      spriteID: e3c6b7e46dd717c45ad3f614af4823bc
+      internalID: 1423169515
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_2
+      name: c1_boss_rush_new-Sheet_6
       rect:
         serializedVersion: 2
         x: 0
         y: 1596
-        width: 288
+        width: 480
         height: 84
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f19a0e31fe7341945b38717913990f48
-      internalID: 801532820
+      spriteID: d1976c358abea31489602831c2fa8455
+      internalID: 1081177069
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_3
+      name: c1_boss_rush_new-Sheet_7
       rect:
         serializedVersion: 2
         x: 0
         y: 1512
-        width: 288
+        width: 480
         height: 84
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba8320300712b714c84e812f023573ea
-      internalID: 1870034931
+      spriteID: 45d10ea3bc24ed54eabbcbe5cdf37faf
+      internalID: 768209365
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_4
+      name: c1_boss_rush_new-Sheet_8
       rect:
         serializedVersion: 2
         x: 0
         y: 1428
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5347222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1515fa7ea520db14398ded659c33724a
-      internalID: 1184105377
+      spriteID: a99563a666eca7841bc9cb474767ad46
+      internalID: -70494875
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_5
+      name: c1_boss_rush_new-Sheet_9
       rect:
         serializedVersion: 2
         x: 0
         y: 1344
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5347222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fafb284fd6cc78343b1dce19212cae38
-      internalID: 495983571
+      spriteID: 10e7ecbe9dae48241aa5f8fa1538eefa
+      internalID: -478076048
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_6
+      name: c1_boss_rush_new-Sheet_10
       rect:
         serializedVersion: 2
         x: 0
         y: 1260
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5347222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9ac9282b015b5b444925cf22a923624d
-      internalID: -1615396533
+      spriteID: 6927261af7e760b4c8a88ac0d18db151
+      internalID: 1606416496
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_7
+      name: c1_boss_rush_new-Sheet_11
       rect:
         serializedVersion: 2
         x: 0
         y: 1176
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5347222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 868dc3b49b87ee74dbd75d9c4e79d29f
-      internalID: 2054128868
+      spriteID: 3555f9d96a1945642bc0df0ed2d53a77
+      internalID: 2088045966
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_8
+      name: c1_boss_rush_new-Sheet_12
       rect:
         serializedVersion: 2
         x: 0
         y: 1092
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5729167, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7549c7affa0e44b4d9912efff5fa5f6e
-      internalID: 502938634
+      spriteID: cafcda835ae91804d94a092144112ece
+      internalID: 1769962556
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_9
+      name: c1_boss_rush_new-Sheet_13
       rect:
         serializedVersion: 2
         x: 0
         y: 1008
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.5729167, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f5adc41a579c68e4895f11f5f2561cbe
-      internalID: -749733679
+      spriteID: 4a7876996ab94d64aa3900cd594fd23e
+      internalID: 1701364213
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_10
+      name: c1_boss_rush_new-Sheet_14
       rect:
         serializedVersion: 2
         x: 0
-        y: 926
-        width: 288
+        y: 924
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6597222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87332126eb705b945b8eb39d807a10bf
-      internalID: 504117655
+      spriteID: 26b0fb4b613b91f4dba29efe75852c09
+      internalID: -1641910118
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_11
+      name: c1_boss_rush_new-Sheet_15
       rect:
         serializedVersion: 2
         x: 0
         y: 840
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6597222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3deaa57dc133f7c42baf386059962fe9
-      internalID: 767315820
+      spriteID: fe39d05ec6210574e8b9e46a1dadfd37
+      internalID: 2143740792
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_12
+      name: c1_boss_rush_new-Sheet_16
       rect:
         serializedVersion: 2
         x: 0
         y: 756
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6597222, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4764bbea3bbcc3c448cc4cec78119089
-      internalID: 1395470756
+      spriteID: 00d945d49421e2e4f97b6476bdad2881
+      internalID: -1919571847
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_13
+      name: c1_boss_rush_new-Sheet_17
       rect:
         serializedVersion: 2
         x: 0
         y: 672
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6840278, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ca873b9146e219c499d37c915550d70a
-      internalID: -971373512
+      spriteID: 808b8824eed545d4ab343a8af3279ee4
+      internalID: 241388763
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_14
+      name: c1_boss_rush_new-Sheet_18
       rect:
         serializedVersion: 2
         x: 0
         y: 588
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6840278, y: 0.5}
+      pivot: {x: 0.104166664, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0c2eff85ca84c34090f1e0136d2e5e9
-      internalID: 785894648
+      spriteID: a3ac4179fb5d09c438148936e4e7d9c5
+      internalID: 1665849516
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_15
+      name: c1_boss_rush_new-Sheet_19
       rect:
         serializedVersion: 2
         x: 0
         y: 504
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6840278, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0456a06e257534428c9783417fdd3fd
-      internalID: -573405309
+      spriteID: e880ad351b212f24f9a7ec810c879304
+      internalID: 1726707764
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_16
+      name: c1_boss_rush_new-Sheet_20
       rect:
         serializedVersion: 2
         x: 0
         y: 420
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.6875, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0845ef3f4e0c4ab4bad4593b7aabbc53
-      internalID: -211762540
+      spriteID: dc50f67db3247c84d9e88130e970c248
+      internalID: 541568981
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_17
+      name: c1_boss_rush_new-Sheet_21
       rect:
         serializedVersion: 2
         x: 0
         y: 336
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.8020833, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f5bf898c21222e04da2922d38cdf8854
-      internalID: -1138614488
+      spriteID: 358e1e1dfe269d04ead0c9e10c3fb73d
+      internalID: 1764406558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_18
+      name: c1_boss_rush_new-Sheet_22
       rect:
         serializedVersion: 2
         x: 0
         y: 252
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.8020833, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2d7a0dac4105e444d9c36945ec673616
-      internalID: -1808667727
+      spriteID: 67a4b82e58b805f4794028ac48aaeebf
+      internalID: 820031884
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_19
+      name: c1_boss_rush_new-Sheet_23
       rect:
         serializedVersion: 2
         x: 0
         y: 168
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.8020833, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 33c2a24b372b97b47bc504822b7e7a46
-      internalID: 2121027445
+      spriteID: ad7af2f639aa5f94e907a14dad54bf67
+      internalID: 1643740973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_20
+      name: c1_boss_rush_new-Sheet_24
       rect:
         serializedVersion: 2
         x: 0
         y: 84
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.7986111, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e1eb9fcac585330468839b4021349118
-      internalID: 147587222
+      spriteID: 3a0bc6b36908f614bbf5ee7abc38a702
+      internalID: 1149119269
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_boss_pt1-Sheet_21
+      name: c1_boss_rush_new-Sheet_25
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 288
+        width: 480
         height: 84
       alignment: 9
-      pivot: {x: 0.7951389, y: 0.5}
+      pivot: {x: 0.90625, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8cd709a8c81299549b05f47ac5125926
-      internalID: 1734181589
+      spriteID: 98d4f972deb6c4a459541baf321af2e3
+      internalID: -1697824534
       vertices: []
       indices: 
       edges: []
@@ -582,28 +653,32 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_boss_pt1-Sheet_0: -523382701
-      c1_boss_pt1-Sheet_1: -561395680
-      c1_boss_pt1-Sheet_10: 504117655
-      c1_boss_pt1-Sheet_11: 767315820
-      c1_boss_pt1-Sheet_12: 1395470756
-      c1_boss_pt1-Sheet_13: -971373512
-      c1_boss_pt1-Sheet_14: 785894648
-      c1_boss_pt1-Sheet_15: -573405309
-      c1_boss_pt1-Sheet_16: -211762540
-      c1_boss_pt1-Sheet_17: -1138614488
-      c1_boss_pt1-Sheet_18: -1808667727
-      c1_boss_pt1-Sheet_19: 2121027445
-      c1_boss_pt1-Sheet_2: 801532820
-      c1_boss_pt1-Sheet_20: 147587222
-      c1_boss_pt1-Sheet_21: 1734181589
-      c1_boss_pt1-Sheet_3: 1870034931
-      c1_boss_pt1-Sheet_4: 1184105377
-      c1_boss_pt1-Sheet_5: 495983571
-      c1_boss_pt1-Sheet_6: -1615396533
-      c1_boss_pt1-Sheet_7: 2054128868
-      c1_boss_pt1-Sheet_8: 502938634
-      c1_boss_pt1-Sheet_9: -749733679
+      c1_boss_rush_new-Sheet_0: 2035020340
+      c1_boss_rush_new-Sheet_1: 1139220557
+      c1_boss_rush_new-Sheet_10: 1606416496
+      c1_boss_rush_new-Sheet_11: 2088045966
+      c1_boss_rush_new-Sheet_12: 1769962556
+      c1_boss_rush_new-Sheet_13: 1701364213
+      c1_boss_rush_new-Sheet_14: -1641910118
+      c1_boss_rush_new-Sheet_15: 2143740792
+      c1_boss_rush_new-Sheet_16: -1919571847
+      c1_boss_rush_new-Sheet_17: 241388763
+      c1_boss_rush_new-Sheet_18: 1665849516
+      c1_boss_rush_new-Sheet_19: 1726707764
+      c1_boss_rush_new-Sheet_2: -208246923
+      c1_boss_rush_new-Sheet_20: 541568981
+      c1_boss_rush_new-Sheet_21: 1764406558
+      c1_boss_rush_new-Sheet_22: 820031884
+      c1_boss_rush_new-Sheet_23: 1643740973
+      c1_boss_rush_new-Sheet_24: 1149119269
+      c1_boss_rush_new-Sheet_25: -1697824534
+      c1_boss_rush_new-Sheet_3: -4343703
+      c1_boss_rush_new-Sheet_4: -680766389
+      c1_boss_rush_new-Sheet_5: 1423169515
+      c1_boss_rush_new-Sheet_6: 1081177069
+      c1_boss_rush_new-Sheet_7: 768209365
+      c1_boss_rush_new-Sheet_8: -70494875
+      c1_boss_rush_new-Sheet_9: -478076048
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

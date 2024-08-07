@@ -714,9 +714,10 @@ MonoBehaviour:
   mapLeftEnd: {fileID: 0}
   mapRightEnd: {fileID: 0}
   backstepJumpMaxDuration: 1
+  chargeReadyEffectPrefab: {fileID: 568573568832534134, guid: 85da9c90847fad047ae9a785fc1c04c4, type: 3}
   noBoxGimmickNearbyTrigger: {fileID: 0}
   dashAttackHitbox: {fileID: 5904141127077743963}
-  delayBeforeDash: 1
+  delayBeforeDash: 0.3
   dashDuration: 0.2
   dashMotionEase: 32
   dashImpactCameraShakeForce: 1
