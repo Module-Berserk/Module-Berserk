@@ -60,6 +60,8 @@ public class YouDied : MonoBehaviour
 
         // 주인공 페이드
         playerSpriteRenderer.DOFade(0f, fadeDuration).From(1f).SetEase(Ease.InSine);
+        int[] deathIndices = {47};
+        AudioManager.instance.PlaySFXBasedOnPlayer(deathIndices, this.transform);
 
         await UniTask.WaitForSeconds(fadeDuration);
     }

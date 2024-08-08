@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour {
@@ -50,6 +51,10 @@ public class AudioManager : MonoBehaviour {
     }
 
     public AudioSource PlaySFXBasedOnPlayer(int[] indices, Transform target) {
+        if (player.IsDestroyed() && indices[0] != 47) {
+            Debug.Log("hi");
+            return null;
+        }
         if (target == null) {
             return null;
         }
