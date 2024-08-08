@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 19678524f56959b479ff51c73d2061f9
+guid: 0c0bfd8fd82253d408139b1d12a65810
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -93,29 +93,16 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_0
+      name: c1_elite_gunner_repel_new-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -124,19 +111,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b03f96d1d39cf34196d871681c8a98f
-      internalID: -13766260
+      spriteID: 2bd637c5660767c4199dd23aca7523a5
+      internalID: 1146819365
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_1
+      name: c1_elite_gunner_repel_new-Sheet_1
       rect:
         serializedVersion: 2
-        x: 160
+        x: 288
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -145,19 +132,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f4dcf5a1f8710c94db5c7ca6409dc4cb
-      internalID: -986279127
+      spriteID: b6a2a6ab6a1639642ba6ee8a9a51d458
+      internalID: 1273075698
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_2
+      name: c1_elite_gunner_repel_new-Sheet_2
       rect:
         serializedVersion: 2
-        x: 320
+        x: 576
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -166,19 +153,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60678fd379d17f94ebc93f11edb5713e
-      internalID: -784475487
+      spriteID: a48745bf688dd2e4594f3052f8cdbd42
+      internalID: -662058142
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_3
+      name: c1_elite_gunner_repel_new-Sheet_3
       rect:
         serializedVersion: 2
-        x: 480
+        x: 864
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -187,19 +174,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de58755334eb1a0498876b51ee2d9b79
-      internalID: -1150568671
+      spriteID: 99e84f499ec4344408120c61e5162a51
+      internalID: 458201170
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_4
+      name: c1_elite_gunner_repel_new-Sheet_4
       rect:
         serializedVersion: 2
-        x: 640
+        x: 1152
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -208,103 +195,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 54785ebf96caeba479b5c1df2487bbcf
-      internalID: -1481004655
+      spriteID: 58007045281ad24439d8afa7d158cb12
+      internalID: 1456415609
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_5
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 0
-        width: 160
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c40db39c9e9ae3e47ac81b7cff0aca86
-      internalID: -11263391
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_6
-      rect:
-        serializedVersion: 2
-        x: 960
-        y: 0
-        width: 160
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4b8b94d17dd5ab14084911020ca2984c
-      internalID: -1944908245
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_7
-      rect:
-        serializedVersion: 2
-        x: 1120
-        y: 0
-        width: 160
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dd3a51d3256efe843821d3c41755e3bb
-      internalID: -251590771
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_8
-      rect:
-        serializedVersion: 2
-        x: 1280
-        y: 0
-        width: 160
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c41bdc33eb8548645905023a7e5f7e87
-      internalID: -1616546620
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_9
+      name: c1_elite_gunner_repel_new-Sheet_5
       rect:
         serializedVersion: 2
         x: 1440
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -313,19 +216,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 65ea743185f8a7e47b86edbcaf994b41
-      internalID: 446364383
+      spriteID: b112a53ac8916b445bd79181bca8bb4c
+      internalID: -1490426927
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_10
+      name: c1_elite_gunner_repel_new-Sheet_6
       rect:
         serializedVersion: 2
-        x: 1600
+        x: 1728
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -334,19 +237,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a72ea232b7a2b064a94e85c97efa8a71
-      internalID: -1379865980
+      spriteID: 8af090e27623680488d53b7fd4296909
+      internalID: 221412066
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_11
+      name: c1_elite_gunner_repel_new-Sheet_7
       rect:
         serializedVersion: 2
-        x: 1760
+        x: 2016
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -355,19 +258,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 166d24d8e67afc348906c1631d56521d
-      internalID: -660019870
+      spriteID: 6e9bffc0dec881f4f9571184b09ff72c
+      internalID: 644794899
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_12
+      name: c1_elite_gunner_repel_new-Sheet_8
       rect:
         serializedVersion: 2
-        x: 1920
+        x: 2304
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -376,19 +279,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a5f360808d4ea545b902ea2280aeaee
-      internalID: -571910706
+      spriteID: 23219fe90ada25140a65dcebd4e2136d
+      internalID: -995367721
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: c1_elite_gunner_shoot-Sheet_13
+      name: c1_elite_gunner_repel_new-Sheet_9
       rect:
         serializedVersion: 2
-        x: 2080
+        x: 2592
         y: 0
-        width: 160
+        width: 288
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -397,8 +300,197 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c3f42799a41d8942846639bde7efebf
-      internalID: -497424653
+      spriteID: b340bb1aa5cac6f49bc727286c7980f1
+      internalID: 1965395262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eff050d30c72aa54bb07379bb54b968f
+      internalID: -483869558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 3168
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b657f63eaa2e65a4da1f9f240e7662d3
+      internalID: -2089592996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35d024973f811d447b06f437940ba806
+      internalID: -2082976722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 3744
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0b65f69c84515b458147db6a874b1df
+      internalID: 1952298564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 4032
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3acae3d273290ea42b80048973315588
+      internalID: 895343789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0e6a2352f1f1594b989a03b39626192
+      internalID: -649666768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb0e98092de148a4ca9e50e2dad7871d
+      internalID: 1935598604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 4896
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c7beefe8a1df1642bdd97ce076e5ef6
+      internalID: 1823300700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: c1_elite_gunner_repel_new-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 5184
+        y: 0
+        width: 288
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15dc0832626ab704fbbfa25ef7672106
+      internalID: -785923265
       vertices: []
       indices: 
       edges: []
@@ -414,20 +506,25 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      c1_elite_gunner_shoot-Sheet_0: -13766260
-      c1_elite_gunner_shoot-Sheet_1: -986279127
-      c1_elite_gunner_shoot-Sheet_10: -1379865980
-      c1_elite_gunner_shoot-Sheet_11: -660019870
-      c1_elite_gunner_shoot-Sheet_12: -571910706
-      c1_elite_gunner_shoot-Sheet_13: -497424653
-      c1_elite_gunner_shoot-Sheet_2: -784475487
-      c1_elite_gunner_shoot-Sheet_3: -1150568671
-      c1_elite_gunner_shoot-Sheet_4: -1481004655
-      c1_elite_gunner_shoot-Sheet_5: -11263391
-      c1_elite_gunner_shoot-Sheet_6: -1944908245
-      c1_elite_gunner_shoot-Sheet_7: -251590771
-      c1_elite_gunner_shoot-Sheet_8: -1616546620
-      c1_elite_gunner_shoot-Sheet_9: 446364383
+      c1_elite_gunner_repel_new-Sheet_0: 1146819365
+      c1_elite_gunner_repel_new-Sheet_1: 1273075698
+      c1_elite_gunner_repel_new-Sheet_10: -483869558
+      c1_elite_gunner_repel_new-Sheet_11: -2089592996
+      c1_elite_gunner_repel_new-Sheet_12: -2082976722
+      c1_elite_gunner_repel_new-Sheet_13: 1952298564
+      c1_elite_gunner_repel_new-Sheet_14: 895343789
+      c1_elite_gunner_repel_new-Sheet_15: -649666768
+      c1_elite_gunner_repel_new-Sheet_16: 1935598604
+      c1_elite_gunner_repel_new-Sheet_17: 1823300700
+      c1_elite_gunner_repel_new-Sheet_18: -785923265
+      c1_elite_gunner_repel_new-Sheet_2: -662058142
+      c1_elite_gunner_repel_new-Sheet_3: 458201170
+      c1_elite_gunner_repel_new-Sheet_4: 1456415609
+      c1_elite_gunner_repel_new-Sheet_5: -1490426927
+      c1_elite_gunner_repel_new-Sheet_6: 221412066
+      c1_elite_gunner_repel_new-Sheet_7: 644794899
+      c1_elite_gunner_repel_new-Sheet_8: -995367721
+      c1_elite_gunner_repel_new-Sheet_9: 1965395262
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
