@@ -86,13 +86,8 @@ public class MeleeEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
         }
         else
         {
-            (this as IEnemyChaseBehavior).Idle();
+            platformerMovement.UpdateMoveVelocity(0f);
+            platformerMovement.ApplyHighFriction();
         }
-    }
-
-    void IEnemyChaseBehavior.Idle()
-    {
-        platformerMovement.UpdateMoveVelocity(0f);
-        platformerMovement.ApplyHighFriction();
     }
 }

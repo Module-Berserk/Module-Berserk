@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(IEnemyPatrolBehavior))]
@@ -11,12 +10,11 @@ using UnityEngine;
 public class NewEnemyController : MonoBehaviour
 {
     [SerializeField] private PlayerDetectionRange playerDetectionRange;
-    [SerializeField] private List<MonoBehaviour> attackBehaviorScripts; // IEnemyAttackBehavior를 구현하는 스크립트들의 목록
 
     private IEnemyPatrolBehavior patrolBehavior;
     private IEnemyChaseBehavior chaseBehavior;
-    private List<IEnemyAttackBehavior> attackBehaviors; // attackBehaviorScripts에서 형변환된 공격 패턴들
-    private IEnemyAttackBehavior activeAttackBehavior = null; // 지금 진행중인 공격패턴 (attackBehaviors 중 하나)
+    private IEnemyAttackBehavior[] attackBehaviors; // 가능한 모든 공격 패턴
+    private IEnemyAttackBehavior activeAttackBehavior = null; // 지금 진행중인 공격 패턴 (attackBehaviors 중 하나)
 
     private PlatformerMovement platformerMovement;
     private SpriteRenderer spriteRenderer;
@@ -41,16 +39,7 @@ public class NewEnemyController : MonoBehaviour
 
         chaseBehavior = GetComponent<IEnemyChaseBehavior>();
         patrolBehavior = GetComponent<IEnemyPatrolBehavior>();
-
-        // 할 수 있는 모든 공격을 리스트 형태로 관리.
-        // 인터페이스 형식으로는 인스펙터에 표시되지 않으니
-        // 그대신 IEnemyAttackBehavior를 구현하는 MonoBehavior의
-        // 리스트를 받아서 여기서 형변환을 진행함.
-        attackBehaviors = new List<IEnemyAttackBehavior>();
-        foreach (var script in attackBehaviorScripts)
-        {
-            attackBehaviors.Add(script as IEnemyAttackBehavior);
-        }
+        attackBehaviors = GetComponents<IEnemyAttackBehavior>();
 
         platformerMovement = GetComponent<PlatformerMovement>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -125,6 +114,8 @@ public class NewEnemyController : MonoBehaviour
             {
                 state = State.Patrol;
                 patrolBehavior.StartPatrol();
+
+                playerDetectionRange.IsDetectionShared = true;
             }
         }
         else if (state == State.Attack)

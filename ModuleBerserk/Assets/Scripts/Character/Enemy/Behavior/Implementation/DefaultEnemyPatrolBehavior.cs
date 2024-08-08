@@ -93,11 +93,17 @@ public class DefaultEnemyPatrolBehavior : MonoBehaviour, IEnemyPatrolBehavior
         // 다음과 같은 경우 반대 방향 선택:
         // 1. 같은 순찰 방향이 3회 이상 걸림
         // 2. 해당 방향이 낭떠러지
-        if (samePatrolDirectionCount >= 3 || platformerMovement.IsOnBrink(patrolSpeed))
+        // 3. 해당 방향으로 가면 활동 제한 범위를 벗어남 (optional)
+        if (samePatrolDirectionCount >= 3 || platformerMovement.IsOnBrink(patrolSpeed) || IsMovingOutsideConfinement(patrolSpeed))
         {
             patrolSpeed *= -1f;
             samePatrolDirectionCount = 1;
         }
+    }
+
+    private bool IsMovingOutsideConfinement(float patrolSpeed)
+    {
+        return optionalMovementConfiner != null && optionalMovementConfiner.IsMovingOutsideRestrictedArea(patrolSpeed);
     }
 
     protected void PerformPatrol()
@@ -141,7 +147,7 @@ public class DefaultEnemyPatrolBehavior : MonoBehaviour, IEnemyPatrolBehavior
         spriteRenderer.flipX = patrolSpeed < 0f;
 
         // 해당 방향이 낭떠러지가 아니라면 이동
-        if (!platformerMovement.IsOnBrink(patrolSpeed))
+        if (!platformerMovement.IsOnBrink(patrolSpeed) && !IsMovingOutsideConfinement(patrolSpeed))
         {
             platformerMovement.UpdateMoveVelocity(patrolSpeed);
             platformerMovement.UpdateFriction(patrolSpeed);

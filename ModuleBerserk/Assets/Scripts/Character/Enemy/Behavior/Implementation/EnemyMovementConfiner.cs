@@ -41,4 +41,12 @@ public class EnemyMovementConfiner : MonoBehaviour
         // 범위 안에 있거나 안으로 돌아오는 방향인 경우
         return false;
     }
+
+    // 행동 반경 제한은 붉은색 테두리로 보여줌
+    private void OnDrawGizmos()
+    {
+        var bounds = moveRestrictionArea.GetComponent<Collider2D>().bounds;
+        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
+    }
 }

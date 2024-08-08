@@ -104,10 +104,4 @@ public class RangedEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
         // 이동 방향으로 스프라이트 설정
         spriteRenderer.flipX = desiredSpeed < 0f;
     }
-
-    void IEnemyChaseBehavior.Idle()
-    {
-        platformerMovement.UpdateMoveVelocity(0f);
-        platformerMovement.ApplyHighFriction();
-    }
 }
