@@ -179,9 +179,15 @@ public class EnemyController : MonoBehaviour, IDestructible
     // 공격 애니메이션의 마지막 프레임에 호출되는 이벤트.
     // 애니메이션이 완전히 끝났다는 것을 알려주며,
     // FSM에서는 Attack -> Chase 전환 조건으로서 작동한다.
+    //
+    // 경직, 사망 모션 등 히트박스를 정리해야 하는 곳에서도 사용됨.
     public void StopActiveAttack()
     {
-        activeAttackBehavior.StopAttack();
+        if (activeAttackBehavior != null)
+        {
+            activeAttackBehavior.StopAttack();
+            activeAttackBehavior = null;
+        }
     }
 
     CharacterStat IDestructible.GetHPStat()
