@@ -101,7 +101,15 @@ public class RangedEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
         platformerMovement.UpdateMoveVelocity(desiredSpeed);
         platformerMovement.UpdateFriction(desiredSpeed);
 
-        // 이동 방향으로 스프라이트 설정
-        spriteRenderer.flipX = desiredSpeed < 0f;
+        // 계속 움직이는 중이라면 이동 방향으로 스프라이트 설정
+        if (Mathf.Abs(desiredSpeed) > 0.1f)
+        {
+            spriteRenderer.flipX = desiredSpeed < 0f;
+        }
+        // 모종의 이유로 정지했다면 플레이어를 바라봄
+        else
+        {
+            spriteRenderer.flipX = player.transform.position.x < transform.position.x;
+        }
     }
 }

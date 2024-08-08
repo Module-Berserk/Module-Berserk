@@ -186,7 +186,6 @@ public class EnemyController : MonoBehaviour, IDestructible
         if (activeAttackBehavior != null)
         {
             activeAttackBehavior.StopAttack();
-            activeAttackBehavior = null;
         }
     }
 

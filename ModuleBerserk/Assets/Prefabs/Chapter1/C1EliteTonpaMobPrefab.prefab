@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageSource: 1
   staggerStrength: 1
-  knockbackForce: 20
+  knockbackForce: 10
   staggerDuration: 0.3
   delayBetweenDamageTick: 0.1
   DamageCoefficient: 1
@@ -212,10 +212,15 @@ GameObject:
   - component: {fileID: 4886122082470953988}
   - component: {fileID: 2631998744343749331}
   - component: {fileID: 714344578949617153}
-  - component: {fileID: 753227502174625611}
-  - component: {fileID: 7054442615863630989}
   - component: {fileID: 6860080865006008720}
   - component: {fileID: 779419864531559493}
+  - component: {fileID: 1652045859640283906}
+  - component: {fileID: 4210286562721240839}
+  - component: {fileID: 2520917237043528704}
+  - component: {fileID: 3715785214335747629}
+  - component: {fileID: 6978697466977766336}
+  - component: {fileID: 2413094686517621305}
+  - component: {fileID: 2680204892409213323}
   m_Layer: 7
   m_Name: C1EliteTonpaMobPrefab
   m_TagString: Enemy
@@ -401,46 +406,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flashEffectMaterial: {fileID: 2100000, guid: edf17806928ca8641b1d20a1af4096dc, type: 2}
   flashDuration: 0.15
---- !u!114 &753227502174625611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3685673258423367676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05310a7e91624764b9c2d16fa790c07f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chaseMinDistance: 0.5
-  chaseMaxDistance: 30
-  chaseSpeed: 2
-  minPatrolSubbehaviorDuration: 1
-  maxPatrolSubbehaviorDuration: 4
-  patrolSpeed: 1
-  moveRestrictionArea: {fileID: 0}
-  randomizationFactor: 0.1
-  hitboxes: {fileID: 1667865729473829347}
-  meleeAttackDamage: 10
-  delayBetweenMeleeAttacks: 3
---- !u!114 &7054442615863630989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3685673258423367676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e369103f277eb040954cdcebc082797, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerDetectionRange: {fileID: 6916859358446872805}
-  attackRange: {fileID: 4123128810883870133}
-  maxHP: 50
-  hpBarUI: {fileID: 1086092378978331772}
-  hpBarSlider: {fileID: 4521241054544124578}
 --- !u!114 &6860080865006008720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,6 +457,109 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 
   LogWarningOnNullGUID: 1
+--- !u!114 &1652045859640283906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4327cf2295916a45bc945d1c90c924d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randomizationFactor: 0.1
+--- !u!114 &4210286562721240839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca60d50ad2fe8147bc42960d9897a0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: {fileID: 4123128810883870133}
+  hitbox: {fileID: 1667865729473829347}
+  delayBetweenAttacks: 3
+  attackAnimationTriggerName: MeleeAttack
+--- !u!114 &2520917237043528704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3083a50ec78727949a799fdbb861c79c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minPatrolSubbehaviorDuration: 1
+  maxPatrolSubbehaviorDuration: 4
+  patrolSpeed: 1
+--- !u!114 &3715785214335747629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5118787ae3f7acb49a6f86bbafb81383, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseMinDistance: 0.5
+  chaseMaxDistance: 30
+  chaseSpeed: 2
+--- !u!114 &6978697466977766336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a05cc2f476351449a8f1069da0dfbdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staggerAnimationTriggerName: Stagger
+  defaultStaggerResistance: 0
+  superArmorStaggerResistance: 1
+--- !u!114 &2413094686517621305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a91f398b55dda924996a5b2764fb72e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHP: 50
+  baseDefense: 10
+  hpBarUI: {fileID: 1086092378978331772}
+  hpBarSlider: {fileID: 4521241054544124578}
+  playerDetectionRange: {fileID: 6916859358446872805}
+--- !u!114 &2680204892409213323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685673258423367676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d16cdf7673df8f04f9c87693d5238db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8408449600811310982
 GameObject:
   m_ObjectHideFlags: 0
