@@ -405,14 +405,14 @@ public class C1BossController : MonoBehaviour, IDestructible
         {
             var tonpaMob = Instantiate(tonpaMobPrefab, mobSpawnPoint.position, Quaternion.identity);
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
-            tonpaMob.GetComponent<MeleeEnemyController>().HandlePlayerDetection();
+            tonpaMob.GetComponent<EnemyController>().HandlePlayerDetection();
         }
 
         for (int i = 0; i < numGunnerMob; ++i)
         {
             var gunnerMob = Instantiate(gunnerMobPrefab, mobSpawnPoint.position, Quaternion.identity);
             await UniTask.WaitForSeconds(0.2f, cancellationToken: attackCancellation.Token);
-            gunnerMob.GetComponent<RangedEnemyController>().HandlePlayerDetection();
+            gunnerMob.GetComponent<EnemyController>().HandlePlayerDetection();
         }
 
         // 모션 끝나고 잡몹 걸어오는 것까지 볼 수 있게 잠깐 대기
@@ -909,13 +909,9 @@ public class C1BossController : MonoBehaviour, IDestructible
         DOTween.KillAll();
 
         // 남아있는 잡몹은 컷신에 방해되니까 다 없애기
-        foreach(var meleeEnemy in FindObjectsByType<MeleeEnemyController>(FindObjectsSortMode.None))
+        foreach(var enemy in FindObjectsByType<EnemyController>(FindObjectsSortMode.None))
         {
-            Destroy(meleeEnemy.gameObject);
-        }
-        foreach(var rangedEnemy in FindObjectsByType<RangedEnemyController>(FindObjectsSortMode.None))
-        {
-            Destroy(rangedEnemy.gameObject);
+            Destroy(enemy.gameObject);
         }
 
         // 보스전이 끝났으니 더이상 AI가 조종하지 못하도록 막기
