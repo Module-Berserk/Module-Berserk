@@ -9,8 +9,8 @@ public class MeleeEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
     // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건.
     // 거리가 min과 max 사이에 있는 경우에만 추적을 시도한다.
     [SerializeField] private float chaseMinDistance = 0.5f;
-    [SerializeField] private float chaseMaxDistance = 5f;
-    [SerializeField] private float chaseSpeed = 1f;
+    [SerializeField] private float chaseMaxDistance = 30f;
+    [SerializeField] private float chaseSpeed = 2f;
 
     private SpriteRenderer spriteRenderer;
     private PlatformerMovement platformerMovement;

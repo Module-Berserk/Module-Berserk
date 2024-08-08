@@ -1,25 +1,47 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(IEnemyPatrolBehavior))]
 [RequireComponent(typeof(IEnemyChaseBehavior))]
+[RequireComponent(typeof(IEnemyStaggerBehavior))]
 [RequireComponent(typeof(IEnemyAttackBehavior))]
 [RequireComponent(typeof(PlatformerMovement))]
+[RequireComponent(typeof(FlashEffectOnHit))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class NewEnemyController : MonoBehaviour
+[RequireComponent(typeof(ObjectExistenceSceneState))]
+public class EnemyController : MonoBehaviour, IDestructible
 {
+    [Header("Stats")]
+    [SerializeField] private float baseHP = 50f;
+    [SerializeField] private float baseDefense = 10f;
+    
+
+    [Header("HP Bar")]
+    [SerializeField] private GameObject hpBarUI; // 체력바 루트 오브젝트
+    [SerializeField] private Slider hpBarSlider;
+
+
+    [Header("Player Detection")]
     [SerializeField] private PlayerDetectionRange playerDetectionRange;
+
 
     private IEnemyPatrolBehavior patrolBehavior;
     private IEnemyChaseBehavior chaseBehavior;
+    private IEnemyStaggerBehavior staggerBehavior;
     private IEnemyAttackBehavior[] attackBehaviors; // 가능한 모든 공격 패턴
     private IEnemyAttackBehavior activeAttackBehavior = null; // 지금 진행중인 공격 패턴 (attackBehaviors 중 하나)
 
     private PlatformerMovement platformerMovement;
+    private FlashEffectOnHit flashEffectOnHit;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private Rigidbody2D rb;
+
+    private CharacterStat hp;
+    private CharacterStat defense;
 
     private enum State
     {
@@ -39,12 +61,30 @@ public class NewEnemyController : MonoBehaviour
 
         chaseBehavior = GetComponent<IEnemyChaseBehavior>();
         patrolBehavior = GetComponent<IEnemyPatrolBehavior>();
+        staggerBehavior = GetComponent<IEnemyStaggerBehavior>();
         attackBehaviors = GetComponents<IEnemyAttackBehavior>();
 
         platformerMovement = GetComponent<PlatformerMovement>();
+        flashEffectOnHit = GetComponent<FlashEffectOnHit>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+
+        hp = new CharacterStat(baseHP, 0f, baseHP);
+        defense = new CharacterStat(baseDefense, 0f);
+
+        hp.OnValueChange.AddListener(UpdateHPBarUI);
+    }
+
+    private void UpdateHPBarUI(float diff)
+    {
+        // Note: 최초 피격 전까지는 체력바가 숨어있음!
+        if (!hpBarUI.activeInHierarchy)
+        {
+            hpBarUI.SetActive(true);
+        }
+
+        hpBarSlider.value = hp.CurrentValue / hp.MaxValue;
     }
 
     private void Start()
@@ -89,7 +129,15 @@ public class NewEnemyController : MonoBehaviour
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
 
         // Debug.Log(state);
-        if (state == State.Chase)
+        if (state == State.Stagger)
+        {
+            // 경직이 끝나면 무조건 추적 상태로 전환
+            if (!staggerBehavior.IsStaggered)
+            {
+                state = State.Chase;
+            }
+        }
+        else if (state == State.Chase)
         {
             // 추적 가능한 범위에 있다면 플레이어에게 접근
             if (chaseBehavior.CanChasePlayer())
@@ -134,5 +182,63 @@ public class NewEnemyController : MonoBehaviour
     public void StopActiveAttack()
     {
         activeAttackBehavior.StopAttack();
+    }
+
+    CharacterStat IDestructible.GetHPStat()
+    {
+        return hp;
+    }
+
+    CharacterStat IDestructible.GetDefenseStat()
+    {
+        return defense;
+    }
+
+    Team IDestructible.GetTeam()
+    {
+        return Team.Enemy;
+    }
+
+    bool IDestructible.OnDamage(AttackInfo attackInfo)
+    {
+        (this as IDestructible).HandleHPDecrease(attackInfo.damage);
+
+        // 피격 이펙트
+        flashEffectOnHit.StartEffectAsync().Forget();
+
+        // 경직 상태에 들어갔다면 잠시 기다렸다가 추적 시작
+        if (staggerBehavior.TryApplyStagger(attackInfo))
+        {
+            state = State.Stagger;
+        }
+        // 만약 슈퍼아머로 인해 경직을 무시했다면 바로 추적 시작
+        else
+        {
+            state = State.Chase;
+        }
+
+        return true;
+    }
+
+    void IDestructible.OnDestruction()
+    {
+        // 이동중이었을 수도 있으니 멈추고 사망 처리
+        platformerMovement.ApplyHighFriction();
+
+        // 체력바 숨기기
+        hpBarUI.SetActive(false);
+
+        // 컨트롤러 비활성화
+        enabled = false;
+
+        animator.SetTrigger("Die");
+
+        // 세이브 데이터에 죽었다고 기록하기
+        GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
+    }
+
+    private void PlayVictimSFX() {
+        int[] victimIndices = {41, 42, 43, 44, 45};
+        AudioManager.instance.PlaySFXBasedOnPlayer(victimIndices, this.transform);
     }
 }

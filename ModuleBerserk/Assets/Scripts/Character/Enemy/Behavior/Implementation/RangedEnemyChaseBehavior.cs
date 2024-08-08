@@ -9,8 +9,8 @@ public class RangedEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
     // Chase 상태에서 이동을 멈추기 위한 플레이어와의 거리 조건.
     // 너무 가까우면 도망가고 너무 멀면 접근하지만 그 중간에 있는 경우 가만히 서있는다.
     [SerializeField] private float runAwayStartDistance = 3f;
-    [SerializeField] private float chaseStopMaxDistance = 4f;
-    [SerializeField] private float chaseMaxDistance = 5f;
+    [SerializeField] private float chaseStopMaxDistance = 5f;
+    [SerializeField] private float chaseMaxDistance = 30f;
     [SerializeField] private float chaseSpeed = 1f;
 
     private SpriteRenderer spriteRenderer;
