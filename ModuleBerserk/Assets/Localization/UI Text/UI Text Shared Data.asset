@@ -47,6 +47,22 @@ MonoBehaviour:
     m_Key: OVERWRITE_WARNING
     m_Metadata:
       m_Items: []
+  - m_Id: 59635359940608
+    m_Key: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59754662723584
+    m_Key: MAIN_MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60691326304256
+    m_Key: FULLSCREEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60784238526464
+    m_Key: SCREEN_SHAKE_EFFECT
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

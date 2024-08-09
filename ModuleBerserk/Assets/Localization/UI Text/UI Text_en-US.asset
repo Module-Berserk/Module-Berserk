@@ -54,6 +54,22 @@ MonoBehaviour:
       Do you want to overwrite it?'
     m_Metadata:
       m_Items: []
+  - m_Id: 59635359940608
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59754662723584
+    m_Localized: Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60691326304256
+    m_Localized: Fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60784238526464
+    m_Localized: Screen Shake Effect
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
