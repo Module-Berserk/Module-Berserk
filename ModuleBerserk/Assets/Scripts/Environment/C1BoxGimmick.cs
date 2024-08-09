@@ -58,10 +58,10 @@ public class C1BoxGimmick : MonoBehaviour, IDestructible
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        // case 1) 상자가 머리 위로 떨어지는 경우 즉시 파괴
+        // case 1) 상자가 머리 위로 떨어지는 경우 즉시 파괴 (같은 상자나 static rigidbody를 제외한 나머지 모든 물체에 반응)
         bool isGroundCollision = other.rigidbody.bodyType == RigidbodyType2D.Static;
         bool isFalling = rb.velocity.y < -0.3f;
-        if (!isGroundCollision && isFalling)
+        if (!isGroundCollision && isFalling && other.gameObject.GetComponent<C1BoxGimmick>() == null)
         {
             int[] boxIndices = {33};
             AudioManager.instance.PlaySFXBasedOnPlayer(boxIndices, this.transform);  
