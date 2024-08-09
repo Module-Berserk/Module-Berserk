@@ -71,6 +71,10 @@ public class PlatformerMovement : MonoBehaviour
     [SerializeField] private float expectedSlopeAngleInDegrees = 45f;
 
 
+    [Header("Debug")]
+    [SerializeField] private bool logFrictionChange = false;
+
+
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     // 지면 접촉 테스트 관리자
@@ -396,11 +400,21 @@ public class PlatformerMovement : MonoBehaviour
     public void ApplyHighFriction()
     {
         rb.sharedMaterial = maxFrictionMat;
+
+        if (logFrictionChange)
+        {
+            Debug.Log("{[PlatformerMovement] high friction}");
+        }
     }
 
     public void ApplyZeroFriction()
     {
         rb.sharedMaterial = zeroFrictionMat;
+        
+        if (logFrictionChange)
+        {
+            Debug.Log("{[PlatformerMovement] zero friction}");
+        }
     }
 
     private float ChooseAcceleration(float desiredSpeed)

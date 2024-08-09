@@ -29,6 +29,10 @@ public class EnemyController : MonoBehaviour, IDestructible
     [SerializeField] private PlayerDetectionRange playerDetectionRange;
 
 
+    [Header("Debug")]
+    [SerializeField] private bool logCurrentState = false;
+
+
     private IEnemyPatrolBehavior patrolBehavior;
     private IEnemyChaseBehavior chaseBehavior;
     private IEnemyStaggerBehavior staggerBehavior;
@@ -127,11 +131,15 @@ public class EnemyController : MonoBehaviour, IDestructible
 
     private void FixedUpdate()
     {
+        if (logCurrentState)
+        {
+            Debug.Log($"[EnemyController] State: {state}", gameObject);
+        }
+
         platformerMovement.HandleGroundContact();
         playerDetectionRange.SetDetectorDirection(spriteRenderer.flipX);
         animator.SetBool("IsMoving", Mathf.Abs(rb.velocity.x) > 0.01f);
 
-        // Debug.Log(state);
         if (state == State.Stagger)
         {
             // 경직이 끝나면 무조건 추적 상태로 전환
@@ -218,6 +226,11 @@ public class EnemyController : MonoBehaviour, IDestructible
         if (staggerBehavior.TryApplyStagger(attackInfo))
         {
             state = State.Stagger;
+
+            // patrolBehavior는 stateful해서 여기서 명시적으로 멈춰주지 않으면
+            // 순찰 패턴 중 "대기" 상태를 처리하는 코드에 의해
+            // 넉백 효과가 의도한 것보다 빨리 사라질 수 있음!
+            patrolBehavior.StopPatrol();
         }
         // 만약 슈퍼아머로 인해 경직을 무시했다면 바로 추적 시작
         else

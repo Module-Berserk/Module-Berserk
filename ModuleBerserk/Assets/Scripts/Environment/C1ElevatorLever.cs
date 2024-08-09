@@ -11,28 +11,49 @@ public class C1ElevatorLever : Trigger, IInteractable
     // ex) 주변에 적이 없을 때만 가능 => NoEnemyNearbyTrigger 레퍼런스 넣기
     [SerializeField] private Trigger requiredTrigger;
 
-    [Header("Activation Sprites")]
-    [SerializeField] private Sprite activeSprite;
-    [SerializeField] private Sprite inactiveSprite;
+    [Header("Animators")]
+    [SerializeField] private Animator leverHandleAnimator;
+    [SerializeField] private Animator leverBodyAnimator;
 
     [Header("Reactivate")]
     // 레버를 당긴 뒤 다시 원상태로 돌아오기까지 걸리는 시간.
     // 엘리베이터의 이동 시간에 맞춰서 설정해줘야 자연스럽다.
     [SerializeField] private float timeToReactivate;
 
-    private SpriteRenderer spriteRenderer;
+    private bool isPlayerInRange = false;
+    private bool isHandleAnimationFinished = true;
 
     // 레버가 작동 중일 때 맵을 이동하는 경우 비동기 작업 취소
     private CancellationTokenSource cancelOnDestruction = new();
 
-    private void Awake()
+    private void Update()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        leverHandleAnimator.SetBool("IsActive", IsActive);
+        leverHandleAnimator.SetBool("IsInteractable", isPlayerInRange && (this as IInteractable).IsInteractionPossible());
+
+        // 레버 본체는 레버 당기는 모션이 완전히 끝난 상태에서만 불빛이 바뀜
+        leverBodyAnimator.SetBool("IsActivationDone", IsActive && isHandleAnimationFinished);
+        leverBodyAnimator.SetBool("IsInteractable", isHandleAnimationFinished && isPlayerInRange && (this as IInteractable).IsInteractionPossible());
     }
 
     private void OnDestroy()
     {
         cancelOnDestruction.Cancel();
+    }
+
+    public void OnHandleAnimationFinish()
+    {
+        isHandleAnimationFinished = true;
+    }
+
+    void IInteractable.OnPlayerEnter()
+    {
+        isPlayerInRange = true;
+    }
+
+    void IInteractable.OnPlayerExit()
+    {
+        isPlayerInRange = false;
     }
 
     void IInteractable.StartInteraction()
@@ -43,14 +64,16 @@ public class C1ElevatorLever : Trigger, IInteractable
 
     private async UniTask ActivateForDurationAsync(float duration, CancellationToken cancellationToken)
     {
+        isHandleAnimationFinished = false;
         Activate();
+
         //SFX 시전! Lever On
         int[] leveronIndices = {12};
         AudioManager.instance.PlaySFXBasedOnPlayer(leveronIndices, this.transform);
 
-        spriteRenderer.sprite = activeSprite;
         await UniTask.WaitForSeconds(duration, cancellationToken: cancellationToken);
-        spriteRenderer.sprite = inactiveSprite;
+
+        isHandleAnimationFinished = false;
         Deactivate();
 
         //SFX 시전! Lever Off
