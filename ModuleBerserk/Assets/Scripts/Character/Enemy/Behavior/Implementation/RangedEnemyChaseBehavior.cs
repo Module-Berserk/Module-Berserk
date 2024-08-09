@@ -13,6 +13,10 @@ public class RangedEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
     [SerializeField] private float chaseMaxDistance = 30f;
     [SerializeField] private float chaseSpeed = 1f;
 
+
+    [Header("Debug")]
+    [SerializeField] private bool logChaseFailureReason = false;
+
     private SpriteRenderer spriteRenderer;
     private PlatformerMovement platformerMovement;
     private EnemyMovementConfiner optionalMovementConfiner; // null이어도 됨!
@@ -41,27 +45,39 @@ public class RangedEnemyChaseBehavior : MonoBehaviour, IEnemyChaseBehavior
         // 플레이어어가 존재하지 않는 경우
         if (!player)
         {
-            Debug.Log("플레이어가 없어서 추적 실패");
+            if (logChaseFailureReason)
+            {
+                Debug.Log("플레이어가 없어서 추적 실패", gameObject);
+            }
             return false;
         }
 
         // 움직일 방향이 낭떠러지인 경우
         if (platformerMovement.IsOnBrink(GetChaseSpeed()))
         {
-            // Debug.Log("플레이어가 낭떠러지 방향에 있어서 추적 실패");
+            if (logChaseFailureReason)
+            {
+                Debug.Log($"플레이어가 낭떠러지 방향에 있어서 추적 실패\nchase speed = {GetChaseSpeed()}", gameObject);
+            }
             return false;
         }
 
         // 플레이어가 추적 가능 범위를 벗어난 경우
         if (IsPlayerOutOfRange())
         {
-            // Debug.Log("플레이어가 너무 멀어서 추적 실패");
+            if (logChaseFailureReason)
+            {
+                Debug.Log("플레이어가 너무 멀어서 추적 실패", gameObject);
+            }
             return false;
         }
 
         if (optionalMovementConfiner != null && !optionalMovementConfiner.IsPlayerInRange())
         {
-            // Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패");
+            if (logChaseFailureReason)
+            {
+                Debug.Log("플레이어가 활동 범위 밖에 있어서 추적 실패", gameObject);
+            }
             return false;
         }
 

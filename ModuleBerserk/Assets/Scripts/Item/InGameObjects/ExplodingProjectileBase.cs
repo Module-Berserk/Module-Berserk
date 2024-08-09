@@ -1,7 +1,10 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public abstract class ExplodingProjectileBase : MonoBehaviour
 {
+    [SerializeField] private float explosionDelay = 0f; // 착지한 후 몇 초 뒤에 터지는지
+
     private bool isExploded = false;
 
     private void OnCollisionStay2D(Collision2D other)
@@ -18,10 +21,17 @@ public abstract class ExplodingProjectileBase : MonoBehaviour
         {
             isExploded = true;
 
-            OnExplosion(other);
-
-            Destroy(gameObject);
+            ExplodeWithDelay(other).Forget();
         }
+    }
+
+    private async UniTask ExplodeWithDelay(Collision2D other)
+    {
+        await UniTask.WaitForSeconds(explosionDelay);
+
+        OnExplosion(other);
+
+        Destroy(gameObject);
     }
 
     protected abstract void OnExplosion(Collision2D other);

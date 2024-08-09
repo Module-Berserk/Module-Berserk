@@ -4,18 +4,20 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(StatRandomizer))]
 [RequireComponent(typeof(PlatformerMovement))]
-public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
+public class GrenadierAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
 {
+    [SerializeField] private GameObject grenadePrefab;
     [SerializeField] private PlayerDetectionRange attackRange;
-    [SerializeField] private ApplyDamageOnContact hitbox;
     [SerializeField] private float delayBetweenAttacks;
     [SerializeField] private string attackAnimationTriggerName;
+    [SerializeField] private float grenadeArrivalTime; // 수류탄을 던진 후 목적지까지 도달하는데에 걸리는 시간
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private StatRandomizer cooltimeRandomizer;
     private PlatformerMovement platformerMovement;
     private GameObject player;
+
     private float attackCooltime = 0f;
 
     private void Awake()
@@ -25,21 +27,37 @@ public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
         cooltimeRandomizer = GetComponent<StatRandomizer>();
         platformerMovement = GetComponent<PlatformerMovement>();
         player = GameObject.FindWithTag("Player");
-
-        if (hitbox == null)
-        {
-            throw new ReferenceNotInitializedException("hitbox");
-        }
     }
 
     private void FixedUpdate()
     {
         attackCooltime -= Time.fixedDeltaTime;
         attackRange.SetDetectorDirection(spriteRenderer.flipX);
-        hitbox.SetHitboxDirection(spriteRenderer.flipX);
     }
 
-    bool IEnemyAttackBehavior.IsAttackMotionFinished {get; set; } = true;
+    // 투척 애니메이션에서 이벤트로 호출되는 함수
+    public void ThrowGrenade()
+    {
+        GameObject grenade = Instantiate(grenadePrefab, transform.position, Quaternion.identity);
+        Rigidbody2D rb = grenade.GetComponent<Rigidbody2D>();
+
+        // 수류탄이 도착해야 할 위치 (플레이어가 서있는 곳)
+        Vector2 targetPosition = new Vector2()
+        {
+            x = player.transform.position.x,
+            y = player.GetComponent<Collider2D>().bounds.min.y
+        };
+
+        // grenadeArrivalTime 후에 목적지에 도달하도록 초기 속도를 설정
+        Vector2 displacement = targetPosition - (Vector2)grenade.transform.position;
+        rb.velocity = new Vector2()
+        {
+            x = displacement.x / grenadeArrivalTime,
+            y = displacement.y / grenadeArrivalTime - rb.gravityScale * Physics2D.gravity.y * grenadeArrivalTime * 0.5f
+        };
+    }
+
+    bool IEnemyAttackBehavior.IsAttackMotionFinished { get; set; } = true;
 
     bool IEnemyAttackBehavior.IsAttackPossible()
     {
@@ -49,11 +67,6 @@ public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
     void IEnemyAttackBehavior.StartAttack()
     {
         (this as IEnemyAttackBehavior).IsAttackMotionFinished = false;
-
-        // 원거리 적이 도주 중에 사용하는 밀치기 공격처럼
-        // 현재 방향과 플레이어가 있는 방향이 다른 경우가 있으니
-        // 반드시 공격 전에 플레이어를 바라보도록 해야 함.
-        spriteRenderer.flipX = player.transform.position.x < transform.position.x;
 
         animator.SetTrigger(attackAnimationTriggerName);
 
@@ -66,7 +79,5 @@ public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
     void IEnemyAttackBehavior.StopAttack()
     {
         (this as IEnemyAttackBehavior).IsAttackMotionFinished = true;
-
-        hitbox.IsHitboxEnabled = false;
     }
 }
