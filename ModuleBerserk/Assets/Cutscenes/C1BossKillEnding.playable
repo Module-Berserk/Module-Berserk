@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030f85c3f73729f4f976f66ffb23b875, type: 3}
   m_Name: AnimationPlayableAsset(Clone)(Clone)
   m_EditorClassIdentifier: 
-  m_Clip: {fileID: 7400000, guid: e7f826a701e6a874eb6d2880686b28b6, type: 2}
+  m_Clip: {fileID: 7400000, guid: e49b9a2ccd0cc244a8484be3747c5c69, type: 2}
   m_Position: {x: 0, y: 0, z: 0}
   m_EulerAngles: {x: 0, y: 0, z: 0}
   m_UseTrackMatchFields: 1
@@ -34,7 +34,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030f85c3f73729f4f976f66ffb23b875, type: 3}
   m_Name: AnimationPlayableAsset
   m_EditorClassIdentifier: 
-  m_Clip: {fileID: 7400000, guid: 1c473b5b88f6825499de3591a3c93cc3, type: 2}
+  m_Clip: {fileID: 7400000, guid: a698c346db4dc724eaed19d0f1ae7b8d, type: 2}
   m_Position: {x: 0, y: 0, z: 0}
   m_EulerAngles: {x: 0, y: 0, z: 0}
   m_UseTrackMatchFields: 1
@@ -276,7 +276,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: player_loyal_idle
+    m_DisplayName: player_idle
   - m_Version: 1
     m_Start: 1.1833333333333333
     m_ClipIn: 0
@@ -327,7 +327,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: player_loyal_atk1
+    m_DisplayName: player_atk1
   - m_Version: 1
     m_Start: 1.9333333333333333
     m_ClipIn: 0
@@ -378,7 +378,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: player_loyal_idle
+    m_DisplayName: player_idle
   - m_Version: 1
     m_Start: 5
     m_ClipIn: 0
@@ -447,7 +447,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: Infinity
     m_PreExtrapolationTime: 0
-    m_DisplayName: player_loyal_run
+    m_DisplayName: player_run
   m_Markers:
     m_Objects: []
   m_InfiniteClipPreExtrapolation: 0
@@ -480,7 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030f85c3f73729f4f976f66ffb23b875, type: 3}
   m_Name: AnimationPlayableAsset
   m_EditorClassIdentifier: 
-  m_Clip: {fileID: 7400000, guid: e7f826a701e6a874eb6d2880686b28b6, type: 2}
+  m_Clip: {fileID: 7400000, guid: e49b9a2ccd0cc244a8484be3747c5c69, type: 2}
   m_Position: {x: 0, y: 0, z: 0}
   m_EulerAngles: {x: 0, y: 0, z: 0}
   m_UseTrackMatchFields: 1
@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030f85c3f73729f4f976f66ffb23b875, type: 3}
   m_Name: AnimationPlayableAsset
   m_EditorClassIdentifier: 
-  m_Clip: {fileID: 7400000, guid: 05a9670b38b11bf48ae1945162f9ccf0, type: 2}
+  m_Clip: {fileID: 7400000, guid: e4e6e25c509bff14bbc1b0a2328ac15f, type: 2}
   m_Position: {x: 0, y: 0, z: 0}
   m_EulerAngles: {x: 0, y: 0, z: 0}
   m_UseTrackMatchFields: 1
