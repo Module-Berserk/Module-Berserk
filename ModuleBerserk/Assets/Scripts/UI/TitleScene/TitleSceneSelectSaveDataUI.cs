@@ -6,6 +6,9 @@ using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.UI;
 
 public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceController
@@ -28,21 +31,33 @@ public class TitleSceneSelectSaveDataUI : MonoBehaviour, IUserInterfaceControlle
 
         for (int i = 0; i < savedStates.Count; ++i)
         {
-            int buttonIndex = i; // 람다에 i를 직접 넣으니 루프 끝난 i값이 사용되어서
+            int buttonIndex = i; // 람다에 i를 직접 넣으니 루프 끝난 i값이 사용되어서 참조용 로컬 변수를 하나 더 만듦
             if (savedStates[i] == null)
             {
-                buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = "빈 슬롯";
-                buttons[i].onClick.AddListener(() => {
+                SetButtonLocalizationSmartString(buttons[i], -1);
+                buttons[i].onClick.AddListener(() =>
+                {
                     OnSelectEmptySlot.Invoke(buttonIndex);
                 });
             }
             else
             {
-                buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = $"슬롯 {i + 1}";
+                SetButtonLocalizationSmartString(buttons[i], i);
                 buttons[i].onClick.AddListener(() => {
                     OnSelectExistingSlot.Invoke(buttonIndex);
                 });
             }
+        }
+    }
+
+    // localization에서 slotIndex라는 로컬 변수를 사용해
+    // 언어에 맞게 formatting 해주므로 우리는 해당 값만 설정해주면 됨.
+    // -1은 빈 슬롯이라는 뜻!
+    private void SetButtonLocalizationSmartString(Button button, int slotIndex)
+    {
+        if (button.GetComponentInChildren<LocalizeStringEvent>().StringReference.TryGetValue("slotIndex", out IVariable variable))
+        {
+            (variable as IntVariable).Value = slotIndex;
         }
     }
 
