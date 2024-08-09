@@ -404,6 +404,7 @@ MonoBehaviour:
   chaseStopMaxDistance: 4
   chaseMaxDistance: 30
   chaseSpeed: 1
+  logChaseFailureReason: 0
 --- !u!114 &3931100263305933077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -463,8 +464,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91f398b55dda924996a5b2764fb72e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHP: 50
+  baseHP: 40
   baseDefense: 10
+  baseDamage: 20
   hpBarUI: {fileID: 3104229841293423801}
   hpBarSlider: {fileID: 1925375824747741799}
   playerDetectionRange: {fileID: 2309236956191449333}

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 // 대칭적인 모양의 Collider2D가 필요하고 layer는 Weapon으로 설정해야 한다.
 //
 // 플레이어의 공격처럼 상황마다 다른 모양의 콜라이더를 사용하는 경우를 고려해
-// 하나의 오브젝트에 여러 개의 콜라이더와 하나의 ApplyDamageOnContact 스크립트가 있다고 가정함.
+// 하나의 오브젝트에 여러 개의 콜라이더와 하나의 Hitbox 스크립트가 있다고 가정함.
 // 콜라이더 중에서는 한 번에 하나만 활성화되는 것이 정상!
 //
 // object hierarchy 예시:
@@ -26,7 +26,7 @@ using UnityEngine.Events;
 // 주의사항:
 // 모든 콜라이더의 위치 조정은 transform.position이 아니라 offset으로 해줘야
 // 왼쪽 오른쪽 방향 전환이 정상적으로 동작함!
-public class ApplyDamageOnContact : MonoBehaviour
+public class Hitbox : MonoBehaviour
 {
     [SerializeField] private Team DamageSource;
     [SerializeField] private StaggerStrength staggerStrength;
@@ -71,7 +71,7 @@ public class ApplyDamageOnContact : MonoBehaviour
     }
 
     // 공격의 주체가 설정해줘야하는 스탯
-    public CharacterStat RawDamage;
+    public CharacterStat BaseDamage;
 
     // 공격마다 계수가 다른 경우 설정
     public float DamageCoefficient = 1f;
@@ -151,7 +151,7 @@ public class ApplyDamageOnContact : MonoBehaviour
                 AttackInfo attackInfo = new()
                 {
                     damageSource = DamageSource,
-                    damage = RawDamage.CurrentValue * DamageCoefficient,
+                    damage = BaseDamage.CurrentValue * DamageCoefficient,
                     staggerStrength = staggerStrength,
                     knockbackForce = knockbackDirection * knockbackForce,
                     duration = staggerDuration

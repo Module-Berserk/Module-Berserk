@@ -7,8 +7,8 @@ public class MiniTurretBullet : MonoBehaviour
 
     private void Start()
     {
-        var hitbox = GetComponent<ApplyDamageOnContact>();
-        hitbox.RawDamage = new CharacterStat(damage);
+        var hitbox = GetComponent<Hitbox>();
+        hitbox.BaseDamage = new CharacterStat(damage);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

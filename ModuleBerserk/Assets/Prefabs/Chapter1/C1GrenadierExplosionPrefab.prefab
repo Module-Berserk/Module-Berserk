@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7181383860227060224}
   - component: {fileID: 6271587833123678819}
   - component: {fileID: 4486853195267823613}
-  - component: {fileID: -2072596331965978600}
   - component: {fileID: 6053770805624139835}
   - component: {fileID: 8647576943436918876}
   - component: {fileID: -2310143832960061504}
@@ -110,19 +109,6 @@ MonoBehaviour:
   OnApplyDamageSuccess:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &-2072596331965978600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 568573568832534134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c97165cc2e8f3b4b98566b2413cdbab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 5
 --- !u!95 &6053770805624139835
 Animator:
   serializedVersion: 5

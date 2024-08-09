@@ -7,7 +7,7 @@ using UnityEngine;
 public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
 {
     [SerializeField] private PlayerDetectionRange attackRange;
-    [SerializeField] private ApplyDamageOnContact hitbox;
+    [SerializeField] private Hitbox hitbox;
     [SerializeField] private float delayBetweenAttacks;
     [SerializeField] private string attackAnimationTriggerName;
 
@@ -46,7 +46,7 @@ public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
         return attackRange.IsPlayerInRange && attackCooltime <= 0f;
     }
 
-    void IEnemyAttackBehavior.StartAttack()
+    void IEnemyAttackBehavior.StartAttack(CharacterStat baseDamage)
     {
         (this as IEnemyAttackBehavior).IsAttackMotionFinished = false;
 
@@ -56,6 +56,8 @@ public class HitboxBasedAttackBehavior : MonoBehaviour, IEnemyAttackBehavior
         spriteRenderer.flipX = player.transform.position.x < transform.position.x;
 
         animator.SetTrigger(attackAnimationTriggerName);
+
+        hitbox.BaseDamage = baseDamage;
 
         // 직전에 이동하고 있었을 수 있으므로 확실히 제자리에 정지시킴
         platformerMovement.ApplyHighFriction();

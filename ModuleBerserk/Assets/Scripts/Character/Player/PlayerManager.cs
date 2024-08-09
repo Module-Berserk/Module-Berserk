@@ -56,8 +56,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
 
     [Header("Hitbox")]
-    [SerializeField] private ApplyDamageOnContact weaponHitbox; // 평타 범위
-    [SerializeField] private ApplyDamageOnContact emergencyEvadeHitbox; // 긴급회피 밀치기 범위
+    [SerializeField] private Hitbox weaponHitbox; // 평타 범위
+    [SerializeField] private Hitbox emergencyEvadeHitbox; // 긴급회피 밀치기 범위
 
 
     [Header("Hit Effect")]
@@ -247,7 +247,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 무기와 긴급 회피 모션의 밀쳐내기 히트박스를 비활성화 상태로 준비함
     private void InitializeHitbox(CharacterStat attackDamage)
     {
-        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 ApplyDamageOnContact 컴포넌트에 콜백 등록
+        // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 Hitbox 컴포넌트에 콜백 등록
         weaponHitbox.OnApplyDamageSuccess.AddListener((other) => {
             gearSystem.OnAttackSuccess();
 
@@ -256,8 +256,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
         });
 
         // 해당 컴포넌트에서 플레이어의 공격력 스탯을 사용하도록 설정
-        weaponHitbox.RawDamage = attackDamage;
-        emergencyEvadeHitbox.RawDamage = attackDamage;
+        weaponHitbox.BaseDamage = attackDamage;
+        emergencyEvadeHitbox.BaseDamage = attackDamage;
 
         // 히트박스는 항상 비활성화 상태로 시작해야 함
         weaponHitbox.IsHitboxEnabled = false;
@@ -505,12 +505,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
-        // TODO: 테스트 끝나면 돌려놓기
-        // 테스트 과정에서 긴급 회피를 제한 없이
-        // 사용할 수 있도록 기어 게이지 소모를 비활성화해둠
-        // if (gearSystem.IsEmergencyEvadePossible())
+        // 충격파는 기어 단계를 하나 내리면서 사용하는 기술이므로
+        // 최소 기어 단계에서는 사용할 수 없음!
+        if (gearSystem.IsEmergencyEvadePossible())
         {
-            // gearSystem.OnEmergencyEvade();
+            gearSystem.OnEmergencyEvade();
 
             // 이미 피격당했지만 긴급 회피로 무효화할 수 있는 기간인 경우
             // 데미지를 씹고 다른 모션을 재생한다.
@@ -1128,7 +1127,8 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
         await GameStateManager.RestoreLastSavePointAsync();
 
-        // 재도전 횟수 차감한 상태로 저장
+        // 재도전 횟수 차감하고 체력 회복한 상태로 저장
+        GameStateManager.ActiveGameState.PlayerState.HP.ResetToMaxValue();
         GameStateManager.ActiveGameState.SceneState.RemainingRevives--;
         GameStateManager.SaveActiveGameState();
 

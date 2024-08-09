@@ -14,7 +14,7 @@ public class C1BossCannonExplode : MonoBehaviour
     private void Awake()
     {
         screenShake = GetComponent<ScreenShake>();
-        GetComponent<ApplyDamageOnContact>().RawDamage = new CharacterStat(damage);
+        GetComponent<Hitbox>().BaseDamage = new CharacterStat(damage);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

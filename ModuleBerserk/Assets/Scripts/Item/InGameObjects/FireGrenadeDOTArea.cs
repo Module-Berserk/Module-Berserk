@@ -9,8 +9,8 @@ public class FireGrenadeDOTArea : MonoBehaviour
 
     private void Start()
     {
-        var hitbox = GetComponent<ApplyDamageOnContact>();
-        hitbox.RawDamage = new CharacterStat(tickDamage);
+        var hitbox = GetComponent<Hitbox>();
+        hitbox.BaseDamage = new CharacterStat(tickDamage);
         //SFX
         int[] flameIndices = {37};
         AudioManager.instance.PlaySFXBasedOnPlayer(flameIndices, this.transform);

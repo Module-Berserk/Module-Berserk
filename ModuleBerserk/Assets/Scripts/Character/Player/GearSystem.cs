@@ -5,7 +5,6 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // 플레이어의 기어 게이지를 관리하는 클래스.
@@ -38,13 +37,9 @@ public class GearSystem : MonoBehaviour
     // MAX_GAUGE_TIME_REQUIRED_FOR_GAUGE_LEVEL_INCREASE만큼 대기한 다음
     // 기어 단계를 1로 올리며 미션이 시작된다.
     private const float INITIAL_GUAGE_RAMPUP_TIME = 1f;
-    // 비전투 상태에서 1초마다 깎이는 게이지
-    private const float NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC = 2f;
     // 최대 기어 단계에 도달했을 때 게이지 수치 하락을 막는 기간
     private const float MAX_GEAR_LEVEL_PROTECTION_TIME = 5f;
-    // 비전투 상태에서 게이지 하한선에 도달했을 때 기어 단계 하락을 막는 기간
-    private const float NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME = 3f;
-    // 공격 또는 피격 이후로 이 시간 동안은 전투 상태로 판단해 기어 게이지 자연 감소가 일어나지 않음
+    // 공격 또는 피격 이후로 이 시간 동안은 전투 상태로 판단
     private const float COMBAT_DURATION = 10f;
 
     // 기어 레벨별 버프 수치.
@@ -75,10 +70,8 @@ public class GearSystem : MonoBehaviour
     // 최대 기어 단계 도달에 의한 게이지 하락 보호 기간.
     // 이 수치가 0 이상이면 무슨 일이 있어도 게이지가 떨어지지 않는다.
     private float remainingGaugeProtectionTime = 0f;
-    // 비전투 상태에서 게이지 하한선에 머무른 시간
-    private float gaugeLowerBoundDuration = 0f;
     // 매 프레임마다 시간을 누적해 공격 또는 피격 이벤트로부터 몇 초나 지났는지 기록함.
-    // 공격 및 피격 이후 3초 동안은 전투 중으로 취급함.
+    // 공격 및 피격 이후 N초 동안은 전투 중으로 취급함.
     private float combatTimer = 0f;
     // 마지막으로 호출된 UpdateGearLevelBuff()에서 적용한 버프 수치.
     // 이전 버프를 제거하고 현재 값으로 갱신하기 위해 기록한다.
@@ -324,12 +317,6 @@ public class GearSystem : MonoBehaviour
         // 기어 레벨 최대치에 달성한 경우 주어지는 게이지 하락 방지 기간
         remainingGaugeProtectionTime -= Time.deltaTime;
 
-        // 비전투 상태라면 게이지 조금씩 감소
-        if (!IsCombatOngoing())
-        {
-            HandleNaturalGaugeDecrease();
-        }
-
         // 게이지 최대치에 도달한 경우 최대치를 유지한 시간을 기록
         if (CurrentState.GearGauge == MAX_GEAR_GAUGE)
         {
@@ -357,35 +344,5 @@ public class GearSystem : MonoBehaviour
         float targetZAngle = Mathf.LerpUnclamped(359f, 170f, gearGuagePercent);
         float newZAngle = Mathf.Lerp(gaugeNeedle.eulerAngles.z, targetZAngle, 0.1f);
         gaugeNeedle.rotation = Quaternion.Euler(0f, 0f, newZAngle);
-    }
-
-    // 비전투 상태에서의 기어 게이지 하락 로직
-    private void HandleNaturalGaugeDecrease()
-    {
-        // 이미 최소 기어 단계인 경우는 더 하락할 게이지조차 없음
-        if (CurrentState.GearLevel == 0)
-        {
-            return;
-        }
-
-        // 하한선까지는 계속 감소
-        CurrentState.GearGauge = Mathf.Max(0f, CurrentState.GearGauge - NON_COMBAT_STATE_GEAR_GAUGE_LOSS_PER_SEC * Time.deltaTime);
-
-        // 하한선에 도달한 경우 잠깐의 유예 시간을 준 뒤 단계를 하나 감소시킴
-        // 단, 기어 레벨이 1인 경우는 더 떨어질 레벨이 없으므로 현상태를 유지함
-        if (CurrentState.GearGauge == 0f && CurrentState.GearLevel > 1)
-        {
-            gaugeLowerBoundDuration += Time.deltaTime;
-            if (gaugeLowerBoundDuration > NON_COMBAT_GEAR_LEVEL_PROTECTION_TIME)
-            {
-                gaugeLowerBoundDuration = 0f;
-
-                // 단계가 감소한 뒤에는 게이지가 이전 단계의 최대치에서 감소하기 시작함
-                CurrentState.GearLevel--;
-                CurrentState.GearGauge = MAX_GEAR_GAUGE;
-
-                OnGearLevelChange.Invoke();
-            }
-        }
     }
 }

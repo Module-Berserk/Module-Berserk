@@ -17,6 +17,7 @@ public class EnemyController : MonoBehaviour, IDestructible
     [Header("Stats")]
     [SerializeField] private float baseHP = 50f;
     [SerializeField] private float baseDefense = 10f;
+    [SerializeField] private float baseDamage = 10f;
     
 
     [Header("HP Bar")]
@@ -42,6 +43,7 @@ public class EnemyController : MonoBehaviour, IDestructible
 
     private CharacterStat hp;
     private CharacterStat defense;
+    private CharacterStat damage;
 
     private enum State
     {
@@ -72,6 +74,7 @@ public class EnemyController : MonoBehaviour, IDestructible
 
         hp = new CharacterStat(baseHP, 0f, baseHP);
         defense = new CharacterStat(baseDefense, 0f);
+        damage = new CharacterStat(baseDamage, 0f);
 
         hp.OnValueChange.AddListener(UpdateHPBarUI);
     }
@@ -150,7 +153,7 @@ public class EnemyController : MonoBehaviour, IDestructible
                 {
                     if (attackBehavior.IsAttackPossible())
                     {
-                        attackBehavior.StartAttack();
+                        attackBehavior.StartAttack(damage);
 
                         activeAttackBehavior = attackBehavior;
                         state = State.Attack;

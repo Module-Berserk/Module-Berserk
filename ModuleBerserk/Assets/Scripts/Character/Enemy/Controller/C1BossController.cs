@@ -35,7 +35,7 @@ public class C1BossController : MonoBehaviour, IDestructible
 
 
     [Header("Hixbox")]
-    [SerializeField] private ApplyDamageOnContact hitboxes;
+    [SerializeField] private Hitbox hitboxes;
 
 
     [Header("Chase Pattern")]
@@ -194,7 +194,7 @@ public class C1BossController : MonoBehaviour, IDestructible
         // TODO: 보스 스탯은 나중에 밸런싱 과정에서 수정할 것
         hp = new CharacterStat(400f, 0f, 400f);
         defense = new CharacterStat(10f, 0f);
-        hitboxes.RawDamage = new CharacterStat(10f);
+        hitboxes.BaseDamage = new CharacterStat(10f);
 
         // 체력바 업데이트 콜백
         hp.OnValueChange.AddListener((damage) => healthUISlider.value = hp.CurrentValue / hp.MaxValue);

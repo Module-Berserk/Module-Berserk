@@ -7,8 +7,8 @@ public class StunGrenadeExplosion : MonoBehaviour
 
     private void Start()
     {
-        var hitbox = GetComponent<ApplyDamageOnContact>();
-        hitbox.RawDamage = new CharacterStat(damage);
+        var hitbox = GetComponent<Hitbox>();
+        hitbox.BaseDamage = new CharacterStat(damage);
     }
     
     // 영역에 들어오면 기절
