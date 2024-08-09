@@ -242,6 +242,16 @@ public class EnemyController : MonoBehaviour, IDestructible
         GetComponent<ObjectExistenceSceneState>().RecordAsDestroyed();
     }
 
+    // 효과음 함수들은 언젠가 별도의 스크립트로 분리할 예정...
+    private void PlayReloadSFX() {
+        int[] reloadIndices = {16};
+        AudioManager.instance.PlaySFXBasedOnPlayer(reloadIndices, this.transform);
+    }
+    private void PlayShotGunSFX() {
+        int[] shotIndices = {17};
+        AudioManager.instance.PlaySFXBasedOnPlayer(shotIndices, this.transform);
+    }
+
     private void PlayVictimSFX() {
         int[] victimIndices = {41, 42, 43, 44, 45};
         AudioManager.instance.PlaySFXBasedOnPlayer(victimIndices, this.transform);
