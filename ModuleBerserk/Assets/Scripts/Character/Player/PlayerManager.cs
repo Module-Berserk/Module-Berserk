@@ -122,10 +122,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
 
     private bool isJumpKeyPressed = false;
     
-    //Prototype 공격용 변수들
+    //공격 관련 상태 변수들
     private bool isAttackInputBufferingAllowed = false; // 공격 모션 중에서 선입력 기록이 가능한 시점에 도달했는지
     private bool isAttackInputBuffered = false; // 공격 버튼 선입력 여부
     private bool isAirAttackPerformed = false; // 공중 공격을 이미 했는지 (점프마다 한 번 가능)
+    private bool isGearLevelAscentAttack = false; // 기어 상승 특수 액션인지 (특수 액션으로 인한 기어 게이지 상승을 막기 위해 사용)
     private int attackCount = 0;
     private int maxAttackCount = 2; // 최대 연속 공격 횟수. attackCount가 이보다 커지면 첫 공격 모션으로 돌아감.
 
@@ -249,7 +250,11 @@ public class PlayerManager : MonoBehaviour, IDestructible
     {
         // 공격 성공한 시점을 기어 시스템에게 알려주기 위해 Hitbox 컴포넌트에 콜백 등록
         weaponHitbox.OnApplyDamageSuccess.AddListener((other) => {
-            gearSystem.OnAttackSuccess();
+            // 게이지 회복은 기어 상승 특수액션을 제외한 나머지 평타에만 일어나야 함!
+            if (!isGearLevelAscentAttack)
+            {
+                gearSystem.OnAttackSuccess();
+            }
 
             // TODO: 치명타 판정이면 두 번째 인자 true로 바꿔야 함
             CreateHitEffect(other, isCriticalHit: true);
@@ -436,10 +441,10 @@ public class PlayerManager : MonoBehaviour, IDestructible
             return;
         }
 
-        // Case 1) 상단 방향키 + 회피 버튼 = 기어 게이지 상승
-        if (IsGearGaugeAscentCommand())
+        // Case 1) 상단 방향키 + 회피 버튼 = 기어 단계 상승
+        if (IsGearLevelAscentCommand())
         {
-            HandleGearGaugeAscent();
+            HandleGearLevelAscent();
         }
         // Case 2) 하단 방향키 + 회피 버튼 = 긴급 회피
         else if (IsEmergencyEvasionCommand())
@@ -453,7 +458,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         }
     }
 
-    private bool IsGearGaugeAscentCommand()
+    private bool IsGearLevelAscentCommand()
     {
         return InputManager.InputActions.Player.UpArrow.IsPressed() || (bufferedCompositeCommandValidDuration > 0f && bufferedCompositeCommand == CompositeCommand.UpArrow);
     }
@@ -467,7 +472,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
     // 유저가 shift + up arrow를 입력한 경우 호출되는 함수.
     //
     // 기어를 한 단계 올리고 특수 공격을 시전한다.
-    private void HandleGearGaugeAscent()
+    private void HandleGearLevelAscent()
     {
         // 경직/스턴 상태에서는 기어 단계 상승이 불가능함.
         // 피격 경직은 아마 문제가 안 될텐데 상자 기믹에 대쉬한 경우 등
@@ -490,6 +495,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
         CancelCurrentAction();
         animator.SetTrigger("GearIncreaseAttack");
         invincibleDuration = 1.2f; // 대충 특수공격 모션 지속시간보다 살짝 높게 잡으면 됨
+        isGearLevelAscentAttack = true;
         ActionState = PlayerActionState.AttackInProgress;
         weaponHitbox.SetHitboxDirection(IsFacingLeft);
         spriteRootMotion.HandleAnimationChange();
@@ -1086,6 +1092,7 @@ public class PlayerManager : MonoBehaviour, IDestructible
             attackCount = 0;
             isAttackInputBufferingAllowed = false;
             isAttackInputBuffered = false;
+            isGearLevelAscentAttack = false;
             OnDisableAttackCollider();
         }
 
