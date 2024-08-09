@@ -47,11 +47,4 @@ public class DialogueSequence : MonoBehaviour
             dialogueEntry.dialogueBox.HideBox();
         }
     }
-
-    private void Awake()
-    {
-        InputManager.InputActions.Player.UpArrow.performed += (context) =>{
-            BeginNextDialogue();
-        };
-    }
 }
