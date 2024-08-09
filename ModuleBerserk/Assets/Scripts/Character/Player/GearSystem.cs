@@ -226,6 +226,8 @@ public class GearSystem : MonoBehaviour
         combatTimer = 0f;
     }
 
+    // 지금은 게이지 자연 감소가 사라져서 사용하지 않지만
+    // 언젠가 "전투 중" 상태를 기준으로 일어나는 일이 있을지도 몰라서 남겨둠
     private bool IsCombatOngoing()
     {
         // 공격 및 피격 시점으로부터 일정 시간이 않은 경우 전투 중으로 취급함
@@ -236,12 +238,6 @@ public class GearSystem : MonoBehaviour
     // 다음 기어 단계로 넘어갈 준비가 되었다면 true를 반환
     public bool IsNextGearLevelReady()
     {
-        // 이미 최대 단계인 경우
-        if (CurrentState.GearLevel == MAX_GEAR_LEVEL)
-        {
-            return false;
-        }
-
         // 아직 게이지를 충분히 채우지 못한 경우
         if (CurrentState.GearGauge < MAX_GEAR_GAUGE)
         {
@@ -266,16 +262,15 @@ public class GearSystem : MonoBehaviour
             CurrentState.NeedInitialRampUp = false;
         }
 
-        // 기어 단계 변동은 아직 최대 단계에 도달하지 못했고
-        // 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함.
+        // 기어 단계 변동은 게이지가 현재 기어 단계의 최대치인 상태에서만 가능함.
         //
         // 유일하게 여기서 assertion에 실패해도 되는 상황은
         // 튜토리얼 시작하자마자 낙사해서 ramp up 도중에 게이지가 깎여버리는 것...
-        Assert.IsTrue(CurrentState.GearLevel < MAX_GEAR_LEVEL);
         Assert.AreEqual(CurrentState.GearGauge, MAX_GEAR_GAUGE);
 
-        // 단계가 올라가면 게이지를 0부터 다시 채우기 시작
-        CurrentState.GearLevel++;
+        // 단계가 올라가면 게이지를 0부터 다시 채우기 시작.
+        // 이미 최대 단계인 경우는 게이지만 초기화됨.
+        CurrentState.GearLevel = Mathf.Min(CurrentState.GearLevel + 1, MAX_GEAR_LEVEL);
         CurrentState.GearGauge = 0;
 
         OnGearLevelChange.Invoke();
