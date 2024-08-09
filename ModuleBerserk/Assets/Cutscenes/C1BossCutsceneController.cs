@@ -20,47 +20,6 @@ public class C1BossCutsceneController : MonoBehaviour
     [SerializeField] private PlayableDirector mercyEnding;
     [SerializeField] private PlayableDirector killEnding;
 
-    private enum Speaker
-    {
-        Player,
-        Boss,
-    }
-    private struct Dialogue
-    {
-        public Speaker speaker;
-        public string message;
-
-        // 대사 이후에 대화창이 숨겨지길 원하면 true를,
-        // 곧바로 다음 대사를 출력하기를 원하면 false를 주면 됨.
-        // Note: 같은 사람이 대사를 연속으로 출력하는 경우 대화창을 껐다가 켜면 이상해보임!
-        public bool hideBoxOnComplete;
-    }
-    // 보스전 인트로 컷신에서 쓰일 대사들.
-    // 나중에 보스 처치 컷신에서 내용물이 바뀜.
-    private List<Dialogue> dialogues = new()
-    {
-        new Dialogue{speaker = Speaker.Boss, message = "하, 이번에는 웬 고철덩이가 찾아왔군", hideBoxOnComplete = true},
-        // new Dialogue{speaker = Speaker.Player, message = "허밍버드가 이곳에 있다던데...", hideBoxOnComplete = true},
-        new Dialogue{speaker = Speaker.Boss, message = "그래, 너도 이게 목적인 모양이군", hideBoxOnComplete = false},
-        new Dialogue{speaker = Speaker.Boss, message = "그럼 어디 실력 좀 볼까?", hideBoxOnComplete = true},
-    };
-    private int nextDialogueIndex = 0;
-
-    public void PrepareBossDefeatCutsceneDialogues()
-    {
-        dialogues = new()
-        {
-            new Dialogue{speaker = Speaker.Boss, message = "... 정말 괴물같은 힘이군", hideBoxOnComplete = true},
-            new Dialogue{speaker = Speaker.Player, message = "너희는 돈으로 움직인다는걸 알고 있다.", hideBoxOnComplete = false},
-            new Dialogue{speaker = Speaker.Player, message = "이번 의뢰주는 누구지?", hideBoxOnComplete = true},
-            new Dialogue{speaker = Speaker.Boss, message = "이야기하면... 살려줄건가?", hideBoxOnComplete = true},
-            new Dialogue{speaker = Speaker.Boss, message = "처음보는 사내였다.", hideBoxOnComplete = false},
-            new Dialogue{speaker = Speaker.Boss, message = "입가에 큰 흉터가 있었다는 것\n말고는 기억이 안 나는군", hideBoxOnComplete = true},
-            new Dialogue{speaker = Speaker.Player, message = "알겠다.", hideBoxOnComplete = true},
-        };
-        nextDialogueIndex = 0;
-    }
-
     // 컷신의 시작과 끝에 호출되는 함수.
     // 잠시 플레이어 조작을 막아준다.
     public void DisablePlayerControl()
@@ -98,33 +57,6 @@ public class C1BossCutsceneController : MonoBehaviour
     public void EnableBossController()
     {
         bossController.enabled = true;
-    }
-
-    // 다음 대사가 출력되어야 할 타이밍에 호출됨
-    public void BeginNextDialogue()
-    {
-        // 화자에 맞게 대사창 선택 및 대사 출력
-        Dialogue nextDialogue = dialogues[nextDialogueIndex++];
-        DialogueBox dialogueBox = nextDialogue.speaker == Speaker.Boss ? bossDialogueBox : playerDialogueBox;
-
-        // 이상한 효과음이라 다들 빼자고 해서 주석처리한듯?
-        // int[] talkingIndices = nextDialogue.speaker == Speaker.Boss ? new int[] { 19 } : new int[] { 20 };
-        //AudioManager.instance.PlaySFX(talkingIndices);
-
-        BeginTypingAnimationAsync(dialogueBox, nextDialogue).Forget();
-    }
-
-    private async UniTask BeginTypingAnimationAsync(DialogueBox dialogueBox, Dialogue dialogue)
-    {
-        dialogueBox.ShowBox();
-        await dialogueBox.BeginTypingAnimation(dialogue.message);
-
-        if (dialogue.hideBoxOnComplete)
-        {
-            // 대사 출력 끝나도 계속 읽을 수 있도록 잠깐 대기
-            await UniTask.WaitForSeconds(1f);
-            dialogueBox.HideBox();
-        }
     }
 
     // 죽인다 살린다 선택지 띄우고 후속 컷신 재생

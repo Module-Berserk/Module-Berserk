@@ -4,6 +4,8 @@ using TMPro;
 using Cysharp.Threading.Tasks;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 
 // 등장인물 머리 위에 말풍선 모양으로 대사를 출력해주는 스크립트
 public class DialogueBox : MonoBehaviour, IUserInterfaceController
@@ -97,6 +99,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         textMesh.enabled = false;
     }
 
+    /* 사용법 예시로 참고하려고 주석 처리해서 남겨둠
     private async UniTask TestDialogueSelection()
     {
         ShowBox();
@@ -130,6 +133,7 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
 
         HideBox();
     }
+    */
 
     public async UniTask BeginTypingAnimation(string dialogue)
     {
@@ -208,6 +212,17 @@ public class DialogueBox : MonoBehaviour, IUserInterfaceController
         InputManager.InputActions.UI.Up.performed -= SelectUpperDialogueOption;
         InputManager.InputActions.UI.Down.performed -= SelectLowerDialogueOption;
         InputManager.InputActions.UI.Select.performed -= FinishSelectingDialogueOption;
+    }
+
+    // 말풍선 텍스트에는 기본적으로 localization 컴포넌트가 달려있음.
+    // 그걸 이용해서 현재 언어 설정에 따른 대사를 알아냄.
+    public string GetLocalizedDialogue(string localizationKey)
+    {
+        LocalizedString localizedString = GetComponentInChildren<LocalizeStringEvent>().StringReference;
+        localizedString.TableEntryReference = localizationKey;
+        localizedString.RefreshString();
+
+        return localizedString.GetLocalizedString();
     }
 
     public void SelectUpperDialogueOption(InputAction.CallbackContext context)

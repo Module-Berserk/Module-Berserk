@@ -10457,7 +10457,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -162.1012, y: -14.699989, z: -10}
+  m_LocalPosition: {x: -162.09167, y: -14.699989, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12088,11 +12088,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5620073694721036249, guid: 945910fa21b6fec4ea336e20c9dd50e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.400002
+      value: -227.57501
       objectReference: {fileID: 0}
     - target: {fileID: 5620073694721036249, guid: 945910fa21b6fec4ea336e20c9dd50e4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5000005
+      value: -9.202499
       objectReference: {fileID: 0}
     - target: {fileID: 5620073694721036249, guid: 945910fa21b6fec4ea336e20c9dd50e4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -21223,6 +21223,7 @@ GameObject:
   - component: {fileID: 1256533914}
   - component: {fileID: 1256533913}
   - component: {fileID: 1256533915}
+  - component: {fileID: 1256533917}
   - component: {fileID: 1256533916}
   m_Layer: 0
   m_Name: C1BossIntro
@@ -21347,8 +21348,8 @@ MonoBehaviour:
     m_Events:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256533915}
-          m_TargetAssemblyTypeName: C1BossIntroDialogues, Assembly-CSharp
+        - m_Target: {fileID: 1256533917}
+          m_TargetAssemblyTypeName: DialogueSequence, Assembly-CSharp
           m_MethodName: BeginNextDialogue
           m_Mode: 1
           m_Arguments:
@@ -21471,6 +21472,28 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1256533917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256533912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5318c3932b513be4dab20da147275249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogues:
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_INTRO1
+    hideBoxOnComplete: 1
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_INTRO2
+    hideBoxOnComplete: 0
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_INTRO3
+    hideBoxOnComplete: 1
 --- !u!1001 &1257974223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25285,6 +25308,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1628609954}
   - component: {fileID: 1628609953}
+  - component: {fileID: 1628609956}
   - component: {fileID: 1628609955}
   m_Layer: 0
   m_Name: C1BossDefeat
@@ -25379,7 +25403,7 @@ MonoBehaviour:
     m_Signals:
     - {fileID: 11400000, guid: 52b35316727b59943b98365f907a85e1, type: 2}
     - {fileID: 11400000, guid: d27485ec63fd77a41916dcaa749fee5b, type: 2}
-    - {fileID: 11400000, guid: 712d74c116d56bc4c87ee20694eb647b, type: 2}
+    - {fileID: 0}
     - {fileID: 11400000, guid: f066ddfd487fb2b4daff332fbcaef40a, type: 2}
     - {fileID: 11400000, guid: 6d5165709ee47d24db3cadd3dbed9902, type: 2}
     - {fileID: 11400000, guid: ac7f790a7ab12af449729061f681a2ef, type: 2}
@@ -25416,23 +25440,11 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1256533915}
-          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
-          m_MethodName: PrepareBossDefeatCutsceneDialogues
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1256533915}
-          m_TargetAssemblyTypeName: C1BossCutsceneController, Assembly-CSharp
+        - m_Target: {fileID: 1628609956}
+          m_TargetAssemblyTypeName: DialogueSequence, Assembly-CSharp
           m_MethodName: BeginNextDialogue
           m_Mode: 1
           m_Arguments:
@@ -25513,6 +25525,40 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1628609956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628609952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5318c3932b513be4dab20da147275249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogues:
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_DEFEAT1
+    hideBoxOnComplete: 1
+  - dialogueBox: {fileID: 1412133577}
+    localizationKey: C1_BOSS_DEFEAT2
+    hideBoxOnComplete: 0
+  - dialogueBox: {fileID: 1412133577}
+    localizationKey: C1_BOSS_DEFEAT3
+    hideBoxOnComplete: 1
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_DEFEAT4
+    hideBoxOnComplete: 1
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_DEFEAT5
+    hideBoxOnComplete: 0
+  - dialogueBox: {fileID: 911965969}
+    localizationKey: C1_BOSS_DEFEAT6
+    hideBoxOnComplete: 1
+  - dialogueBox: {fileID: 1412133577}
+    localizationKey: C1_BOSS_DEFEAT7
+    hideBoxOnComplete: 1
 --- !u!1001 &1633833557
 PrefabInstance:
   m_ObjectHideFlags: 0
