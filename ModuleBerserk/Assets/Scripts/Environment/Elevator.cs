@@ -213,9 +213,9 @@ public class Elevator : MonoBehaviour, IPersistentSceneState
         rb.DOMove(destination, movementDuration)
             .SetEase(movementEase)
             .SetUpdate(UpdateType.Fixed);
-        velocityRecorder.enabled = false;
         
         await UniTask.WaitForSeconds(movementDuration, cancellationToken: cancellationToken);
+        velocityRecorder.enabled = false;
         
         // 앨리베이터 작동음 중지
         AudioManager.instance.StopSFX(elevatorAudioSource);

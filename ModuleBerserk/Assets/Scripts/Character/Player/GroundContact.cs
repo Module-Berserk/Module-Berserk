@@ -142,7 +142,7 @@ public class GroundContact
         var relativeNormalVelocity = Vector2.Dot(GroundNormal, relativeVelocity);
         if (!IsGrounded && relativeNormalVelocity > 0.1f)
         {
-            // Debug.Log($"수직 속도가 0.1 이상이어서 착지로 판단하지 않음!\nvelocity: {rb.velocity}, other velocity: {}", platform);
+            // Debug.Log($"수직 속도가 0.1 이상이어서 착지로 판단하지 않음!\nvelocity: {rb.velocity}, other velocity: {platform.velocity}", platform);
             return null;
         }
 
