@@ -35,6 +35,18 @@ MonoBehaviour:
     m_Key: SAVE_SLOT
     m_Metadata:
       m_Items: []
+  - m_Id: 58044493987840
+    m_Key: OVERWRITE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58218167533568
+    m_Key: RETURN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58435151462400
+    m_Key: OVERWRITE_WARNING
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -40,6 +40,20 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 4324141946663862300
+  - m_Id: 58044493987840
+    m_Localized: Overwrite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58218167533568
+    m_Localized: Return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58435151462400
+    m_Localized: 'Saved data exists.
+
+      Do you want to overwrite it?'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
